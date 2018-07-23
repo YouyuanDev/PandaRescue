@@ -213,6 +213,7 @@
                        setBubble(rets[i].id, rets[i].company_name);
                     }
                     openCompanyFrame(rets);
+                    openLocatingButton();
                 } else {
                     api.alert({
                         msg: JSON.stringify(errs)
@@ -285,6 +286,26 @@
     //         }
     //     });
     // }
+
+    //定位按钮
+    function openLocatingButton(rets) {
+        api.openFrame({
+            name: 'locating_button',
+            url: './html/frames/locating_button.html',
+            rect: {
+                x: 10,
+                y: api.winHeight - 340,
+                w: 25,
+                h: 25
+            },
+            pageParam: {
+
+            }
+        });
+    }
+
+
+
     //代开frame
     function openCompanyFrame(rets) {
         api.openFrame({
