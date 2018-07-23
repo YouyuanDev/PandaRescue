@@ -7,34 +7,52 @@
     <meta name="format-detection" content="telephone=no,email=no,date=no,address=no">
     <title>Hello APP</title>
     <link rel="stylesheet" type="text/css" href="../css/api.css" />
+    <link rel="stylesheet" type="text/css" href="../css/aui.css" />
+
     <style type="text/css">
         html,
         body {
             height: 100%;
         }
+
+        .container {
+            width: 100%;
+            height: 100%;
+            /*border:1px solid #8B8989;*/
+        }
+
+        .poilist-container ul li:first-child {
+            border-top: none;
+        }
     </style>
 </head>
 
 <body class="wrap">
-    <section class="flex-1">
-        <div class="poilist-container">
-            <div class="aui-content aui-margin-b-15">
-                <ul id="poilist-ul" class="aui-list aui-list-in">
+    <div class="container">
+        <div class="aui-content aui-margin-b-15">
+            <div class="poilist-container">
+                <div class="aui-content aui-margin-b-15">
+                    <ul id="poilist-ul" class="aui-list aui-media-list">
 
-                </ul>
+                    </ul>
+                </div>
             </div>
         </div>
-    </section>
+
+        <div>
+
+
+        </div>
 </body>
 <script type="text/javascript" src="../script/api.js"></script>
 <script type="text/javascript" src="../script/jquery-3.3.1.min.js"></script>
 <script type="text/javascript" src="../script/common.js"></script>
 <script type="text/javascript">
-    var company_data, map;
+    var company_data;
     apiready = function() {
             var data = api.pageParam
             company_data = data.company;
-            map = api.require('bMap');
+            addCompanyInfoScrollEventListener();
             showCompany();
         }
         //展示附近商户信息
@@ -42,58 +60,62 @@
         if (company_data) {
             var template = "";
             for (var i = 0; i < company_data.length; i++) {
-                template += (companyListTemplate(company_data[i].id, company_data[i].company_name, company_data[i].address));
+                template += (companyListTemplate(company_data[i].id, company_data[i].company_name, company_data[i].address, getDistance(company_data[i].distance)));
                 //setBubble(company_data[i].id, company_data[i].company_name);
             }
             $('#poilist-ul').append(template);
         }
     }
-    //设置商户的Bubble
-    // function setBubble(bubble_id, company_name) {
-    //     map.setBubble({
-    //         id: bubble_id,
-    //         bgImg: 'widget://image/bubble_bg.png',
-    //         content: {
-    //             title: '',
-    //             subTitle: company_name,
-    //         },
-    //         styles: {
-    //             titleColor: '#000',
-    //             titleSize: 16,
-    //             subTitleColor: '#fff',
-    //             subTitleSize: 12,
-    //             illusAlign: 'left'
-    //         }
-    //     }, function(ret) {
-    //         if (ret) {
-    //             alert(JSON.stringify(ret));
-    //         }
-    //     });
-    // }
-
+    //计算模板中所需距离
+    function getDistance(num) {
+        if (num != undefined && !isNaN(num)) {
+            num = num / 1000.0;
+            num = num.toFixed(2);
+        }
+        return num;
+    }
+    //发送弹出标注信息事件
     function popupBubble(obj) {
         var company_no = $(obj).attr('data-no');
         api.sendEvent({
             name: 'ClickCompanyListEventListener',
             extra: {
-                company_no:company_no
+                company_no: company_no
             }
         });
     }
     //生成模板
-    function companyListTemplate(company_no, company_name, company_address) {
-        var template = '<li class="aui-list-item" data-no=' + company_no + ' onclick="popupBubble(this)">' +
-            '<div class="aui-list-item-label-icon">' +
-            '<i class="aui-iconfont aui-icon-home"></i>' +
-            '</div>' +
+    function companyListTemplate(company_no, company_name, company_address, distance) {
+        var template = '<li class="aui-list-item aui-list-item-middle" data-no=' + company_no + ' onclick="popupBubble(this)">' +
+            '<div class="aui-media-list-item-inner">' +
             '<div class="aui-list-item-inner">' +
-            '<div class="company-name">' + company_name + '</div>' +
-            '<div class="company-address">' + company_address + '</div>' +
+            '<div class="aui-list-item-text">' +
+            '<div class="aui-list-item-title aui-font-size-14">' + company_name + '</div>' +
+            '<div class="aui-list-item-right">' + distance + 'km</div>' +
+            '</div>' +
+            '<div class="aui-list-item-text">' + company_address + '</div>' +
+            '</div>' +
             '</div>' +
             '</li>';
         return template;
     }
-    //
+    //监听地图标注点击事件，商户滚动
+    function addCompanyInfoScrollEventListener() {
+        api.addEventListener({
+            name: 'CompanyInfoScrollEventListener'
+        }, function(ret, err) {
+            var company_id = ret.value.id;
+            if (company_id != undefined) {
+                var $obj=$("li[data-no='"+company_id+"']");
+                if($obj!=undefined){
+                  var top = $obj.offset().top;
+                  $("html,body").animate({
+                      scrollTop: top + "px"
+                  }, 500);
+                }
+            }
+        });
+    }
 </script>
 
 </html>

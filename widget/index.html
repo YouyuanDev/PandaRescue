@@ -113,7 +113,7 @@
                 lon: 121.377462,
                 lat: 31.47022
             },
-            zoomLevel: 18,
+            zoomLevel: 17,
             showUserLocation: true
         }, function(ret) {
             if (ret.status) {
@@ -173,9 +173,14 @@
             draggable: false
         }, function(ret) {
             if (ret) {
-                if (ret.eventType == "click") {
-                    return;
-                }
+              if (ret.eventType == "click") {
+                  api.sendEvent({
+                      name: 'CompanyInfoScrollEventListener',
+                      extra: {
+                          id:ret.id
+                      }
+                  });
+              }
             }
         });
     }
@@ -202,10 +207,11 @@
                             "lat": rets[i].company_location_lat
                         };
                         annotations.push(temp);
-                        //template += (companyListTemplate(rets[i].id, rets[i].company_name, rets[i].address));
-                        setBubble(rets[i].id, rets[i].company_name);
                     }
                     setAnnotations(annotations);
+                    for (var i = 0; i < rets.length; i++) {
+                       setBubble(rets[i].id, rets[i].company_name);
+                    }
                     openCompanyFrame(rets);
                 } else {
                     api.alert({
@@ -237,10 +243,7 @@
         });
     }
     function popupBubble(company_no) {
-        alert("从"+company_no);
         if (company_no != undefined) {
-            alert("从1111"+company_no);
-            //var map = api.require('bMap');
             map.popupBubble({
                 id: company_no
             });
@@ -299,19 +302,6 @@
             }
         });
     }
-    //生成模板
-    // function companyListTemplate(company_no, company_name, company_address) {
-    //     var template = '<li class="aui-list-item" data-no=' + company_no + ' onclick="popupBubble(this)">' +
-    //         '<div class="aui-list-item-label-icon">' +
-    //         '<i class="aui-iconfont aui-icon-home"></i>' +
-    //         '</div>' +
-    //         '<div class="aui-list-item-inner">' +
-    //         '<div class="company-name">' + company_name + '</div>' +
-    //         '<div class="company-address">' + company_address + '</div>' +
-    //         '</div>' +
-    //         '</li>';
-    //     return template;
-    // }
     //监听商户列表点击事件
     function addClickCompanyListEventListener() {
         api.addEventListener({
