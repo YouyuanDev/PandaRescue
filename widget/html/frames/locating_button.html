@@ -12,6 +12,15 @@
         body {
             height: 100%;
         }
+        .location-btn{
+          width:100%;
+          height:100%;
+          background-color:#fff;
+          background-image:url(../../image/locating_48.png);
+          background-repeat:no-repeat;
+          background-size:100% 100%;
+          -moz-background-size:100% 100%;
+        }
     </style>
 </head>
 
@@ -22,24 +31,11 @@
 <script type="text/javascript" src="../../script/jquery-3.3.1.min.js"></script>
 <script type="text/javascript" src="../../script/common.js"></script>
 <script type="text/javascript">
-    var map;
     apiready = function() {
-        map = api.require('bMap');
-
     }
-
-    function locating(obj) {
-        // var company_no = $(obj).attr('data-no');
-        // api.sendEvent({
-        //     name: 'ClickCompanyListEventListener',
-        //     extra: {
-        //         company_no:company_no
-        //     }
-        // });
-        alert("111");
-        map.showUserLocation({
-            isShow: true,
-            trackingMode: 'none'
+    function locating() {
+        api.sendEvent({
+            name: 'locatingEvent'
         });
     }
 </script>

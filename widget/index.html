@@ -82,6 +82,7 @@
         // var headerH = $api.fixStatusBar(header);
         // // 最新api.js为了适配iPhoneX增加的方法，修复底部Footer部分与iPhoneX的底部虚拟横条键重叠的问题；
         // var footerH = $api.fixTabBar(footer);
+        registLocatingEvent();
         addClickCompanyListEventListener();
         initMapSDK();
 
@@ -173,14 +174,14 @@
             draggable: false
         }, function(ret) {
             if (ret) {
-              if (ret.eventType == "click") {
-                  api.sendEvent({
-                      name: 'CompanyInfoScrollEventListener',
-                      extra: {
-                          id:ret.id
-                      }
-                  });
-              }
+                if (ret.eventType == "click") {
+                    api.sendEvent({
+                        name: 'CompanyInfoScrollEventListener',
+                        extra: {
+                            id: ret.id
+                        }
+                    });
+                }
             }
         });
     }
@@ -210,7 +211,7 @@
                     }
                     setAnnotations(annotations);
                     for (var i = 0; i < rets.length; i++) {
-                       setBubble(rets[i].id, rets[i].company_name);
+                        setBubble(rets[i].id, rets[i].company_name);
                     }
                     openCompanyFrame(rets);
                     openLocatingButton();
@@ -222,12 +223,13 @@
             });
         }
     }
+
     function setBubble(bubble_id, company_name) {
         map.setBubble({
             id: bubble_id,
             // bgImg: 'widget://image/bubble_bg.png',
             content: {
-                title:company_name,
+                title: company_name,
                 subTitle: company_name,
             },
             styles: {
@@ -243,6 +245,7 @@
             }
         });
     }
+
     function popupBubble(company_no) {
         if (company_no != undefined) {
             map.popupBubble({
@@ -294,9 +297,9 @@
             url: './html/frames/locating_button.html',
             rect: {
                 x: 10,
-                y: api.winHeight - 340,
-                w: 25,
-                h: 25
+                y: api.winHeight - 250,
+                w: 30,
+                h:30
             },
             pageParam: {
 
@@ -319,7 +322,7 @@
             },
             pageParam: {
                 company: rets,
-                map:map
+                map: map
             }
         });
     }
@@ -328,8 +331,18 @@
         api.addEventListener({
             name: 'ClickCompanyListEventListener'
         }, function(ret, err) {
-             popupBubble(ret.value.company_no);
-             //alert(ret.value.company_no);
+            popupBubble(ret.value.company_no);
+        });
+    }
+    //设置用户位置
+    function registLocatingEvent() {
+        api.addEventListener({
+            name: 'locatingEvent'
+        }, function(ret, err) {
+            map.showUserLocation({
+                isShow: true,
+                trackingMode: 'none'
+            });
         });
     }
 </script>
