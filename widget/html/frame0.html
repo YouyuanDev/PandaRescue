@@ -1,0 +1,412 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0" />
+    <meta name="format-detection" content="telephone=no,email=no,date=no,address=no">
+    <title>外防腐</title>
+    <link rel="stylesheet" type="text/css" href="../css/api.css" />
+    <link rel="stylesheet" type="text/css" href="../css/style.css" />
+    <style>
+        .empty {
+            text-align: center;
+            padding: 120px 0;
+        }
+        /* 条目总体样式 */
+
+        .item {
+            display: table;
+            height: 70px;
+            width: 100%;
+            padding: 5px 0px;
+        }
+
+        .item .itemlogo,
+        .item .itemshelf {
+            display: table-cell;
+            vertical-align: middle;
+        }
+
+        .style1 {
+            border-top: 1px solid #cdcdcd;
+        }
+
+        .item .itemlogo {
+            width: 70px;
+        }
+
+        .item .itemlogo img {
+            margin-left: 10px;
+            width: 40px;
+        }
+        /* 条目特例 */
+
+        .shelf2 .userlogo img {
+            width: 50px;
+        }
+
+        .status-span {
+            background-color: #ffffff;
+            color: #000000;
+            font-size: 14px;
+            border-radius: 3px;
+            opacity: 0.5;
+            padding: 2px;
+            float: right;
+            margin-right: 20px;
+        }
+
+        .pipeno-span {
+            color: #000000;
+            font-size: 20px;
+            font-family: "Sans-serif";
+        }
+
+        .contractno-span,
+        .od-span,
+        .wt-span {
+            margin: 0px 2px;
+            font-family: "Sans-serif";
+        }
+
+        .od-span {
+            padding: 2px;
+            border-radius: 3px;
+            color: #AFAFAF;
+            font-family: "Sans-serif";
+        }
+
+        .wt-span {
+            padding: 2px;
+            border-radius: 3px;
+            color: #AFAFAF;
+            font-family: "Sans-serif";
+        }
+
+        .itemshelf .shelfinfo01 {
+            font-size: 16px;
+            color: #4CAD35;
+            text-align: left;
+        }
+
+        .itemshelf .shelfinfo02 {
+            font-size: 12px;
+            color: #AFAFAF;
+            margin-top: 5px;
+            text-align: left;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="div-data" id="div-data" style="margin-top:240px;font-size: 16px;color:#000000;font-family:" Sans-serif ";">
+
+    </div>
+</body>
+
+</html>
+<script type="text/javascript" src="../script/api.js"></script>
+<script type="text/javascript" src="../script/jquery-3.3.1.min.js"></script>
+<script type="text/javascript" src="../script/common.js"></script>
+<script src="../script/jquery.i18n.properties-1.0.9.js" type="text/javascript"></script>
+<script src="../script/language.js" type="text/javascript"></script>
+<script type="text/javascript">
+    //var serverIP='192.168.0.11';
+
+    //定义图片轮播变量
+    var UIScrollPicture;
+    //定义查询分页 开始page
+    var start = 1;
+    var keyword_pipeno;
+    //var UIListView;
+    apiready = function() {
+        UIScrollPicture = api.require('UIScrollPicture');
+
+        //UIListView = api.require('UIListView');
+        broadcastPictures(false);
+        //下拉刷新,下拉加载
+        dropdownLoading();
+        isRollingToEnd();
+        api.addEventListener({
+            name: 'myEvent'
+        }, function(ret, err) {
+            doSearchPipeInfo(ret.value.pipeno, ret.value.pageStart, ret.value.flag);
+        });
+
+        doSearchPipeInfo(keyword_pipeno, 1, false);
+        // api.openWin({
+        //     name: 'testing_active',
+        //     url: './test.html',
+        //     pageParam: {
+        //         pipe_no: '1544790'
+        //     }
+        // });
+
+    }
+
+    //主页面图片轮播
+    function broadcastPictures(reload) {
+        api.showProgress({
+            title: '加载中...',
+            modal: false
+        });
+        var s = 'http://' + serverIP + '/UploadFile/getTopTenPictures.action';
+        api.ajax({
+            url: s,
+            method: 'post',
+            timeout: 30,
+            dataType: 'json',
+            data: {
+                values: {
+
+                }
+            }
+        }, function(ret, err) {
+            //alert(ret);
+            api.hideProgress();
+            if (ret) {
+                if (ret.success == false) {
+                    api.alert({
+                        msg: JSON.stringify(ret.message)
+                    });
+                } else {
+                    // var picturefiles = JSON.stringify(ret);
+                    if(!reload)
+                    showPictures(ret);
+                    else
+                    reloadPictures(ret);
+                }
+            } else {
+                //alert("err");
+                api.alert({
+                    msg: JSON.stringify(err)
+                });
+            }
+
+        });
+
+    }
+
+
+
+    function reloadPictures(picturefiles) {
+      var datalist = [];
+      //alert("picturefiles.length="+picturefiles.length);
+
+      for (var i = 0; i < picturefiles.length; i++) {
+          var pic = picturefiles[i];
+          datalist.push('http://' + serverIP + '/upload/pictures/' + pic.pictureName);
+      }
+        UIScrollPicture.reloadData({
+            data: {
+                paths: datalist ,
+                caption: ['1', '2', '3', '4', '5', '6', '7', '8', '9', '10']
+            }
+        });
+    }
+    //显示照片
+    function showPictures(picturefiles) {
+        var datalist = [];
+        //alert("picturefiles.length="+picturefiles.length);
+
+        for (var i = 0; i < picturefiles.length; i++) {
+            var pic = picturefiles[i];
+            datalist.push('http://' + serverIP + '/upload/pictures/' + pic.pictureName);
+        }
+        //UIScrollPicture.close();
+        UIScrollPicture.open({
+            rect: {
+                x: 0,
+                y: 0,
+                w: api.winWidth,
+                h: 240
+            },
+            data: {
+                paths: datalist,
+                caption: ['1', '2', '3', '4', '5', '6', '7', '8', '9', '10']
+            },
+            styles: {
+                caption: {
+                    height: 35,
+                    color: '#E0FFFF',
+                    size: 13,
+                    bgColor: '#696969',
+                    position: 'bottom'
+                },
+                indicator: {
+                    dot: {
+                        w: 8,
+                        h: 8,
+                        r: 4,
+                        margin: 5
+                    },
+                    align: 'center',
+                    color: '#FFFFFF',
+                    activeColor: '#09aa30'
+                }
+            },
+            placeholderImg: 'widget://image/defaultbg.jpg',
+            contentMode: 'scaleToFill',
+            interval: 3,
+            fixedOn: api.frameName,
+            loop: true,
+            fixed: false
+        }, function(ret, err) {
+            if (ret) {
+                if (ret.eventType == 'click') {
+                    alert(ret.index);
+                }
+            }
+        });
+    }
+
+    //展示搜索记录
+    function funcShowPipeResultList(pipedata, append) {
+        if (!append) {
+
+            $('#div-data').empty();
+        }
+        if (pipedata.length == 0) {
+            var obj = $('#nodata');
+            if (obj.length <= 0)
+                $('#div-data').append('<div id="nodata" class="i18n1" name="nodata"></div>');
+        }
+        for (var i = 0; i < pipedata.length; i++) {
+            $('#div-data').append(pipeInfoTemplate(pipedata[i]));
+        }
+        //api.hideProgress();
+
+    }
+    //钢管信息的模版
+    function pipeInfoTemplate(pipe) {
+        var url2fbe="../image/pipe_2fbe.png";
+        var url3lpe="../image/pipe_3lpe.png";
+        var urlepoxy="../image/pipe_epoxy.png";
+        var urldefault="../image/pipe2.png";
+        var url="";
+        var title = pipe.project_name+' '+pipe.external_coating+' '+pipe.internal_coating;
+        if(pipe.external_coating=="2FBE"){
+          url=url2fbe;
+        }else if(pipe.external_coating=="3LPE"){
+          url=url3lpe;
+        }else{
+          url=urldefault;
+        }
+        var template = '<div class="item style1"  onclick="goPipeInfoRoot(' + pipe.pipe_no + ');">' +
+            '<div class="itemlogo userlogo"><img src="'+url+'" alt=""></div>' +
+            '<div class="itemshelf">' +
+            '<div class="shelfinfo01"><span class="pei pipeno-span">' + pipe.pipe_no + '</span></div>' +
+            '<div class="shelfinfo02"><span class="contractno-span">' + title + '</span></div>' +
+            '<div class="shelfinfo02"><span class="contractno-span">' + pipe.contract_no + '</span><span class="od-span">' + pipe.od + '</span><span class="wt-span">' + pipe.wt + '</span></div>' +
+            '</div>' +
+            '<div class="itemshelf"><span class="status-span i18n1" name="' + pipe.status + '"></span></div>' +
+            '</div>';
+        return template;
+    }
+    // 搜索钢管信息
+    function doSearchPipeInfo(pipeno, parm_start, append) {
+        //搜索管子
+        //alert("doSearchPipeInfo="+pipeno);
+        start = parm_start;
+        keyword_pipeno = pipeno;
+        //pipeno='1545470';
+        api.showProgress({
+            title: '加载中...',
+            modal: false
+        });
+        var s = 'http://' + serverIP + '/pipeinfo/searchPipe.action';
+        api.ajax({
+            url: s,
+            method: 'post',
+            timeout: 30,
+            dataType: 'json',
+            data: {
+                values: {
+                    pipe_no: keyword_pipeno,
+                    page: start,
+                    rows: 20
+                }
+            }
+        }, function(ret, err) {
+            api.hideProgress();
+            if (ret) {
+                if (ret.success == false) {
+                    api.alert({
+                        msg: JSON.stringify(ret.message)
+                    });
+                } else {
+                    //alert(JSON.stringify(ret.rows));
+                    funcShowPipeResultList(ret.rows, append);
+                    api.refreshHeaderLoadDone();
+                    hlLanguage("../i18n/");
+                    // var jsfun = 'funcShowPipeResultList(' + JSON.stringify(ret) + ');';
+                    // api.execScript({
+                    //     frameName: 'frame0',
+                    //     script: jsfun
+                    // });
+                }
+            } else {
+                api.alert({
+                    msg: JSON.stringify(err)
+                });
+            }
+
+        });
+    }
+
+
+
+
+    //打开钢管的涂层生产信息页面pipeinforoot
+    function goPipeInfoRoot(pipe_no) {
+        // api.alert({
+        //     msg: JSON.stringify(urloptions)
+        // });
+        api.openWin({
+            name: 'pipeinforoot',
+            url: './pipeinfo/pipeinforoot.html',
+            pageParam: {
+                pipeno: pipe_no
+            }
+        });
+    }
+
+
+    //下拉刷新更新图片及钢管搜索列表
+    function dropdownLoading() {
+        api.setRefreshHeaderInfo({
+            loadingImg: 'widget://image/loading_more.png',
+            bgColor: '#ccc',
+            textColor: '#fff',
+            textDown: '下拉刷新...',
+            textUp: '松开刷新...'
+        }, function(ret, err) {
+            //在这里从服务器加载数据,加载完成后调用api.refreshHeaderLoadDone()方法恢复组件到默认状态
+            //alert('执行下拉');
+            broadcastPictures(true);
+            doSearchPipeInfo(keyword_pipeno, 1, false);
+
+            setTimeout(function() {
+                //执行刷新
+                api.refreshHeaderLoadDone();
+                hlLanguage("../i18n/");
+            }, 50);
+        });
+    }
+
+    function isRollingToEnd() {
+        api.addEventListener({
+            name: 'scrolltobottom',
+            extra: {
+                threshold: 0 //设置距离底部多少距离时触发,默认值为0,数字类型
+            }
+        }, function(ret, err) {
+            //alert('已滚动到底部');//开始分页加载数据
+            start = start + 1;
+            doSearchPipeInfo(keyword_pipeno, start, true);
+
+
+        });
+    }
+</script>

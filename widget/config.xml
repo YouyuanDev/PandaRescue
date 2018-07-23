@@ -1,0 +1,75 @@
+<widget id="A6054425848203" version="0.0.1">
+
+    <name>HLCoatingTrace</name>
+
+    <description>
+
+        TopInspector Product
+
+    </description>
+
+    <author email="ketewang@youyuantech.com" href="http://www.topinspector.cn">
+
+        Developer
+
+    </author>
+
+    <content src="index.html"/>
+
+    <access origin="*"/>
+
+    <!-- <feature name="bmLocation">
+        <param name="ios_api_key" value="2Z0GExtWCfSzZApjSeb2xzerqnPG8KGd"/>
+    </feature>
+
+    <meta-data name="com.baidu.lbsapi.API_KEY" value="wDgywoNbKVxojUTb0cGG8K4odicYWGfd"/> -->
+
+    <feature name="bMap">
+       <param name="android_api_key" value="cMopB6aGVUqusylLyD32otyyNZAuUyC5" />
+       <param name="ios_api_key" value="" />
+     </feature>
+
+
+    <preference name="backgroundMode" value="location"/>
+
+    <preference name="pageBounce" value="false"/>
+
+    <preference name="appBackground" value="rgba(0,0,0,0.0)"/>
+
+    <preference name="windowBackground" value="rgba(0,0,0,0.0)"/>
+
+    <preference name="frameBackgroundColor" value="rgba(0,0,0,0.0)"/>
+
+    <preference name="hScrollBarEnabled" value="true"/>
+
+    <preference name="vScrollBarEnabled" value="true"/>
+
+    <preference name="autoLaunch" value="true"/>
+
+    <preference name="fullScreen" value="false"/>
+
+    <preference name="autoUpdate" value="true"/>
+
+    <preference name="smartUpdate" value="true"/>
+
+    <preference name="debug" value="true"/>
+
+    <preference name="statusBarAppearance" value="true"/>
+
+    <permission name="readPhoneState"/>
+
+    <permission name="camera"/>
+
+    <permission name="record"/>
+
+    <permission name="location"/>
+
+    <permission name="fileSystem"/>
+
+    <permission name="internet"/>
+
+    <permission name="bootCompleted"/>
+
+    <permission name="hardware"/>
+
+</widget>

@@ -1,0 +1,568 @@
+<!doctype html>
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0" />
+    <meta name="format-detection" content="telephone=no,email=no,date=no,address=no">
+    <title>主页</title>
+    <link rel="stylesheet" type="text/css" href="./css/api.css" />
+    <link rel="stylesheet" type="text/css" href="./css/style.css" />
+    <style>
+        /*head的样式*/
+
+        header {
+            border-bottom: 1px solid #FAFAFA;
+            background-color: #FFFFFF;
+        }
+
+        header ul li {
+            height: 40px;
+            line-height: 40px;
+            text-align: center;
+            display: none;
+            color: #ABB2BF;
+            position: relative;
+            font-size: 18px;
+            padding: 2px 0px;
+        }
+
+        header ul li.active {
+            display: block;
+        }
+
+        .main-container {
+            padding: 5px;
+            height: 30px;
+            margin: 0px 10px;
+            background-color: #ffffff; //#e6e6e6;
+        }
+
+        .scan-container {
+            height: 30px;
+            width: 10%;
+            background: url(./image/qrcode.png);
+            background-size: 30px 30px;
+            background-repeat: no-repeat;
+            float: left;
+        }
+
+        .search-container {
+            height: 30px;
+            float: right;
+            width: 90%;
+        }
+        /*.search-input {
+            width: 100%;
+            height: 100%;
+            line-height: 30px;
+            float: left;
+            background-color: #ffffff;
+        }*/
+        /*.search-input input {
+            height: 32px;
+            width: 70%;
+            padding-top: 2px;
+            padding-right: 35px;
+            padding-left: 10px;
+            border: none;
+            outline: none;
+            background-color: #e6e6e6;
+            font-family: "Sans-serif";
+        }*/
+
+        .search-span {
+            width: 30px;
+            height: 30px;
+            float: right;
+            background: url(./image/search.png);
+            background-size: 30px 30px;
+            background-repeat: no-repeat;
+            background-color: #ffffff;
+        }
+
+        #footer {
+            background-color: #f2f2f2;
+            border-top: 1px solid #FAFAFA;
+        }
+
+        #footer ul li {
+            padding-top: 36px;
+            padding-bottom: 4px;
+            background: url() no-repeat center 2px;
+            background-size: auto 30px;
+            text-align: center;
+            color: #4B5262;
+        }
+        /*5个文字menu的颜色*/
+
+        #footer ul li.active {
+            color: #09aa30;
+            /*#09aa30;*/
+        }
+
+        #footer ul li:nth-child(1) {
+            background-image: url(./image/production.png);
+        }
+
+        #footer ul li:nth-child(2) {
+            background-image: url(./image/testing.png);
+        }
+
+        #footer ul li:nth-child(3) {
+            background-image: url(./image/shipment.png);
+        }
+
+        #footer ul li:nth-child(4) {
+            background-image: url(./image/statistic.png);
+        }
+
+        #footer ul li:nth-child(5) {
+            background-image: url(./image/operator.png);
+        }
+
+        #footer ul li:nth-child(1).active {
+            background-image: url(./image/production_active.png);
+        }
+
+        #footer ul li:nth-child(2).active {
+            background-image: url(./image/testing_active.png);
+        }
+
+        #footer ul li:nth-child(3).active {
+            background-image: url(./image/shipment_active.png);
+        }
+
+        #footer ul li:nth-child(4).active {
+            background-image: url(./image/statistic_active.png);
+        }
+
+        #footer ul li:nth-child(5).active {
+            background-image: url(./image/operator_active.png);
+        }
+
+        .flex-con {
+            overflow: auto
+        }
+
+        .show-float-btn {
+            position: fixed;
+            right: 10px;
+            top: 25px;
+            /*z-index: 10000;*/
+            background-color: #4D4D4D;
+            width: 35px;
+            height: 35px;
+            text-align: center;
+            line-height: 50px;
+            /*border-radius:50%;*/
+            color: white;
+            background: url('./image/new_labtesting.png');
+            background-repeat: no-repeat;
+            background-size: cover;
+        }
+
+        .show-scan-loading-btn {
+            position: fixed;
+            right: 10px;
+            top: 25px;
+            /*z-index: 10000;*/
+            background-color: #4D4D4D;
+            width: 35px;
+            height: 35px;
+            text-align: center;
+            line-height: 50px;
+            /*border-radius:50%;*/
+            color: white;
+            background: url('./image/scan_and_loading.png');
+            background-repeat: no-repeat;
+            background-size: cover;
+        }
+
+        .show-statistics-btn {
+            position: fixed;
+            right: 10px;
+            top: 25px;
+            /*z-index: 10000;*/
+            background-color: #4D4D4D;
+            width: 35px;
+            height: 35px;
+            text-align: center;
+            line-height: 50px;
+            /*border-radius:50%;*/
+            color: white;
+            background: url('./image/search.png');
+            background-repeat: no-repeat;
+            background-size: cover;
+        }
+    </style>
+</head>
+
+<body>
+    <div id="wrap" class="flex-wrap flex-vertical">
+        <header id="header">
+            <ul>
+                <li class="border-b active">
+                    <div class="main-container">
+                        <div class="scan-container"></div>
+                        <div class="search-container">
+
+                            <!-- <div class="search-input"><input type="number" id="search-input" placeholder="请扫描二维码或输入管号..." />
+                            -->
+                            <div class="search-span">
+                                <div></div>
+                            </div>
+                            <div class="clearfix"></div>
+                            <!-- </div>  -->
+                        </div>
+                    </div>
+                </li>
+                <li class="border-b">
+                    <span class="i18n1" name="experiment"></span>
+                    <div class="show-float-btn" data-isshow="hide" id="float-btn-container" onclick="showNewTestingLink()">
+
+
+                    </div>
+                </li>
+                <li class="border-b" name="shipping">
+                    <span class="i18n1" name="shipping"></span>
+                    <div class="show-scan-loading-btn" data-isshow="hide" id="float-btn-container" onclick="newShipment()">
+                        <!-- 新建 -->
+
+                    </div>
+
+                </li>
+                <li class="border-b" name="statistics">
+                    <span class="i18n1" name="statistics"></span>
+                    <div class="show-statistics-btn" data-isshow="hide" onclick="newStatistics()">
+                        <!-- 新建 -->
+                    </div>
+                </li>
+                <li class="border-b i18n1" name="personal">个人信息</li>
+            </ul>
+        </header>
+        <div id="main" class="flex-con">
+
+        </div>
+        <div id="footer" class="border-t">
+            <ul class="flex-wrap">
+                <li tapmode="hover" onclick="randomSwitchBtn( this );" class="flex-con active i18n1" name="production">涂层生产</li>
+                <li tapmode="hover" onclick="randomSwitchBtn( this );" class="flex-con i18n1" name="experiment">涂层实验</li>
+                <li tapmode="hover" onclick="randomSwitchBtn( this );" class="flex-con i18n1" name="shipping">成品发运</li>
+                <li tapmode="hover" onclick="randomSwitchBtn( this );" class="flex-con i18n1" name="statistics">当班统计</li>
+                <li tapmode="hover" onclick="randomSwitchBtn( this );" class="i18n1 flex-con" name="personal">个人信息</li>
+            </ul>
+        </div>
+    </div>
+</body>
+
+</html>
+<script type="text/javascript" src="script/api.js"></script>
+<script type="text/javascript" src="script/jquery-3.3.1.min.js"></script>
+<script type="text/javascript" src="script/common.js"></script>
+<script src="script/jquery.i18n.properties-1.0.9.js" type="text/javascript"></script>
+<script src="script/language.js" type="text/javascript"></script>
+<script type="text/javascript">
+    //定义二维码全局变量
+    var FNScanner;
+    var UIInputId;
+    var g_project_no = "",
+        g_mill_no = "",
+        g_operation_time = "";
+
+    var lab_search_project_no;//实验搜索页的下拉
+    apiready = function() {
+            RequireStatisticSearchinfo();
+            //设置TitleBar位置(兼容IOS)
+            fnSettingHeader();
+            //设置搜索栏
+            initSearchBar();
+            funIniGroup();
+            //判断是否登录
+            //JudgeLogin();
+            //设置回调函数
+            setPushListener();
+            // api.openWin({
+            //     name: 'generalprocess',
+            //     url: './html/process/generalprocess.html',
+            //     pageParam: {
+            //         shipment_no: undefined
+            //     }
+            // });
+            api.addEventListener({
+                name: 'onLabPageProjectNoChangedEvent'
+            }, function(ret, err) {
+                lab_search_project_no=ret.value.project_no;
+                //alert("lab_search_project_no="+lab_search_project_no);
+            });
+
+            FNScanner = api.require('FNScanner');
+
+            api.addEventListener({
+                name: 'resume'
+            }, function(ret, err) {
+                FNScanner.onResume();
+                //alert('应用回到前台');
+            });
+            api.addEventListener({
+                name: 'pause'
+            }, function(ret, err) {
+                FNScanner.onPause();
+                //alert('应用进入后台');
+            });
+
+
+
+
+            //二维码点击事件
+            $('.scan-container').click(function() {
+                FNScanner.open({
+                    autorotation: true,
+                    sound: './sound/scanok.wav'
+                }, function(ret, err) {
+                    if (ret) {
+                        //扫出来结果
+                        if (ret.eventType == 'success') {
+                            //alert(ret.content);
+                            //设置搜索框为读到的二维码数据
+                            var UIInput = api.require('UIInput');
+                            UIInput.value({
+                                msg: ret.content
+                            });
+
+                            // var jsfun = 'doSearchPipeInfo(' + ret.content + ',1,false);';
+                            // api.execScript({
+                            //     frameName: 'frame0',
+                            //     script: jsfun
+                            // });
+                            sendSearchEvent(ret.content);
+                            FNScanner.closeView();
+                        }
+                    }
+                });
+
+            });
+            //搜索点击事件
+            $('.search-span').click(function() {
+                var UIInput = api.require('UIInput');
+                UIInput.value(function(ret) {
+                    if (ret) {
+                        sendSearchEvent(ret.msg);
+                    }
+                });
+            });
+            hlLanguage("./i18n/");
+        }
+        // 班报保留上次搜索信息
+    function RequireStatisticSearchinfo() {
+        api.addEventListener({
+            name: 'sendSettingStatisticInfoEvent'
+        }, function(ret, err) {
+            g_project_no = ret.value.project_no;
+            g_mill_no = ret.value.mill_no;
+            g_operation_time = ret.value.operation_time;
+        });
+    }
+    //发送查询管号事件
+    function sendSearchEvent(pipeno) {
+        api.sendEvent({
+            name: 'myEvent',
+            extra: {
+                pipeno: pipeno,
+                pageStart: 1,
+                flag: false
+            }
+        });
+    }
+
+    function funIniGroup() {
+        var eHeaderLis = $api.domAll('header li'),
+            frames = [];
+        for (var i = 0, len = eHeaderLis.length; i < len; i++) {
+            frames.push({
+                name: 'frame' + i,
+                url: './html/frame' + i + '.html',
+                bgColor: 'rgba(60,0,0,.2)',
+                bounces: true
+            })
+        }
+        api.openFrameGroup({
+            name: 'group',
+            scrollEnabled: false,
+            rect: {
+                x: 0,
+                y: $api.dom('header').offsetHeight,
+                w: api.winWidth,
+                h: $api.dom('#main').offsetHeight
+            },
+            index: 0,
+            frames: frames
+        }, function(ret, err) {
+
+        });
+    }
+    //初始化搜索栏
+    function initSearchBar() {
+
+        var UIInput = api.require('UIInput');
+        UIInput.open({
+            rect: {
+                x: 60,
+                y: 25,
+                w: api.winWidth - 150,
+                h: 35
+            },
+            styles: {
+                bgColor: '#fff',
+                size: 18,
+                color: '#111',
+                placeholder: {
+                    color: '#ccc'
+                }
+            },
+            autoFocus: false,
+            maxRows: 1,
+            placeholder: ' 请输入管号  ',
+            keyboardType: 'search',
+            fixedOn: api.frameName
+        }, function(ret) {
+            UIInputId = ret.id;
+            if (ret.eventType == 'change') {
+                //alert(JSON.stringify(ret));
+            } else if (ret.eventType == 'search') {
+                var UIInput = api.require('UIInput');
+                UIInput.value(function(ret1) {
+                    if (ret1) {
+                        sendSearchEvent(ret1.msg);
+                    }
+                });
+                //关闭键盘
+                UIInput.closeKeyboard({
+                    id: ret.id
+                });
+            }
+
+
+        });
+
+
+
+    }
+
+
+
+    // 随意切换按钮
+    function randomSwitchBtn(tag) {
+        //alert(tag);
+        if (tag == $api.dom('#footer li.active')) return;
+        var eFootLis = $api.domAll('#footer li'),
+            eHeaderLis = $api.domAll('header li'),
+            index = 0;
+        for (var i = 0, len = eFootLis.length; i < len; i++) {
+            if (tag == eFootLis[i]) {
+                index = i;
+            } else {
+                $api.removeCls(eFootLis[i], 'active');
+                $api.removeCls(eHeaderLis[i], 'active');
+            }
+        }
+        $api.addCls(eFootLis[index], 'active');
+        $api.addCls(eHeaderLis[index], 'active');
+
+        if (index == 1 || index == 2 || index == 3 || index == 4) {
+            var UIInput = api.require('UIInput');
+            UIInput.hide({
+                id: UIInputId
+            });
+            if (index == 4) {
+                api.sendEvent({
+                    name: 'reloadUserInfo'
+                });
+            }
+        } else {
+            var UIInput = api.require('UIInput');
+            UIInput.show({
+                id: UIInputId
+            });
+        }
+        api.setFrameGroupIndex({
+            name: 'group',
+            index: index
+        });
+    }
+
+    function showNewTestingLink() {
+      if(lab_search_project_no==undefined||lab_search_project_no==""){
+        api.alert({
+            msg: "请选择项目"
+        });
+        return;
+      }
+
+
+
+        $("body").addClass('mask');
+        api.openFrame({
+            name: 'newtestingpanel',
+            url: './html/labtesting/newtestingpanel.html',
+            bgColor: 'rgba(0,0,0,0.8)',
+            rect: {
+                x: 0,
+                y: 0,
+                w: 'auto',
+                h: 'auto',
+                marginLeft: 0,
+                marginTop: 0,
+                marginBottom: 0,
+                marginRight: 0
+            },
+            animation: {
+                type: "movein",
+                subType: "from_top",
+                duration: 300
+            },
+            pageParam: {
+                project_no: lab_search_project_no
+            }
+        });
+    }
+
+    function newShipment() {
+        api.openWin({
+            name: 'shipmentManagement',
+            url: './html/storage/shipmentManagement.html',
+            pageParam: {
+                shipment_no: undefined
+            }
+        });
+    }
+
+    function newStatistics() {
+        $("body").addClass('mask');
+        api.openFrame({
+            name: 'newstatisticsselect',
+            url: './html/addition/newstatisticsselect.html',
+            bgColor: 'rgba(0,0,0,0.8)',
+            rect: {
+                x: 0,
+                y: 0,
+                w: 'auto',
+                h: 'auto',
+                marginLeft: 0,
+                marginTop: 0,
+                marginBottom: 0,
+                marginRight: 0
+            },
+            animation: {
+                type: "movein",
+                subType: "from_top",
+                duration: 300
+            },
+            pageParam: {
+                project_no:g_project_no,
+                mill_no:g_mill_no,
+                operation_time:g_operation_time
+            }
+        });
+    }
+</script>
