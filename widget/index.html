@@ -44,12 +44,12 @@
         }
 
         .poilist-container {
-            position: fixed;
-            left: 0;
-            bottom: 0;
+            position: absolute;
+            bottom: 4px;
             width: 100%;
             height: 200px;
-            z-index: 10000, overflow-y: scroll;
+            z-index: 9999999;
+            background-color: red;
         }
 
         .poilist-ul li {
@@ -62,40 +62,8 @@
 <body class="wrap">
     <header>APICloud</header>
     <section class="flex-1">
-        <div class="poilist-container">
-            <div class="aui-content aui-margin-b-15">
-                <ul id="poilist-ul" class="aui-list aui-list-in">
-                    <!-- <li class="aui-list-header">带有图标、底线缩进</li> -->
-                    <!-- <li class="aui-list-item">
-                        <div class="aui-list-item-label-icon">
-                            <i class="aui-iconfont aui-icon-home"></i>
-                        </div>
-                        <div class="aui-list-item-inner">
-                            <div class="company-name"></div>
-                            <div class="company-address"></div>
-                        </div>
-                    </li>
-                    <li class="aui-list-item">
-                        <div class="aui-list-item-label-icon">
-                            <i class="aui-iconfont aui-icon-edit"></i>
-                        </div>
-                        <div class="aui-list-item-inner">
-                            这是一个列表项
-                        </div>
-                    </li>
-                    <li class="aui-list-item">
-                        <div class="aui-list-item-label-icon">
-                            <i class="aui-iconfont aui-icon-camera"></i>
-                        </div>
-                        <div class="aui-list-item-inner">
-                            这是一个列表项
-                        </div>
-                    </li> -->
-                </ul>
-            </div>
-        </div>
+
     </section>
-    <footer>Copyright &copy;<span id="year"></span></footer>
 </body>
 <script type="text/javascript" src="./script/api.js"></script>
 <script type="text/javascript" src="./script/jquery-3.3.1.min.js"></script>
@@ -103,31 +71,20 @@
 <script type="text/javascript">
     var g_my_lon, g_my_lat, g_company_lon, g_company_lat;
     var map;
-    var floatModule;
     apiready = function() {
+        fnSettingHeader();
         map = api.require('bMap');
-        //floatModule = api.require('floatModule');
-        var params = {
-            rect: {
-                x: 0,
-                y: api.winHeight-200,
-                w: api.winWidth,
-                h:200
-            }
-        };
-        // floatModule.openFloat(params, function(ret) {
-        //     alert(ret);
-        // });
-        var header = $api.dom('header'); // 获取 header 标签元素
-        var footer = $api.dom('footer'); // 获取 footer 标签元素
-        // 1.修复开启沉浸式效果带来的顶部Header与手机状态栏重合的问题，最新api.js方法已支持适配iPhoneX；
-        // 2.默认已开启了沉浸式效果 config.xml中 <preference name="statusBarAppearance" value="true"/>
-        // 3.沉浸式效果适配支持iOS7+，Android4.4+以上版本
-        var headerH = $api.fixStatusBar(header);
-        // 最新api.js为了适配iPhoneX增加的方法，修复底部Footer部分与iPhoneX的底部虚拟横条键重叠的问题；
-        var footerH = $api.fixTabBar(footer);
+        // var header = $api.dom('header'); // 获取 header 标签元素
+        // var footer = $api.dom('footer'); // 获取 footer 标签元素
+        // // 1.修复开启沉浸式效果带来的顶部Header与手机状态栏重合的问题，最新api.js方法已支持适配iPhoneX；
+        // // 2.默认已开启了沉浸式效果 config.xml中 <preference name="statusBarAppearance" value="true"/>
+        // // 3.沉浸式效果适配支持iOS7+，Android4.4+以上版本
+        // var headerH = $api.fixStatusBar(header);
+        // // 最新api.js为了适配iPhoneX增加的方法，修复底部Footer部分与iPhoneX的底部虚拟横条键重叠的问题；
+        // var footerH = $api.fixTabBar(footer);
+        addClickCompanyListEventListener();
         initMapSDK();
-        //setAnnotations();
+
     };
     //1.初始化MapSDK
     function initMapSDK() {
@@ -148,7 +105,7 @@
         map.open({
             rect: {
                 x: 0,
-                y: 90,
+                y: 60,
                 w: api.winWidth,
                 h: api.winHeight
             },
@@ -200,7 +157,6 @@
                 g_my_lon = ret.lon;
                 g_my_lat = ret.lat;
                 loadNearbyCompany();
-                alert(JSON.stringify(ret));
                 //map.stopLocation();
             } else {
                 alert('获取用户信息时出错,错误信息:' + err.code);
@@ -213,7 +169,7 @@
         //此处应获取附近的商户信息  121.498034  31.385146
         map.addAnnotations({
             annotations: annotations,
-            icon: 'widget://image/rescue.png',
+            icon: 'widget://image/companyusericon_128.jpg',
             draggable: false
         }, function(ret) {
             if (ret) {
@@ -238,8 +194,7 @@
                 }
             }, function(rets, errs) {
                 if (rets) {
-                    var annotations = [],
-                        template = "";
+                    var annotations = [];
                     for (var i = 0; i < rets.length; i++) {
                         var temp = {
                             "id": rets[i].id,
@@ -247,11 +202,11 @@
                             "lat": rets[i].company_location_lat
                         };
                         annotations.push(temp);
-                        template += (companyListTemplate(rets[i].id, rets[i].company_name, rets[i].address));
+                        //template += (companyListTemplate(rets[i].id, rets[i].company_name, rets[i].address));
                         setBubble(rets[i].id, rets[i].company_name);
                     }
                     setAnnotations(annotations);
-                    $('#poilist-ul').append(template);
+                    openCompanyFrame(rets);
                 } else {
                     api.alert({
                         msg: JSON.stringify(errs)
@@ -260,69 +215,18 @@
             });
         }
     }
-
-    function GetMyLonLat() {
-        var my_lon;
-        var my_lat;
-        map.getLocation({
-            accuracy: '10m',
-            autoStop: false,
-            filter: 1
-        }, function(ret, err) {
-            if (ret.status) {
-                map.stopLocation();
-                my_lon = ret.lon;
-                my_lat = ret.lat;
-            } else {
-                alert(err.code);
-            }
-        });
-    }
-    //获取两点之间距离
-    function getDistance(mill_lon, mill_lat, my_lon, my_lat) {
-        map.getDistance({
-            start: {
-                lon: mill_lon,
-                lat: mill_lat
-            },
-            end: {
-                lon: my_lon,
-                lat: my_lat
-            }
-        }, function(ret) {
-            if (ret.status) {
-
-            } else {
-                alert("错误" + ret);
-            }
-        });
-    }
-
-    function companyListTemplate(company_no, company_name, company_address) {
-        var template = '<li class="aui-list-item" data-no=' + company_no + ' onclick="popupBubble(this)">' +
-            '<div class="aui-list-item-label-icon">' +
-            '<i class="aui-iconfont aui-icon-home"></i>' +
-            '</div>' +
-            '<div class="aui-list-item-inner">' +
-            '<div class="company-name">' + company_name + '</div>' +
-            '<div class="company-address">' + company_address + '</div>' +
-            '</div>' +
-            '</li>';
-        return template;
-    }
-    //设置商户的Bubble
     function setBubble(bubble_id, company_name) {
         map.setBubble({
             id: bubble_id,
-            bgImg: 'widget://image/bubble_bg.png',
+            // bgImg: 'widget://image/bubble_bg.png',
             content: {
-                title: '',
+                title:company_name,
                 subTitle: company_name,
             },
             styles: {
                 titleColor: '#000',
                 titleSize: 16,
-                subTitleColor: '#fff',
+                subTitleColor: '#61c721',
                 subTitleSize: 12,
                 illusAlign: 'left'
             }
@@ -332,14 +236,91 @@
             }
         });
     }
-    //点击商户图标时弹出商户信息
-    function popupBubble(obj) {
-        var company_no = $(obj).attr('data-no');
+    function popupBubble(company_no) {
+        alert("从"+company_no);
         if (company_no != undefined) {
+            alert("从1111"+company_no);
+            //var map = api.require('bMap');
             map.popupBubble({
                 id: company_no
             });
         }
     }
+    // function GetMyLonLat() {
+    //     var my_lon;
+    //     var my_lat;
+    //     map.getLocation({
+    //         accuracy: '10m',
+    //         autoStop: false,
+    //         filter: 1
+    //     }, function(ret, err) {
+    //         if (ret.status) {
+    //             map.stopLocation();
+    //             my_lon = ret.lon;
+    //             my_lat = ret.lat;
+    //         } else {
+    //             alert(err.code);
+    //         }
+    //     });
+    // }
+    //获取两点之间距离
+    // function getDistance(mill_lat, my_lon, my_lat) {
+    //     map.getDistance({
+    //         start: {
+    //             lon: mill_lon,
+    //             lat: mill_lat
+    //         },
+    //         end: {
+    //             lon: my_lon,
+    //             lat: my_lat
+    //         }
+    //     }, function(ret) {
+    //         if (ret.status) {
+    //
+    //         } else {
+    //             alert("错误" + ret);
+    //         }
+    //     });
+    // }
+    //代开frame
+    function openCompanyFrame(rets) {
+        api.openFrame({
+            name: 'nearby_company',
+            url: './html/nearby_company.html',
+            rect: {
+                x: 10,
+                y: api.winHeight - 200,
+                w: api.winWidth - 20,
+                h: 190
+            },
+            pageParam: {
+                company: rets,
+                map:map
+            }
+        });
+    }
+    //生成模板
+    // function companyListTemplate(company_no, company_name, company_address) {
+    //     var template = '<li class="aui-list-item" data-no=' + company_no + ' onclick="popupBubble(this)">' +
+    //         '<div class="aui-list-item-label-icon">' +
+    //         '<i class="aui-iconfont aui-icon-home"></i>' +
+    //         '</div>' +
+    //         '<div class="aui-list-item-inner">' +
+    //         '<div class="company-name">' + company_name + '</div>' +
+    //         '<div class="company-address">' + company_address + '</div>' +
+    //         '</div>' +
+    //         '</li>';
+    //     return template;
+    // }
+    //监听商户列表点击事件
+    function addClickCompanyListEventListener() {
+        api.addEventListener({
+            name: 'ClickCompanyListEventListener'
+        }, function(ret, err) {
+             popupBubble(ret.value.company_no);
+             //alert(ret.value.company_no);
+        });
+    }
 </script>
+
 </html>
