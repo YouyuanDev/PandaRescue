@@ -1,17 +1,10 @@
-<widget id="A6054425848203" version="0.0.1">
-
-    <name>HLCoatingTrace</name>
-
+<widget id="A6087851424740" version="0.0.1">
+    <name></name>
     <description>
-
         TopInspector Product
-
     </description>
-
     <author email="ketewang@youyuantech.com" href="http://www.topinspector.cn">
-
         Developer
-
     </author>
 
     <content src="index.html"/>
@@ -21,11 +14,9 @@
     <!-- <feature name="bmLocation">
         <param name="ios_api_key" value="2Z0GExtWCfSzZApjSeb2xzerqnPG8KGd"/>
     </feature>
-
     <meta-data name="com.baidu.lbsapi.API_KEY" value="wDgywoNbKVxojUTb0cGG8K4odicYWGfd"/> -->
-
     <feature name="bMap">
-       <param name="android_api_key" value="cMopB6aGVUqusylLyD32otyyNZAuUyC5" />
+       <param name="android_api_key" value="olAkqioBRzzey2P9zzLo1ZoesXoi4nLj" />
        <param name="ios_api_key" value="uhMNF5USSpeqFmlekx1w3VbPtcFgbDzw" />
      </feature>
 

@@ -95,7 +95,7 @@
             </div>
         </div>
     </section>
-    <!-- <footer>Copyright &copy;<span id="year"></span></footer> -->
+    <footer>Copyright &copy;<span id="year"></span></footer>
 </body>
 <script type="text/javascript" src="./script/api.js"></script>
 <script type="text/javascript" src="./script/jquery-3.3.1.min.js"></script>
@@ -106,7 +106,7 @@
     var floatModule;
     apiready = function() {
         map = api.require('bMap');
-        floatModule = api.require('floatModule');
+        //floatModule = api.require('floatModule');
         var params = {
             rect: {
                 x: 0,
@@ -115,9 +115,9 @@
                 h:200
             }
         };
-        floatModule.openFloat(params, function(ret) {
-            alert(ret);
-        });
+        // floatModule.openFloat(params, function(ret) {
+        //     alert(ret);
+        // });
         var header = $api.dom('header'); // 获取 header 标签元素
         var footer = $api.dom('footer'); // 获取 footer 标签元素
         // 1.修复开启沉浸式效果带来的顶部Header与手机状态栏重合的问题，最新api.js方法已支持适配iPhoneX；
