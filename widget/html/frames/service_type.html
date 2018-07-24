@@ -1,0 +1,176 @@
+<!doctype html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,initial-scale=1.0,width=device-width" />
+    <meta name="format-detection" content="telephone=no,email=no,date=no,address=no">
+    <title>servicetype</title>
+    <link rel="stylesheet" type="text/css" href="../../css/api.css" />
+    <link rel="stylesheet" type="text/css" href="../../css/aui.css" />
+    <link rel="stylesheet" type="text/css" href="../../css/style.css" />
+    <style type="text/css">
+        .submit-btn {
+            height: 2.3rem;
+            width: 100%;
+            background-color: #81a9c3;
+            color: white;
+            line-height: 2.3rem;
+            text-align: center;
+        }
+        .close-btn {
+            display: block;
+            float: right;
+            padding: 0px 8px;
+        }
+        .aui-bar-nav {
+            background-color: #81a9c3;
+        }
+        .aui-list .aui-list-item {
+            padding-top: 0.6rem;
+            padding-bottom: 0.6rem;
+        }
+        .aui-list .aui-list-item-input label {
+            padding-top: 0.2rem;
+        }
+
+        .select-picture .aui-btn {
+            width: 100%;
+        }
+        .service-container{
+          overflow-y: scroll;
+          padding-top:2.25rem;
+          padding-bottom:2.25rem;
+        }
+        .aui-bar{
+          position: fixed;
+        }
+        .service-footer{
+          z-index:101;
+        }
+    </style>
+</head>
+
+<body>
+    <header class="aui-bar aui-bar-nav">
+        <i class="aui-iconfont aui-icon-close close-btn"></i>
+    </header>
+    <div class="aui-content aui-margin-b-15 service-container">
+        <ul class="aui-list aui-form-list">
+            <li class="aui-list-item">
+                <div class="aui-list-item-inner">
+                    <div class="aui-list-item-label">
+                        服务类型
+                    </div>
+                    <div class="aui-list-item-input">
+                        <label><input class="aui-radio" type="radio" name="demo1" checked>门店服务</label>
+                        <label><input class="aui-radio" type="radio" name="demo1">现场服务</label>
+                        <label><input class="aui-radio" type="radio" name="demo1">拖车服务</label>
+                    </div>
+                </div>
+            </li>
+            <li class="aui-list-item">
+                <div class="aui-list-item-inner">
+                    <div class="aui-list-item-label">
+                        故障类型
+                    </div>
+                    <div class="aui-list-item-input">
+                        <label><input class="aui-checkbox" type="checkbox" name="checkbox">故障类型1</label>
+                        <label><input class="aui-checkbox" type="checkbox" name="checkbox">故障类型2</label>
+                        <label><input class="aui-checkbox" type="checkbox" name="checkbox">故障类型3</label>
+                        <label><input class="aui-checkbox" type="checkbox" name="checkbox">故障类型4</label>
+                        <label><input class="aui-checkbox" type="checkbox" name="checkbox">故障类型5</label>
+                        <label><input class="aui-checkbox" type="checkbox" name="checkbox">故障类型6</label>
+                        <label><input class="aui-checkbox" type="checkbox" name="checkbox">故障类型7</label>
+                        <label><input class="aui-checkbox" type="checkbox" name="checkbox">故障类型8</label>
+                        <label><input class="aui-checkbox" type="checkbox" name="checkbox">故障类型1</label>
+                        <label><input class="aui-checkbox" type="checkbox" name="checkbox">故障类型2</label>
+                    </div>
+                </div>
+            </li>
+            <li class="aui-list-item">
+                <div class="aui-list-item-inner">
+                    <div class="aui-list-item-label">
+                        图片上传
+                    </div>
+                    <div class="aui-list-item-input select-picture">
+                        <p>
+                            <div class="aui-btn" onclick="selectPicture();">选择图片</div>
+                        </p>
+                    </div>
+                </div>
+            </li>
+            <li class="aui-list-item">
+                <div class="aui-list-item-inner">
+                    <div class="aui-list-item-label">
+                        添加描述
+                    </div>
+                    <div class="aui-list-item-input">
+                        <textarea placeholder="在这里添加描述....">
+                             
+                         </textarea>
+                    </div>
+                </div>
+            </li>
+            <li>
+                    <div class="imgBox">
+
+                    </div>
+            </li>
+        </ul>
+    </div>
+    <footer class="aui-bar aui-bar-tab service-footer">
+        <button class="submit-btn">提交</button>
+    </footer>
+</body>
+<script type="text/javascript" src="../../script/api.js"></script>
+<script type="text/javascript" src="../../script/jquery-3.3.1.min.js"></script>
+<script type="text/javascript" src="../../script/common.js"></script>
+<script type="text/javascript" src="../../script/aui-tab.js"></script>
+
+<script type="text/javascript">
+    apiready = function() {
+        closeServiceTypeForm();
+        //loadServiceTypeAndFaultType();
+    }
+
+    function locating() {
+        api.sendEvent({
+            name: 'sosEvent'
+        });
+    }
+    //加载服务类型和故障类型
+    function loadServiceTypeAndFaultType() {
+        var s = 'http://' + serverIP + '/PersonUser/getNearByCompanyUser.action';
+        api.ajax({
+            url: s,
+            method: 'post'
+        }, function(rets, errs) {
+            if (rets) {
+
+            } else {
+
+            }
+        });
+    }
+    //关闭表单
+    function closeServiceTypeForm() {
+        $('.close-btn').click(function() {
+            api.closeFrame({
+                name: 'service_type'
+            });
+        });
+    }
+    //服务类型模板
+    function serviceTypeTempalte(val,name){
+       var template='<label><input class="aui-radio" type="radio" value="'+val+'" name="demo1" checked>'+name+'</label>';
+       return template;
+    }
+    //故障类型模板
+    function faultTypeTemplate(val,name){
+      var template='<label><input class="aui-checkbox" value="'+val+'" type="checkbox" name="checkbox">'+name+'</label>';
+      return template;
+    }
+</script>
+
+</html>

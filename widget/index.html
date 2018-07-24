@@ -20,7 +20,7 @@
         }
 
         header {
-            height:60px;
+            height: 60px;
             width: 100%;
             text-align: center;
             background-color: #81a9c3;
@@ -71,8 +71,11 @@
 <script type="text/javascript">
     var g_my_lon, g_my_lat, g_company_lon, g_company_lat;
     var map;
+    var g_status = "idle";
+    var g_service_type=false;
     apiready = function() {
         fnSettingHeader();
+        checkNetWork();
         map = api.require('bMap');
         // var header = $api.dom('header'); // 获取 header 标签元素
         // var footer = $api.dom('footer'); // 获取 footer 标签元素
@@ -83,6 +86,7 @@
         // // 最新api.js为了适配iPhoneX增加的方法，修复底部Footer部分与iPhoneX的底部虚拟横条键重叠的问题；
         // var footerH = $api.fixTabBar(footer);
         registLocatingEvent();
+        registerSosEnent();
         addClickCompanyListEventListener();
         initMapSDK();
 
@@ -215,15 +219,19 @@
                     }
                     openCompanyFrame(rets);
                     openLocatingButton();
+                    openSosButton();
                 } else {
                     api.alert({
-                        msg: JSON.stringify(errs)
+                        msg: errs.msg
                     });
+                    openCompanyFrame(rets);
+                    openLocatingButton();
+                    openSosButton();
                 }
             });
         }
     }
-
+    //设置标注弹出气泡
     function setBubble(bubble_id, company_name) {
         map.setBubble({
             id: bubble_id,
@@ -245,7 +253,7 @@
             }
         });
     }
-
+    //标注弹出气泡
     function popupBubble(company_no) {
         if (company_no != undefined) {
             map.popupBubble({
@@ -253,23 +261,6 @@
             });
         }
     }
-    // function GetMyLonLat() {
-    //     var my_lon;
-    //     var my_lat;
-    //     map.getLocation({
-    //         accuracy: '10m',
-    //         autoStop: false,
-    //         filter: 1
-    //     }, function(ret, err) {
-    //         if (ret.status) {
-    //             map.stopLocation();
-    //             my_lon = ret.lon;
-    //             my_lat = ret.lat;
-    //         } else {
-    //             alert(err.code);
-    //         }
-    //     });
-    // }
     //获取两点之间距离
     // function getDistance(mill_lat, my_lon, my_lat) {
     //     map.getDistance({
@@ -291,7 +282,7 @@
     // }
 
     //定位按钮
-    function openLocatingButton(rets) {
+    function openLocatingButton() {
         api.openFrame({
             name: 'locating_button',
             url: './html/frames/locating_button.html',
@@ -299,7 +290,23 @@
                 x: 10,
                 y: api.winHeight - 250,
                 w: 30,
-                h:30
+                h: 30
+            },
+            pageParam: {
+
+            }
+        });
+    }
+    //求救按钮
+    function openSosButton() {
+        api.openFrame({
+            name: 'help_button',
+            url: './html/frames/sos_button.html',
+            rect: {
+                x: api.winWidth - 74,
+                y: api.winHeight - 260,
+                w: 64,
+                h: 64
             },
             pageParam: {
 
@@ -307,19 +314,18 @@
         });
     }
 
-
-
     //代开frame
     function openCompanyFrame(rets) {
         api.openFrame({
             name: 'nearby_company',
-            url: './html/nearby_company.html',
+            url: './html/frames/nearby_company.html',
             rect: {
                 x: 10,
-                y: api.winHeight - 200,
+                y: api.winHeight - 190,
                 w: api.winWidth - 20,
-                h: 190
+                h: 180
             },
+            vScrollBarEnabled:false,
             pageParam: {
                 company: rets,
                 map: map
@@ -342,6 +348,31 @@
             map.showUserLocation({
                 isShow: true,
                 trackingMode: 'none'
+            });
+        });
+    }
+    //求救点击事件
+    function registerSosEnent() {
+        api.addEventListener({
+            name: 'sosEvent'
+        }, function(ret, err) {
+            g_status = ""; //设置状态
+            //打开服务类型
+            api.openFrame({
+                name: 'service_type',
+                url: './html/frames/service_type.html',
+                rect: {
+                    x: 10,
+                    y: 70,
+                    w: api.winWidth - 20,
+                    h: api.winHeight-80
+                },
+                reload:true,
+                animation: {
+                    type: "push",
+                    subType: "from_bottom",
+                    duration:200
+                }
             });
         });
     }

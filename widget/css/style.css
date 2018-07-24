@@ -1,0 +1,35 @@
+html,body { height:100%;background:#FFFFFF;}
+.hover{ opacity: .8; }
+/*bottom的菜单样式*/
+.flex-wrap{ display: -webkit-box;	display: -webkit-flex;	display: flex; background:#FFFFFF;}
+.flex-con{     -webkit-box-flex: 1;     -webkit-flex: 1;    flex: 1;}
+.flex-vertical{ -webkit-box-orient: vertical;-webkit-flex-flow: column;flex-flow: column;}
+
+.border-t,
+.border-b{ position:relative;  }
+.border-t:before,
+.border-b:after{     content: '';     position: absolute;     left: 0;  top:0;     background: #ddd;   right:0;    height: 0px;     -webkit-transform: scaleY(0.5);             transform: scaleY(0.5);     -webkit-transform-origin: 0 0;             transform-origin: 0 0; }
+.border-b:after{ top:auto; bottom:0;  }
+
+#wrap{ height: 100%; }
+.imgBox{
+   width:100%;max-height:100px;
+   margin: 5px 0px;
+   padding-top:5px;
+   overflow-x: scroll;
+   overflow-y: hidden;
+   white-space: nowrap;
+}
+.temp-container{
+   width:100px;height:100px;position:relative;margin-left:3px;display:inline-block;
+    box-sizing: border-box;
+}
+.temp-container .temp-del-icon{
+   width:20px;height:20px;border-radius:10px;
+   text-align:center;line-height:20px;background-color:red;
+   position:absolute;top:-5px;right:-5px;color:#FFFFFF;
+   z-index:100;
+}
+.temp-container img{
+    width:100px;height:100px;
+}
