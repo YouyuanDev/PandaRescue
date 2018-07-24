@@ -72,7 +72,7 @@
     var g_my_lon, g_my_lat, g_company_lon, g_company_lat;
     var map;
     var g_status = "idle";
-    var g_service_type=false;
+    var g_service_type = false;
     apiready = function() {
         fnSettingHeader();
         checkNetWork();
@@ -261,25 +261,6 @@
             });
         }
     }
-    //获取两点之间距离
-    // function getDistance(mill_lat, my_lon, my_lat) {
-    //     map.getDistance({
-    //         start: {
-    //             lon: mill_lon,
-    //             lat: mill_lat
-    //         },
-    //         end: {
-    //             lon: my_lon,
-    //             lat: my_lat
-    //         }
-    //     }, function(ret) {
-    //         if (ret.status) {
-    //
-    //         } else {
-    //             alert("错误" + ret);
-    //         }
-    //     });
-    // }
 
     //定位按钮
     function openLocatingButton() {
@@ -325,7 +306,7 @@
                 w: api.winWidth - 20,
                 h: 180
             },
-            vScrollBarEnabled:false,
+            vScrollBarEnabled: false,
             pageParam: {
                 company: rets,
                 map: map
@@ -365,13 +346,13 @@
                     x: 10,
                     y: 70,
                     w: api.winWidth - 20,
-                    h: api.winHeight-80
+                    h: api.winHeight - 80
                 },
-                reload:true,
+                reload: true,
                 animation: {
                     type: "push",
                     subType: "from_bottom",
-                    duration:200
+                    duration: 200
                 }
             });
         });

@@ -74,7 +74,7 @@ function parseMobiDate(str) {
 
 }
 
-function closeWindowNoPipeNo(){
+function closeWindow(){
    api.closeWin();
 }
 
