@@ -1,0 +1,63 @@
+<!doctype html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,initial-scale=1.0,width=device-width" />
+    <meta name="format-detection" content="telephone=no,email=no,date=no,address=no">
+    <title>Order Status</title>
+    <link rel="stylesheet" type="text/css" href="../../css/api.css" />
+    <link rel="stylesheet" type="text/css" href="../../css/aui.css" />
+    <style type="text/css">
+        .order-status {
+            background-color: #fff;
+            color: #595959;
+            border-radius: 3px 3px 0px 0px;
+        }
+        .cancel-order {
+            background: #81a9c3;
+            border-radius: 0px 0px 3px 3px;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <div class="aui-content aui-margin-b-15">
+            <div class="aui-bar aui-bar-nav order-status">待接单......</div>
+            <div class="aui-bar aui-bar-nav cancel-order">
+                <div class="aui-btn aui-btn-block cancel-order" onclick="cacelOrder();">取消订单</div>
+            </div>
+        </div>
+    </div>
+</body>
+<script type="text/javascript" src="../../script/api.js"></script>
+<script type="text/javascript" src="../../script/jquery-3.3.1.min.js"></script>
+<script type="text/javascript" src="../../script/common.js"></script>
+<script type="text/javascript">
+    //var company_data;
+    apiready = function() {
+            registerUpdateOrderStatusEvent();
+    }
+    //取消订单事件
+    function cacelOrder() {
+      api.sendEvent({
+          name: 'CancelOrderEvent',
+          extra: {
+          }
+      });
+    }
+    //监听订单状态改变事件
+    function registerUpdateOrderStatusEvent(){
+      api.addEventListener({
+          name: 'UpdateOrderStatusEvent'
+      }, function(ret, err) {
+          var status_name=ret.value.status_name;
+          if(status_name!=undefined){
+              $('.order-status').text(status_name);
+          }
+      });
+    }
+</script>
+
+</html>

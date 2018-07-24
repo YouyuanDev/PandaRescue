@@ -104,9 +104,9 @@
         api.addEventListener({
             name: 'CompanyInfoScrollEventListener'
         }, function(ret, err) {
-            var company_id = ret.value.id;
-            if (company_id != undefined) {
-                var $obj=$("li[data-no='"+company_id+"']");
+            var company_user_no = ret.value.id;
+            if (company_user_no != undefined) {
+                var $obj=$("li[data-no='"+company_user_no+"']");
                 if($obj!=undefined){
                   var top = $obj.offset().top;
                   $("html,body").animate({
