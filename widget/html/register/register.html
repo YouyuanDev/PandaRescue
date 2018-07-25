@@ -213,6 +213,7 @@
         if (phone != undefined && phone != "") {
             if (!isPhoneNo(phone)) {
                 toastFail(toast,"手机号不合法!");
+                return;
             }
         } else {
             toastFail(toast,"请输入手机号!");
@@ -225,6 +226,7 @@
         if (password != undefined && password != "") {
             if (!isPassword(password)) {
                 toastFail(toast,"密码由6-15位数字和字母组成!");
+                return;
             }
         } else {
             toastFail(toast,"密码不能为空!");
@@ -233,6 +235,7 @@
         if (againPassword != undefined && againPassword != "") {
             if (password != againPassword) {
                 toastFail(toast,"两次输入的密码不一致!");
+                return;
             }
         } else {
             toastFail(toast,"请再次输入密码!");
@@ -263,12 +266,13 @@
                    api.openWin({
                        name: 'login',
                        url: '../login/login.html',
+                       reload：true,
                        pageParam: {
                          cellphoneno:phone,
                          password:password
                        }
                    });
-                 },500);
+                 },1500);
              }else{
                  toastFail(toast,rets.msg);
              }
