@@ -58,23 +58,22 @@
             padding: 5px 0px;
             border-bottom: 1px solid #000;
         }
-        /*.account-icon{
-           background:url(./image/account_48.png) no-repeat;
-           background-size:50px 50px;
-        }*/
+        .fa-size{
+           font-size:1.2rem;
+        }
     </style>
 </head>
 
 <body class="wrap">
     <header id="header" class="aui-bar aui-bar-nav">
         <a class="aui-pull-left aui-btn">
-            <i class="fa fa-user-circle-o fa-2x"></i>
+            <i class="fa fa-user-circle-o fa-size" onclick="accounInfo();"></i>
         </a>
         <!-- <div class="aui-title">
            <i class="fa fa-user"></i>
         </div> -->
         <a class="aui-pull-right aui-btn">
-             <i class="fa fa-commenting fa-2x"></i>
+            <i class="fa fa-commenting fa-2x fa-size" onclick="accountMessage();"></i>
         </a>
     </header>
     <section class="flex-1">
@@ -83,6 +82,7 @@
 </body>
 <script type="text/javascript" src="./script/api.js"></script>
 <script type="text/javascript" src="./script/jquery-3.3.1.min.js"></script>
+<script type="text/javascript" src="./script/aui-toast.js"></script>
 <script type="text/javascript" src="./script/common.js"></script>
 <script type="text/javascript">
     var g_my_lon, g_my_lat, g_company_lon, g_company_lat;
@@ -92,6 +92,7 @@
     var g_orderStatusInterval, g_userLocationInterval;
     var g_CU = [];
     var g_order_status = "";
+    var toast = new auiToast({});
     apiready = function() {
         fnSettingHeader();
         getUserSession();
@@ -201,10 +202,16 @@
         }, function(ret) {
             if (ret) {
                 if (ret.eventType == "click") {
+                    var company_user_no;
+                    for (var i = 0; i < g_CU.length; i++) {
+                       if(g_CU[i].id==ret.id){
+                         company_user_no=g_CU[i].company_user_no;
+                       }
+                    }
                     api.sendEvent({
                         name: 'CompanyInfoScrollEventListener',
                         extra: {
-                            id: ret.id
+                            id:company_user_no
                         }
                     });
                 }
@@ -235,7 +242,8 @@
                             "lat": rets[i].company_location_lat
                         };
                         annotations.push(temp);
-                        g_CU.push(rets[i].company_user_no);
+                        //g_CU.push(rets[i].company_user_no);
+                        g_CU.push({id:i,company_user_no:rets[i].company_user_no});
                     }
                     setAnnotations(annotations);
                     for (var i = 0; i < rets.length; i++) {
@@ -279,6 +287,11 @@
     }
     //标注弹出气泡
     function popupBubble(company_no) {
+        for (var i = 0; i < g_CU.length; i++) {
+            if(g_CU[i].company_user_no==company_no){
+               company_no=g_CU[i].id;
+            }
+        }
         if (company_no != undefined) {
             map.popupBubble({
                 id: company_no
@@ -398,10 +411,10 @@
                 openOrderStatusFrame();
                 //开始定时器，定时更新订单状态和用户坐标
                 var g_orderStatusInterval = setInterval(function() {
-                    getOrderStatusInfo(order_no)
+                    getOrderStatusInfo(order_no);
                 }, 3000);
                 var g_userLocationInterval = setInterval(function() {
-                    updateOrderUserLocation(order_no)
+                    updateOrderUserLocation(order_no);
                 }, 5000);
             } else {
                 api.alert({
@@ -576,37 +589,41 @@
         });
 
     }
-    function getUserSession(){
-      var s = 'http://' + serverIP + '/Login/getMySession.action';
-      api.ajax({
-          url: s,
-          method: 'post'
-      }, function(rets, errs) {
-          if (rets) {
-              if (!rets.success) {
-                var data = api.getPrefs({
-                    sync: true,
-                    key: 'userInfo'
-                });
-                if(data!=undefined&&data!=""){
-                   var userInfo=JSON.parse(data);
-                   var phone=userInfo.phone;
-                   var password=userInfo.password;
-                   autoLoginWithCellPhoneNo(phone,password);
-                   return;
-                }
-              }
-              api.openWin({
-                  name: 'login',
-                  url: './html/login/login.html',
-                  reload: true,
-                  pageParam: {}
-              });
 
-          } else {
-              toastFail(toast, "登录异常,请稍后重试!");
-          }
-      });
+    function getUserSession() {
+        var s = 'http://' + serverIP + '/Login/getMySession.action';
+        api.ajax({
+            url: s,
+            method: 'post'
+        }, function(rets, errs) {
+            if (rets) {
+                if (rets.success) {
+                    return;
+                }
+                if (!rets.success) {
+                    var data = api.getPrefs({
+                        sync: true,
+                        key: 'userInfo'
+                    });
+                    if (data != undefined && data != "") {
+                        var userInfo = JSON.parse(data);
+                        var phone = userInfo.phone;
+                        var password = userInfo.password;
+                        autoLoginWithCellPhoneNo(phone, password);
+                        return;
+                    }
+                }
+                api.openWin({
+                    name: 'login',
+                    url: './html/login/login.html',
+                    reload: true,
+                    pageParam: {}
+                });
+
+            } else {
+                toastFail(toast, "登录异常,请稍后重试!");
+            }
+        });
     }
     //判断用户是否存在本地，如果存在直接登录
     function entryLogin() {
@@ -614,49 +631,57 @@
             sync: true,
             key: 'userInfo'
         });
-        if(data!=undefined&&data!=""){
-           var userInfo=JSON.parse(data);
-           var phone=userInfo.phone;
-           var password=userInfo.password;
-        }else{
-          //打开登录页面
-          api.openWin({
-              name: 'login',
-              url: './html/login/login.html',
-              reload: true,
-              pageParam: {}
-          });
+        if (data != undefined && data != "") {
+            var userInfo = JSON.parse(data);
+            var phone = userInfo.phone;
+            var password = userInfo.password;
+        } else {
+            //打开登录页面
+            api.openWin({
+                name: 'login',
+                url: './html/login/login.html',
+                reload: true,
+                pageParam: {}
+            });
         }
     }
     //如果本地存在用户登录信息，则请求后台session或者刷新session
-    function autoLoginWithCellPhoneNo(phone,password){
-      var s = 'http://' + serverIP + '/Login/LoginWithCellPhoneNo.action';
-      api.ajax({
-          url: s,
-          method: 'post',
-          data: {
-              values: {
-                  cellphoneno: phone,
-                  password: password
-              }
-          }
-      }, function(rets, errs) {
-          if (rets) {
-              if (rets.success) {
-
-              } else {
-                  toastFail(toast, rets.msg);
-                  api.openWin({
-                      name: 'login',
-                      url: './html/login/login.html',
-                      reload: true,
-                      pageParam: {}
-                  });
-              }
-          } else {
-              toastFail(toast, "登录异常,请稍后重试!");
-          }
-      });
+    function autoLoginWithCellPhoneNo(phone, password) {
+        var s = 'http://' + serverIP + '/Login/LoginWithCellPhoneNo.action';
+        api.ajax({
+            url: s,
+            method: 'post',
+            data: {
+                values: {
+                    cellphoneno: phone,
+                    password: password
+                }
+            }
+        }, function(rets, errs) {
+            if (rets) {
+                if (rets.success) {
+                    alert("自动登录成功!");
+                } else {
+                    toastFail(toast, rets.msg);
+                    api.openWin({
+                        name: 'login',
+                        url: './html/login/login.html',
+                        reload: true,
+                        pageParam: {}
+                    });
+                }
+            } else {
+                toastFail(toast, "登录异常,请稍后重试!");
+            }
+        });
+    }
+    //打开账户信息
+    function accounInfo(){
+       alert(1);
+    }
+    //打开用户消息
+    function accountMessage(){
+      alert(1);
     }
 </script>
 
