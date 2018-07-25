@@ -53,3 +53,6 @@ html,body { height:100%;background:#FFFFFF;}
   -webkit-justify-content: space-between;
       justify-content: space-between;
 }
+input{
+  -webkit-appearance: none;
+}

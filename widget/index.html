@@ -8,12 +8,13 @@
     <title>Hello APP</title>
     <link rel="stylesheet" type="text/css" href="./css/api.css" />
     <link rel="stylesheet" type="text/css" href="./css/aui.css" />
-    <link rel="stylesheet"  href="./css/font-awesome.min.css" />
+    <link rel="stylesheet" href="./css/font-awesome.min.css" />
     <style type="text/css">
-        #header{
-          background-color:#00acc1;
-          padding-top:50px;
+        #header {
+            background-color: #00acc1;
+            padding-top: 50px;
         }
+
         .wrap {
             display: -webkit-box;
             -webkit-box-orient: vertical;
@@ -21,7 +22,7 @@
         }
 
         header {
-            height:60px;
+            height: 60px;
             width: 100%;
             text-align: center;
             background-color: #81a9c3;
@@ -29,6 +30,7 @@
             line-height: 44px;
             font-size: 20px;
         }
+
         .flex-1 {
             -webkit-box-flex: 1;
             -webkit-flex: 1;
@@ -65,15 +67,14 @@
 
 <body class="wrap">
     <header id="header" class="aui-bar aui-bar-nav">
-        <a class="aui-pull-left aui-btn aui-btn-outlined">
-            <span class="aui-iconfont fa fa-user"></span>
-            <!-- <img src="./image/account_48.png"/> -->
+        <a class="aui-pull-left aui-btn">
+            <i class="fa fa-user-circle-o fa-2x"></i>
         </a>
-        <div class="aui-title">
-           <i></i>
-        </div>
-        <a class="aui-pull-right aui-btn aui-btn-outlined">
-            <span class="aui-iconfont aui-icon-search"></span>
+        <!-- <div class="aui-title">
+           <i class="fa fa-user"></i>
+        </div> -->
+        <a class="aui-pull-right aui-btn">
+             <i class="fa fa-commenting fa-2x"></i>
         </a>
     </header>
     <section class="flex-1">
@@ -92,14 +93,8 @@
     var g_CU = [];
     var g_order_status = "";
     apiready = function() {
-        api.openWin({
-            name: 'login',
-            url: './html/login/login.html',
-            reload:true,
-            pageParam: {
-            }
-        });
         fnSettingHeader();
+        getUserSession();
         checkNetWork();
         map = api.require('bMap');
         // var header = $api.dom('header'); // 获取 header 标签元素
@@ -137,7 +132,7 @@
         map.open({
             rect: {
                 x: 0,
-                y:70,
+                y: 70,
                 w: api.winWidth,
                 h: api.winHeight
             },
@@ -580,6 +575,88 @@
             }
         });
 
+    }
+    function getUserSession(){
+      var s = 'http://' + serverIP + '/Login/getMySession.action';
+      api.ajax({
+          url: s,
+          method: 'post'
+      }, function(rets, errs) {
+          if (rets) {
+              if (!rets.success) {
+                var data = api.getPrefs({
+                    sync: true,
+                    key: 'userInfo'
+                });
+                if(data!=undefined&&data!=""){
+                   var userInfo=JSON.parse(data);
+                   var phone=userInfo.phone;
+                   var password=userInfo.password;
+                   autoLoginWithCellPhoneNo(phone,password);
+                   return;
+                }
+              }
+              api.openWin({
+                  name: 'login',
+                  url: './html/login/login.html',
+                  reload: true,
+                  pageParam: {}
+              });
+
+          } else {
+              toastFail(toast, "登录异常,请稍后重试!");
+          }
+      });
+    }
+    //判断用户是否存在本地，如果存在直接登录
+    function entryLogin() {
+        var data = api.getPrefs({
+            sync: true,
+            key: 'userInfo'
+        });
+        if(data!=undefined&&data!=""){
+           var userInfo=JSON.parse(data);
+           var phone=userInfo.phone;
+           var password=userInfo.password;
+        }else{
+          //打开登录页面
+          api.openWin({
+              name: 'login',
+              url: './html/login/login.html',
+              reload: true,
+              pageParam: {}
+          });
+        }
+    }
+    //如果本地存在用户登录信息，则请求后台session或者刷新session
+    function autoLoginWithCellPhoneNo(phone,password){
+      var s = 'http://' + serverIP + '/Login/LoginWithCellPhoneNo.action';
+      api.ajax({
+          url: s,
+          method: 'post',
+          data: {
+              values: {
+                  cellphoneno: phone,
+                  password: password
+              }
+          }
+      }, function(rets, errs) {
+          if (rets) {
+              if (rets.success) {
+
+              } else {
+                  toastFail(toast, rets.msg);
+                  api.openWin({
+                      name: 'login',
+                      url: './html/login/login.html',
+                      reload: true,
+                      pageParam: {}
+                  });
+              }
+          } else {
+              toastFail(toast, "登录异常,请稍后重试!");
+          }
+      });
     }
 </script>
 

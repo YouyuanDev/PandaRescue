@@ -13,7 +13,7 @@
         #header {
             padding-top: 50px;
             border-bottom: 0px;
-            background-color:#00acc1;
+            background-color: #00acc1;
         }
 
         .forget-password {
@@ -49,6 +49,7 @@
             text-align: center;
             color: #fff;
         }
+
         .aui-list .aui-list-item:active {
             background-color: #fff;
         }
@@ -59,17 +60,19 @@
 
         .login-container {
             padding: 0rem 0.3rem;
-            background-color:#fff;
+            background-color: #fff;
         }
 
         .forget-password-interval {
             display: none;
         }
-        .body-bg{
-          background-color:#fff;
+
+        .body-bg {
+            background-color: #fff;
         }
-        .login-container ul li{
-          background-color:#fff;
+
+        .login-container ul li {
+            background-color: #fff;
         }
     </style>
 </head>
@@ -95,7 +98,7 @@
                         <i class="aui-iconfont aui-icon-mobile"></i>
                     </div>
                     <div class="aui-list-item-input">
-                        <input id="phone" type="number" placeholder="手机号">
+                        <input id="phone" type="tel" placeholder="手机号">
                     </div>
                 </div>
             </li>
@@ -162,7 +165,7 @@
         api.openWin({
             name: 'register',
             url: '../register/register.html',
-            reload:true,
+            reload: true,
             pageParam: {}
         });
     }
@@ -186,16 +189,16 @@
                 }
             }, function(rets, errs) {
                 if (rets) {
-                   if(rets.success){
-                     toastSuccess(toast,rets.msg);
-                     forgetPasswordInterval = setInterval("forgetPasswordSetInterval()", 1000);
-                     $('.forget-password').hide();
-                     $('.forget-password-interval').show();
-                   }else{
-                     toastFail(toast,rets.msg);
-                   }
+                    if (rets.success) {
+                        toastSuccess(toast, rets.msg);
+                        forgetPasswordInterval = setInterval("forgetPasswordSetInterval()", 1000);
+                        $('.forget-password').hide();
+                        $('.forget-password-interval').show();
+                    } else {
+                        toastFail(toast, rets.msg);
+                    }
                 } else {
-                  toastFail(toast,"发送异常,请稍后重试!");
+                    toastFail(toast, "发送异常,请稍后重试!");
                 }
             });
         } else {
@@ -221,15 +224,16 @@
                 if (rets) {
                     if (rets.success) {
                         toastSuccess(toast, rets.msg);
-                        api.openWin({
-                            name: 'index',
-                            url: '../../index.html',
-                            reload:true,
-                            pageParam: {
-
-                            }
+                        var userInfo={};
+                        userInfo["phone"]=phone;
+                        userInfo["password"]=password;
+                        api.setPrefs({
+                            key: 'userInfo',
+                            value:userInfo
                         });
-                        closeWindow();
+                        api.closeToWin({
+                            name: 'root'
+                        });
                     } else {
                         toastFail(toast, rets.msg);
                     }
