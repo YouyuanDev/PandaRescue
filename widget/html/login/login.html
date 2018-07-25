@@ -13,17 +13,18 @@
         #header {
             padding-top: 50px;
             border-bottom: 0px;
+            background-color:#00acc1;
         }
 
         .forget-password {
             text-align: left;
-            color: #fff;
+            color: #000;
         }
 
         .no-account {
             text-align: right;
             text-decoration: underline;
-            color: #fff;
+            color: #000;
         }
 
         .logo {
@@ -36,7 +37,7 @@
             margin: auto;
             width: 80px;
             height: 80px;
-            background-color: #81a9c3;
+            background-color: #fff;
             border-radius: 50%;
         }
 
@@ -48,26 +49,32 @@
             text-align: center;
             color: #fff;
         }
-
         .aui-list .aui-list-item:active {
-            background-color: #81a9c3;
+            background-color: #fff;
         }
 
         .aui-list.aui-form-list .aui-list-item:active {
-            background-color: #81a9c3;
+            background-color: #fff;
         }
 
         .login-container {
             padding: 0rem 0.3rem;
+            background-color:#fff;
         }
 
         .forget-password-interval {
             display: none;
         }
+        .body-bg{
+          background-color:#fff;
+        }
+        .login-container ul li{
+          background-color:#fff;
+        }
     </style>
 </head>
 
-<body class="prscue-bg">
+<body class="body-bg">
     <header id="header" class="aui-bar aui-bar-nav prscue-bg">
         <a class="aui-pull-left aui-btn" onclick="closeWindow();">
             <span class="aui-iconfont aui-icon-left"></span>返回
@@ -216,7 +223,7 @@
                         closeWindow();
                         api.openWin({
                             name: 'index',
-                            url: '../login/index.html',
+                            url: '../../index.html',
                             pageParam: {
 
                             }

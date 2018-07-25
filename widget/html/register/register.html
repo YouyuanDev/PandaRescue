@@ -13,10 +13,11 @@
     #header {
         padding-top: 50px;
         border-bottom: 0px;
+        background-color:#00acc1;
     }
         .have-account {
             text-align: right;
-            color: #fff;
+            color: #000;
             text-decoration: underline;
         }
 
@@ -30,7 +31,7 @@
             margin: auto;
             width: 80px;
             height: 80px;
-            background-color: #81a9c3;
+            background-color: #fff;
             border-radius: 50%;
         }
 
@@ -44,11 +45,11 @@
         }
 
         .aui-list .aui-list-item:active {
-            background-color: #81a9c3;
+            background-color: #fff;
         }
 
         .aui-list.aui-form-list .aui-list-item:active {
-            background-color: #81a9c3;
+            background-color: #fff;
         }
 
         .aui-content {
@@ -72,22 +73,30 @@
         }
 
         .send-btn {
-            color: #000;
+            color: #fff;
         }
 
         .send-btn-active {
             background-color: #00acc1;
+            color:#000;
+        }
+        .body-bg{
+          background-color:#fff;
+        }
+        .register-container ul li{
+          background-color:#fff;
         }
     </style>
+
 </head>
 
-<body class="prscue-bg">
-  <header id="header" class="aui-bar aui-bar-nav prscue-bg">
+<body class="body-bg">
+  <header id="header" class="aui-bar aui-bar-nav">
       <a class="aui-pull-left aui-btn" onclick="closeWindow();">
           <span class="aui-iconfont aui-icon-left"></span>返回
       </a>
   </header>
-    <div class="aui-content aui-margin-b-15 prscue-bg">
+    <div class="aui-content aui-margin-b-15 register-container">
         <ul class="aui-list aui-form-list aui-list-noborder prscue-bg">
             <!-- <li class="aui-list-header">带有图标的表单</li> -->
             <li class="aui-list-item-diy">
