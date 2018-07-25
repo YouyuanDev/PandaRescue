@@ -8,7 +8,7 @@
     <title>Hello APP</title>
     <link rel="stylesheet" type="text/css" href="./css/api.css" />
     <link rel="stylesheet" type="text/css" href="./css/aui.css" />
-    <link rel="stylesheet" type="text/css" href="./css/font-awesome.min.css" />
+    <link rel="stylesheet"  href="./css/font-awesome.min.css" />
     <style type="text/css">
         #header{
           background-color:#00acc1;
@@ -69,7 +69,9 @@
             <span class="aui-iconfont fa fa-user"></span>
             <!-- <img src="./image/account_48.png"/> -->
         </a>
-        <div class="aui-title">Title</div>
+        <div class="aui-title">
+           <i></i>
+        </div>
         <a class="aui-pull-right aui-btn aui-btn-outlined">
             <span class="aui-iconfont aui-icon-search"></span>
         </a>
@@ -93,6 +95,7 @@
         api.openWin({
             name: 'login',
             url: './html/login/login.html',
+            reload:true,
             pageParam: {
             }
         });

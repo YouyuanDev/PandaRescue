@@ -95,7 +95,7 @@
                         <i class="aui-iconfont aui-icon-mobile"></i>
                     </div>
                     <div class="aui-list-item-input">
-                        <input id="phone" type="text" placeholder="手机号">
+                        <input id="phone" type="number" placeholder="手机号">
                     </div>
                 </div>
             </li>
@@ -221,7 +221,6 @@
                 if (rets) {
                     if (rets.success) {
                         toastSuccess(toast, rets.msg);
-                        closeWindow();
                         api.openWin({
                             name: 'index',
                             url: '../../index.html',
@@ -230,6 +229,7 @@
 
                             }
                         });
+                        closeWindow();
                     } else {
                         toastFail(toast, rets.msg);
                     }

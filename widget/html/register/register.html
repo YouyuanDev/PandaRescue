@@ -112,7 +112,7 @@
                         <i class="aui-iconfont aui-icon-mobile"></i>
                     </div>
                     <div class="aui-list-item-input">
-                        <input id="phone" type="text" placeholder="手机号">
+                        <input id="phone" type="number" placeholder="手机号">
                     </div>
                 </div>
             </li>
@@ -121,7 +121,7 @@
                     <div class="aui-col-xs-12">
                         <div class="aui-col-xs-6">
                             <div class="send-container">
-                                <input id="verification-code" type="text" placeholder="验证码">
+                                <input id="verification-code" type="number" placeholder="验证码">
                             </div>
                         </div>
                         <div class="aui-col-xs-6">
@@ -262,7 +262,6 @@
                  toastSuccess(toast,rets.msg);
                  setTimeout(function(){
                    //直接跳转到登录页面
-                   closeWindow();
                    api.openWin({
                        name: 'login',
                        url: '../login/login.html',
@@ -272,6 +271,7 @@
                          password:password
                        }
                    });
+                   closeWindow();
                  },1500);
              }else{
                  toastFail(toast,rets.msg);
