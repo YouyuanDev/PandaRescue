@@ -7,82 +7,253 @@
     <meta name="format-detection" content="telephone=no,email=no,date=no,address=no">
     <title>登录</title>
     <link rel="stylesheet" type="text/css" href="../../css/api.css" />
+    <link rel="stylesheet" type="text/css" href="../../css/aui.css" />
     <link rel="stylesheet" type="text/css" href="../../css/style.css" />
     <style>
-        html,
-        body {
-            height: 100%;
-            background-color: #f4f5f6;
+        #header {
+            padding-top: 50px;
+            border-bottom: 0px;
         }
 
+        .forget-password {
+            text-align: left;
+            color: #fff;
+        }
 
-        .nav {
+        .no-account {
+            text-align: right;
+            text-decoration: underline;
+            color: #fff;
+        }
+
+        .logo {
             width: 100%;
-            height: 43px;
-            line-height:43px;
-            background-color: #fafafa;
-            border-bottom: 1px solid #FAFAFA;
+            height: auto;
+            padding: 4rem 0rem;
+        }
+
+        .logo img {
+            margin: auto;
+            width: 80px;
+            height: 80px;
+            background-color: #81a9c3;
+            border-radius: 50%;
+        }
+
+        .login {
+            width: 100%;
+            padding: 0.75rem 0rem;
+            line-height: 0.75rem;
+            background-color: #00acc1;
             text-align: center;
+            color: #fff;
         }
 
-
-
-
-        .nav .arrow {
-            width: 100%;
-            height: 43px;
-            background-image: url(../../image/back.png);
-            background-size: 11px 20px;
-            background-repeat: no-repeat;
-            background-position: left center;
-            margin-left: 20px;
+        .aui-list .aui-list-item:active {
+            background-color: #81a9c3;
         }
 
-        .nav .arrow .tt {
-            margin-left: -43px;
-            color: #ABB2BF;
-            position: relative;
-            font-size: 18px;
+        .aui-list.aui-form-list .aui-list-item:active {
+            background-color: #81a9c3;
         }
 
+        .login-container {
+            padding: 0rem 0.3rem;
+        }
 
-
+        .forget-password-interval {
+            display: none;
+        }
     </style>
 </head>
 
-<body>
-    <!-- <div id="wrap" class="flex-wrap flex-vertical"> -->
-        <!-- <header class="form-nav" id="header">
-            <div class="title">
-                <div class="arrow event-back"></div>
-                登录
-            </div>
-        </header> -->
-        <div class="nav" id="header">
-           <div class="arrow" tapmode onclick="api.closeWin();"><label class="i18n1 tt" name="login"></label> </div>
-        </div>
+<body class="prscue-bg">
+    <header id="header" class="aui-bar aui-bar-nav prscue-bg">
+        <a class="aui-pull-left aui-btn" onclick="closeWindow();">
+            <span class="aui-iconfont aui-icon-left"></span>返回
+        </a>
+    </header>
+    <div class="aui-content aui-margin-b-15 prscue-bg login-container">
+        <ul class="aui-list aui-form-list aui-list-noborder prscue-bg">
+            <li class="aui-list-item-diy">
+                <div class="aui-list-item-inner">
+                    <div class="logo">
+                        <img src="../../image/sos_128.png" />
+                    </div>
+                </div>
+            </li>
+            <li class="aui-list-item">
+                <div class="aui-list-item-inner">
+                    <div class="aui-list-item-label-icon">
+                        <i class="aui-iconfont aui-icon-mobile"></i>
+                    </div>
+                    <div class="aui-list-item-input">
+                        <input id="phone" type="text" placeholder="手机号">
+                    </div>
+                </div>
+            </li>
+            <li class="aui-list-item">
+                <div class="aui-list-item-inner">
+                    <div class="aui-list-item-label-icon">
+                        <i class="aui-iconfont aui-icon-lock"></i>
+                    </div>
+                    <div class="aui-list-item-input">
+                        <input id="password" type="password" placeholder="密码">
+                    </div>
+                    <div class="aui-list-item-label-icon">
+                        <i class="aui-iconfont aui-icon-display show-password" data-show="0" onclick="showPassword();"></i>
+                    </div>
+                </div>
+            </li>
+            <li class="aui-list-item-diy">
+                <div class="aui-list-item-inner">
+                    <div class="aui-col-xs-12">
+                        <div class="aui-col-xs-6 forget-password" onclick="forgetPassword();">忘记密码?</div>
+                        <div class="aui-col-xs-6 forget-password-interval">
+                            <button class="send-btn">剩余60s</button>
+                        </div>
+                        <div class="aui-col-xs-6 no-account" onclick="registerAccount();">还没账号?</div>
+                    </div>
+                </div>
+            </li>
+            <li class="aui-list-item-diy">
+                <div class="aui-list-item-inner aui-list-item-center aui-list-item-btn">
+                    <div class="login" onclick="accountLogin();">登录</div>
+                </div>
+            </li>
+        </ul>
+    </div>
 
-
-        <!-- <div class="title" id="header">
-      <div class="arrow event-back"></div>
-      登录
-  </div> -->
-    <!-- </div> -->
 </body>
 
 </html>
 <script type="text/javascript" src="../../script/api.js"></script>
 <script type="text/javascript" src="../../script/jquery-3.3.1.min.js"></script>
+<script type="text/javascript" src="../../script/aui-toast.js"></script>
 <script type="text/javascript" src="../../script/common.js"></script>
-<script src="../../script/jquery.i18n.properties-1.0.9.js" type="text/javascript"></script>
-<script src="../../script/language.js" type="text/javascript"></script>
 <script type="text/javascript">
+    var forgetPasswordInterval;
+    var count = 60;
     apiready = function() {
         fnSettingHeader();
-        fnReadyFrame();
-        $('.event-back').click(function() {
-            api.closeWin();
+        var data = api.pageParam;
+        if (data != undefined) {
+            var cellphoneno = data.cellphoneno;
+            var password = data.password;
+            if (cellphoneno != undefined) {
+                $("#phone").val(cellphoneno);
+            }
+            if (password != undefined) {
+                $("#password").val(password);
+            }
+        }
+        //hlLanguage("../../i18n/");
+    }
+    var toast = new auiToast({});
+
+    function registerAccount() {
+        api.openWin({
+            name: 'register',
+            url: '../register/register.html',
+            pageParam: {}
         });
-        hlLanguage("../../i18n/");
+    }
+    //忘记密码
+    function forgetPassword() {
+        var phone = $('#phone').val();
+        if (phone != undefined && phone != "") {
+            if (!isPhoneNo(phone)) {
+                toastFail(toast, "手机号不合法!");
+                return;
+            }
+
+            var s = 'http://' + serverIP + '/Login/ForgotPassword.action';
+            api.ajax({
+                url: s,
+                method: 'post',
+                data: {
+                    values: {
+                        cellphoneno: phone
+                    }
+                }
+            }, function(rets, errs) {
+                if (rets) {
+                   if(rets.success){
+                     toastSuccess(toast,rets.msg);
+                     forgetPasswordInterval = setInterval("forgetPasswordSetInterval()", 1000);
+                     $('.forget-password').hide();
+                     $('.forget-password-interval').show();
+                   }else{
+                     toastFail(toast,rets.msg);
+                   }
+                } else {
+                  toastFail(toast,"发送异常,请稍后重试!");
+                }
+            });
+        } else {
+            toastFail(toast, "请输入手机号!");
+        }
+    }
+    //用户登录
+    function accountLogin() {
+        var phone = $('#phone').val().trim();
+        var password = $('#password').val().trim();
+        if (phone != undefined && password != undefined && phone != "" && password != "") {
+            var s = 'http://' + serverIP + '/Login/LoginWithCellPhoneNo.action';
+            api.ajax({
+                url: s,
+                method: 'post',
+                data: {
+                    values: {
+                        cellphoneno: phone,
+                        password: password
+                    }
+                }
+            }, function(rets, errs) {
+                if (rets) {
+                    if (rets.success) {
+                        toastSuccess(toast, rets.msg);
+                        closeWindow();
+                        api.openWin({
+                            name: 'index',
+                            url: '../login/index.html',
+                            pageParam: {
+
+                            }
+                        });
+                    } else {
+                        toastFail(toast, rets.msg);
+                    }
+                } else {
+                    toastFail(toast, "登录异常,请稍后重试!");
+                }
+            });
+        } else {
+            toastFail(toast, "用户名或密码错误!");
+        }
+    }
+    //显示密码
+    function showPassword() {
+        var dataShow = $('.show-password').attr('data-show');
+        if (dataShow == "0") {
+            $('#password').attr('type', 'text');
+            $('.show-password').attr('data-show', '1');
+        } else {
+            $('#password').attr('type', 'password');
+            $('.show-password').attr('data-show', '0');
+        }
+    }
+    //设置倒计时
+    function forgetPasswordSetInterval() {
+        if (count > 1) {
+            count--;
+            $('.send-btn').text("剩余" + count + "s");
+        } else {
+            clearInterval(forgetPasswordInterval);
+            $('.forget-password-interval').hide();
+            $('.forget-password').show();
+            count = 60;
+            $('.send-btn').text("剩余" + count + "s");
+        }
     }
 </script>

@@ -1,0 +1,368 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0" />
+    <meta name="format-detection" content="telephone=no,email=no,date=no,address=no">
+    <title>注册</title>
+    <link rel="stylesheet" type="text/css" href="../../css/api.css" />
+    <link rel="stylesheet" type="text/css" href="../../css/aui.css" />
+    <link rel="stylesheet" type="text/css" href="../../css/style.css" />
+    <style>
+    #header {
+        padding-top: 50px;
+        border-bottom: 0px;
+    }
+        .have-account {
+            text-align: right;
+            color: #fff;
+            text-decoration: underline;
+        }
+
+        .logo {
+            width: 100%;
+            height: auto;
+            padding: 4rem 0rem;
+        }
+
+        .logo img {
+            margin: auto;
+            width: 80px;
+            height: 80px;
+            background-color: #81a9c3;
+            border-radius: 50%;
+        }
+
+        .register {
+            width: 100%;
+            padding: 0.75rem;
+            line-height: 0.75rem;
+            background-color: #00acc1;
+            text-align: center;
+            color: #fff;
+        }
+
+        .aui-list .aui-list-item:active {
+            background-color: #81a9c3;
+        }
+
+        .aui-list.aui-form-list .aui-list-item:active {
+            background-color: #81a9c3;
+        }
+
+        .aui-content {
+            padding: 0rem 0.3rem;
+        }
+
+        .send-container {
+            padding: 0.2rem 0rem;
+        }
+
+        .send-container input {
+            padding-left: 1.5rem;
+            padding-right: 0.1rem;
+        }
+
+        .send-container button {
+            height: 2.1rem;
+            line-height: 2.1rem;
+            vertical-align: middle;
+            float: right;
+        }
+
+        .send-btn {
+            color: #000;
+        }
+
+        .send-btn-active {
+            background-color: #00acc1;
+        }
+    </style>
+</head>
+
+<body class="prscue-bg">
+  <header id="header" class="aui-bar aui-bar-nav prscue-bg">
+      <a class="aui-pull-left aui-btn" onclick="closeWindow();">
+          <span class="aui-iconfont aui-icon-left"></span>返回
+      </a>
+  </header>
+    <div class="aui-content aui-margin-b-15 prscue-bg">
+        <ul class="aui-list aui-form-list aui-list-noborder prscue-bg">
+            <!-- <li class="aui-list-header">带有图标的表单</li> -->
+            <li class="aui-list-item-diy">
+                <div class="aui-list-item-inner">
+                    <div class="logo">
+                        <img src="../../image/sos_128.png" />
+                    </div>
+                </div>
+            </li>
+            <li class="aui-list-item">
+                <div class="aui-list-item-inner">
+                    <div class="aui-list-item-label-icon">
+                        <i class="aui-iconfont aui-icon-mobile"></i>
+                    </div>
+                    <div class="aui-list-item-input">
+                        <input id="phone" type="text" placeholder="手机号">
+                    </div>
+                </div>
+            </li>
+            <li class="aui-list-item">
+                <div class="aui-list-item-inner">
+                    <div class="aui-col-xs-12">
+                        <div class="aui-col-xs-6">
+                            <div class="send-container">
+                                <input id="verification-code" type="text" placeholder="验证码">
+                            </div>
+                        </div>
+                        <div class="aui-col-xs-6">
+                            <div class="send-container">
+                                <button class="send-btn send-btn-active" onclick="APPIsCellphoneNoValidForRegister();">发送验证码</button>
+                            </div>
+                            <!-- <div class="aui-btn">默认按钮(default)</div> -->
+                            <!-- <button class="send-btn">发送验证码</button> -->
+                        </div>
+                    </div>
+                    <!-- <div class="aui-list-item-label-icon">
+                        <i class="aui-iconfont aui-icon-mobile"></i>
+                    </div> -->
+                    <!-- <div class="aui-list-item-input">
+                        <input id="phone" type="text" placeholder="手机号">
+                    </div> -->
+                </div>
+            </li>
+            <li class="aui-list-item">
+                <div class="aui-list-item-inner">
+                    <div class="aui-list-item-label-icon">
+                        <i class="aui-iconfont aui-icon-lock"></i>
+                    </div>
+                    <div class="aui-list-item-input">
+                        <input id="password" type="password" placeholder="密码">
+                    </div>
+                    <div class="aui-list-item-label-icon">
+                        <i class="aui-iconfont aui-icon-display" data-show="0" onclick="showPassword(0,this);"></i>
+                    </div>
+                </div>
+            </li>
+            <li class="aui-list-item">
+                <div class="aui-list-item-inner">
+                    <div class="aui-list-item-label-icon">
+                        <i class="aui-iconfont aui-icon-lock"></i>
+                    </div>
+                    <div class="aui-list-item-input">
+                        <input id="again-password" type="password" placeholder="确认密码">
+                    </div>
+                    <div class="aui-list-item-label-icon">
+                        <i class="aui-iconfont aui-icon-display" data-show="0" onclick="showPassword(1,this);"></i>
+                    </div>
+                </div>
+            </li>
+            <li class="aui-list-item-diy">
+                <div class="aui-list-item-inner">
+                    <div class="aui-col-xs-12">
+                        <div class="aui-col-xs-6">&nbsp;</div>
+                        <div class="aui-col-xs-6 have-account" onclick="openLogin();">已有账号,直接登录</div>
+                    </div>
+                </div>
+            </li>
+            <li class="aui-list-item-diy">
+                <div class="aui-list-item-inner aui-list-item-center aui-list-item-btn">
+                    <div class="register" onclick="accountRegister();">注册</div>
+                </div>
+            </li>
+        </ul>
+    </div>
+</body>
+
+</html>
+<script type="text/javascript" src="../../script/api.js"></script>
+<script type="text/javascript" src="../../script/jquery-3.3.1.min.js"></script>
+<script type="text/javascript" src="../../script/aui-toast.js"></script>
+<script type="text/javascript" src="../../script/common.js"></script>
+<script type="text/javascript">
+    var codeInterval;
+    var count =60;
+    apiready = function() {
+        fnSettingHeader();
+        //hlLanguage("../../i18n/");
+    }
+    var toast = new auiToast({});
+    function openLogin() {
+        api.openWin({
+            name: 'login',
+            url: '../login/login.html',
+            pageParam: {}
+        });
+    }
+    //账户注册
+    function accountRegister() {
+        var phone = $('#phone').val().trim();
+        var password = $('#password').val().trim();
+        var againPassword = $('#again-password').val().trim();
+        var verificationCode = $('#verification-code').val().trim();
+        //判断手机号或密码是否合法
+        if (phone != undefined && phone != "") {
+            if (!isPhoneNo(phone)) {
+                toastFail(toast,"手机号不合法!");
+            }
+        } else {
+            toastFail(toast,"请输入手机号!");
+            return;
+        }
+        if (verificationCode == undefined || verificationCode == "") {
+            toastFail(toast,"请输入验证码!");
+            return;
+        }
+        if (password != undefined && password != "") {
+            if (!isPassword(password)) {
+                toastFail(toast,"密码由6-15位数字和字母组成!");
+            }
+        } else {
+            toastFail(toast,"密码不能为空!");
+            return;
+        }
+        if (againPassword != undefined && againPassword != "") {
+            if (password != againPassword) {
+                toastFail(toast,"两次输入的密码不一致!");
+            }
+        } else {
+            toastFail(toast,"请再次输入密码!");
+            return;
+        }
+        beginRegister(phone,password,verificationCode);
+    }
+    //开始注册
+    function beginRegister(phone,password,verificationCode){
+      var s = 'http://' + serverIP + '/Login/APPRegister.action';
+      api.ajax({
+          url: s,
+          method: 'post',
+          data: {
+              values: {
+                  cellphoneno: phone,
+                  password:password,
+                  verifycode:verificationCode
+              }
+          }
+      }, function(rets, errs) {
+          if (rets) {
+             if(rets.success){
+                 toastSuccess(toast,rets.msg);
+                 //直接跳转到登录页面
+                 closeWindow();
+                 api.openWin({
+                     name: 'login',
+                     url: '../login/login.html',
+                     pageParam: {
+                       cellphoneno:phone,
+                       password:password
+                     }
+                 });
+             }else{
+                 toastFail(toast,rets.msg);
+             }
+          } else {
+            toastFail(toast,"发送异常,请稍后重试!");
+          }
+      });
+    }
+    //点击显示密码
+    function showPassword(type, obj) {
+        var dataShow = $(obj).attr('data-show');
+        if (dataShow == "0") {
+            if (type == 0) {
+                $('#password').attr('type', 'text');
+                $(obj).attr('data-show', '1');
+            } else {
+                $('#again-password').attr('type', 'text');
+                $(obj).attr('data-show', '1');
+            }
+        } else {
+            if (type == 0) {
+                $('#password').attr('type', 'password');
+                $(obj).attr('data-show', '0');
+            } else {
+                $('#again-password').attr('type', 'password');
+                $(obj).attr('data-show', '0');
+            }
+        }
+    }
+    //发送验证码
+    function sendVerificationCode(phone) {
+        if (phone!= undefined&&phone!= "") {
+          var s = 'http://' + serverIP + '/Login/SendVerCodeSMS.action';
+          api.ajax({
+              url: s,
+              method: 'post',
+              data: {
+                  values: {
+                      cellphoneno: phone
+                  }
+              }
+          }, function(rets, errs) {
+              if (rets) {
+                 if(rets.success){
+                   toastSuccess(toast,rets.msg);
+                   $('.send-btn').attr("disabled", "disabled");
+                   $('.send-btn').text("剩余" + count + "s");
+                   $('.send-btn').removeClass('send-btn-active');
+                   codeInterval = setInterval("codeSetInterval()", 1000);
+                 }else{
+                     toastFail(toast,rets.msg);
+                 }
+              } else {
+                toastFail(toast,"发送异常,请稍后重试!");
+              }
+          });
+        }else{
+          toastFail(toast,"请输入手机号!");
+        }
+    }
+    //设置倒计时
+    function codeSetInterval() {
+        if (count > 1) {
+            count--;
+            $('.send-btn').text("剩余" + count + "s");
+        } else {
+            clearInterval(codeInterval);
+            $('.send-btn').removeAttr("disabled");
+            $('.send-btn').text("发送验证码");
+            $('.send-btn').addClass('send-btn-active');
+            count =60;
+        }
+    }
+    //判断用户是否已经注册
+    function APPIsCellphoneNoValidForRegister(){
+      //判断用户是否已经注册
+      var phone=$('#phone').val().trim();
+      if (phone != undefined && phone != "") {
+          if (!isPhoneNo(phone)) {
+              toastFail(toast,"手机号不合法!");
+          }
+      } else {
+          toastFail(toast,"请输入手机号!");
+          return;
+      }
+      var s = 'http://' + serverIP + '/Login/APPIsCellphoneNoValidForRegister.action';
+      api.ajax({
+          url: s,
+          method: 'post',
+          data: {
+              values: {
+                  cellphoneno: phone
+              }
+          }
+      }, function(rets, errs) {
+          if (rets) {
+             if(rets.success){
+                sendVerificationCode(phone);
+             }else{
+                 toastFail(toast,rets.msg);
+             }
+          } else {
+            toastFail(toast,"出现异常,请稍后重试!");
+          }
+      });
+    }
+
+</script>

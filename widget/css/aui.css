@@ -789,7 +789,7 @@ input[type="search"]::-webkit-search-cancel-button {
 	width:0px;
 }
 /*列表*/
-.aui-list {
+.aui-list{
     position: relative;
     font-size: 0.8rem;
     background-color: #ffffff;
@@ -844,7 +844,7 @@ input[type="search"]::-webkit-search-cancel-button {
 .aui-list .aui-list-item-inner {
     position: relative;
     min-height: 2.2rem;
-	padding-right: 0.75rem;
+	  padding-right: 0.75rem;
     width: 100%;
     -webkit-box-sizing: border-box;
     		box-sizing: border-box;
@@ -1417,7 +1417,7 @@ input[type="search"]::-webkit-search-cancel-button {
     left: 1.1rem;
 }
 /*导航栏*/
-.aui-bar {
+.aui-bar{
 	position: relative;
 	top: 0;
 	right: 0;
@@ -1429,7 +1429,7 @@ input[type="search"]::-webkit-search-cancel-button {
 	text-align: center;
 	display: table;
 }
-.aui-bar-nav {
+.aui-bar-nav{
 	top: 0;
 	line-height: 2.25rem;
 	background-color: #03a9f4;

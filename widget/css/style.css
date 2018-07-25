@@ -33,3 +33,29 @@ html,body { height:100%;background:#FFFFFF;}
 .temp-container img{
     width:100px;height:100px;
 }
+.prscue-bg{
+  background-color:#81a9c3;
+}
+.aui-list-item-diy{
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  padding-left: 0.75rem;
+  color: #212121;
+  position: relative;
+  min-height: 2.2rem;
+  -webkit-box-sizing: border-box;
+      box-sizing: border-box;
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: flex;
+  -webkit-box-pack: justify;
+  -webkit-justify-content: space-between;
+      justify-content: space-between;
+}
+.aui-bar-diy{
+  
+}
+.aui-bar-nav-diy{
+
+}

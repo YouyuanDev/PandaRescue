@@ -9,11 +9,9 @@
     <link rel="stylesheet" type="text/css" href="./css/api.css" />
     <link rel="stylesheet" type="text/css" href="./css/aui.css" />
     <style type="text/css">
-        html,
-        body {
-            height: 100%;
+        #header{
+          padding-top:50px;border-bottom:0px;
         }
-
         .wrap {
             display: -webkit-box;
             -webkit-box-orient: vertical;
@@ -21,7 +19,7 @@
         }
 
         header {
-            height: 60px;
+            height:60px;
             width: 100%;
             text-align: center;
             background-color: #81a9c3;
@@ -61,7 +59,7 @@
 </head>
 
 <body class="wrap">
-    <header class="aui-bar aui-bar-nav">
+    <header id="header" class="aui-bar aui-bar-nav">
         <a class="aui-pull-left aui-btn aui-btn-outlined">
             <span class="aui-iconfont aui-icon-menu"></span>
         </a>
@@ -86,6 +84,12 @@
     var g_CU = [];
     var g_order_status = "";
     apiready = function() {
+        api.openWin({
+            name: 'login',
+            url: './html/login/login.html',
+            pageParam: {
+            }
+        });
         fnSettingHeader();
         checkNetWork();
         map = api.require('bMap');
@@ -124,7 +128,7 @@
         map.open({
             rect: {
                 x: 0,
-                y: 60,
+                y:70,
                 w: api.winWidth,
                 h: api.winHeight
             },
@@ -559,12 +563,11 @@
                     annotations: [{
                         id: id,
                         lon: lon,
-                        lat:lat
+                        lat: lat
                     }],
                     icon: 'widget://image/company_user_128.png',
                     draggable: false
-                }, function(ret) {
-                });
+                }, function(ret) {});
             }
         });
 

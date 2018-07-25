@@ -216,3 +216,27 @@ function ClearLoadingPicture() {
     });
     g_loadingID = 0;
 }
+//验证手机号是否合法
+function isPhoneNo(phone) {
+    var pattern = /^1[34578]\d{9}$/;
+    return pattern.test(phone);
+}
+//验证密码是否合法
+function isPassword(password) {
+    var pattern = /^[0-9a-zA-Z_]{6,15}$/;
+    return pattern.test(password);
+}
+//正确消息弹出框
+function toastSuccess(toast,txt) {
+    toast.success({
+        title: txt,
+        duration:1500
+    });
+}
+//错误消息弹出框
+function toastFail(toast,txt) {
+    toast.fail({
+        title: txt,
+        duration: 1500
+    });
+}
