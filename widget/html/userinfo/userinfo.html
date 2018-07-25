@@ -5,371 +5,183 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0" />
     <meta name="format-detection" content="telephone=no,email=no,date=no,address=no">
-    <title>个人信息</title>
+    <title>个人账户</title>
     <link rel="stylesheet" type="text/css" href="../../css/api.css" />
+    <link rel="stylesheet" type="text/css" href="../../css/aui.css" />
     <link rel="stylesheet" type="text/css" href="../../css/style.css" />
     <style>
-        html,
-        body {
-            height: 100%;
-            background-color: #f4f5f6;
-        }
 
-        .title {
-            height: 43px;
-            line-height: 43px;
-            width: 100%;
-            text-align: center;
-            font-size: 16px;
-            color: #222;
-            background-color: #fefefe;
-            border-bottom: 1px solid #d8d8d8;
-            box-sizing: border-box;
-            position: relative;
-        }
-
-        .title .arrow {
-            width: 43px;
-            height: 43px;
-            position: absolute;
-            left: 0;
-            bottom: 0;
-            background-image: url(../../image/back.png);
-            background-repeat: no-repeat;
-            background-size: 20px 20px;
-            background-position: center center;
-        }
-
-        .save-container {
-            position: absolute;
-            width: 60px;
-            height: 30px;
-            bottom: 0;
-            right: 0;
-            margin-right: 20px;
-            margin-bottom: 10px;
-            border-radius: 4px;
-
-        }
-
-        .save-container .save-button{
-              position: relative;
-              width: 100%;
-              /*outline: none;*/
-              height: 30px;
-              line-height: 30px;
-              text-align: center;
-              font-size: 18px;
-              color: #fff;
-              border-radius: 4px;
-              background-color: #19AD68;
-
-        }
-
-        .top-title{
-        
-          font-size: 18px;
-        }
-
-
-        .userinfo-container {
-            padding: 5px 10px;
-        }
-
-        .userinfo-item {
-            width: 100%;
-            height: auto;
-            display: none;
-            margin-bottom: 20px;
-        }
-
-        .userinfo-item1 {
-            text-align: center;
-            font-size: 20px;
-        }
-
-        .userinfo-item .item-input {
-            width: 100%;
-            height: 40px;
-            outline: none;
-            border-bottom: 1px solid #09aa30;
-            font-size: 19px;
-            text-align: center;
-        }
-
-        .userinfo-item label {
-            width: 100%;
-            height: 40px;
-            line-height: 40px;
-            border-radius: 3px;
-            outline: none;
-            font-size: 19px;
-            text-align: center;
-            background-color: #999;
-        }
-
-        .userinfo-item1 input {
-            width: 20px;
-            height: 20px;
-            margin: 10px;
-        }
-
-        .user-age span {
-            padding: 5px 10px;
-            opacity: 0.5;
-        }
     </style>
 </head>
 
-<body>
-    <div id="wrap" class="flex-wrap flex-vertical">
-      <header id="header">
-        <div class="title">
-          <div class="arrow event-back"></div>
-          <span class="top-title" id="userinfo-tag"></span>
-          <div class="save-container"><label class="i18n1 save-button" name="save" userinfo-id="" id="save-btn"></label></div>
-        </div>
-      </header>
-        <div class="userinfo-container flex-con" id="main">
-            <div class="userinfo-item user-name">
-                <input type="text" class="item-input" id="user-name" />
-            </div>
-            <div class="userinfo-item user-pwd">
-                <input type="password" class="item-input" id="user-pwd" />
-            </div>
-            <div class="userinfo-item user-idno">
-                <input type="text" class="item-input" id="user-idno" />
-            </div>
-            <div class="userinfo-item user-phoneno">
-                <input type="text" class="item-input" id="user-phoneno" />
-            </div>
-            <div class="userinfo-item userinfo-item1 language">
-                <input class="item-input1" type="radio" name="radio" id="user-language1" value="1" />中文
-                <input class="item-input1" type="radio" name="radio" id="user-language2" value="2" />English
-            </div>
-            <!-- <div class="userinfo-item userinfo-item1 user-gender">
-                <input class="item-input1" type="radio" name="radio" id="user-gender1" value="1" />男
-                <input class="item-input1" type="radio" name="radio" id="user-gender2" value="2" />女
-            </div>
-            <div class="userinfo-item user-age">
-                <label id="user-age">21</label>
-                <span>点击修改年龄.</span>
-            </div> -->
-            <div class="userinfo-item1">
-
-            </div>
-        </div>
-        <div id="footer" class="border-t">
-
-        </div>
+<body class="body-bg">
+    <header id="header" class="aui-bar aui-bar-nav prscue-bg">
+        <a class="aui-pull-left aui-btn" onclick="closeWindow();">
+            <span class="aui-iconfont aui-icon-left"></span>返回
+        </a>
+    </header>
+    <div class="aui-content aui-margin-b-15 prscue-bg login-container">
+        <ul class="aui-list aui-form-list aui-list-noborder prscue-bg">
+            <li class="aui-list-item-diy">
+                <div class="aui-list-item-inner">
+                    <div class="logo">
+                        <img src="../../image/sos_128.png" />
+                    </div>
+                </div>
+            </li>
+            <li class="aui-list-item">
+                <div class="aui-list-item-inner">
+                    <div class="aui-list-item-label-icon">
+                        <i class="aui-iconfont aui-icon-mobile"></i>
+                    </div>
+                    <div class="aui-list-item-input">
+                        <input id="phone" type="tel" placeholder="手机号">
+                    </div>
+                </div>
+            </li>
+            <li class="aui-list-item">
+                <div class="aui-list-item-inner">
+                    <div class="aui-list-item-label-icon">
+                        <i class="aui-iconfont aui-icon-lock"></i>
+                    </div>
+                    <div class="aui-list-item-input">
+                        <input id="password" type="password" placeholder="密码">
+                    </div>
+                    <div class="aui-list-item-label-icon">
+                        <i class="aui-iconfont aui-icon-display show-password" data-show="0" onclick="showPassword();"></i>
+                    </div>
+                </div>
+            </li>
+            <li class="aui-list-item-diy">
+                <div class="aui-list-item-inner">
+                    <div class="aui-col-xs-12">
+                        <div class="aui-col-xs-6 forget-password" onclick="forgetPassword();">忘记密码?</div>
+                        <div class="aui-col-xs-6 forget-password-interval">
+                            <button class="send-btn">剩余60s</button>
+                        </div>
+                        <div class="aui-col-xs-6 no-account" onclick="registerAccount();">还没账号?</div>
+                    </div>
+                </div>
+            </li>
+            <li class="aui-list-item-diy">
+                <div class="aui-list-item-inner aui-list-item-center aui-list-item-btn">
+                    <div class="login" onclick="accountLogin();">登录</div>
+                </div>
+            </li>
+        </ul>
     </div>
+
 </body>
 
 </html>
 <script type="text/javascript" src="../../script/api.js"></script>
 <script type="text/javascript" src="../../script/jquery-3.3.1.min.js"></script>
+<script type="text/javascript" src="../../script/aui-toast.js"></script>
 <script type="text/javascript" src="../../script/common.js"></script>
-<script src="../../script/jquery.i18n.properties-1.0.9.js" type="text/javascript"></script>
-<script src="../../script/language.js" type="text/javascript"></script>
 <script type="text/javascript">
-    var UIActionSelector;
-
+    var forgetPasswordInterval;
+    var count = 60;
     apiready = function() {
-        UIActionSelector = api.require('UIActionSelector');
-
-        getParamName();
         fnSettingHeader();
-        //返回事件
-        $('.event-back').click(function() {
-            backUserInfo();
-        });
-        //保存事件
-        $('#save-btn').click(function() {
-            var index = parseInt($('#save-btn').attr('userinfo-id'));
-            var result;
-            switch (index) {
-                case 3:
-                    result = $api.byId('user-name').value;
-                    break;
-                case 4:
-                    result = $api.byId('user-pwd').value;
-                    break;
-                case 5:
-                    result = $api.byId('user-idno').value;
-                    break;
-                case 6:
-                    result = $api.byId('user-phoneno').value;
-                    break;
-                case 9:
-                    result=$("input[name='radio']:checked").val();
-                    //result = $api.byId('language').value;
-                    break;
-                default:
-                    break;
-                // case 6:
-                //     result = $api.byId('user-age').value;
-                //     break;
-            }
-            if(index!=9){
-              if (index != undefined) {
-                  api.sendEvent({
-                      name: 'SaveUserInfoEvent',
-                      extra: {
-                          index: index,
-                          result: result
-                      }
-                  });
-                  api.closeWin();
-              } else {
-                  api.alert('修改失败!');
-              }
-            }else{
-                  if(result==1){
-                    $api.setStorage('userLanguage','zh-CN');
-                  }else {
-                    $api.setStorage('userLanguage','en');
-                  }
-                  //var language =$(this).children('option:selected').val();
-                  //重新设置cookie
-                  //alert(language);
-                  api.rebootApp();
-            }
-
-        });
-        hlLanguage("../../i18n/");
-
-
-        //年龄修改
-        // $('#user-age').click(function() {
-        //     var jsonArr = [];
-        //     var beginTimeYear = new Date('1940-01-01').getFullYear();
-        //     var endTimeYear = new Date().getFullYear();
-        //     var nowAgeOfYear = endTimeYear - $(this).text();
-        //     var indexArr = [];
-        //     var item;
-        //     var index = 0;
-        //     var flag = true;
-        //     for (var i = beginTimeYear; i < endTimeYear; i++) {
-        //         item = {
-        //             "name": i
-        //         };
-        //         jsonArr.push(item);
-        //         if (i != nowAgeOfYear && flag) {
-        //             index++;
-        //         } else {
-        //             flag = false;
-        //         }
-        //     }
-        //     indexArr[0] = index;
-        //     UIActionSelector.open({
-        //         datas: jsonArr,
-        //         layout: {
-        //             row: 5,
-        //             col: 1,
-        //             height: 30,
-        //             size: 12,
-        //             sizeActive: 14,
-        //             rowSpacing: 5,
-        //             colSpacing: 10,
-        //             maskBg: 'rgba(0,0,0,0.2)',
-        //             bg: '#fff',
-        //             color: '#888',
-        //             colorActive: '#f00',
-        //             colorSelected: '#f00'
-        //         },
-        //         animation: true,
-        //         cancel: {
-        //             text: '取消',
-        //             size: 12,
-        //             w: 90,
-        //             h: 35,
-        //             bg: '#fff',
-        //             bgActive: '#ccc',
-        //             color: '#888',
-        //             colorActive: '#fff'
-        //         },
-        //         ok: {
-        //             text: '确定',
-        //             size: 12,
-        //             w: 90,
-        //             h: 35,
-        //             bg: '#fff',
-        //             bgActive: '#ccc',
-        //             color: '#888',
-        //             colorActive: '#fff'
-        //         },
-        //         title: {
-        //             text: '请选择',
-        //             size: 12,
-        //             h: 44,
-        //             bg: '#eee',
-        //             color: '#888'
-        //         },
-        //         actives: indexArr,
-        //         fixedOn: api.frameName
-        //     }, function(ret, err) {
-        //         if (ret) {
-        //             if (ret.eventType == 'ok') {
-        //                 var year = ret.level1;
-        //                 $('#user-age').text(endTimeYear - year);
-        //             }
-        //         } else {
-        //             alert('系统繁忙');
-        //         }
-        //         UIActionSelector.hide();
-        //     });
-        // });
-       //
-    };
-
-    function getParamName() {
         var data = api.pageParam;
-        var index = data.index;
-        var labelName = data.labelName;
-        var userData = data.userData;
-        if (index != '' && index != undefined && labelName != '' && labelName != undefined && userData != undefined) {
-            $('#userinfo-tag').text(data.labelName);
-            $('#save-btn').attr('userinfo-id', index);
-            switch (index) {
-                case 3: //姓名
-                    $('.user-name').css('display', 'block');
-                    $('#user-name').val(userData);
-                    break;
-                case 4: //密码
-                    $('.user-pwd').css('display', 'block');
-                    $('#user-pwd').val(userData);
-                    break;
-                case 5: //身份证号
-                    $('.user-idno').css('display', 'block');
-                    $('#user-idno').val(userData);
-                    break;
-                case 6: //手机号
-                    $('.user-phoneno').css('display', 'block');
-                    $('#user-phoneno').val(userData);
-                    break;
-                case 9: //语言
-                    $('.language').css('display', 'block');
-                    if (userData == '中文') {
-                        $('#user-language1').attr('checked', 'true');
-                    } else {
-                        $('#user-language2').attr('checked', 'true');
-                    }
-                    $('#language').val(userData);
-                    break;
-                default:
-                    break;
-                // case 6: //年龄
-                //     $('.user-age').css('display', 'block');
-                //     $('#user-age').text(userData);
-                //     break;
+        if (data != undefined) {
+            var cellphoneno = data.cellphoneno;
+            var password = data.password;
+            if (cellphoneno != undefined) {
+                $("#phone").val(cellphoneno);
             }
-        } else {
-            //传值时出错,返回到个人信息页面
+            if (password != undefined) {
+                $("#password").val(password);
+            }
+        }
+        //hlLanguage("../../i18n/");
+    }
+    var toast = new auiToast({});
 
+    function registerAccount() {
+        api.openWin({
+            name: 'register',
+            url: '../register/register.html',
+            reload: true,
+            pageParam: {}
+        });
+    }
+    //忘记密码
+    function forgetPassword() {
+        var phone = $('#phone').val();
+        if (phone != undefined && phone != "") {
+            if (!isPhoneNo(phone)) {
+                toastFail(toast, "手机号不合法!");
+                return;
+            }
+
+            var s = 'http://' + serverIP + '/Login/ForgotPassword.action';
+            api.ajax({
+                url: s,
+                method: 'post',
+                data: {
+                    values: {
+                        cellphoneno: phone
+                    }
+                }
+            }, function(rets, errs) {
+                if (rets) {
+                    if (rets.success) {
+                        toastSuccess(toast, rets.msg);
+                        forgetPasswordInterval = setInterval("forgetPasswordSetInterval()", 1000);
+                        $('.forget-password').hide();
+                        $('.forget-password-interval').show();
+                    } else {
+                        toastFail(toast, rets.msg);
+                    }
+                } else {
+                    toastFail(toast, "发送异常,请稍后重试!");
+                }
+            });
+        } else {
+            toastFail(toast, "请输入手机号!");
+        }
+    }
+    //用户登录
+    function accountLogin() {
+        var phone = $('#phone').val().trim();
+        var password = $('#password').val().trim();
+        if (phone != undefined && password != undefined && phone != "" && password != "") {
+            var s = 'http://' + serverIP + '/Login/LoginWithCellPhoneNo.action';
+            api.ajax({
+                url: s,
+                method: 'post',
+                data: {
+                    values: {
+                        cellphoneno: phone,
+                        password: password
+                    }
+                }
+            }, function(rets, errs) {
+                if (rets) {
+                    if (rets.success) {
+                        toastSuccess(toast, rets.msg);
+                        var userInfo={};
+                        userInfo["phone"]=phone;
+                        userInfo["password"]=password;
+                        api.setPrefs({
+                            key: 'userInfo',
+                            value:userInfo
+                        });
+                        api.closeToWin({
+                            name: 'root'
+                        });
+                    } else {
+                        toastFail(toast, rets.msg);
+                    }
+                } else {
+                    toastFail(toast, "登录异常,请稍后重试!");
+                }
+            });
+        } else {
+            toastFail(toast, "用户名或密码错误!");
         }
     }
 
-    function backUserInfo() {
-        api.closeWin();
-    }
+
 </script>
