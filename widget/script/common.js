@@ -1,5 +1,6 @@
 var header, headerHeight = 0;
 var serverIP = '192.168.0.12:8080';
+
 function fnSettingHeader() {
     var sType = api.systemType;
     var header = $api.byId('header');
@@ -10,6 +11,7 @@ function fnSettingHeader() {
         $api.fixStatusBar(header);
     }
 }
+
 function fnReadyFrame() {
     var nav = $api.byId('header');
     var navHeight = $api.offset(nav).h;
@@ -74,31 +76,32 @@ function parseMobiDate(str) {
 
 }
 
-function closeWindow(){
-   api.closeWin();
+function closeWindow() {
+    api.closeWin();
 }
 
 //检查用户是否有网络
-function checkNetWork(){
-  var connectionType = api.connectionType;
-  if(connectionType=="none"){
-    api.alert({
-        msg:"无网络连接!"
-    });
-  }
+function checkNetWork() {
+    var connectionType = api.connectionType;
+    if (connectionType == "none") {
+        api.alert({
+            msg: "无网络连接!"
+        });
+    }
 }
 //图片上传
-function selectPicture(){
-  api.actionSheet({
-      title: '上传图片',
-      cancelTitle: '取消',
-      buttons: ['拍照', '从手机相册选择']
-  }, function(ret, err) {
-      if (ret) {
-          getPicture(ret.buttonIndex);
-      }
-  });
+function selectPicture() {
+    api.actionSheet({
+        title: '上传图片',
+        cancelTitle: '取消',
+        buttons: ['拍照', '从手机相册选择']
+    }, function(ret, err) {
+        if (ret) {
+            getPicture(ret.buttonIndex);
+        }
+    });
 }
+
 function getPicture(sourceType) {
     if (sourceType == 1) { // 拍照
         api.getPicture({
@@ -209,6 +212,7 @@ function DoLoadingPicture() {
         g_loadingID = ret.id;
     });
 }
+
 function ClearLoadingPicture() {
     var uiloading = api.require('UILoading');
     uiloading.closeFlower({
@@ -227,16 +231,18 @@ function isPassword(password) {
     return pattern.test(password);
 }
 //正确消息弹出框
-function toastSuccess(toast,txt) {
-    toast.success({
-        title: txt,
-        duration:1500
+function toastSuccess(txt) {
+    api.toast({
+        msg: txt,
+        duration: 2000,
+        location: 'middle'
     });
 }
 //错误消息弹出框
-function toastFail(toast,txt) {
-    toast.fail({
-        title: txt,
-        duration: 1500
-    });
+function toastFail(txt) {
+  api.toast({
+      msg: txt,
+      duration: 2000,
+      location: 'middle'
+  });
 }

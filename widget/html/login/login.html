@@ -139,7 +139,6 @@
 </html>
 <script type="text/javascript" src="../../script/api.js"></script>
 <script type="text/javascript" src="../../script/jquery-3.3.1.min.js"></script>
-<script type="text/javascript" src="../../script/aui-toast.js"></script>
 <script type="text/javascript" src="../../script/common.js"></script>
 <script type="text/javascript">
     var forgetPasswordInterval;
@@ -174,7 +173,7 @@
         var phone = $('#phone').val();
         if (phone != undefined && phone != "") {
             if (!isPhoneNo(phone)) {
-                toastFail(toast, "手机号不合法!");
+                toastFail("手机号不合法!");
                 return;
             }
 
@@ -190,19 +189,19 @@
             }, function(rets, errs) {
                 if (rets) {
                     if (rets.success) {
-                        toastSuccess(toast, rets.msg);
+                        toastSuccess(rets.msg);
                         forgetPasswordInterval = setInterval("forgetPasswordSetInterval()", 1000);
                         $('.forget-password').hide();
                         $('.forget-password-interval').show();
                     } else {
-                        toastFail(toast, rets.msg);
+                        toastFail(rets.msg);
                     }
                 } else {
-                    toastFail(toast, "发送异常,请稍后重试!");
+                    toastFail("发送异常,请稍后重试!");
                 }
             });
         } else {
-            toastFail(toast, "请输入手机号!");
+            toastFail("请输入手机号!");
         }
     }
     //用户登录
@@ -223,7 +222,7 @@
             }, function(rets, errs) {
                 if (rets) {
                     if (rets.success) {
-                        toastSuccess(toast, rets.msg);
+                        toastSuccess(rets.msg);
                         var userInfo={};
                         userInfo["phone"]=phone;
                         userInfo["password"]=password;
@@ -235,14 +234,14 @@
                             name: 'root'
                         });
                     } else {
-                        toastFail(toast, rets.msg);
+                        toastFail(rets.msg);
                     }
                 } else {
-                    toastFail(toast, "登录异常,请稍后重试!");
+                    toastFail("登录异常,请稍后重试!");
                 }
             });
         } else {
-            toastFail(toast, "用户名或密码错误!");
+            toastFail("用户名或密码错误!");
         }
     }
     //显示密码

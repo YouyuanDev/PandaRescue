@@ -186,7 +186,6 @@
 </html>
 <script type="text/javascript" src="../../script/api.js"></script>
 <script type="text/javascript" src="../../script/jquery-3.3.1.min.js"></script>
-<script type="text/javascript" src="../../script/aui-toast.js"></script>
 <script type="text/javascript" src="../../script/common.js"></script>
 <script type="text/javascript">
     var codeInterval;
@@ -195,7 +194,6 @@
         fnSettingHeader();
         //hlLanguage("../../i18n/");
     }
-    var toast = new auiToast({});
     function openLogin() {
         api.openWin({
             name: 'login',
@@ -212,33 +210,33 @@
         //判断手机号或密码是否合法
         if (phone != undefined && phone != "") {
             if (!isPhoneNo(phone)) {
-                toastFail(toast,"手机号不合法!");
+                toastFail("手机号不合法!");
                 return;
             }
         } else {
-            toastFail(toast,"请输入手机号!");
+            toastFail("请输入手机号!");
             return;
         }
         if (verificationCode == undefined || verificationCode == "") {
-            toastFail(toast,"请输入验证码!");
+            toastFail("请输入验证码!");
             return;
         }
         if (password != undefined && password != "") {
             if (!isPassword(password)) {
-                toastFail(toast,"密码由6-15位数字和字母组成!");
+                toastFail("密码由6-15位数字和字母组成!");
                 return;
             }
         } else {
-            toastFail(toast,"密码不能为空!");
+            toastFail("密码不能为空!");
             return;
         }
         if (againPassword != undefined && againPassword != "") {
             if (password != againPassword) {
-                toastFail(toast,"两次输入的密码不一致!");
+                toastFail("两次输入的密码不一致!");
                 return;
             }
         } else {
-            toastFail(toast,"请再次输入密码!");
+            toastFail("请再次输入密码!");
             return;
         }
         beginRegister(phone,password,verificationCode);
@@ -259,7 +257,7 @@
       }, function(rets, errs) {
           if (rets) {
              if(rets.success){
-                 toastSuccess(toast,rets.msg);
+                 toastSuccess(rets.msg);
                  setTimeout(function(){
                    //直接跳转到登录页面
                    api.openWin({
@@ -274,10 +272,10 @@
                    closeWindow();
                  },1500);
              }else{
-                 toastFail(toast,rets.msg);
+                 toastFail(rets.msg);
              }
           } else {
-            toastFail(toast,"发送异常,请稍后重试!");
+            toastFail("发送异常,请稍后重试!");
           }
       });
     }
@@ -317,20 +315,20 @@
           }, function(rets, errs) {
               if (rets) {
                  if(rets.success){
-                   toastSuccess(toast,rets.msg);
+                   toastSuccess(rets.msg);
                    $('.send-btn').attr("disabled", "disabled");
                    $('.send-btn').text("剩余" + count + "s");
                    $('.send-btn').removeClass('send-btn-active');
                    codeInterval = setInterval("codeSetInterval()", 1000);
                  }else{
-                     toastFail(toast,rets.msg);
+                     toastFail(rets.msg);
                  }
               } else {
-                toastFail(toast,"发送异常,请稍后重试!");
+                toastFail("发送异常,请稍后重试!");
               }
           });
         }else{
-          toastFail(toast,"请输入手机号!");
+          toastFail("请输入手机号!");
         }
     }
     //设置倒计时
@@ -352,10 +350,10 @@
       var phone=$('#phone').val().trim();
       if (phone != undefined && phone != "") {
           if (!isPhoneNo(phone)) {
-              toastFail(toast,"手机号不合法!");
+              toastFail("手机号不合法!");
           }
       } else {
-          toastFail(toast,"请输入手机号!");
+          toastFail("请输入手机号!");
           return;
       }
       var s = 'http://' + serverIP + '/Login/APPIsCellphoneNoValidForRegister.action';
@@ -372,10 +370,10 @@
              if(rets.success){
                 sendVerificationCode(phone);
              }else{
-                 toastFail(toast,rets.msg);
+                 toastFail(rets.msg);
              }
           } else {
-            toastFail(toast,"出现异常,请稍后重试!");
+            toastFail("出现异常,请稍后重试!");
           }
       });
     }
