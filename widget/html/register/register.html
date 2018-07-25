@@ -257,16 +257,18 @@
           if (rets) {
              if(rets.success){
                  toastSuccess(toast,rets.msg);
-                 //直接跳转到登录页面
-                 closeWindow();
-                 api.openWin({
-                     name: 'login',
-                     url: '../login/login.html',
-                     pageParam: {
-                       cellphoneno:phone,
-                       password:password
-                     }
-                 });
+                 setTimeout(function(){
+                   //直接跳转到登录页面
+                   closeWindow();
+                   api.openWin({
+                       name: 'login',
+                       url: '../login/login.html',
+                       pageParam: {
+                         cellphoneno:phone,
+                         password:password
+                       }
+                   });
+                 },500);
              }else{
                  toastFail(toast,rets.msg);
              }
