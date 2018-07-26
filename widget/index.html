@@ -1083,8 +1083,9 @@
                 //alert("setPushListener回调函数");
 
                 if(ret.data){
-                  var order_no=ret.data.order_no;
-                  alert("回调函数order_no="+order_no);
+                  alert("回调函数:"+ret.data);
+                  var order_no=ret.data.OrderNo;
+                  alert("11order_no:"+order_no);
                   getCurrentOrder(g_account_type);
                 }
 
