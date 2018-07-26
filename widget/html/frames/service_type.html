@@ -9,35 +9,33 @@
     <link rel="stylesheet" type="text/css" href="../../css/api.css" />
     <link rel="stylesheet" type="text/css" href="../../css/aui.css" />
     <link rel="stylesheet" type="text/css" href="../../css/style.css" />
+    <link rel="stylesheet" type="text/css" href="../../css/font-awesome.min.css" />
     <style type="text/css">
         .submit-btn {
             height: 2.3rem;
             width: 100%;
-            background-color: #81a9c3;
+            /*background-color: #81a9c3;*/
             color: white;
             line-height: 2.3rem;
             text-align: center;
         }
-
         .close-btn {
             display: block;
             float: right;
             padding: 0px 8px;
+            color:#000;
+            font-size:1.2rem;
         }
-
         .aui-bar-nav {
-            background-color: #81a9c3;
+            background-color: #fff;
         }
-
         .aui-list .aui-list-item {
             padding-top: 0.6rem;
             padding-bottom: 0.6rem;
         }
-
         .aui-list .aui-list-item-input label {
             padding-top: 0.2rem;
         }
-
         .select-picture .aui-btn {
             width: 100%;
         }
@@ -68,7 +66,7 @@
 
 <body>
     <header class="aui-bar aui-bar-nav">
-        <i class="aui-iconfont aui-icon-close close-btn"></i>
+        <i class="fa fa-close close-btn"></i>
     </header>
     <div class="aui-content aui-margin-b-15 service-container">
         <input type="hidden" value="0" class="id" />
@@ -125,7 +123,7 @@
         </ul>
     </div>
     <footer class="aui-bar aui-bar-tab service-footer">
-        <button class="submit-btn" onclick="submitForm();">提交</button>
+        <button class="submit-btn pr-color" onclick="submitForm();">提交</button>
     </footer>
 </body>
 <script type="text/javascript" src="../../script/api.js"></script>

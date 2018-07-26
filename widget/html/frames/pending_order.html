@@ -56,7 +56,7 @@
         if (pending_order_data) {
             var template = "";
             for (var i = 0; i < pending_order_data.length; i++) {
-                template += (pendingOrderListTemplate(pending_order_data[i].id, pending_order_data[i].service_type_name, pending_order_data[i].failure_type_name, getDistance(pending_order_data[i].distance)));
+                template += (pendingOrderListTemplate(pending_order_data[i].order_no, pending_order_data[i].service_type_name, pending_order_data[i].failure_type_name, getDistance(pending_order_data[i].distance)));
             }
             $('#poilist-ul').append(template);
         }
@@ -71,19 +71,19 @@
     }
     //发送弹出标注信息事件
     function popupBubble(obj) {
-        var id = $(obj).attr('data-no');
+        var order_no = $(obj).attr('data-no');
         $(obj).addClass('pr-color');
         $(obj).siblings('li').removeClass('pr-color');
         api.sendEvent({
-            name: 'ClickCompanyListEventListener',
+            name: 'ClickPendingOrderListEventListener',
             extra: {
-                id: id
+                id: order_no
             }
         });
     }
     //生成模板
-    function pendingOrderListTemplate(id, service_type_name, failure_type_name, distance) {
-        var template = '<li class="aui-list-item aui-list-item-middle" data-no=' + company_no + ' onclick="popupBubble(this)">' +
+    function pendingOrderListTemplate(order_no, service_type_name, failure_type_name, distance) {
+        var template = '<li class="aui-list-item aui-list-item-middle" data-no=' + order_no + ' onclick="popupBubble(this)">' +
             '<div class="aui-media-list-item-inner">' +
             '<div class="aui-list-item-inner">' +
             '<div class="aui-list-item-text">' +
@@ -101,9 +101,9 @@
         api.addEventListener({
             name: 'PendingOrderScrollEvent'
         }, function(ret, err) {
-            var id = ret.value.id;
-            if (id != undefined) {
-                var $obj = $("li[data-no='" + id + "']");
+            var order_no = ret.value.order_no;
+            if (order_no != undefined) {
+                var $obj = $("li[data-no='" + order_no + "']");
                 if ($obj != undefined) {
                     try {
                         $obj.addClass('pr-color');
