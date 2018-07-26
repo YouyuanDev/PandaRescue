@@ -1084,11 +1084,14 @@
                 //alert("setPushListener回调函数");
 
                 if(ret.data){
-                  alert("回调函数:"+ret.data);
+                  //alert("回调函数:"+ret.data);
                   var jsonObject=JSON.parse(ret.data);
-                  var order_no=jsonObject.OrderNo;
-                  alert("11order_no:"+order_no);
-                  getCurrentOrder(g_account_type);
+                  if(jsonObject.success){
+                    var order_no=jsonObject.OrderNo;
+                    alert("回调getCurrentOrder order_no:"+order_no);
+                    getCurrentOrder(g_account_type);
+                  }
+
                 }
 
                 api.alert({
