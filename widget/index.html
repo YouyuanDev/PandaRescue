@@ -109,7 +109,6 @@
 
         map = api.require('bMap');
         registLocatingEvent();
-
         registerSosEvent();
         registerOrderStatusEvent();
         registerCancelOrderEvent();
@@ -118,6 +117,7 @@
         registerReceiptEvent();
         registerPendingOrderListEvent();
         registerChangeAccountTypeEvent();
+        registerPauseResumeEvent();
         initMapSDK();
     };
     //1.初始化MapSDK
@@ -202,6 +202,28 @@
     function initMapSDKOK() {
         getUserSession();
     }
+
+
+    //注册app前台，后台切换事件
+    function registerPauseResumeEvent(){
+      api.addEventListener({
+          name: 'resume'
+      }, function(ret, err) {
+          alert('应用回到前台');
+          getCurrentOrder();
+      });
+      api.addEventListener({
+          name: 'pause'
+      }, function(ret, err) {
+          alert('应用进入后台');
+          //getCurrentOrder();
+      });
+    }
+
+
+
+
+
     //设置商户标注信息
     function setCompanyAnnotations(annotations) {
         //此处应获取附近的商户信息  121.498034  31.385146
