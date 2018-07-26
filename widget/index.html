@@ -1081,6 +1081,13 @@
         push.setListener(function(ret, err) {
             if (ret) {
                 alert("setPushListener回调函数");
+
+                if(ret.data){
+                  var order_no=ret.data.order_no;
+                  alert("order_no="+order_no);
+                  getCurrentOrder(g_account_type);
+                }
+
                 api.alert({
                     msg: ret.data
                 });
