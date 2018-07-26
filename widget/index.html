@@ -813,10 +813,10 @@
             if (rets) {
                 if (rets.success) {
                     g_account_type = rets.accountType;
-                    alert(g_account_type);
+                    //alert(g_account_type);
                     getCurrentOrder();
                     //绑定推送
-                    bindPush();
+                    bindPush(phone);
                     var roles = rets.roles;
                     //加入现在的组
                     if (roles != undefined) {

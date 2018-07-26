@@ -253,28 +253,30 @@ function makeEmptyTemplate(con) {
 }
 
 //绑定Push推送
-function bindPush() {
+function bindPush(username) {
     var push = api.require('push');
     push.bind({
-        userName: api.deviceId,
-        userId: api.deviceId
+      userName: username,
+      userId: username
+        // userName: api.deviceId,
+        // userId: api.deviceId
     }, function(ret, err) {
         if (ret.status == true) {
-            alert(api.deviceId + "bind成功");
-            toastSuccess(api.deviceId + "bind成功");
+            alert(username + "bind成功");
+            toastSuccess(username + "bind成功");
         } else {
-            alert(api.deviceId + "bind"+err.msg);
+            alert(username+ "bind"+err.msg);
             toastFail(err.msg);
         }
     });
 }
 
 //解除绑定Push推送
-function unbindPush() {
+function unbindPush(username) {
     var push = api.require('push');
     push.unbind({
-        userName: api.deviceId,
-        userId: api.deviceId
+        userName: username,
+        userId: username
     }, function(ret, err) {
         if (ret.status) {
             alert('解除绑定成功');
