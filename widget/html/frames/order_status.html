@@ -8,6 +8,8 @@
     <title>Order Status</title>
     <link rel="stylesheet" type="text/css" href="../../css/api.css" />
     <link rel="stylesheet" type="text/css" href="../../css/aui.css" />
+    <link rel="stylesheet" type="text/css" href="../../css/style.css" />
+      <link rel="stylesheet" type="text/css" href="../../css/font-awesome.min.css" />
     <style type="text/css">
         .order-status {
             background-color: #fff;
@@ -15,7 +17,7 @@
             border-radius: 3px 3px 0px 0px;
         }
         .cancel-order {
-            background: #81a9c3;
+            background: #61C721;
             border-radius: 0px 0px 3px 3px;
         }
     </style>
@@ -24,7 +26,7 @@
 <body>
     <div class="container">
         <div class="aui-content aui-margin-b-15">
-            <div class="aui-bar aui-bar-nav order-status">待接单......</div>
+            <div class="aui-bar aui-bar-nav order-status"><i class="fa fa-spinner fa-spin"></i></div>
             <div class="aui-bar aui-bar-nav cancel-order">
                 <div class="aui-btn aui-btn-block cancel-order" onclick="cacelOrder();">取消订单</div>
             </div>

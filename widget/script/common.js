@@ -240,9 +240,76 @@ function toastSuccess(txt) {
 }
 //错误消息弹出框
 function toastFail(txt) {
-  api.toast({
-      msg: txt,
-      duration: 2000,
-      location: 'middle'
-  });
+    api.toast({
+        msg: txt,
+        duration: 2000,
+        location: 'middle'
+    });
+}
+//数据为空时的模板
+function makeEmptyTemplate(con) {
+    var template = '<div class="pr-empty">' + con + '</div>';
+    return template;
+}
+
+//绑定Push推送
+function bindPush() {
+    var push = api.require('push');
+    push.bind({
+        userName: api.deviceId,
+        userId: api.deviceId
+    }, function(ret, err) {
+        if (ret.status == true) {
+            toastSuccess(api.deviceId + "bind成功");
+        } else {
+            toastFail(err.msg);
+        }
+    });
+}
+
+//解除绑定Push推送
+function unbindPush() {
+    var push = api.require('push');
+    push.unbind({
+        userName: api.deviceId,
+        userId: api.deviceId
+    }, function(ret, err) {
+        if (ret.status) {
+            toastSuccess('解除绑定成功');
+        } else {
+            toastFail(err.msg);
+        }
+    });
+}
+// 加入推送群组
+function joinPushGroup(groupName) {
+
+    var push = api.require('push');
+    //加入组
+    push.joinGroup({
+        groupName: groupName
+    }, function(ret, err) {
+        if (ret.status) {
+            var s = '加入组' + groupName + '成功';
+            toastSuccess(s);
+        } else {
+            toastFail(err.msg);
+        }
+    });
+    push.setPreference({
+        notify: true,
+        updateCurrent: false
+    });
+}
+// 退出推送群组
+function leaveAllPushGroup() {
+    var push = api.require('push');
+    push.leaveAllGroup(function(ret, err) {
+        if (ret) {
+            var s = '退出所有组成功';
+            toastSuccess(s);
+        } else {
+            toastFail(err.msg);
+        }
+    });
 }

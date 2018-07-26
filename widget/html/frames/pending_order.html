@@ -53,12 +53,18 @@
         }
         //展示待接单状态的订单信息
     function showPendingOrder() {
-        if (pending_order_data) {
+        $('#poilist-ul').empty();
+        if (pending_order_data!=undefined) {
             var template = "";
             for (var i = 0; i < pending_order_data.length; i++) {
                 template += (pendingOrderListTemplate(pending_order_data[i].order_no, pending_order_data[i].service_type_name, pending_order_data[i].failure_type_name, getDistance(pending_order_data[i].distance)));
             }
             $('#poilist-ul').append(template);
+            if(pending_order_data.length<=0){
+              $('#poilist-ul').append(makeEmptyTemplate("暂无数据!"));
+            }
+        }else{
+            $('#poilist-ul').append(makeEmptyTemplate("暂无数据!"));
         }
     }
     //计算模板中所需距离
@@ -77,7 +83,7 @@
         api.sendEvent({
             name: 'ClickPendingOrderListEventListener',
             extra: {
-                id: order_no
+                order_no: order_no
             }
         });
     }

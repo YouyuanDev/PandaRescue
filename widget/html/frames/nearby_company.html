@@ -53,12 +53,17 @@
         }
         //展示附近商户信息
     function showCompany() {
-        if (company_data) {
+        if (company_data!=undefined) {
             var template = "";
             for (var i = 0; i < company_data.length; i++) {
-                template += (companyListTemplate(company_data[i].company_user_no, company_data[i].company_name, company_data[i].address, getDistance(company_data[i].distance)));
+                template += (companyListTemplate(company_data[i].company_no, company_data[i].company_name, company_data[i].address, getDistance(company_data[i].distance)));
             }
             $('#poilist-ul').append(template);
+            if(company_data.length<=0){
+              $('#poilist-ul').append(makeEmptyTemplate("暂无数据!"));
+            }
+        }else{
+          $('#poilist-ul').append(makeEmptyTemplate("暂无数据!"));
         }
     }
     //计算模板中所需距离
@@ -101,9 +106,9 @@
         api.addEventListener({
             name: 'CompanyInfoScrollEventListener'
         }, function(ret, err) {
-            var company_user_no = ret.value.id;
-            if (company_user_no != undefined) {
-                var $obj = $("li[data-no='" + company_user_no + "']");
+            var company_no = ret.value.id;
+            if (company_no != undefined) {
+                var $obj = $("li[data-no='" + company_no + "']");
                 if ($obj != undefined) {
                     try {
                         $obj.addClass('pr-color');

@@ -222,13 +222,30 @@
             }, function(rets, errs) {
                 if (rets) {
                     if (rets.success) {
+                        var account_type = rets.accountType;
                         toastSuccess(rets.msg);
-                        var userInfo={};
-                        userInfo["phone"]=phone;
-                        userInfo["password"]=password;
+                        var userInfo = {};
+                        userInfo["phone"] = phone;
+                        userInfo["password"] = password;
+                        api.sendEvent({
+                            name: 'ChangeAccountTypeEvent',
+                            extra: {
+                                account_type: account_type
+                            }
+                        });
+                        //绑定推送
+                        bindPush();
+                        var roles = rets.roles;
+                        //加入现在的组
+                        if (roles != undefined) {
+                            var rolelist = roles.split(";");
+                            for (i = 0; i < rolelist.length; i++) {
+                                joinPushGroup(rolelist[i]);
+                            }
+                        }
                         api.setPrefs({
                             key: 'userInfo',
-                            value:userInfo
+                            value: userInfo
                         });
                         api.closeToWin({
                             name: 'root'
