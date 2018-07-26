@@ -834,6 +834,7 @@
                 if (rets.success) {
                     //存在进行中订单
                     updateOrderStatus(rets.order_no);
+                    toastSuccess("发现未完成订单");
                 } else {
                     //不存在进行中订单
                     if (g_account_type == "person_user") {
