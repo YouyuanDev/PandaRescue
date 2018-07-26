@@ -861,7 +861,8 @@
                     toastSuccess("发现未完成订单");
 
                 } else {
-
+                    //为了关闭定时器
+                    updateOrderStatus(undefined);
                     if (rets.relogin) {
                         //session过期，重新登录 000
                         toastFail(rets.msg);
