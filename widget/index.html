@@ -98,10 +98,15 @@
         getUserSession();
         map = api.require('bMap');
         registLocatingEvent();
-        registerSosEnent();
+
+        registerSosEvent();
         registerOrderStatusEvent();
         registerCancelOrderEvent();
         registerCompanyListEvent();
+
+        registerReceiptEvent();
+        registerPendingOrderListEvent();
+
         initMapSDK();
 
     };
@@ -148,7 +153,7 @@
         });
 
     }
-    //3.显示用户位置
+    //3.设置是否显示用户位置
     function showUserLocation() {
         map.showUserLocation({
             isShow: true,
@@ -183,14 +188,12 @@
             }
         });
     }
-    //初始化地图成功
+    //初始化地图成功,获取最新订单信息
     function initMapSDKOK() {
-
         getCurrentOrder(g_account_type);
-
     }
-    //7.设置商户标注信息
-    function setAnnotations(annotations) {
+    //设置商户标注信息
+    function setCompanyAnnotations(annotations) {
         //此处应获取附近的商户信息  121.498034  31.385146
         map.addAnnotations({
             annotations: annotations,
@@ -215,56 +218,33 @@
             }
         });
     }
-    //加载附近商户的信息
-    function loadNearbyCompany() {
-        if (g_my_lon != undefined && g_my_lat != undefined) {
-            var s = 'http://' + serverIP + '/PersonUser/getNearByCompanyUser.action';
-            api.ajax({
-                url: s,
-                method: 'post',
-                data: {
-                    values: {
-                        lon: g_my_lon,
-                        lat: g_my_lat
-                    }
-                }
-            }, function(rets, errs) {
-                if (rets) {
-                    var annotations = [];
-                    g_CU.length = 0;
-                    for (var i = 0; i < rets.length; i++) {
-                        var temp = {
-                            "id": i,
-                            "lon": rets[i].company_location_lon,
-                            "lat": rets[i].company_location_lat
-                        };
-                        annotations.push(temp);
-                        //g_CU.push(rets[i].company_user_no);
-                        g_CU.push({
-                            id: i,
-                            company_user_no: rets[i].company_user_no
-                        });
-                    }
-                    setAnnotations(annotations);
-                    for (var i = 0; i < rets.length; i++) {
-                        setBubble(i, rets[i].company_name);
-                    }
-                    openCompanyFrame(rets);
-                    openLocatingButton();
-                    openSosButton();
-                } else {
-                    api.alert({
-                        msg: errs.msg
-                    });
-                    openCompanyFrame(rets);
-                    openLocatingButton();
-                    openSosButton();
-                }
-            });
-        }
+    //设置所有待接单订单标注信息
+    function setPendingOrderAnnotations(annotations){
+      map.addAnnotations({
+          annotations: annotations,
+          icon: 'widget://image/help_64.png',
+          draggable: false
+      }, function(ret) {
+          if (ret) {
+              if (ret.eventType == "click") {
+                  var company_user_no;
+                  for (var i = 0; i < g_CU.length; i++) {
+                      if (g_CU[i].id == ret.id) {
+                          company_user_no = g_CU[i].company_user_no;
+                      }
+                  }
+                  api.sendEvent({
+                      name: 'CompanyInfoScrollEventListener',
+                      extra: {
+                          id: company_user_no
+                      }
+                  });
+              }
+          }
+      });
     }
-    //设置标注弹出气泡
-    function setBubble(bubble_id, company_name) {
+    //设置商户标注弹出气泡
+    function setCompanyBubble(bubble_id, company_name) {
         map.setBubble({
             id: bubble_id,
             // bgImg: 'widget://image/bubble_bg.png',
@@ -280,13 +260,35 @@
                 illusAlign: 'left'
             }
         }, function(ret) {
-            if (ret) {
-                alert(JSON.stringify(ret));
-            }
+            // if (ret) {
+            //     alert(ret.eventType);
+            // }
         });
     }
-    //标注弹出气泡
-    function popupBubble(company_no) {
+    //设置未接单订单标注弹出气泡
+    function setPendingOrderBubble(bubble_id, company_name) {
+        map.setBubble({
+            id: bubble_id,
+            // bgImg: 'widget://image/bubble_bg.png',
+            content: {
+                title: company_name,
+                subTitle: company_name,
+            },
+            styles: {
+                titleColor: '#000',
+                titleSize: 16,
+                subTitleColor: '#61c721',
+                subTitleSize: 12,
+                illusAlign: 'left'
+            }
+        }, function(ret) {
+            // if (ret) {
+            //     alert(ret.eventType);
+            // }
+        });
+    }
+    //商户标注弹出气泡
+    function popupCompanyBubble(company_no) {
         for (var i = 0; i < g_CU.length; i++) {
             if (g_CU[i].company_user_no == company_no) {
                 company_no = g_CU[i].id;
@@ -298,8 +300,20 @@
             });
         }
     }
-
-    //定位按钮
+    //待接单标注弹出气泡
+    function popupPendingOrderBubble(company_no) {
+        for (var i = 0; i < g_CU.length; i++) {
+            if (g_CU[i].company_user_no == company_no) {
+                company_no = g_CU[i].id;
+            }
+        }
+        if (company_no != undefined) {
+            map.popupBubble({
+                id: company_no
+            });
+        }
+    }
+    //打开定位按钮
     function openLocatingButton() {
         api.openFrame({
             name: 'locating_button',
@@ -315,7 +329,7 @@
             }
         });
     }
-    //求救按钮
+    //打开求救按钮
     function openSosButton() {
         api.openFrame({
             name: 'help_button',
@@ -331,12 +345,45 @@
             }
         });
     }
+    //打开接单按钮
+    function openReceiptButton(){
+      api.openFrame({
+          name: 'receipt_button',
+          url: './html/frames/receipt_button.html',
+          rect: {
+              x: api.winWidth - 74,
+              y: api.winHeight - 260,
+              w: 64,
+              h: 64
+          },
+          pageParam: {
 
-    //代开frame
+          }
+      });
+    }
+    //打开附近商户信息frame
     function openCompanyFrame(rets) {
         api.openFrame({
             name: 'nearby_company',
             url: './html/frames/nearby_company.html',
+            rect: {
+                x: 10,
+                y: api.winHeight - 190,
+                w: api.winWidth - 20,
+                h: 180
+            },
+            vScrollBarEnabled: false,
+            pageParam: {
+                company: rets,
+                map: map
+            }
+        });
+    }
+    //打开待接单的订单信息frame
+    function openPendingorderFrame(rets) {
+        api.openFrame({
+            name: 'pending_order',
+            url: './html/frames/pending_order.html',
             rect: {
                 x: 10,
                 y: api.winHeight - 190,
@@ -355,7 +402,15 @@
         api.addEventListener({
             name: 'ClickCompanyListEventListener'
         }, function(ret, err) {
-            popupBubble(ret.value.company_no);
+            popupCompanyBubble(ret.value.company_no);
+        });
+    }
+    //监听待接单列表点击事件
+    function registerPendingOrderListEvent() {
+        api.addEventListener({
+            name: 'ClickPendingOrderListEventListener'
+        }, function(ret, err) {
+            popupPendingOrderBubble(ret.value.company_no);
         });
     }
     //设置用户位置
@@ -370,7 +425,7 @@
         });
     }
     //求救点击事件
-    function registerSosEnent() {
+    function registerSosEvent() {
         api.addEventListener({
             name: 'sosEvent'
         }, function(ret, err) {
@@ -392,6 +447,14 @@
                     duration: 200
                 }
             });
+        });
+    }
+    //接单点击事件
+    function registerReceiptEvent() {
+        api.addEventListener({
+            name: 'receiptEvent'
+        }, function(ret, err) {
+             alert("点击了接单，开始接单后操作");
         });
     }
     //监听生成订单后事件
@@ -425,7 +488,6 @@
         });
     }
     //取消订单事件
-    //监听订单状态改变事件
     function registerCancelOrderEvent() {
         api.addEventListener({
             name: 'CancelOrderEvent'
@@ -693,6 +755,7 @@
                       loadNearbyCompany();
                   } else {
                     //如果是商户用户,则显示所有pending订单
+                      loadAllPendingOrder();
                   }
                 }
             } else {
@@ -734,6 +797,102 @@
         //切换至商户
         alert('切换至商户');
 
+    }
+    //加载附近商户的信息
+    function loadNearbyCompany() {
+        if (g_my_lon != undefined && g_my_lat != undefined) {
+            var s = 'http://' + serverIP + '/PersonUser/getNearByCompanyUser.action';
+            api.ajax({
+                url: s,
+                method: 'post',
+                data: {
+                    values: {
+                        lon: g_my_lon,
+                        lat: g_my_lat
+                    }
+                }
+            }, function(rets, errs) {
+                if (rets) {
+                    var annotations = [];
+                    g_CU.length = 0;
+                    for (var i = 0; i < rets.length; i++) {
+                        var temp = {
+                            "id": i,
+                            "lon": rets[i].company_location_lon,
+                            "lat": rets[i].company_location_lat
+                        };
+                        annotations.push(temp);
+                        //g_CU.push(rets[i].company_user_no);
+                        g_CU.push({
+                            id: i,
+                            company_user_no: rets[i].company_user_no
+                        });
+                    }
+                    setPendingOrderAnnotations(annotations);
+                    for (var i = 0; i < rets.length; i++) {
+                        setPendingOrderBubble(i, rets[i].company_name);
+                    }
+                    openCompanyFrame(rets);
+                    openLocatingButton();
+                    openSosButton();
+                } else {
+                    api.alert({
+                        msg: errs.msg
+                    });
+                    openCompanyFrame(rets);
+                    openLocatingButton();
+                    openSosButton();
+                }
+            });
+        }
+    }
+    //加载所有未接单的订单
+    function loadAllPendingOrder(){
+      if (g_my_lon != undefined && g_my_lat != undefined) {
+          var s = 'http://' + serverIP + '/PersonUser/getNearByCompanyUser.action';
+          api.ajax({
+              url: s,
+              method: 'post',
+              data: {
+                  values: {
+                      lon: g_my_lon,
+                      lat: g_my_lat
+                  }
+              }
+          }, function(rets, errs) {
+              if (rets) {
+                  var annotations = [];
+                  g_CU.length = 0;
+                  for (var i = 0; i < rets.length; i++) {
+                      var temp = {
+                          "id": i,
+                          "lon": rets[i].company_location_lon,
+                          "lat": rets[i].company_location_lat
+                      };
+                      annotations.push(temp);
+                      //g_CU.push(rets[i].company_user_no);
+                      g_CU.push({
+                          id: i,
+                          company_user_no: rets[i].company_user_no
+                      });
+                  }
+                  setPendingOrderAnnotations(annotations);
+                  for (var i = 0; i < rets.length; i++) {
+                      setPendingOrderBubble(i, rets[i].company_name);
+                  }
+                  openCompanyFrame(rets);
+                  openLocatingButton();
+                  openSosButton();
+              } else {
+                  api.alert({
+                      msg: errs.msg
+                  });
+                  openCompanyFrame(rets);
+                  openLocatingButton();
+                  openSosButton();
+              }
+          });
+      }
     }
 </script>
 
