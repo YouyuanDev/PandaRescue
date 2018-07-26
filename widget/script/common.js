@@ -260,8 +260,10 @@ function bindPush() {
         userId: api.deviceId
     }, function(ret, err) {
         if (ret.status == true) {
+            alert(api.deviceId + "bind成功");
             toastSuccess(api.deviceId + "bind成功");
         } else {
+            alert(api.deviceId + "bind"+err.msg);
             toastFail(err.msg);
         }
     });
