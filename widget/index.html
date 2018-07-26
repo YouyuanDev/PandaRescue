@@ -503,7 +503,7 @@
             name: 'ChangeAccountTypeEvent'
         }, function(ret, err) {
             g_account_type = ret.value.account_type;
-            getCurrentOrder(g_account_type);
+            getCurrentOrder();
         });
     }
     //获取订单状态
@@ -596,9 +596,9 @@
                         } else if (status_code == "inservice") {
 
                         } else if (status_code == "finished") {
-                            getCurrentOrder(g_account_type);
+                            getCurrentOrder();
                         } else if (status_code == "cancelled") {
-                            getCurrentOrder(g_account_type);
+                            getCurrentOrder();
                         }
                     }
                     if (status_name != undefined && status_name != "") {
@@ -789,7 +789,7 @@
                 if (rets.success) {
                     g_account_type = rets.accountType;
                     alert(g_account_type);
-                    getCurrentOrder(g_account_type);
+                    getCurrentOrder();
                     //绑定推送
                     bindPush();
                     var roles = rets.roles;
@@ -800,7 +800,7 @@
                             joinPushGroup(rolelist[i]);
                         }
                     }
-                    alert("自动登录成功!");
+                    toastSuccess("自动登录成功!");
                 } else {
                     toastFail(rets.msg);
                     api.openWin({
@@ -816,7 +816,7 @@
         });
     }
     //获取用户最新的订单状态
-    function getCurrentOrder(usertype) {
+    function getCurrentOrder() {
         //请求后台判断用户是否有正在进行的订单
         var s = 'http://' + serverIP + '/Order/getCurrentOrder.action';
         api.ajax({
@@ -824,7 +824,6 @@
             method: 'post',
             data: {
                 values: {
-                    usertype: usertype
                 }
             }
         }, function(rets, errs) {
@@ -1074,7 +1073,7 @@
 
     function sendPush() {
         alert("调用getCurrentOrder");
-        getCurrentOrder(g_account_type);
+        getCurrentOrder();
     }
     //设置推送回调函数
     function setPushListener() {
@@ -1089,7 +1088,7 @@
                   if(jsonObject.success){
                     var order_no=jsonObject.OrderNo;
                     alert("回调getCurrentOrder order_no:"+order_no);
-                    getCurrentOrder(g_account_type);
+                    getCurrentOrder();
                   }
 
                 }
