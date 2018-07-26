@@ -277,6 +277,7 @@ function unbindPush() {
         userId: api.deviceId
     }, function(ret, err) {
         if (ret.status) {
+            alert('解除绑定成功');
             toastSuccess('解除绑定成功');
         } else {
             toastFail(err.msg);
@@ -293,8 +294,10 @@ function joinPushGroup(groupName) {
     }, function(ret, err) {
         if (ret.status) {
             var s = '加入组' + groupName + '成功';
+            alert(s);
             toastSuccess(s);
         } else {
+             alert('加入组'+err.msg);
             toastFail(err.msg);
         }
     });
@@ -309,6 +312,7 @@ function leaveAllPushGroup() {
     push.leaveAllGroup(function(ret, err) {
         if (ret) {
             var s = '退出所有组成功';
+            alert(s);
             toastSuccess(s);
         } else {
             toastFail(err.msg);
