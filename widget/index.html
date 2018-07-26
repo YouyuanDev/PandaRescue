@@ -114,7 +114,7 @@
         registerOrderStatusEvent();
         registerCancelOrderEvent();
         registerCompanyListEvent();
-
+        setPushListener();
         registerReceiptEvent();
         registerPendingOrderListEvent();
         registerChangeAccountTypeEvent();
@@ -1080,7 +1080,7 @@
         var push = api.require('push');
         push.setListener(function(ret, err) {
             if (ret) {
-                //alert("setPushListener回调函数");
+                alert("setPushListener回调函数");
                 api.alert({
                     msg: ret.data
                 });
