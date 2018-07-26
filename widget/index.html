@@ -200,24 +200,25 @@
     }
     //初始化地图成功,获取最新订单信息
     function initMapSDKOK() {
-        getUserSession();
+        //getUserSession();
+        getCurrentOrder();
     }
 
 
     //注册app前台，后台切换事件
-    function registerPauseResumeEvent(){
-      api.addEventListener({
-          name: 'resume'
-      }, function(ret, err) {
-          alert('应用回到前台');
-          getCurrentOrder();
-      });
-      api.addEventListener({
-          name: 'pause'
-      }, function(ret, err) {
-          alert('应用进入后台');
-          //getCurrentOrder();
-      });
+    function registerPauseResumeEvent() {
+        api.addEventListener({
+            name: 'resume'
+        }, function(ret, err) {
+            alert('应用回到前台');
+            getCurrentOrder();
+        });
+        api.addEventListener({
+            name: 'pause'
+        }, function(ret, err) {
+            alert('应用进入后台');
+            //getCurrentOrder();
+        });
     }
 
 
@@ -845,8 +846,7 @@
             url: s,
             method: 'post',
             data: {
-                values: {
-                }
+                values: {}
             }
         }, function(rets, errs) {
             //清屏操作
@@ -857,14 +857,22 @@
                     updateOrderStatus(rets.order_no);
                     toastSuccess("发现未完成订单");
                 } else {
-                    //不存在进行中订单
-                    if (g_account_type == "person_user") {
-                        //如果是个人用则显示附近商户
-                        loadNearbyCompany();
+
+                    if (rets.relogin) {
+                        //session过期，重新登录 000
+                        getUserSession();
                     } else {
-                        //如果是商户用户,则显示所有pending订单
-                        loadAllPendingOrder();
+                        //不存在进行中订单
+                        if (g_account_type == "person_user") {
+                            //如果是个人用则显示附近商户
+                            loadNearbyCompany();
+                        } else {
+                            //如果是商户用户,则显示所有pending订单
+                            loadAllPendingOrder();
+                        }
                     }
+
+
                 }
             } else {
                 toastFail("getCurrentOrder异常,请稍后重试!");
@@ -1104,20 +1112,20 @@
             if (ret) {
                 //alert("setPushListener回调函数");
 
-                if(ret.data){
-                  //alert("回调函数:"+ret.data);
-                  var jsonObject=JSON.parse(ret.data);
-                  if(jsonObject.success){
-                    var order_no=jsonObject.OrderNo;
-                    alert("回调getCurrentOrder order_no:"+order_no);
-                    getCurrentOrder();
-                  }
+                if (ret.data) {
+                    //alert("回调函数:"+ret.data);
+                    var jsonObject = JSON.parse(ret.data);
+                    if (jsonObject.success) {
+                        var order_no = jsonObject.OrderNo;
+                      //  alert("回调getCurrentOrder order_no:" + order_no);
+                        getCurrentOrder();
+                    }
 
                 }
 
-                api.alert({
-                    msg: ret.data
-                });
+                // api.alert({
+                //     msg: ret.data
+                // });
                 //alert(JSON.stringify(ret));
             } else {
                 //alert(JSON.stringify(err));
