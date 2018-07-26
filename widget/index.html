@@ -1084,7 +1084,8 @@
 
                 if(ret.data){
                   alert("回调函数:"+ret.data);
-                  var order_no=ret.data.OrderNo;
+                  var jsonObject=JSON.parse(ret.data);
+                  var order_no=jsonObject.OrderNo;
                   alert("11order_no:"+order_no);
                   getCurrentOrder(g_account_type);
                 }
