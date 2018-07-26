@@ -621,9 +621,9 @@
                         } else if (status_code == "inservice") {
 
                         } else if (status_code == "finished") {
-                            getCurrentOrder();
+
                         } else if (status_code == "cancelled") {
-                            getCurrentOrder();
+
                         }
                     }
                     if (status_name != undefined && status_name != "") {
@@ -856,8 +856,10 @@
             if (rets) {
                 if (rets.success) {
                     //存在进行中订单
+                    g_account_type = rets.accountType;
                     updateOrderStatus(rets.order_no);
                     toastSuccess("发现未完成订单");
+
                 } else {
 
                     if (rets.relogin) {
