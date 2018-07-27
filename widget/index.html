@@ -196,6 +196,7 @@
                 } else {
                     //alert('获取用户信息时出错,错误信息:' + err.code);
                     map.stopLocation();
+                    toastFail('getUserLocation 失败');
                 }
             });
 
@@ -519,9 +520,9 @@
                         } else {
                             toastFail(ret.message);
                             if (ret.relogin) {
-                              api.sendEvent({
-                                  name: 'reloginEvent'
-                              });
+                                api.sendEvent({
+                                    name: 'reloginEvent'
+                                });
                             }
                         }
                     } else {
@@ -689,6 +690,65 @@
             }
         });
     }
+
+    //上传坐标
+    function SendLocationToServer(my_location,order_no,distanceToLastLocation) {
+        var s = 'http://' + serverIP + '/Order/updateLocation.action';
+        api.ajax({
+            url: s,
+            method: 'post',
+            timeout: 30,
+            dataType: 'json',
+            data: {
+                values: {
+                    order_no: order_no,
+                    my_location: my_location
+                }
+            }
+        }, function(ret, err) {
+            if (ret) {
+                if (ret.success) {
+
+                  if(distanceToLastLocation>10){
+                    map.showUserLocation({
+                        isShow: true,
+                        trackingMode: 'none'
+                    });
+                  }
+
+                    g_my_lon = now_lon;
+                    g_my_lat = now_lat;
+                    //更新对方的位置
+                    var person_user_location = ret.person_user_location;
+                    var company_user_location = ret.company_user_location;
+                    if (g_account_type == "person_user") {
+                        if (company_user_location == undefined || company_user_location == "") {
+                            return;
+                        }
+                        var lon_lat = company_user_location.split(',');
+                        if (lon_lat.length > 1) {
+                            var lon = lon_lat[0];
+                            var lat = lon_lat[1];
+                            updateCompanyUserLocation(g_CompanyList.length, lon, lat);
+                            drawRouteFromBeginToEnd(g_my_lon, g_my_lat, lon, lat);
+                        }
+                    } else if (g_account_type == "company_user") {
+                        if (person_user_location == undefined || person_user_location == "") {
+                            return;
+                        }
+                        var lon_lat = person_user_location.split(',');
+                        if (lon_lat.length > 1) {
+                            var lon = lon_lat[0];
+                            var lat = lon_lat[1];
+                            updatePersonUserLocation(g_CompanyList.length, lon, lat);
+                            drawRouteFromBeginToEnd(g_my_lon, g_my_lat, lon, lat, );
+                        }
+                    }
+                }
+            }
+        });
+    }
+
     //更新订单用户坐标
     function updateOrderUserLocation(order_no) {
         map.getLocation({
@@ -697,8 +757,10 @@
             filter: 1
         }, function(ret, err) {
             if (ret.status) {
+              //alert("updateOrderUserLocation");
                 var now_lon = ret.lon;
                 var now_lat = ret.lat;
+                var my_location = now_lon + "," + now_lat;
                 //获取上次和当前距离差，大于1m则更新位置
                 if (g_my_lon != undefined && g_my_lat != undefined && now_lon != undefined && now_lat != undefined) {
                     map.getDistance({
@@ -712,66 +774,18 @@
                         }
                     }, function(ret) {
                         if (ret.status) {
-                            var distance = ret.distance;
-                            if ((distance != undefined && distance > 10) || g_my_lon == undefined || g_my_lon == "") {
-                                var my_location = now_lon + "," + now_lat;
-                                var s = 'http://' + serverIP + '/Order/updateLocation.action';
-                                api.ajax({
-                                    url: s,
-                                    method: 'post',
-                                    timeout: 30,
-                                    dataType: 'json',
-                                    data: {
-                                        values: {
-                                            order_no: order_no,
-                                            my_location: my_location
-                                        }
-                                    }
-                                }, function(ret, err) {
-                                    if (ret) {
-                                        if (ret.success) {
-                                            map.showUserLocation({
-                                                isShow: true,
-                                                trackingMode: 'none'
-                                            });
-                                            g_my_lon = now_lon;
-                                            g_my_lat = now_lat;
-                                            //更新对方的位置
-                                            var person_user_location = ret.person_user_location;
-                                            var company_user_location = ret.company_user_location;
-                                            if (g_account_type == "person_user") {
-                                                if (company_user_location == undefined || company_user_location == "") {
-                                                    return;
-                                                }
-                                                var lon_lat = company_user_location.split(',');
-                                                if (lon_lat.length > 1) {
-                                                    var lon = lon_lat[0];
-                                                    var lat = lon_lat[1];
-                                                    updateCompanyUserLocation(g_CompanyList.length, lon, lat);
-                                                    drawRouteFromBeginToEnd(g_my_lon, g_my_lat, lon, lat);
-                                                }
-                                            } else if (g_account_type == "company_user") {
-                                                if (person_user_location == undefined || person_user_location == "") {
-                                                    return;
-                                                }
-                                                var lon_lat = person_user_location.split(',');
-                                                if (lon_lat.length > 1) {
-                                                    var lon = lon_lat[0];
-                                                    var lat = lon_lat[1];
-                                                    updatePersonUserLocation(g_CompanyList.length, lon, lat);
-                                                    drawRouteFromBeginToEnd(g_my_lon, g_my_lat, lon, lat, );
-                                                }
-                                            }
-                                        }
-                                    }
-                                });
-                            }
+                            //var distance = ret.distance;
+                            //alert("ret.distance"+ret.distance);
+                            SendLocationToServer(my_location,order_no,ret.distance);
                         }
                     });
+                }else{
+                  SendLocationToServer(my_location,order_no,100);
                 }
             } else {
                 //alert('获取用户信息时出错,错误信息:' + err.code);
-                map.stopLocation();
+                //map.stopLocation();
+                toastFail('获取用户信息时出错,错误信息:' + err.code);
             }
         });
     }
@@ -941,8 +955,6 @@
         }, function(rets, errs) {
             if (rets) {
                 if (rets.success) {
-                    g_account_type = rets.accountType;
-                    getCurrentOrder();
                     //绑定推送
                     bindPush(phone);
                     var roles = rets.roles;
@@ -954,6 +966,13 @@
                         }
                     }
                     toastSuccess("自动登录成功!");
+                    api.sendEvent({
+                        name: 'ChangeAccountTypeEvent',
+                        extra: {
+                            account_type: rets.accountType
+                        }
+                    });
+
                 } else {
                     toastFail(rets.msg);
                     api.openWin({
@@ -982,9 +1001,9 @@
             //清屏操作
             clearPanel();
             if (rets) {
+                g_account_type = rets.accountType;
                 if (rets.success) {
                     //存在进行中订单
-                    g_account_type = rets.accountType;
                     updateOrderStatus(rets.order_no);
                     toastSuccess("发现未完成订单");
 
@@ -1004,9 +1023,11 @@
                         if (g_account_type == "person_user") {
                             //如果是个人用则显示附近商户
                             loadNearbyCompany();
-                        } else {
+                        } else if (g_account_type == "company_user") {
                             //如果是商户用户,则显示所有pending订单
                             loadAllPendingOrder();
+                        } else {
+                            toastFail("g_account_type=" + g_account_type);
                         }
                     }
 
@@ -1140,8 +1161,8 @@
                     // openReceiptButton();
                 }
             });
-        }else{
-          toastFail("无定位信息");
+        } else {
+            toastFail("无定位信息");
         }
     }
     //切换至普通账户
