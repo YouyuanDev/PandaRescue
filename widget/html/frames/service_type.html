@@ -262,13 +262,17 @@
                                         msg: ret.message
                                     });
                                     if (ret.success) {
-                                        var order_no=ret.OrderNo;
+                                        //var order_no=ret.OrderNo;
+                                        //alert(order_no+"完成");
                                         //发送订单完成事件
-                                        api.sendEvent({
-                                            name: 'OrderStatusEvent',
-                                            extra: {
-                                                order_no:order_no
-                                            }
+                                        // api.sendEvent({
+                                        //     name: 'OrderStatusEvent',
+                                        //     extra: {
+                                        //         order_no:order_no
+                                        //     }
+                                        // });
+                                        api.closeFrame({
+                                            name: 'service_type'
                                         });
                                     }
                                 } else {

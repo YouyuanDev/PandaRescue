@@ -44,39 +44,55 @@
 <script type="text/javascript" src="../../script/jquery-3.3.1.min.js"></script>
 <script type="text/javascript" src="../../script/common.js"></script>
 <script type="text/javascript">
-    var pending_order_data,g_service_type_dict,g_failure_type_dict;
+    var pending_order_data, g_service_type_dict, g_failure_type_dict;
     apiready = function() {
             var data = api.pageParam;
             pending_order_data = data.pendingorder;
-            g_service_type_dict=data.g_service_type_dict;
-            g_failure_type_dict=data.g_failure_type_dict;
+            g_service_type_dict = data.g_service_type_dict;
+            g_failure_type_dict = data.g_failure_type_dict;
             registerPendingOrderScrollEvent();
             showPendingOrder();
         }
         //展示待接单状态的订单信息
     function showPendingOrder() {
-        if (pending_order_data!=undefined) {
+        if (pending_order_data != undefined) {
             var template = "";
             for (var i = 0; i < pending_order_data.length; i++) {
-                var service_type_name=g_service_type_dict[pending_order_data[i].service_type_code];
-                if(service_type_name==undefined)
-                  service_type_name="";
-                var failure_type_name=g_failure_type_dict[pending_order_data[i].failure_type_code];
-                if(failure_type_name==undefined)
-                  failure_type_name="";
-                template += (pendingOrderListTemplate(pending_order_data[i].order_no, service_type_name,failure_type_name, getDistance(pending_order_data[i].distance)));
+                try {
+                    var service_type_name = g_service_type_dict[pending_order_data[i].service_type_code].service_type_name;
+                    if (service_type_name == undefined)
+                        service_type_name = "";
+                    var str = pending_order_data[i].failure_type_code_list;
+                    var code_list = str.split(',');
+                    var failure_type_name = "";
+                    for (var j = 0; j < code_list.length; j++) {
+                        if (code_list[j] != undefined && code_list[j] != "") {
+                            failure_type_name = failure_type_name + g_failure_type_dict[code_list[j]].failure_type_name + ",";
+                        }
+                    }
+                    if (failure_type_name.length > 0 && (failure_type_name.lastIndexOf(',') == failure_type_name.length - 1)) {
+                        failure_type_name = failure_type_name.substring(0, failure_type_name.length - 1);
+                    }
+                    if (code_list.length <= 0)
+                        failure_type_name = "";
+                    // var failure_type_name=g_failure_type_dict[pending_order_data[i].failure_type_code].failure_type_name;
+                    // if(failure_type_name==undefined)
+                    template += pendingOrderListTemplate(pending_order_data[i].order_no, service_type_name, failure_type_name, getDistance(pending_order_data[i].distance));
+                } catch (e) {
+                    alert(e);
+                }
             }
             $('#poilist-ul').append(template);
-            if(pending_order_data.length<=0){
-              $('.container').hide();
-              $(document.body).append(makeEmptyTemplate("暂无数据!"));
-            }else{
-              $('.pr-empty').remove();
-              $('.container').show();
+            if (pending_order_data.length <= 0) {
+                $('.container').hide();
+                $(document.body).append(makeEmptyTemplate("暂无数据!"));
+            } else {
+                $('.pr-empty').remove();
+                $('.container').show();
             }
-        }else{
-              $('.container').hide();
-              $(document.body).append(makeEmptyTemplate("暂无数据!"));
+        } else {
+            $('.container').hide();
+            $(document.body).append(makeEmptyTemplate("暂无数据!"));
         }
     }
     //计算模板中所需距离
