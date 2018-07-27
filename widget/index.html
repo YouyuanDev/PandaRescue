@@ -537,7 +537,7 @@
         if (order_no == undefined || order_no == "") {
             return;
         }
-        var s = 'http://' + serverIP + '/Order/getOrderByOrderNo.action';
+        var s = 'http://' + serverIP + '/Order/getOrderMapByOrderNo.action';
         api.ajax({
             url: s,
             method: 'post',
@@ -666,27 +666,41 @@
                             if (ret.status) {
                                 var distance = ret.distance;
                                 //if (distance != undefined && distance > 10) {
-                                    g_my_lon = now_lon;
-                                    g_my_lat = now_lat;
-                                    var my_location = now_lon + "," + now_lat;
-                                    var s = 'http://' + serverIP + '/Order/updateLocation.action';
-                                    api.ajax({
-                                        url: s,
-                                        method: 'post',
-                                        timeout: 30,
-                                        dataType: 'json',
-                                        data: {
-                                            values: {
-                                                order_no: order_no,
-                                                my_location: my_location
-                                            }
+                                g_my_lon = now_lon;
+                                g_my_lat = now_lat;
+                                var my_location = now_lon + "," + now_lat;
+                                var s = 'http://' + serverIP + '/Order/updateLocation.action';
+                                api.ajax({
+                                    url: s,
+                                    method: 'post',
+                                    timeout: 30,
+                                    dataType: 'json',
+                                    data: {
+                                        values: {
+                                            order_no: order_no,
+                                            my_location: my_location
                                         }
-                                    }, function(ret, err) {});
-                              //  }
+                                    }
+                                }, function(ret, err) {});
                             }
                         });
                     }
-                } else {}
+                } else {
+                    var my_location = "123,234";
+                    var s = 'http://' + serverIP + '/Order/updateLocation.action';
+                    api.ajax({
+                        url: s,
+                        method: 'post',
+                        timeout: 30,
+                        dataType: 'json',
+                        data: {
+                            values: {
+                                order_no: order_no,
+                                my_location: my_location
+                            }
+                        }
+                    }, function(ret, err) {});
+                }
             });
     }
     //打开订单状态Frame
@@ -772,7 +786,7 @@
                     });
                     $('.aui-title').append("<i>" + rets.accountType + "<i>");
                     return;
-                }else{
+                } else {
                     var data = api.getPrefs({
                         sync: true,
                         key: 'userInfo'
@@ -813,7 +827,6 @@
             if (rets) {
                 if (rets.success) {
                     g_account_type = rets.accountType;
-                    //alert(g_account_type);
                     getCurrentOrder();
                     //绑定推送
                     bindPush(phone);
@@ -894,9 +907,10 @@
         if (order_no != undefined && order_no != "") {
             openOrderStatusFrame();
             //开始定时器，定时更新订单状态和用户坐标
-            g_orderStatusInterval = setInterval(function() {
-                getOrderStatusInfo(order_no);
-            }, 3000);
+            // g_orderStatusInterval = setInterval(function() {
+            //     getOrderStatusInfo(order_no);
+            // }, 3000);
+            getOrderStatusInfo(order_no);
             g_userLocationInterval = setInterval(function() {
                 updateOrderUserLocation(order_no);
             }, 5000);
@@ -1128,7 +1142,7 @@
                     var jsonObject = JSON.parse(ret.data);
                     if (jsonObject.success) {
                         var order_no = jsonObject.OrderNo;
-                      //  alert("回调getCurrentOrder order_no:" + order_no);
+                        //  alert("回调getCurrentOrder order_no:" + order_no);
                         getCurrentOrder();
                     }
 
@@ -1146,13 +1160,14 @@
             }
         });
     }
-    function openLogin(){
-      api.openWin({
-          name: 'login',
-          url: './html/login/login.html',
-          reload: true,
-          pageParam: {}
-      });
+
+    function openLogin() {
+        api.openWin({
+            name: 'login',
+            url: './html/login/login.html',
+            reload: true,
+            pageParam: {}
+        });
     }
 </script>
 
