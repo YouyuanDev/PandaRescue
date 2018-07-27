@@ -669,7 +669,7 @@
                     }, function(ret) {
                         if (ret.status) {
                             var distance = ret.distance;
-                            if (distance != undefined && distance >10) {
+                            if (distance != undefined && distance > 10) {
                                 var my_location = now_lon + "," + now_lat;
                                 var s = 'http://' + serverIP + '/Order/updateLocation.action';
                                 api.ajax({
@@ -684,38 +684,39 @@
                                         }
                                     }
                                 }, function(ret, err) {
-                                    if (ret.success) {
-                                        map.showUserLocation({
-                                            isShow: true,
-                                            trackingMode: 'none'
-                                        });
-                                        g_my_lon = now_lon;
-                                        g_my_lat = now_lat;
-                                        //更新对方的位置
-                                        var person_user_location = ret.person_user_location;
-                                        var company_user_location = ret.company_user_location;
-                                        if (g_account_type == "person_user") {
-                                            if (company_user_location == undefined || company_user_location == "") {
-                                                return;
-                                            }
-                                            var lon_lat = company_user_location.split(',');
-                                            if (lon_lat.length > 1) {
-                                                var lon = lon_lat[0];
-                                                var lat = lon_lat[1];
-                                                updateCompanyUserLocation(g_CompanyList.length, lon, lat);
-                                            }
-                                        } else if (g_account_type == "company_user") {
-                                            if (person_user_location == undefined || person_user_location == "") {
-                                                return;
-                                            }
-                                            var lon_lat = person_user_location.split(',');
-                                            if (lon_lat.length > 1) {
-                                                var lon = lon_lat[0];
-                                                var lat = lon_lat[1];
-                                                updatePersonUserLocation(g_CompanyList.length, lon, lat);
+                                    if (ret) {
+                                        if (ret.success) {
+                                            map.showUserLocation({
+                                                isShow: true,
+                                                trackingMode: 'none'
+                                            });
+                                            g_my_lon = now_lon;
+                                            g_my_lat = now_lat;
+                                            //更新对方的位置
+                                            var person_user_location = ret.person_user_location;
+                                            var company_user_location = ret.company_user_location;
+                                            if (g_account_type == "person_user") {
+                                                if (company_user_location == undefined || company_user_location == "") {
+                                                    return;
+                                                }
+                                                var lon_lat = company_user_location.split(',');
+                                                if (lon_lat.length > 1) {
+                                                    var lon = lon_lat[0];
+                                                    var lat = lon_lat[1];
+                                                    updateCompanyUserLocation(g_CompanyList.length, lon, lat);
+                                                }
+                                            } else if (g_account_type == "company_user") {
+                                                if (person_user_location == undefined || person_user_location == "") {
+                                                    return;
+                                                }
+                                                var lon_lat = person_user_location.split(',');
+                                                if (lon_lat.length > 1) {
+                                                    var lon = lon_lat[0];
+                                                    var lat = lon_lat[1];
+                                                    updatePersonUserLocation(g_CompanyList.length, lon, lat);
+                                                }
                                             }
                                         }
-                                        //g_CompanyList[g_c]
                                     }
                                 });
                             }
