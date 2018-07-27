@@ -107,7 +107,6 @@
     var g_failure_type_dict = {};
     apiready = function() {
         fnSettingHeader();
-
         map = api.require('bMap');
         registLocatingEvent();
         registerSosEvent();
@@ -184,22 +183,20 @@
     }
     //5.获取用户位置信息
     function getUserLocation() {
-        map.getLocation({
-            accuracy: '10m',
-            autoStop: false,
-            filter: 1
-        }, function(ret, err) {
+        map.getCurrentLocation(
+            function(ret, err) {
+                if (ret.status) {
+                    //alert(ret.status);
+                    g_my_lon = ret.lon;
+                    g_my_lat = ret.lat;
+                    initMapSDKOK();
+                } else {
+                    //alert('获取用户信息时出错,错误信息:' + err.code);
+                    map.stopLocation();
+                }
+            });
 
-            if (ret.status) {
-                //alert(ret.status);
-                g_my_lon = ret.lon;
-                g_my_lat = ret.lat;
-                initMapSDKOK();
-            } else {
-                //alert('获取用户信息时出错,错误信息:' + err.code);
-                map.stopLocation();
-            }
-        });
+
     }
     //初始化地图成功,获取最新订单信息
     function initMapSDKOK() {
@@ -630,46 +627,49 @@
                         }
                     }
                     if (status_name != undefined && status_name != "") {
-                        api.sendEvent({
-                            name: 'UpdateOrderStatusEvent',
-                            extra: {
-                                status_name: status_name
-                            }
-                        });
+                        openOrderStatusFrame(status_name);
+                        // api.sendEvent({
+                        //     name: 'UpdateOrderStatusEvent',
+                        //     extra: {
+                        //         status_name: status_name
+                        //     }
+                        // });
                     }
                 }
+
             } else {
                 api.alert({
                     msg: JSON.stringify(err)
                 });
-                clearInterval(g_orderStatusInterval);
+                //clearInterval(g_orderStatusInterval);
             }
         });
     }
     //更新订单用户坐标
     function updateOrderUserLocation(order_no) {
-        map.getCurrentLocation(
-            function(ret, err) {
-                if (ret.status) {
-                    var now_lon = ret.lon;
-                    var now_lat = ret.lat;
-                    //获取上次和当前距离差，大于1m则更新位置
-                    if (g_my_lon != undefined && g_my_lat != undefined && now_lon != undefined && now_lat != undefined) {
-                        map.getDistance({
-                            start: {
-                                lon: g_my_lon,
-                                lat: g_my_lat
-                            },
-                            end: {
-                                lon: now_lon,
-                                lat: now_lat
-                            }
-                        }, function(ret) {
-                            if (ret.status) {
-                                var distance = ret.distance;
-                                //if (distance != undefined && distance > 10) {
-                                g_my_lon = now_lon;
-                                g_my_lat = now_lat;
+        map.getLocation({
+            accuracy: '10m',
+            autoStop: false,
+            filter: 1
+        }, function(ret, err) {
+            if (ret.status) {
+                var now_lon = ret.lon;
+                var now_lat = ret.lat;
+                //获取上次和当前距离差，大于1m则更新位置
+                if (g_my_lon != undefined && g_my_lat != undefined && now_lon != undefined && now_lat != undefined) {
+                    map.getDistance({
+                        start: {
+                            lon: g_my_lon,
+                            lat: g_my_lat
+                        },
+                        end: {
+                            lon: now_lon,
+                            lat: now_lat
+                        }
+                    }, function(ret) {
+                        if (ret.status) {
+                            var distance = ret.distance;
+                            if (distance != undefined && distance >10) {
                                 var my_location = now_lon + "," + now_lat;
                                 var s = 'http://' + serverIP + '/Order/updateLocation.action';
                                 api.ajax({
@@ -683,30 +683,53 @@
                                             my_location: my_location
                                         }
                                     }
-                                }, function(ret, err) {});
-                            }
-                        });
-                    }
-                } else {
-                    var my_location = "123,234";
-                    var s = 'http://' + serverIP + '/Order/updateLocation.action';
-                    api.ajax({
-                        url: s,
-                        method: 'post',
-                        timeout: 30,
-                        dataType: 'json',
-                        data: {
-                            values: {
-                                order_no: order_no,
-                                my_location: my_location
+                                }, function(ret, err) {
+                                    if (ret.success) {
+                                        map.showUserLocation({
+                                            isShow: true,
+                                            trackingMode: 'none'
+                                        });
+                                        g_my_lon = now_lon;
+                                        g_my_lat = now_lat;
+                                        //更新对方的位置
+                                        var person_user_location = ret.person_user_location;
+                                        var company_user_location = ret.company_user_location;
+                                        if (g_account_type == "person_user") {
+                                            if (company_user_location == undefined || company_user_location == "") {
+                                                return;
+                                            }
+                                            var lon_lat = company_user_location.split(',');
+                                            if (lon_lat.length > 1) {
+                                                var lon = lon_lat[0];
+                                                var lat = lon_lat[1];
+                                                updateCompanyUserLocation(g_CompanyList.length, lon, lat);
+                                            }
+                                        } else if (g_account_type == "company_user") {
+                                            if (person_user_location == undefined || person_user_location == "") {
+                                                return;
+                                            }
+                                            var lon_lat = person_user_location.split(',');
+                                            if (lon_lat.length > 1) {
+                                                var lon = lon_lat[0];
+                                                var lat = lon_lat[1];
+                                                updatePersonUserLocation(g_CompanyList.length, lon, lat);
+                                            }
+                                        }
+                                        //g_CompanyList[g_c]
+                                    }
+                                });
                             }
                         }
-                    }, function(ret, err) {});
+                    });
                 }
-            });
+            } else {
+                //alert('获取用户信息时出错,错误信息:' + err.code);
+                map.stopLocation();
+            }
+        });
     }
     //打开订单状态Frame
-    function openOrderStatusFrame() {
+    function openOrderStatusFrame(status_name) {
         api.openFrame({
             name: 'order_status',
             url: './html/frames/order_status.html',
@@ -718,9 +741,21 @@
             },
             bgColor: 'transparent',
             vScrollBarEnabled: false,
-            pageParam: {}
+            pageParam: {
+                status_name: status_name
+            }
         });
+        // api.setFrameAttr({
+        //     name: 'order_status',
+        //     hidden: true
+        // });
     }
+    // function openOrderStatusFrame() {
+    //   api.setFrameAttr({
+    //       name: 'order_status',
+    //       hidden: false
+    //   });
+    // }
     //更新商户所派人员坐标
     function updateCompanyUserLocation(id, lon, lat) {
         map.annotationExist({
@@ -878,6 +913,7 @@
                 } else {
                     //为了关闭定时器
                     updateOrderStatus(undefined);
+                    map.stopLocation();
                     if (rets.relogin) {
                         //session过期，重新登录 000
                         toastFail(rets.msg);
@@ -904,19 +940,25 @@
     //更新当前订单的状态
     function updateOrderStatus(order_no) {
         //关闭附近商户列表和求救Frame
-        clearInterval(g_orderStatusInterval);
-        clearInterval(g_userLocationInterval);
-        if (order_no != undefined && order_no != "") {
-            openOrderStatusFrame();
-            //开始定时器，定时更新订单状态和用户坐标
-            // g_orderStatusInterval = setInterval(function() {
-            //     getOrderStatusInfo(order_no);
-            // }, 3000);
-            getOrderStatusInfo(order_no);
-            g_userLocationInterval = setInterval(function() {
-                updateOrderUserLocation(order_no);
-            }, 5000);
-        }
+        // clearInterval(g_orderStatusInterval);
+        // clearInterval(g_userLocationInterval);
+        //openOrderStatusFrame();
+        getOrderStatusInfo(order_no);
+        updateOrderUserLocation(order_no);
+
+        //if (order_no != undefined && order_no != "") {
+
+        //openOrderStatusFrame();
+        //开始定时器，定时更新订单状态和用户坐标
+        // g_orderStatusInterval = setInterval(function() {
+        //     getOrderStatusInfo(order_no);
+        // }, 3000);
+
+        //g_userLocationInterval = setInterval(function() {
+        //updateOrderUserLocation(order_no);
+        //}, 5000);
+
+        //}
     }
 
     //加载附近商户的信息

@@ -39,7 +39,12 @@
 <script type="text/javascript">
     //var company_data;
     apiready = function() {
-            registerUpdateOrderStatusEvent();
+            //registerUpdateOrderStatusEvent();
+            var data = api.pageParam;
+            var status_name = data.status_name;
+            if(status_name!=undefined){
+               $('.order-status').text(status_name);
+            }
     }
     //取消订单事件
     function cacelOrder() {
@@ -50,16 +55,17 @@
       });
     }
     //监听订单状态改变事件
-    function registerUpdateOrderStatusEvent(){
-      api.addEventListener({
-          name: 'UpdateOrderStatusEvent'
-      }, function(ret, err) {
-          var status_name=ret.value.status_name;
-          if(status_name!=undefined){
-              $('.order-status').text(status_name);
-          }
-      });
-    }
+    // function registerUpdateOrderStatusEvent(){
+    //   api.addEventListener({
+    //       name: 'UpdateOrderStatusEvent'
+    //   }, function(ret, err) {
+    //       var status_name=ret.value.status_name;
+    //       alert(status_name+"oooooo");
+    //       if(status_name!=undefined){
+    //           $('.order-status').text(status_name);
+    //       }
+    //   });
+    // }
 </script>
 
 </html>
