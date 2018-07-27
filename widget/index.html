@@ -695,7 +695,7 @@
                     }, function(ret) {
                         if (ret.status) {
                             var distance = ret.distance;
-                            if ((distance != undefined && distance > -10) || g_my_lon == undefined || g_my_lon == "") {
+                            if ((distance != undefined && distance >10) || g_my_lon == undefined || g_my_lon == "") {
                                 var my_location = now_lon + "," + now_lat;
                                 var s = 'http://' + serverIP + '/Order/updateLocation.action';
                                 api.ajax({
@@ -768,6 +768,7 @@
                 w: api.winWidth - 20,
                 h: 90
             },
+            reload:true,
             vScrollBarEnabled: false,
             pageParam: {
                 account_type: account_type,
@@ -972,7 +973,7 @@
                 } else {
                     //为了关闭定时器
                     updateOrderStatus(undefined);
-                    map.stopLocation();
+                    // map.stopLocation();
                     if (rets.relogin) {
                         //session过期，重新登录 000
                         toastFail(rets.msg);
@@ -1137,13 +1138,12 @@
             if (rets) {
                 if (rets.success) {
                     toastSuccess(rets.msg);
-                    getCurrentOrder();
-                    // api.sendEvent({
-                    //     name: 'ChangeAccountTypeEvent',
-                    //     extra: {
-                    //         account_type: account_type
-                    //     }
-                    // });
+                    api.sendEvent({
+                        name: 'ChangeAccountTypeEvent',
+                        extra: {
+                            account_type: account_type
+                        }
+                    });
                 } else {
                     toastFail(rets.msg);
                     if (rets.relogin) {
@@ -1186,6 +1186,12 @@
         });
         api.closeFrame({
             name: 'receipt_button'
+        });
+        api.closeFrame({
+            name: 'order_status'
+        });
+        api.closeFrame({
+            name: 'service_type'
         });
     }
     //加载服务类型

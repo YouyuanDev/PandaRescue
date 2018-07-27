@@ -262,9 +262,6 @@
                                         msg: ret.message
                                     });
                                     if (ret.success) {
-                                        api.closeFrame({
-                                            name: 'service_type'
-                                        });
                                         var order_no=ret.OrderNo;
                                         //发送订单完成事件
                                         api.sendEvent({
