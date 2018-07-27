@@ -652,6 +652,7 @@
                     var now_lon = ret.lon;
                     var now_lat = ret.lat;
                     //获取上次和当前距离差，大于1m则更新位置
+                    alert(g_my_lon+":"+g_my_lat+":"+now_lon+":"+now_lat);
                     if (g_my_lon != undefined && g_my_lat != undefined && now_lon != undefined && now_lat != undefined) {
                         map.getDistance({
                             start: {
@@ -864,6 +865,7 @@
                     toastSuccess("发现未完成订单");
 
                 } else {
+                    alert("不存在进行中订单");
                     //为了关闭定时器
                     updateOrderStatus(undefined);
                     if (rets.relogin) {
