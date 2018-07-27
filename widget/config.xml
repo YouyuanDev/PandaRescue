@@ -21,7 +21,7 @@
      </feature>
 
 
-    <preference name="backgroundMode" value="location"/>
+    <preference name="backgroundMode" value="location | fetch"/>
 
     <preference name="pageBounce" value="false"/>
 

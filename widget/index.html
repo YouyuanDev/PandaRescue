@@ -186,15 +186,17 @@
     function getUserLocation() {
         map.getLocation({
             accuracy: '10m',
-            autoStop: true,
+            autoStop: false,
             filter: 1
         }, function(ret, err) {
+
             if (ret.status) {
+                //alert(ret.status);
                 g_my_lon = ret.lon;
                 g_my_lat = ret.lat;
                 initMapSDKOK();
             } else {
-                alert('获取用户信息时出错,错误信息:' + err.code);
+                //alert('获取用户信息时出错,错误信息:' + err.code);
                 map.stopLocation();
             }
         });
