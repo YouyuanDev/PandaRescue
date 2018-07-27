@@ -665,7 +665,8 @@
                         }, function(ret) {
                             if (ret.status) {
                                 var distance = ret.distance;
-                                if (distance != undefined && distance > 10) {
+                                alert(distance);
+                                //if (distance != undefined && distance > 10) {
                                     g_my_lon = now_lon;
                                     g_my_lat = now_lat;
                                     var my_location = now_lon + "," + now_lat;
@@ -682,7 +683,7 @@
                                             }
                                         }
                                     }, function(ret, err) {});
-                                }
+                              //  }
                             }
                         });
                     }
@@ -785,7 +786,6 @@
                         return;
                     }
                 }
-                alert(11111);
                 api.openWin({
                     name: 'login',
                     url: './html/login/login.html',
@@ -794,7 +794,6 @@
                 });
 
             } else {
-                alert(222222);
                 toastFail("登录异常,请稍后重试!");
             }
         });
@@ -838,6 +837,7 @@
                     });
                 }
             } else {
+                alert("登录异常,请稍后重试!");
                 toastFail("登录异常,请稍后重试!");
             }
         });
@@ -857,6 +857,7 @@
             clearPanel();
             if (rets) {
                 if (rets.success) {
+                    alert("存在进行中订单");
                     //存在进行中订单
                     g_account_type = rets.accountType;
                     updateOrderStatus(rets.order_no);
