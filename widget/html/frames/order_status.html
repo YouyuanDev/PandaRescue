@@ -59,7 +59,7 @@
         $('.buttons').empty();
         $('.order-status').empty();
         $('.order-status').text(status_name);
-        $('.buttons').append(makeButtonTemplate("cancelOrder();", "取消订单"));
+        $('.buttons').append(makeButtonTemplate("cancelOrder('"+account_type+"');", "取消订单"));
         if (account_type == "person_user") {
             //pending,confirmed,confirmedpaid,inservice,finished,cancelled,finishedconfirmed
             if (status_code == "confirmed") { //支付
@@ -128,8 +128,13 @@
         });
     }
     //取消支付
-    function cancelOrder() {
-        var s = 'http://' + serverIP + '/PersonUser/PersonUserCancelOrder.action';
+    function cancelOrder(account_type) {
+        var s="";
+        if(account_type=="person_user"){
+          s= 'http://' + serverIP + '/PersonUser/PersonUserCancelOrder.action';
+        }else if(account_type=="company_user"){
+          s= 'http://' + serverIP + '/CompanyUser/CompanyUserCancelOrder.action';
+        }
         api.ajax({
             url: s,
             method: 'post',

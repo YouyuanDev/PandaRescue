@@ -576,6 +576,7 @@
             }
         }, function(ret, err) {
             if (ret) {
+                alert(ret);
                 var order = undefined;
                 var status_code, status_name, status_name_en, company_user_location, person_user_location, contact_person, cell_phone;
                 if ($.isArray(ret)) {
@@ -657,6 +658,7 @@
                     }
                     if (status_name != undefined && status_name != "") {
                         openLocatingButton();
+                        alert(status_name);
                         openOrderStatusFrame(g_account_type,status_code,status_name,status_name_en);
                     }
                 }
@@ -1135,12 +1137,13 @@
             if (rets) {
                 if (rets.success) {
                     toastSuccess(rets.msg);
-                    api.sendEvent({
-                        name: 'ChangeAccountTypeEvent',
-                        extra: {
-                            account_type: account_type
-                        }
-                    });
+                    getCurrentOrder();
+                    // api.sendEvent({
+                    //     name: 'ChangeAccountTypeEvent',
+                    //     extra: {
+                    //         account_type: account_type
+                    //     }
+                    // });
                 } else {
                     toastFail(rets.msg);
                     if (rets.relogin) {
