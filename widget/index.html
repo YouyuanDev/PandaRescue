@@ -73,6 +73,7 @@
         <div class="aui-title">
             <i class="fa fa-user fa-size" onclick="requestSwitchAccounType('company_user');"></i> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
             <i class="fa fa-bookmark fa-size" onclick="sendPush();"></i>
+            <i class="fa fa-toggle-on fa-size" onclick="openLogin();"></i>
         </div>
         <a class="aui-pull-right aui-btn">
             <i class="fa fa-commenting fa-2x fa-size" onclick="accountMessage();"></i>
@@ -771,8 +772,7 @@
                     });
                     $('.aui-title').append("<i>" + rets.accountType + "<i>");
                     return;
-                }
-                if (!rets.success) {
+                }else{
                     var data = api.getPrefs({
                         sync: true,
                         key: 'userInfo'
@@ -785,6 +785,7 @@
                         return;
                     }
                 }
+                alert(11111);
                 api.openWin({
                     name: 'login',
                     url: './html/login/login.html',
@@ -793,6 +794,7 @@
                 });
 
             } else {
+                alert(222222);
                 toastFail("登录异常,请稍后重试!");
             }
         });
@@ -1145,6 +1147,14 @@
                 });
             }
         });
+    }
+    function openLogin(){
+      api.openWin({
+          name: 'login',
+          url: './html/login/login.html',
+          reload: true,
+          pageParam: {}
+      });
     }
 </script>
 
