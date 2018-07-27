@@ -44,27 +44,39 @@
 <script type="text/javascript" src="../../script/jquery-3.3.1.min.js"></script>
 <script type="text/javascript" src="../../script/common.js"></script>
 <script type="text/javascript">
-    var pending_order_data;
+    var pending_order_data,g_service_type_dict,g_failure_type_dict;
     apiready = function() {
             var data = api.pageParam;
             pending_order_data = data.pendingorder;
+            g_service_type_dict=data.g_service_type_dict;
+            g_failure_type_dict=data.g_failure_type_dict;
             registerPendingOrderScrollEvent();
             showPendingOrder();
         }
         //展示待接单状态的订单信息
     function showPendingOrder() {
-        $('#poilist-ul').empty();
         if (pending_order_data!=undefined) {
             var template = "";
             for (var i = 0; i < pending_order_data.length; i++) {
-                template += (pendingOrderListTemplate(pending_order_data[i].order_no, pending_order_data[i].service_type_name, pending_order_data[i].failure_type_name, getDistance(pending_order_data[i].distance)));
+                var service_type_name=g_service_type_dict[pending_order_data[i].service_type_code];
+                if(service_type_name==undefined)
+                  service_type_name="";
+                var failure_type_name=g_failure_type_dict[pending_order_data[i].failure_type_code];
+                if(failure_type_name==undefined)
+                  failure_type_name="";
+                template += (pendingOrderListTemplate(pending_order_data[i].order_no, service_type_name,failure_type_name, getDistance(pending_order_data[i].distance)));
             }
             $('#poilist-ul').append(template);
             if(pending_order_data.length<=0){
-              $('#poilist-ul').append(makeEmptyTemplate("暂无数据!"));
+              $('.container').hide();
+              $(document.body).append(makeEmptyTemplate("暂无数据!"));
+            }else{
+              $('.pr-empty').remove();
+              $('.container').show();
             }
         }else{
-            $('#poilist-ul').append(makeEmptyTemplate("暂无数据!"));
+              $('.container').hide();
+              $(document.body).append(makeEmptyTemplate("暂无数据!"));
         }
     }
     //计算模板中所需距离

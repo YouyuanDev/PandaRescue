@@ -216,7 +216,7 @@
             buttons: ['确定', '取消']
         }, function(ret, err) {
             if (ret.buttonIndex == 1) {
-                var s = 'http://' + serverIP + '/Order/saveOrder.action';
+                var s = 'http://' + serverIP + '/PersonUser/PersonUserSubmitPendingOrder.action';
                 var service_type_code = $("input[name='radio']:checked").val();
                 var arr = new Array();
                 $('input[name="checkbox"]:checked').each(function() {

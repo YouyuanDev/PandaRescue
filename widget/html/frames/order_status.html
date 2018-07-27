@@ -9,13 +9,14 @@
     <link rel="stylesheet" type="text/css" href="../../css/api.css" />
     <link rel="stylesheet" type="text/css" href="../../css/aui.css" />
     <link rel="stylesheet" type="text/css" href="../../css/style.css" />
-      <link rel="stylesheet" type="text/css" href="../../css/font-awesome.min.css" />
+    <link rel="stylesheet" type="text/css" href="../../css/font-awesome.min.css" />
     <style type="text/css">
         .order-status {
             background-color: #fff;
             color: #595959;
             border-radius: 3px 3px 0px 0px;
         }
+
         .cancel-order {
             background: #61C721;
             border-radius: 0px 0px 3px 3px;
@@ -27,8 +28,8 @@
     <div class="container">
         <div class="aui-content aui-margin-b-15">
             <div class="aui-bar aui-bar-nav order-status"><i class="fa fa-spinner fa-spin"></i></div>
-            <div class="aui-bar aui-bar-nav cancel-order">
-                <div class="aui-btn aui-btn-block cancel-order" onclick="cacelOrder();">取消订单</div>
+            <div class="aui-bar aui-bar-nav cancel-order buttons">
+                <!-- <div class="aui-btn aui-btn-block cancel-order" onclick="cacelOrder();">取消订单</div> -->
             </div>
         </div>
     </div>
@@ -41,18 +42,174 @@
     apiready = function() {
             //registerUpdateOrderStatusEvent();
             var data = api.pageParam;
+            var account_type = data.account_type;
+            var status_code = data.status_code;
             var status_name = data.status_name;
-            if(status_name!=undefined){
-               $('.order-status').text(status_name);
+            var status_name_en = data.status_name_en;
+            if (account_type != undefined && status_code != undefined) {
+                drawStatusPanel(account_type, status_code, status_name, status_name_en);
             }
+            // if (status_name != undefined) {
+            //     $('.order-status').text(status_name);
+            // }
+        }
+        //
+    function drawStatusPanel(account_type, status_code, status_name, status_name_en) {
+        //$('.order-status').append('<i class="fa fa-spinner fa-spin"></i>');
+        $('.buttons').empty();
+        $('.order-status').empty();
+        $('.order-status').text(status_name);
+        $('.buttons').append(makeButtonTemplate("cancelOrder();", "取消订单"));
+        if (account_type == "person_user") {
+            //pending,confirmed,confirmedpaid,inservice,finished,cancelled,finishedconfirmed
+            if (status_code == "confirmed") { //支付
+                $('.order-status').empty();
+                $('.order-status').append(makeButtonTemplate("payOrder();", status_name + "=>去支付"));
+            } else if (status_code == "finished") {
+                $('.order-status').empty();
+                $('.order-status').append(makeButtonTemplate("confirmFinishedOrder();", status_name + "=>确认完成"));
+            } else if (status_code == "cancelled") {
+                $('.buttons').empty();
+            } else if (status_code == "finishedconfirmed") {
+                $('.buttons').empty();
+            }
+        } else if (account_type == "company_user") {
+            if (status_code == "pending") {
+
+            } else if (status_code == "confirmed") {
+
+            } else if (status_code == "confirmedpaid") {
+                $('.order-status').empty();
+                $('.order-status').append(makeButtonTemplate("startService();", status_name + "=>开始服务"));
+            } else if (status_code == "inservice") {
+                $('.order-status').empty();
+                $('.order-status').append(makeButtonTemplate("finishOrder();", status_name + "=>服务完成"));
+            } else if (status_code == "finished") {
+                $('.buttons').empty();
+            } else if (status_code == "cancelled") {
+                $('.buttons').empty();
+            } else if (status_code == "finishedconfirmed") {
+                $('.buttons').empty();
+            }
+        }
     }
     //取消订单事件
     function cacelOrder() {
-      api.sendEvent({
-          name: 'CancelOrderEvent',
-          extra: {
-          }
-      });
+        api.sendEvent({
+            name: 'CancelOrderEvent',
+            extra: {}
+        });
+    }
+
+    function makeButtonTemplate(buttonFunctionName, buttonName) {
+        var template = '<div class="aui-btn aui-btn-block cancel-order" onclick="' + buttonFunctionName + '">' + buttonName + '</div>';
+        return template;
+    }
+    //支付
+    function payOrder() {
+        //弹出支付界面
+        var s = 'http://' + serverIP + '/PersonUser/PersonUserPayOrder.action';
+        api.ajax({
+            url: s,
+            method: 'post',
+            data: {
+                values: {}
+            }
+        }, function(rets, errs) {
+            if (rets) {
+                if (rets.success) {
+                    toastSuccess(rets.message);
+                } else {
+                    toastFail(rets.message);
+                }
+            } else {
+                toastFail("系统错误,支付失败!");
+            }
+        });
+    }
+    //取消支付
+    function cancelOrder() {
+        var s = 'http://' + serverIP + '/PersonUser/PersonUserCancelOrder.action';
+        api.ajax({
+            url: s,
+            method: 'post',
+            data: {
+                values: {}
+            }
+        }, function(rets, errs) {
+            if (rets) {
+                if (rets.success) {
+                    toastSuccess(rets.message);
+                } else {
+                    toastFail(rets.message);
+                }
+            } else {
+                toastFail("系统错误,取消订单失败!");
+            }
+        });
+    }
+    //确认完成
+    function confirmFinishedOrder() {
+        var s = 'http://' + serverIP + '/PersonUser/PersonUserConfirmFinishedOrder.action';
+        api.ajax({
+            url: s,
+            method: 'post',
+            data: {
+                values: {}
+            }
+        }, function(rets, errs) {
+            if (rets) {
+                if (rets.success) {
+                    toastSuccess(rets.message);
+                } else {
+                    toastFail(rets.message);
+                }
+            } else {
+                toastFail("系统错误,确认完成失败!");
+            }
+        });
+    }
+    //开始服务
+    function startService() {
+        var s = 'http://' + serverIP + '/CompanyUser/CompanyUserStartService.action';
+        api.ajax({
+            url: s,
+            method: 'post',
+            data: {
+                values: {}
+            }
+        }, function(rets, errs) {
+            if (rets) {
+                if (rets.success) {
+                    toastSuccess(rets.message);
+                } else {
+                    toastFail(rets.message);
+                }
+            } else {
+                toastFail("系统错误,开始服务失败!");
+            }
+        });
+    }
+    //服务完成
+    function finishOrder() {
+        var s = 'http://' + serverIP + '/CompanyUser/CompanyUserFinishService.action';
+        api.ajax({
+            url: s,
+            method: 'post',
+            data: {
+                values: {}
+            }
+        }, function(rets, errs) {
+            if (rets) {
+                if (rets.success) {
+                    toastSuccess(rets.message);
+                } else {
+                    toastFail(rets.message);
+                }
+            } else {
+                toastFail("系统错误,服务完成失败!");
+            }
+        });
     }
     //监听订单状态改变事件
     // function registerUpdateOrderStatusEvent(){

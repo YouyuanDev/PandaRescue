@@ -60,10 +60,15 @@
             }
             $('#poilist-ul').append(template);
             if(company_data.length<=0){
-              $('#poilist-ul').append(makeEmptyTemplate("暂无数据!"));
+              $('.container').hide();
+              $(document.body).append(makeEmptyTemplate("暂无数据!"));
+            }else{
+              $('.pr-empty').remove();
+              $('.container').show();
             }
         }else{
-          $('#poilist-ul').append(makeEmptyTemplate("暂无数据!"));
+          $('.container').hide();
+          $(document.body).append(makeEmptyTemplate("暂无数据!"));
         }
     }
     //计算模板中所需距离

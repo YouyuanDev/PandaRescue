@@ -72,7 +72,7 @@
         </a>
         <div class="aui-title">
             <i class="fa fa-user fa-size" onclick="requestSwitchAccounType('company_user');"></i> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-            <i class="fa fa-bookmark fa-size" onclick="sendPush();"></i>
+            <i class="fa fa-bookmark fa-size" onclick="sendPush();"></i>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
             <i class="fa fa-toggle-on fa-size" onclick="openLogin();"></i>
         </div>
         <a class="aui-pull-right aui-btn">
@@ -429,7 +429,9 @@
             reload: true,
             vScrollBarEnabled: false,
             pageParam: {
-                pendingorder: rets
+                pendingorder: rets,
+                g_service_type_dict: g_service_type_dict,
+                g_failure_type_dict: g_failure_type_dict
             }
         });
     }
@@ -492,7 +494,32 @@
         }, function(ret, err) {
             //判断是否选中了要接的单,如果选中了接单获取接单编号
             if (g_selected_pending_order_no != undefined && g_selected_pending_order_no != "") {
-                alert("点击了接单，开始接单后操作");
+                alert(g_selected_pending_order_no);
+                //alert("点击了接单，开始接单后操作");
+                var s = 'http://' + serverIP + '/CompanyUser/CompanyUserAcceptPendingOrder.action';
+                api.ajax({
+                    url: s,
+                    method: 'post',
+                    timeout: 30,
+                    dataType: 'json',
+                    data: {
+                        values: {
+                            order_no: g_selected_pending_order_no
+                        }
+                    }
+                }, function(ret, err) {
+                    if (ret) {
+                        if (ret.success) {
+                            toastSuccess(ret.message);
+                            //接单成功
+
+                        } else {
+                            toastFail(ret.message);
+                        }
+                    } else {
+                        toastFail("系统错误,接单失败!");
+                    }
+                });
             } else {
                 toastFail("请选择后接单!");
             }
@@ -550,7 +577,7 @@
         }, function(ret, err) {
             if (ret) {
                 var order = undefined;
-                var status_code, status_name, status_name_en, company_user_location, person_user_location;
+                var status_code, status_name, status_name_en, company_user_location, person_user_location, contact_person, cell_phone;
                 if ($.isArray(ret)) {
                     for (var i = 0; i < ret.length; i++) {
                         order = ret[0];
@@ -561,6 +588,8 @@
                         status_name_en = order.status_name_en;
                         company_user_location = order.company_user_location;
                         person_user_location = order.person_user_location;
+                        contact_person = order.contact_person;
+                        cell_phone = order.cell_phone;
                     }
                     //如果是普通用户,获取商户坐标
                     if (g_account_type == "person_user") {
@@ -569,7 +598,7 @@
                             if (lon_lat.length > 1) {
                                 var lon = lon_lat[0];
                                 var lat = lon_lat[1];
-                                updateCompanyUserLocation(g_CompanyList.length, lon, lat);
+                                updateCompanyUserLocation(g_CompanyList.length, lon, lat, contact_person, cell_phone);
                             }
                         }
                     } else {
@@ -627,13 +656,8 @@
                         }
                     }
                     if (status_name != undefined && status_name != "") {
-                        openOrderStatusFrame(status_name);
-                        // api.sendEvent({
-                        //     name: 'UpdateOrderStatusEvent',
-                        //     extra: {
-                        //         status_name: status_name
-                        //     }
-                        // });
+                        openLocatingButton();
+                        openOrderStatusFrame(g_account_type,status_code,status_name,status_name_en);
                     }
                 }
 
@@ -669,7 +693,7 @@
                     }, function(ret) {
                         if (ret.status) {
                             var distance = ret.distance;
-                            if (distance != undefined && distance > 10) {
+                            if ((distance != undefined && distance > -10) || g_my_lon == undefined || g_my_lon == "") {
                                 var my_location = now_lon + "," + now_lat;
                                 var s = 'http://' + serverIP + '/Order/updateLocation.action';
                                 api.ajax({
@@ -704,6 +728,7 @@
                                                     var lon = lon_lat[0];
                                                     var lat = lon_lat[1];
                                                     updateCompanyUserLocation(g_CompanyList.length, lon, lat);
+                                                    drawRouteFromBeginToEnd(g_my_lon, g_my_lat, lon, lat);
                                                 }
                                             } else if (g_account_type == "company_user") {
                                                 if (person_user_location == undefined || person_user_location == "") {
@@ -714,6 +739,7 @@
                                                     var lon = lon_lat[0];
                                                     var lat = lon_lat[1];
                                                     updatePersonUserLocation(g_CompanyList.length, lon, lat);
+                                                    drawRouteFromBeginToEnd(g_my_lon, g_my_lat, lon, lat, );
                                                 }
                                             }
                                         }
@@ -730,7 +756,7 @@
         });
     }
     //打开订单状态Frame
-    function openOrderStatusFrame(status_name) {
+    function openOrderStatusFrame(account_type,status_code,status_name,status_name_en) {
         api.openFrame({
             name: 'order_status',
             url: './html/frames/order_status.html',
@@ -740,10 +766,12 @@
                 w: api.winWidth - 20,
                 h: 90
             },
-            bgColor: 'transparent',
             vScrollBarEnabled: false,
             pageParam: {
-                status_name: status_name
+                account_type: account_type,
+                status_code: status_code,
+                status_name: status_name,
+                status_name_en: status_name_en
             }
         });
         // api.setFrameAttr({
@@ -758,7 +786,7 @@
     //   });
     // }
     //更新商户所派人员坐标
-    function updateCompanyUserLocation(id, lon, lat) {
+    function updateCompanyUserLocation(id, lon, lat, title, subTitle) {
         map.annotationExist({
             id: id
         }, function(ret) {
@@ -778,12 +806,26 @@
                     icon: 'widget://image/company_user_128.png',
                     draggable: false
                 }, function(ret) {});
+                map.setBubble({
+                    id: id,
+                    content: {
+                        title: title,
+                        subTitle: subTitle
+                    },
+                    styles: {
+                        titleColor: '#000',
+                        titleSize: 16,
+                        subTitleColor: '#999',
+                        subTitleSize: 12,
+                        illusAlign: 'left'
+                    }
+                }, function(ret) {});
             }
         });
 
     }
     //更新用户坐标
-    function updatePersonUserLocation(id, lon, lat) {
+    function updatePersonUserLocation(id, lon, lat, title, subTitle) {
         map.annotationExist({
             id: id
         }, function(ret) {
@@ -802,6 +844,20 @@
                     }],
                     icon: 'widget://image/help_64.png',
                     draggable: false
+                }, function(ret) {});
+                map.setBubble({
+                    id: id,
+                    content: {
+                        title: title,
+                        subTitle: subTitle
+                    },
+                    styles: {
+                        titleColor: '#000',
+                        titleSize: 16,
+                        subTitleColor: '#999',
+                        subTitleSize: 12,
+                        illusAlign: 'left'
+                    }
                 }, function(ret) {});
             }
         });
@@ -1040,7 +1096,13 @@
                     }
                     setPendingOrderAnnotations(annotations);
                     for (var i = 0; i < rets.length; i++) {
-                        setPendingOrderBubble(i, rets[i].service_type_name, rets[i].failure_type_name);
+                        var service_type_name = g_service_type_dict[rets[i].service_type_code];
+                        if (service_type_name == undefined)
+                            service_type_name = "";
+                        var failure_type_name = g_failure_type_dict[rets[i].failure_type_code];
+                        if (failure_type_name == undefined)
+                            failure_type_name = "";
+                        setPendingOrderBubble(i, service_type_name, failure_type_name);
                     }
                     openPendingorderFrame(rets);
                     openLocatingButton();
@@ -1104,6 +1166,9 @@
         ids.push(g_CompanyList.length);
         map.removeAnnotations({
             ids: ids
+        });
+        map.removeRoute({
+            ids: [1]
         });
         g_CompanyList.length = 0;
         //关闭打开的窗体
@@ -1213,6 +1278,40 @@
             reload: true,
             pageParam: {}
         });
+    }
+    //绘制两点之间路线
+    function drawRouteFromBeginToEnd(begin_lon, begin_lat, end_lon, end_lat) {
+        //alert(begin_lon+":"+begin_lat+":"+end_lon+":"+end_lat);
+        if (begin_lon != undefined && begin_lat != undefined && end_lon != undefined && end_lat != undefined) {
+            map.removeRoute({
+                ids: [1]
+            });
+            map.searchRoute({
+                id: 1,
+                type: 'walk',
+                policy: 'ecar_dis_first',
+                start: {
+                    lon: begin_lon,
+                    lat: begin_lat
+                },
+                end: {
+                    lon: end_lon,
+                    lat: end_lat
+                }
+            }, function(ret, err) {
+                if (ret.status) {
+                    map.drawRoute({
+                        id: 1,
+                        autoresizing: false,
+                        index: 0
+                    }, function(ret) {
+                        api.alert({
+                            msg: JSON.stringify(ret)
+                        });
+                    });
+                }
+            });
+        }
     }
 </script>
 
