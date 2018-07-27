@@ -122,6 +122,11 @@
                     toastSuccess(rets.message);
                 } else {
                     toastFail(rets.message);
+                    if(ret.relogin){
+                      api.sendEvent({
+                          name: 'reloginEvent'
+                      });
+                    }
                 }
             } else {
                 toastFail("系统错误,支付失败!");
@@ -148,6 +153,11 @@
                     toastSuccess(rets.message);
                 } else {
                     toastFail(rets.message);
+                    if(ret.relogin){
+                      api.sendEvent({
+                          name: 'reloginEvent'
+                      });
+                    }
                 }
             } else {
                 toastFail("系统错误,取消订单失败!");
@@ -169,6 +179,11 @@
                     toastSuccess(rets.message);
                 } else {
                     toastFail(rets.message);
+                    if(ret.relogin){
+                      api.sendEvent({
+                          name: 'reloginEvent'
+                      });
+                    }
                 }
             } else {
                 toastFail("系统错误,确认完成失败!");
@@ -190,6 +205,11 @@
                     toastSuccess(rets.message);
                 } else {
                     toastFail(rets.message);
+                    if(ret.relogin){
+                      api.sendEvent({
+                          name: 'reloginEvent'
+                      });
+                    }
                 }
             } else {
                 toastFail("系统错误,开始服务失败!");
@@ -211,6 +231,11 @@
                     toastSuccess(rets.message);
                 } else {
                     toastFail(rets.message);
+                    if(ret.relogin){
+                      api.sendEvent({
+                          name: 'reloginEvent'
+                      });
+                    }
                 }
             } else {
                 toastFail("系统错误,服务完成失败!");

@@ -114,6 +114,7 @@
         registerSosEvent();
         registerOrderStatusEvent();
         registerCancelOrderEvent();
+        registerReloginEvent();
         registerCompanyListEvent();
         setPushListener();
         registerReceiptEvent();
@@ -517,6 +518,11 @@
 
                         } else {
                             toastFail(ret.message);
+                            if (ret.relogin) {
+                              api.sendEvent({
+                                  name: 'reloginEvent'
+                              });
+                            }
                         }
                     } else {
                         toastFail("系统错误,接单失败!");
@@ -552,6 +558,17 @@
             //打开附近商户frame和求救frame
         });
     }
+
+    //session不存在relogin事件
+    function registerReloginEvent() {
+        api.addEventListener({
+            name: 'reloginEvent'
+        }, function(ret, err) {
+            getMySession();
+        });
+    }
+
+
     //监听账户类型变化事件
     function registerChangeAccountTypeEvent() {
         api.addEventListener({
@@ -660,7 +677,7 @@
                     }
                     if (status_name != undefined && status_name != "") {
                         openLocatingButton();
-                        openOrderStatusFrame(g_account_type,status_code,status_name,status_name_en);
+                        openOrderStatusFrame(g_account_type, status_code, status_name, status_name_en);
                     }
                 }
 
@@ -696,7 +713,7 @@
                     }, function(ret) {
                         if (ret.status) {
                             var distance = ret.distance;
-                            if ((distance != undefined && distance >10) || g_my_lon == undefined || g_my_lon == "") {
+                            if ((distance != undefined && distance > 10) || g_my_lon == undefined || g_my_lon == "") {
                                 var my_location = now_lon + "," + now_lat;
                                 var s = 'http://' + serverIP + '/Order/updateLocation.action';
                                 api.ajax({
@@ -759,7 +776,7 @@
         });
     }
     //打开订单状态Frame
-    function openOrderStatusFrame(account_type,status_code,status_name,status_name_en) {
+    function openOrderStatusFrame(account_type, status_code, status_name, status_name_en) {
         api.openFrame({
             name: 'order_status',
             url: './html/frames/order_status.html',
@@ -769,7 +786,7 @@
                 w: api.winWidth - 20,
                 h: 90
             },
-            reload:true,
+            reload: true,
             vScrollBarEnabled: false,
             pageParam: {
                 account_type: account_type,
@@ -978,7 +995,9 @@
                     if (rets.relogin) {
                         //session过期，重新登录 000
                         toastFail(rets.msg);
-                        getUserSession();
+                        api.sendEvent({
+                            name: 'reloginEvent'
+                        });
                     } else {
                         //不存在进行中订单
                         toastFail(rets.msg);
@@ -1150,7 +1169,9 @@
                     toastFail(rets.msg);
                     if (rets.relogin) {
                         //session过期，重新登录 000
-                        getUserSession();
+                        api.sendEvent({
+                            name: 'reloginEvent'
+                        });
                     }
                 }
             } else {
