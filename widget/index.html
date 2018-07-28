@@ -692,7 +692,8 @@
     }
 
     //上传坐标
-    function SendLocationToServer(my_location,order_no,distanceToLastLocation) {
+    function SendLocationToServer(now_lon,now_lat,order_no,distanceToLastLocation) {
+      var my_location = now_lon + "," + now_lat;
         var s = 'http://' + serverIP + '/Order/updateLocation.action';
         api.ajax({
             url: s,
@@ -760,7 +761,7 @@
               //alert("updateOrderUserLocation");
                 var now_lon = ret.lon;
                 var now_lat = ret.lat;
-                var my_location = now_lon + "," + now_lat;
+
                 //获取上次和当前距离差，大于1m则更新位置
                 if (g_my_lon != undefined && g_my_lat != undefined && now_lon != undefined && now_lat != undefined) {
                     map.getDistance({
@@ -776,11 +777,11 @@
                         if (ret.status) {
                             //var distance = ret.distance;
                             //alert("ret.distance"+ret.distance);
-                            SendLocationToServer(my_location,order_no,ret.distance);
+                            SendLocationToServer(now_lon,now_lat,order_no,ret.distance);
                         }
                     });
                 }else{
-                  SendLocationToServer(my_location,order_no,100);
+                  SendLocationToServer(now_lon,now_lat,order_no,100);
                 }
             } else {
                 //alert('获取用户信息时出错,错误信息:' + err.code);
