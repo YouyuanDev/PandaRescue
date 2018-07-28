@@ -109,9 +109,9 @@
     var g_failure_type_dict = {};
     apiready = function() {
         fnSettingHeader();
+        map = api.require('bMap');
         loadAllServiceType();
         loadAllFaultType();
-        map = api.require('bMap');
         registLocatingEvent();
         registerSosEvent();
         registerOrderStatusEvent();
@@ -404,7 +404,7 @@
         });
     }
     //打开附近商户信息frame
-    function openCompanyFrame(rets) {
+    function openCompanyFrame(g_my_lon,g_my_lat,rets) {
         api.openFrame({
             name: 'nearby_company',
             url: './html/frames/nearby_company.html',
@@ -417,7 +417,10 @@
             reload: true,
             vScrollBarEnabled: false,
             pageParam: {
-                company: rets
+                company: rets,
+                g_my_lon:g_my_lon,
+                g_my_lat:g_my_lat
+
             }
         });
     }
@@ -615,26 +618,26 @@
                         cell_phone = order.cell_phone;
                     }
                     //如果是普通用户,获取商户坐标
-                    if (g_account_type == "person_user") {
-                        if (company_user_location != undefined) {
-                            var lon_lat = company_user_location.split(',');
-                            if (lon_lat.length > 1) {
-                                var lon = lon_lat[0];
-                                var lat = lon_lat[1];
-                                updateCompanyUserLocation(g_CompanyList.length, lon, lat, contact_person, cell_phone);
-                            }
-                        }
-                    } else {
-                        //获取用户坐标
-                        if (person_user_location != undefined) {
-                            var lon_lat = person_user_location.split(',');
-                            if (lon_lat.length > 1) {
-                                var lon = lon_lat[0];
-                                var lat = lon_lat[1];
-                                updatePersonUserLocation(g_CompanyList.length, lon, lat);
-                            }
-                        }
-                    }
+                    // if (g_account_type == "person_user") {
+                    //     if (company_user_location != undefined) {
+                    //         var lon_lat = company_user_location.split(',');
+                    //         if (lon_lat.length > 1) {
+                    //             var lon = lon_lat[0];
+                    //             var lat = lon_lat[1];
+                    //             updateCompanyUserLocation(g_CompanyList.length, lon, lat, contact_person, cell_phone);
+                    //         }
+                    //     }
+                    // } else {
+                    //     //获取用户坐标
+                    //     if (person_user_location != undefined) {
+                    //         var lon_lat = person_user_location.split(',');
+                    //         if (lon_lat.length > 1) {
+                    //             var lon = lon_lat[0];
+                    //             var lat = lon_lat[1];
+                    //             updatePersonUserLocation(g_CompanyList.length, lon, lat);
+                    //         }
+                    //     }
+                    // }
                     if (g_order_status != status_code) {
                         g_order_status = status_code;
                         if (status_code == "confirmed") {
@@ -1130,21 +1133,21 @@
                             id: i,
                             company_no: rets[i].company_no
                         });
+
                     }
                     setCompanyAnnotations(annotations);
                     for (var i = 0; i < rets.length; i++) {
                         setCompanyBubble(i, rets[i].company_name);
                     }
-                    openCompanyFrame(rets);
+
+                    openCompanyFrame(g_my_lon,g_my_lat,rets);
                     openLocatingButton();
                     openSosButton();
                 } else {
                     api.alert({
                         msg: errs.msg
                     });
-                    // openCompanyFrame(rets);
-                    // openLocatingButton();
-                    // openSosButton();
+
                 }
             });
         }
@@ -1383,8 +1386,8 @@
             });
             map.searchRoute({
                 id: 1,
-                type: 'walk',
-                policy: 'ecar_dis_first',
+                type: 'drive',
+                policy: 'ecar_time_first/ecar_dis_first',
                 start: {
                     lon: begin_lon,
                     lat: begin_lat

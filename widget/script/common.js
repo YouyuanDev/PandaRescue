@@ -1,5 +1,5 @@
 var header, headerHeight = 0;
-var serverIP = '192.168.0.111:8080';
+var serverIP = '192.168.0.102:8080';
 
 function fnSettingHeader() {
     var sType = api.systemType;
