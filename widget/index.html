@@ -425,7 +425,7 @@
         });
     }
     //打开待接单的订单信息frame
-    function openPendingorderFrame(rets) {
+    function openPendingorderFrame(g_my_lon,g_my_lat,rets) {
         api.openFrame({
             name: 'pending_order',
             url: './html/frames/pending_order.html',
@@ -439,6 +439,8 @@
             vScrollBarEnabled: false,
             pageParam: {
                 pendingorder: rets,
+                g_my_lon:g_my_lon,
+                g_my_lat:g_my_lat,
                 g_service_type_dict: g_service_type_dict,
                 g_failure_type_dict: g_failure_type_dict
             }
@@ -1192,7 +1194,7 @@
                         setPendingOrderBubble(i, service_type_name, failure_type_name);
                     }
 
-                    openPendingorderFrame(rets);
+                    openPendingorderFrame(g_my_lon,g_my_lat,rets);
                     openLocatingButton();
                     openReceiptButton();
                 } else {

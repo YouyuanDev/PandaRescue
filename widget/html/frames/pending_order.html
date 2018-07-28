@@ -45,9 +45,14 @@
 <script type="text/javascript" src="../../script/common.js"></script>
 <script type="text/javascript">
     var pending_order_data, g_service_type_dict, g_failure_type_dict;
+    var map;
+    var my_lon,my_lat;
     apiready = function() {
+      map = api.require('bMap');
             var data = api.pageParam;
             pending_order_data = data.pendingorder;
+            my_lon = data.g_my_lon;
+            my_lat = data.g_my_lat;
             g_service_type_dict = data.g_service_type_dict;
             g_failure_type_dict = data.g_failure_type_dict;
             registerPendingOrderScrollEvent();
@@ -77,7 +82,15 @@
                         failure_type_name = "";
                     // var failure_type_name=g_failure_type_dict[pending_order_data[i].failure_type_code].failure_type_name;
                     // if(failure_type_name==undefined)
-                    template += pendingOrderListTemplate(pending_order_data[i].order_no, service_type_name, failure_type_name, getDistance(pending_order_data[i].distance));
+                    var person_user_location_str=pending_order_data[i].person_user_location;
+                    var lon_lat = person_user_location_str.split(',');
+                    var person_user_location_lon,person_user_location_lat;
+                    if(lon_lat.length==2){
+                      person_user_location_lon=lon_lat[0];
+                      person_user_location_lat=lon_lat[1];
+                    }
+
+                    template += pendingOrderListTemplate(person_user_location_lon,person_user_location_lat,pending_order_data[i].order_no, service_type_name, failure_type_name, getDistance(pending_order_data[i].distance));
                 } catch (e) {
                     alert(e);
                 }
@@ -95,19 +108,57 @@
             $(document.body).append(makeEmptyTemplate("暂无数据!"));
         }
     }
-    //计算模板中所需距离
-    function getDistance(num) {
-        if (num != undefined && !isNaN(num)) {
-            num = num / 1000.0;
-            num = num.toFixed(2);
-        }
-        return num;
+
+
+
+    //获取两点间的路线距离
+    function getRouteDistance(order_no, person_user_location_lon, person_user_location_lat) {
+        var p_lon = person_user_location_lon;
+        var p_lat = person_user_location_lat;
+        //计算路线距离
+        map.searchRoute({
+            id: 1,
+            type: 'drive',
+            policy: 'ecar_time_first/ecar_dis_first',
+            start: {
+                lon: my_lon,
+                lat: my_lat
+            },
+            end: {
+                lon: p_lon,
+                lat: p_lat
+            }
+        }, function(ret, err) {
+            if (ret) {
+                if (ret.status) {
+                    //ret.plans[0].duration;
+                    //alert(order_no + " distance=" + ret.plans[0].distance);
+                    $("#dis_" + order_no).text('驾车：'+getDistance(ret.plans[0].distance)+'km '+'耗时：'+convertSecToMin(ret.plans[0].duration)+'分钟');
+                } else {
+                    toastFail("系统错误!");
+                }
+            } else {
+                //alert(err.msg);
+                toastFail("系统错误" + err.msg);
+            }
+
+        });
     }
+
     //发送弹出标注信息事件
     function popupBubble(obj) {
         var order_no = $(obj).attr('data-no');
         $(obj).addClass('pr-color');
         $(obj).siblings('li').removeClass('pr-color');
+
+        var person_user_location_lon = $(obj).attr('person-user-location-lon');
+        var person_user_location_lat = $(obj).attr('person-user-location-lat');
+
+        //alert("person_user_location_lon"+person_user_location_lon);
+        //计算路程距离
+        getRouteDistance(order_no, person_user_location_lon, person_user_location_lat);
+
+
         api.sendEvent({
             name: 'ClickPendingOrderListEventListener',
             extra: {
@@ -116,13 +167,13 @@
         });
     }
     //生成模板
-    function pendingOrderListTemplate(order_no, service_type_name, failure_type_name, distance) {
-        var template = '<li class="aui-list-item aui-list-item-middle" data-no=' + order_no + ' onclick="popupBubble(this)">' +
+    function pendingOrderListTemplate(person_user_location_lon,person_user_location_lat,order_no, service_type_name, failure_type_name, distance) {
+        var template = '<li class="aui-list-item aui-list-item-middle" person-user-location-lon="'+person_user_location_lon+'" person-user-location-lat="'+person_user_location_lat+'"  data-no="' + order_no + '" onclick="popupBubble(this)">' +
             '<div class="aui-media-list-item-inner">' +
             '<div class="aui-list-item-inner">' +
             '<div class="aui-list-item-text">' +
             '<div class="aui-list-item-title aui-font-size-14">' + service_type_name + '</div>' +
-            '<div class="aui-list-item-right">' + distance + 'km</div>' +
+            '<div id="dis_'+order_no+'" class="aui-list-item-right">' + distance + 'km</div>' +
             '</div>' +
             '<div class="aui-list-item-text">' + failure_type_name + '</div>' +
             '</div>' +

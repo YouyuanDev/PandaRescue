@@ -213,6 +213,24 @@ function DoLoadingPicture() {
     });
 }
 
+//计算模板中所需直线距离
+function getDistance(num) {
+    if (num != undefined && !isNaN(num)) {
+        num = num / 1000.0;
+        num = num.toFixed(2);
+    }
+    return num;
+}
+//秒转分钟
+function convertSecToMin(sec){
+  if (sec != undefined && !isNaN(sec)) {
+      sec = sec / 60;
+      sec = sec.toFixed(0);
+  }
+  return sec;
+}
+
+
 function ClearLoadingPicture() {
     var uiloading = api.require('UILoading');
     uiloading.closeFlower({
