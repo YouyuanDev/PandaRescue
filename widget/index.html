@@ -92,7 +92,9 @@
     //百度地图
     var map;
     //刷新订单状态和自己的坐标的定时器
-    var g_orderStatusInterval, g_userLocationInterval;
+    //var g_orderStatusInterval, g_userLocationInterval;
+    //刷新坐标的定时器
+    var g_PersonUserAndCompanyUserLocationInterval;
     //商户列表
     var g_CompanyList = [];
     //订单状态
@@ -691,6 +693,64 @@
         });
     }
 
+    //获取当前订单的个人用户和商户用户当前位置，唯一同步地理信息的地方
+    function getPersonUserAndCompanyUserCurrentLocation(){
+      var s = 'http://' + serverIP + '/Order/getPersonUserAndCompanyUserCurrentLocation.action';
+      api.ajax({
+          url: s,
+          method: 'post',
+          timeout: 30,
+          dataType: 'json',
+          data: {
+          }
+      }, function(ret, err) {
+          if (ret) {
+              if (ret.success) {
+                  drawLocation(ret.accountType,ret.person_user_location,ret.company_user_location);
+              }else{
+                toastFail(ret.msg);
+                if (ret.relogin) {
+                    //session过期，重新登录 000
+                    api.sendEvent({
+                        name: 'reloginEvent'
+                    });
+                }
+              }
+            }else{
+              toastFail('获取用户信息时出错,错误信息:' + err.code);
+            }
+          });
+    }
+
+  //画对方的位置
+  function drawLocation(accountType,person_user_location,company_user_location){
+    //更新对方的位置, 此处改为定时更新客户位置信息
+    if (accountType == "person_user") {
+        if (company_user_location == undefined || company_user_location == "") {
+            return;
+        }
+        var lon_lat = company_user_location.split(',');
+        if (lon_lat.length > 1) {
+            var lon = lon_lat[0];
+            var lat = lon_lat[1];
+            updateCompanyUserLocation(g_CompanyList.length, lon, lat);
+            drawRouteFromBeginToEnd(g_my_lon, g_my_lat, lon, lat);
+        }
+    } else if (accountType == "company_user") {
+        if (person_user_location == undefined || person_user_location == "") {
+            return;
+        }
+        var lon_lat = person_user_location.split(',');
+        if (lon_lat.length > 1) {
+            var lon = lon_lat[0];
+            var lat = lon_lat[1];
+            updatePersonUserLocation(g_CompanyList.length, lon, lat);
+            drawRouteFromBeginToEnd(g_my_lon, g_my_lat, lon, lat, );
+        }
+    }
+  }
+
+
     //上传坐标
     function SendLocationToServer(now_lon,now_lat,order_no,distanceToLastLocation) {
       var my_location = now_lon + "," + now_lat;
@@ -719,32 +779,8 @@
 
                     g_my_lon = now_lon;
                     g_my_lat = now_lat;
-                    //更新对方的位置
-                    var person_user_location = ret.person_user_location;
-                    var company_user_location = ret.company_user_location;
-                    if (g_account_type == "person_user") {
-                        if (company_user_location == undefined || company_user_location == "") {
-                            return;
-                        }
-                        var lon_lat = company_user_location.split(',');
-                        if (lon_lat.length > 1) {
-                            var lon = lon_lat[0];
-                            var lat = lon_lat[1];
-                            updateCompanyUserLocation(g_CompanyList.length, lon, lat);
-                            drawRouteFromBeginToEnd(g_my_lon, g_my_lat, lon, lat);
-                        }
-                    } else if (g_account_type == "company_user") {
-                        if (person_user_location == undefined || person_user_location == "") {
-                            return;
-                        }
-                        var lon_lat = person_user_location.split(',');
-                        if (lon_lat.length > 1) {
-                            var lon = lon_lat[0];
-                            var lat = lon_lat[1];
-                            updatePersonUserLocation(g_CompanyList.length, lon, lat);
-                            drawRouteFromBeginToEnd(g_my_lon, g_my_lat, lon, lat, );
-                        }
-                    }
+
+
                 }
             }
         });
@@ -1044,6 +1080,7 @@
         //关闭附近商户列表和求救Frame
         // clearInterval(g_orderStatusInterval);
         // clearInterval(g_userLocationInterval);
+        clearInterval(g_PersonUserAndCompanyUserLocationInterval);
         //openOrderStatusFrame();
         getOrderStatusInfo(order_no);
         updateOrderUserLocation(order_no);
@@ -1055,10 +1092,12 @@
         // g_orderStatusInterval = setInterval(function() {
         //     getOrderStatusInfo(order_no);
         // }, 3000);
+        if(order_no!=undefined){
+          g_PersonUserAndCompanyUserLocationInterval = setInterval(function() {
+          getPersonUserAndCompanyUserCurrentLocation();
+          }, 5000);
+        }
 
-        //g_userLocationInterval = setInterval(function() {
-        //updateOrderUserLocation(order_no);
-        //}, 5000);
 
         //}
     }
