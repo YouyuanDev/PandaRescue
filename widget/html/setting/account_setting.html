@@ -79,9 +79,9 @@
     </header>
     <div class="aui-content aui-margin-b-15">
         <ul class="aui-list aui-list-in">
-            <li class="aui-list-item aui-list-item-middle">
+            <li class="aui-list-item aui-list-item-middle" onclick="accountsAndSecurity();">
                 <div class="aui-list-item-inner aui-list-item-arrow">
-                    <div class="aui-list-item-title i18n1" name="settings">账号与安全</div>
+                    <div class="aui-list-item-title i18n1" name="accountsandsecurity">账号与安全</div>
                 </div>
             </li>
             <li class="aui-list-item aui-list-item-middle" onclick="changeLanguage();">
@@ -191,5 +191,26 @@
 
             }
         });
+    }
+    //账号和安全
+    function accountsAndSecurity(){
+      api.openFrame({
+          name: 'account_setting_security',
+          url: './account_setting_security.html',
+          rect: {
+              x: 0,
+              y: 0,
+              w: api.winWidth,
+              h: api.height
+          },
+          animation: {
+              type: "push",
+              subType: "from_right",
+              duration: 300
+          },
+          pageParam: {
+
+          }
+      });
     }
 </script>

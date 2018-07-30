@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0" />
+    <meta name="format-detection" content="telephone=no,email=no,date=no,address=no">
+    <title>安全设置手机号更改</title>
+    <link rel="stylesheet" type="text/css" href="../../css/api.css" />
+    <link rel="stylesheet" type="text/css" href="../../css/aui.css" />
+    <link rel="stylesheet" type="text/css" href="../../css/font-awesome.min.css" />
+    <link rel="stylesheet" type="text/css" href="../../css/style.css" />
+    <style>
+        #header {
+            background-color: #61C721;
+        }
+
+        .aui-title {
+            color: #fff;
+        }
+
+        .diy-img img {
+            margin: auto;
+        }
+
+        .diy-p {
+            text-align: center;
+        }
+    </style>
+</head>
+
+<body class="body-bg">
+    <header id="header" class="aui-bar aui-bar-nav aui-bar-light personal-header">
+        <a class="aui-pull-left aui-btn">
+            <span onclick="closeMyself();" class="fa fa-chevron-left"></span>
+        </a>
+        <div class="aui-title i18n1" name="changephonenumber">修改手机号</div>
+    </header>
+    <section class="aui-content-padded">
+        <div class="aui-card-list">
+            <div class="aui-card-list-header diy-img">
+                <img src="../../image/phone.png" />
+            </div>
+            <div class="aui-card-list-content-padded">
+                <p class="diy-p">您当前的手机号为187****1326</p>
+                <p class="diy-p">更换后其他信息不变,修改后必须使用该手机号重新登录。仅支持修改到未注册的手机号,如果手机号已注册,请退出当前账号,并登录要修改到的手机号进行注销。</p>
+            </div>
+        </div>
+    </section>
+    <div class="aui-content aui-margin-b-15">
+        <ul class="aui-list aui-form-list">
+            <li class="aui-list-item">
+                <div class="aui-list-item-inner">
+                    <div class="aui-list-item-label i18n1" name="newphonenumber">
+                        新手机号
+                    </div>
+                    <div class="aui-list-item-input">
+                        <input type="tel" placeholder="新手机号">
+                    </div>
+                </div>
+            </li>
+            <li class="aui-list-item">
+                <div class="aui-list-item-inner">
+                    <div class="aui-list-item-label i18n1" name="verificationcode">
+                        验证码
+                    </div>
+                    <div class="aui-list-item-input">
+                        <input type="number" placeholder="验证码">
+                    </div>
+                </div>
+            </li>
+            <li class="aui-list-item">
+                <div class="aui-list-item-inner">
+                    <div class="aui-list-item-input">
+                       <div class="aui-btn aui-btn-block i18n1" name="sendauthenticationcode">发送验证码</div>
+                    </div>
+                </div>
+            </li>
+        </ul>
+    </div>
+    <footer class="aui-bar aui-bar-tab" id="footer">
+        <div class="aui-btn aui-btn-block i18n1" onclick="" name="changephonenumber">确认更换</div>
+    </footer>
+</body>
+
+</html>
+<script type="text/javascript" src="../../script/api.js"></script>
+<script type="text/javascript" src="../../script/jquery-3.3.1.min.js"></script>
+<script src="../../script/jquery.i18n.properties-1.0.9.js" type="text/javascript"></script>
+<script src="../../script/language.js" type="text/javascript"></script>
+<script type="text/javascript" src="../../script/common.js"></script>
+<script type="text/javascript">
+    var language_id = 0;
+    apiready = function() {
+            fnSettingHeader();
+            hlLanguage("../../i18n/");
+        }
+
+    function closeMyself() {
+        api.closeFrame({
+            name: 'account_setting_security_phone'
+        });
+    }
+</script>

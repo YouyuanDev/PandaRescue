@@ -158,6 +158,7 @@
         }
         //hlLanguage("../../i18n/");
     }
+
     function registerAccount() {
         api.openWin({
             name: 'register',
@@ -218,6 +219,7 @@
                     }
                 }
             }, function(rets, errs) {
+                alert(JSON.stringify(rets));
                 if (rets) {
                     if (rets.success) {
                         var account_type = rets.accountType;
@@ -245,9 +247,14 @@
                             key: 'userInfo',
                             value: userInfo
                         });
-                        api.closeToWin({
-                            name: 'root'
+                        api.openWin({
+                            name: 'inde',
+                            url: '../../index.html',
+                            reload:true
                         });
+                        // api.closeToWin({
+                        //     name: 'root'
+                        // });
                     } else {
                         toastFail(rets.msg);
                     }

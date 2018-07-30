@@ -199,7 +199,6 @@
                     g_my_lat = ret.lat;
                     initMapSDKOK();
                 } else {
-                    //alert('获取用户信息时出错,错误信息:' + err.code);
                     map.stopLocation();
                     toastFail('getUserLocation 失败');
                 }
@@ -209,11 +208,8 @@
     }
     //初始化地图成功,获取最新订单信息
     function initMapSDKOK() {
-        //getUserSession();
         getCurrentOrder();
     }
-
-
     //注册app前台，后台切换事件
     function registerPauseResumeEvent() {
         api.addEventListener({
@@ -957,6 +953,7 @@
                             account_type: rets.accountType
                         }
                     });
+
                     $('.aui-title').append("<i>" + rets.accountType + "<i>");
                     return;
                 } else {
@@ -1451,13 +1448,17 @@
         api.addEventListener({
             name: 'MaskClickEvent'
         }, function(ret, err) {
-            api.closeFrame({
-                name: 'mask'
-            });
-            api.closeFrame({
-                name: 'account'
-            });
+          closeMaskAndAccountFrame();
         });
+    }
+    //关闭侧滑Frame
+    function closeMaskAndAccountFrame(){
+      api.closeFrame({
+          name: 'mask'
+      });
+      api.closeFrame({
+          name: 'account'
+      });
     }
     //监听账户切换事件
     function registerSwitchAccountTypeEvent() {

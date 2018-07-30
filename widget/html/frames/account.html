@@ -135,6 +135,7 @@
         if (data != undefined) {
             g_account_type = data.account_type;
         }
+        hlLanguage("../../i18n/");
     }
 
     function openUserInfo() {
@@ -144,6 +145,9 @@
             reload: true,
             pageParam: {}
         });
+        api.sendEvent({
+            name: 'MaskClickEvent'
+        });
     }
 
     function openSetting() {
@@ -152,6 +156,9 @@
             url: '../setting/account_setting.html',
             reload: true,
             pageParam: {}
+        });
+        api.sendEvent({
+            name: 'MaskClickEvent'
         });
     }
 
