@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0" />
+    <meta name="format-detection" content="telephone=no,email=no,date=no,address=no">
+    <title>语言设置</title>
+    <link rel="stylesheet" type="text/css" href="../../css/api.css" />
+    <link rel="stylesheet" type="text/css" href="../../css/aui.css" />
+    <link rel="stylesheet" type="text/css" href="../../css/font-awesome.min.css" />
+    <link rel="stylesheet" type="text/css" href="../../css/style.css" />
+    <style>
+        #header {
+            background-color: #61C721;
+        }
+        .aui-title {
+            color: #fff;
+        }
+        .hidden-span {
+            display: none;
+        }
+    </style>
+</head>
+
+<body class="body-bg">
+    <header id="header" class="aui-bar aui-bar-nav aui-bar-light personal-header">
+        <a class="aui-pull-left aui-btn">
+            <span onclick="closeMyself();" class="i18n1" name="cancel">取消</span>
+        </a>
+        <div class="aui-title i18n1"  name="switchlanguage">切换语言</div>
+        <a class="aui-pull-right aui-btn">
+            <span onclick="changeLanguage();" class="i18n1" name="confirm">完成</span>
+        </a>
+    </header>
+    <div class="aui-content aui-margin-b-15">
+        <ul class="aui-list aui-list-in">
+            <li class="aui-list-item language-li language-chinese" onclick="selectLanguage(this,0);">
+                <div class="aui-list-item-inner">
+                    <div class="aui-list-item-title i18n1" name="simplifiedchinese"></div>
+                    <div class="aui-list-item-right"><span class="fa fa-check-circle"></span></div>
+                </div>
+            </li>
+            <li class="aui-list-item language-li language-en" onclick="selectLanguage(this,1);">
+                <div class="aui-list-item-inner">
+                    <div class="aui-list-item-title i18n1" name="english">English</div>
+                    <div class="aui-list-item-right"><span class="fa fa-circle-thin"></span></div>
+                </div>
+            </li>
+        </ul>
+    </div>
+</body>
+
+</html>
+<script type="text/javascript" src="../../script/api.js"></script>
+<script type="text/javascript" src="../../script/jquery-3.3.1.min.js"></script>
+<script src="../../script/jquery.i18n.properties-1.0.9.js" type="text/javascript"></script>
+<script src="../../script/language.js" type="text/javascript"></script>
+<script type="text/javascript" src="../../script/common.js"></script>
+<script type="text/javascript">
+    var language_id=0;
+    apiready = function() {
+        fnSettingHeader();
+        loadLanguage();
+        hlLanguage("../../i18n/");
+    }
+
+    function loadLanguage() {
+        var language = $api.getStorage('userLanguage');
+        $('.language-li').find('span').removeClass('fa-check-circle').addClass('fa-circle-thin');
+        if (language == "en") {
+            $('.language-en').find('span').removeClass('fa-circle-thin').addClass('fa-check-circle');
+            language_id=1;
+        } else {
+            $('.language-chinese').find('span').removeClass('fa-circle-thin').addClass('fa-check-circle');
+            language_id=0;
+        }
+    }
+    //退出登录
+    function changeLanguage() {
+      if(language_id==0){
+        $api.setStorage('userLanguage','zh-CN');
+      }else if(language_id==1){
+        $api.setStorage('userLanguage','en');
+      }
+      api.rebootApp();
+    }
+    //选择语言事件
+    function selectLanguage(obj, type) {
+        $(obj).find('span').removeClass('fa-circle-thin').addClass('fa-check-circle');
+        $(obj).siblings('li').find('span').removeClass('fa-check-circle').addClass('fa-circle-thin');
+        language_id=type;
+    }
+
+    function closeMyself() {
+        api.closeFrame({
+            name: 'account_setting_language'
+        });
+    }
+</script>

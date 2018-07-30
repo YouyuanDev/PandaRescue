@@ -37,11 +37,11 @@
 <body class="body-bg">
     <header id="header" class="aui-bar aui-bar-nav aui-bar-light personal-header">
         <a class="aui-pull-left aui-btn">
-            <span onclick="closeWindow();">取消</span>
+            <span onclick="closeWindow();" class="i18n1" name="cancel">取消</span>
         </a>
-        <div class="aui-title">编辑资料</div>
+        <div class="aui-title i18n1"  name="editinginformation">编辑资料</div>
         <a class="aui-pull-right aui-btn">
-            <span onclick="submitForm();">完成</span>
+            <span onclick="submitForm();" class="i18n1" name="confirm">完成</span>
         </a>
     </header>
     <div class="aui-content aui-margin-b-15">
@@ -52,13 +52,13 @@
                          <img src="../../image/sos_128.png" class="personal-header-img"/>
                     </div>
                     <div class="aui-list-item-input">
-                        <div class="aui-label" onclick="changeHeader();">修改头像</div>
+                        <div class="aui-label i18n1" onclick="changeHeader();" name="changetheavatar">更换头像</div>
                     </div>
                 </div>
             </li>
             <li class="aui-list-item">
                 <div class="aui-list-item-inner">
-                    <div class="aui-list-item-label">
+                    <div class="aui-list-item-label i18n1" name="gender">
                         性别
                     </div>
                     <div class="aui-list-item-input">
@@ -76,7 +76,7 @@
         <ul class="aui-list aui-form-list">
             <li class="aui-list-item">
                 <div class="aui-list-item-inner">
-                    <div class="aui-list-item-label">
+                    <div class="aui-list-item-label i18n1" name="accounttype">
                         账户类型
                     </div>
                     <div class="aui-list-item-input">
@@ -86,7 +86,7 @@
             </li>
             <li class="aui-list-item">
                 <div class="aui-list-item-inner">
-                    <div class="aui-list-item-label">
+                    <div class="aui-list-item-label i18n1" name="accountstate">
                         账号状态
                     </div>
                     <div class="aui-list-item-input">
@@ -96,7 +96,7 @@
             </li>
             <li class="aui-list-item">
                 <div class="aui-list-item-inner">
-                    <div class="aui-list-item-label">
+                    <div class="aui-list-item-label i18n1" name="registrationtime">
                         注册时间
                     </div>
                     <div class="aui-list-item-input">
@@ -106,55 +106,13 @@
             </li>
         </ul>
     </div>
-    <!-- <div class="aui-content aui-margin-b-15">
-        <ul class="aui-list aui-form-list">
-            <li class="aui-list-item">
-                <div class="aui-list-item-inner">
-                    <div class="aui-list-item-label">
-                        行业
-                    </div>
-                    <div class="aui-list-item-input">
-                        <input type="text" placeholder="昵称">
-                    </div>
-                </div>
-            </li>
-            <li class="aui-list-item">
-                <div class="aui-list-item-inner">
-                    <div class="aui-list-item-label">
-                        公司
-                    </div>
-                    <div class="aui-list-item-input">
-                        <input type="text" placeholder="昵称">
-                    </div>
-                </div>
-            </li>
-            <li class="aui-list-item">
-                <div class="aui-list-item-inner">
-                    <div class="aui-list-item-label">
-                        职业
-                    </div>
-                    <div class="aui-list-item-input">
-                        <input type="text" placeholder="昵称">
-                    </div>
-                </div>
-            </li>
-            <li class="aui-list-item">
-                <div class="aui-list-item-inner">
-                    <div class="aui-list-item-label">
-                        个性签名
-                    </div>
-                    <div class="aui-list-item-input">
-                        <input type="text" placeholder="昵称">
-                    </div>
-                </div>
-            </li>
-        </ul>
-    </div> -->
 </body>
 
 </html>
 <script type="text/javascript" src="../../script/api.js"></script>
 <script type="text/javascript" src="../../script/jquery-3.3.1.min.js"></script>
+<script src="../../script/jquery.i18n.properties-1.0.9.js" type="text/javascript"></script>
+<script src="../../script/language.js" type="text/javascript"></script>
 <script type="text/javascript" src="../../script/common.js"></script>
 <script type="text/javascript">
     apiready = function() {
@@ -163,7 +121,7 @@
         if (data != undefined) {
 
         }
-        //hlLanguage("../../i18n/");
+        hlLanguage("../../i18n/");
     }
     //更改头像
     function changeHeader(){

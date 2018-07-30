@@ -81,7 +81,7 @@
             $(document.body).append(makeEmptyTemplate("暂无数据!"));
         }
     }
-  
+
 
     //获取两点间的路线距离
     function getRouteDistance(company_no, company_location_lon, company_location_lat) {
@@ -110,7 +110,6 @@
                     toastFail("系统错误!");
                 }
             } else {
-                //alert(err.msg);
                 toastFail("系统错误" + err.msg);
             }
 

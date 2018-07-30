@@ -68,13 +68,13 @@
 <body class="wrap">
     <header id="header" class="aui-bar aui-bar-nav">
         <a class="aui-pull-left aui-btn">
-            <i class="fa fa-user-circle-o fa-size" onclick="requestSwitchAccounType('person_user');"></i>
+            <i class="fa fa-user-circle-o fa-size" onclick="openAccount();"></i>
         </a>
         <div class="aui-title">
-            <i class="fa fa-user fa-size" onclick="requestSwitchAccounType('company_user');"></i> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+            <!-- <i class="fa fa-user fa-size" onclick="requestSwitchAccounType('company_user');"></i> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp; -->
             <i class="fa fa-bookmark fa-size" onclick="sendPush();"></i>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
             <i class="fa fa-toggle-on fa-size" onclick="openLogin();"></i>
-            <i class="fa fa-edit fa-size" onclick="openEdit();"></i>
+            <!-- <i class="fa fa-edit fa-size" onclick="openEdit();"></i> -->
         </div>
         <a class="aui-pull-right aui-btn">
             <i class="fa fa-commenting fa-2x fa-size" onclick="accountMessage();"></i>
@@ -125,6 +125,7 @@
         registerChangeAccountTypeEvent();
         registerPauseResumeEvent();
         registerMaskEvent();
+        registerSwitchAccountTypeEvent();
         initMapSDK();
     };
     //1.初始化MapSDK
@@ -1414,8 +1415,8 @@
             });
         }
     }
-    //openEdit
-    function openEdit() {
+    //侧滑打开账户设置
+    function openAccount() {
         api.openFrame({
             name: 'mask',
             url: './html/frames/mask.html',
@@ -1441,7 +1442,7 @@
                 duration: 300
             },
             pageParam: {
-
+               account_type:g_account_type
             }
         });
     }
@@ -1456,6 +1457,22 @@
             api.closeFrame({
                 name: 'account'
             });
+        });
+    }
+    //监听账户切换事件
+    function registerSwitchAccountTypeEvent() {
+        api.addEventListener({
+            name: 'SwitchAccountTypeEvent'
+        }, function(ret, err) {
+            if(ret){
+              api.closeFrame({
+                  name: 'mask'
+              });
+              api.closeFrame({
+                  name: 'account'
+              });
+              requestSwitchAccounType(ret.value.account_type);
+            }
         });
     }
 </script>
