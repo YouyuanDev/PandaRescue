@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0" />
+    <meta name="format-detection" content="telephone=no,email=no,date=no,address=no">
+    <title>个人信息页面</title>
+    <link rel="stylesheet" type="text/css" href="../../css/api.css" />
+    <link rel="stylesheet" type="text/css" href="../../css/aui.css" />
+    <link rel="stylesheet" type="text/css" href="../../css/font-awesome.min.css" />
+    <link rel="stylesheet" type="text/css" href="../../css/style.css" />
+    <style>
+        #header {
+            background-color: #61C721;
+        }
+
+        .personal-header .aui-title {
+            color: #fff;
+            font-size: 1.2rem;
+        }
+
+        .aui-list .aui-list-item-label {
+            color: #AAAAAA;
+        }
+        .aui-list .aui-list-item-inner.personal-img{
+           padding-top:0.6rem;padding-bottom:0.6rem;
+        }
+        .aui-list .aui-list-item-inner.personal-img img{
+           width:3rem;
+           height:3rem;
+           border-radius:50%;
+        }
+    </style>
+</head>
+
+<body class="body-bg">
+    <header id="header" class="aui-bar aui-bar-nav aui-bar-light personal-header">
+        <a class="aui-pull-left aui-btn">
+            <span onclick="closeWindow();">取消</span>
+        </a>
+        <div class="aui-title">编辑资料</div>
+        <a class="aui-pull-right aui-btn">
+            <span onclick="submitForm();">完成</span>
+        </a>
+    </header>
+    <div class="aui-content aui-margin-b-15">
+        <ul class="aui-list aui-form-list">
+            <li class="aui-list-item">
+                <div class="aui-list-item-inner personal-img">
+                    <div class="aui-list-item-label">
+                         <img src="../../image/sos_128.png" class="personal-header-img"/>
+                    </div>
+                    <div class="aui-list-item-input">
+                        <div class="aui-label" onclick="changeHeader();">修改头像</div>
+                    </div>
+                </div>
+            </li>
+            <li class="aui-list-item">
+                <div class="aui-list-item-inner">
+                    <div class="aui-list-item-label">
+                        性别
+                    </div>
+                    <div class="aui-list-item-input">
+                        <select>
+                         <option value="男">男</option>
+                         <option value="女">女</option>
+                        </select>
+                    </div>
+                </div>
+            </li>
+
+        </ul>
+    </div>
+    <div class="aui-content aui-margin-b-15">
+        <ul class="aui-list aui-form-list">
+            <li class="aui-list-item">
+                <div class="aui-list-item-inner">
+                    <div class="aui-list-item-label">
+                        账户类型
+                    </div>
+                    <div class="aui-list-item-input">
+                        <input type="text" readonly="readonly" placeholder="">
+                    </div>
+                </div>
+            </li>
+            <li class="aui-list-item">
+                <div class="aui-list-item-inner">
+                    <div class="aui-list-item-label">
+                        账号状态
+                    </div>
+                    <div class="aui-list-item-input">
+                        <input type="text" readonly="readonly" placeholder="">
+                    </div>
+                </div>
+            </li>
+            <li class="aui-list-item">
+                <div class="aui-list-item-inner">
+                    <div class="aui-list-item-label">
+                        注册时间
+                    </div>
+                    <div class="aui-list-item-input">
+                        <input type="text" readonly="readonly" placeholder="">
+                    </div>
+                </div>
+            </li>
+        </ul>
+    </div>
+    <!-- <div class="aui-content aui-margin-b-15">
+        <ul class="aui-list aui-form-list">
+            <li class="aui-list-item">
+                <div class="aui-list-item-inner">
+                    <div class="aui-list-item-label">
+                        行业
+                    </div>
+                    <div class="aui-list-item-input">
+                        <input type="text" placeholder="昵称">
+                    </div>
+                </div>
+            </li>
+            <li class="aui-list-item">
+                <div class="aui-list-item-inner">
+                    <div class="aui-list-item-label">
+                        公司
+                    </div>
+                    <div class="aui-list-item-input">
+                        <input type="text" placeholder="昵称">
+                    </div>
+                </div>
+            </li>
+            <li class="aui-list-item">
+                <div class="aui-list-item-inner">
+                    <div class="aui-list-item-label">
+                        职业
+                    </div>
+                    <div class="aui-list-item-input">
+                        <input type="text" placeholder="昵称">
+                    </div>
+                </div>
+            </li>
+            <li class="aui-list-item">
+                <div class="aui-list-item-inner">
+                    <div class="aui-list-item-label">
+                        个性签名
+                    </div>
+                    <div class="aui-list-item-input">
+                        <input type="text" placeholder="昵称">
+                    </div>
+                </div>
+            </li>
+        </ul>
+    </div> -->
+</body>
+
+</html>
+<script type="text/javascript" src="../../script/api.js"></script>
+<script type="text/javascript" src="../../script/jquery-3.3.1.min.js"></script>
+<script type="text/javascript" src="../../script/common.js"></script>
+<script type="text/javascript">
+    apiready = function() {
+        fnSettingHeader();
+        var data = api.pageParam;
+        if (data != undefined) {
+
+        }
+        //hlLanguage("../../i18n/");
+    }
+    //更改头像
+    function changeHeader(){
+       selectPicture(0);
+    }
+    function submitForm() {
+
+    }
+</script>

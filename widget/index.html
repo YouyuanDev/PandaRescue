@@ -74,6 +74,7 @@
             <i class="fa fa-user fa-size" onclick="requestSwitchAccounType('company_user');"></i> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
             <i class="fa fa-bookmark fa-size" onclick="sendPush();"></i>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
             <i class="fa fa-toggle-on fa-size" onclick="openLogin();"></i>
+            <i class="fa fa-edit fa-size" onclick="openEdit();"></i>
         </div>
         <a class="aui-pull-right aui-btn">
             <i class="fa fa-commenting fa-2x fa-size" onclick="accountMessage();"></i>
@@ -123,6 +124,7 @@
         registerPendingOrderListEvent();
         registerChangeAccountTypeEvent();
         registerPauseResumeEvent();
+        registerMaskEvent();
         initMapSDK();
     };
     //1.初始化MapSDK
@@ -404,7 +406,7 @@
         });
     }
     //打开附近商户信息frame
-    function openCompanyFrame(g_my_lon,g_my_lat,rets) {
+    function openCompanyFrame(g_my_lon, g_my_lat, rets) {
         api.openFrame({
             name: 'nearby_company',
             url: './html/frames/nearby_company.html',
@@ -418,14 +420,14 @@
             vScrollBarEnabled: false,
             pageParam: {
                 company: rets,
-                g_my_lon:g_my_lon,
-                g_my_lat:g_my_lat
+                g_my_lon: g_my_lon,
+                g_my_lat: g_my_lat
 
             }
         });
     }
     //打开待接单的订单信息frame
-    function openPendingorderFrame(g_my_lon,g_my_lat,rets) {
+    function openPendingorderFrame(g_my_lon, g_my_lat, rets) {
         api.openFrame({
             name: 'pending_order',
             url: './html/frames/pending_order.html',
@@ -439,8 +441,8 @@
             vScrollBarEnabled: false,
             pageParam: {
                 pendingorder: rets,
-                g_my_lon:g_my_lon,
-                g_my_lat:g_my_lat,
+                g_my_lon: g_my_lon,
+                g_my_lat: g_my_lat,
                 g_service_type_dict: g_service_type_dict,
                 g_failure_type_dict: g_failure_type_dict
             }
@@ -699,66 +701,65 @@
     }
 
     //获取当前订单的个人用户和商户用户当前位置，唯一同步地理信息的地方
-    function getPersonUserAndCompanyUserCurrentLocation(){
-      var s = 'http://' + serverIP + '/Order/getPersonUserAndCompanyUserCurrentLocation.action';
-      api.ajax({
-          url: s,
-          method: 'post',
-          timeout: 30,
-          dataType: 'json',
-          data: {
-          }
-      }, function(ret, err) {
-          if (ret) {
-              if (ret.success) {
-                  drawLocation(ret.accountType,ret.person_user_location,ret.company_user_location);
-              }else{
-                toastFail(ret.msg);
-                if (ret.relogin) {
-                    //session过期，重新登录 000
-                    api.sendEvent({
-                        name: 'reloginEvent'
-                    });
+    function getPersonUserAndCompanyUserCurrentLocation() {
+        var s = 'http://' + serverIP + '/Order/getPersonUserAndCompanyUserCurrentLocation.action';
+        api.ajax({
+            url: s,
+            method: 'post',
+            timeout: 30,
+            dataType: 'json',
+            data: {}
+        }, function(ret, err) {
+            if (ret) {
+                if (ret.success) {
+                    drawLocation(ret.accountType, ret.person_user_location, ret.company_user_location);
+                } else {
+                    toastFail(ret.msg);
+                    if (ret.relogin) {
+                        //session过期，重新登录 000
+                        api.sendEvent({
+                            name: 'reloginEvent'
+                        });
+                    }
                 }
-              }
-            }else{
-              toastFail('获取用户信息时出错,错误信息:' + err.code);
+            } else {
+                toastFail('获取用户信息时出错,错误信息:' + err.code);
             }
-          });
+        });
     }
 
-  //画对方的位置
-  function drawLocation(accountType,person_user_location,company_user_location){
-    //更新对方的位置, 此处改为定时更新客户位置信息
-    if (accountType == "person_user") {
-        if (company_user_location == undefined || company_user_location == "") {
-            return;
-        }
-        var lon_lat = company_user_location.split(',');
-        if (lon_lat.length > 1) {
-            var lon = lon_lat[0];
-            var lat = lon_lat[1];
-            updateCompanyUserLocation(g_CompanyList.length, lon, lat);
-            drawRouteFromBeginToEnd(g_my_lon, g_my_lat, lon, lat);
-        }
-    } else if (accountType == "company_user") {
-        if (person_user_location == undefined || person_user_location == "") {
-            return;
-        }
-        var lon_lat = person_user_location.split(',');
-        if (lon_lat.length > 1) {
-            var lon = lon_lat[0];
-            var lat = lon_lat[1];
-            updatePersonUserLocation(g_CompanyList.length, lon, lat);
-            drawRouteFromBeginToEnd(g_my_lon, g_my_lat, lon, lat, );
+    //画对方的位置
+    function drawLocation(accountType, person_user_location, company_user_location) {
+        //更新对方的位置, 此处改为定时更新客户位置信息
+        if (accountType == "person_user") {
+            if (company_user_location == undefined || company_user_location == "") {
+                return;
+            }
+            var lon_lat = company_user_location.split(',');
+            if (lon_lat.length > 1) {
+                var lon = lon_lat[0];
+                var lat = lon_lat[1];
+                updateCompanyUserLocation(g_CompanyList.length, lon, lat);
+                drawRouteFromBeginToEnd(g_my_lon, g_my_lat, lon, lat);
+            }
+        } else if (accountType == "company_user") {
+            if (person_user_location == undefined || person_user_location == "") {
+                return;
+            }
+            var lon_lat = person_user_location.split(',');
+            if (lon_lat.length > 1) {
+                var lon = lon_lat[0];
+                var lat = lon_lat[1];
+                updatePersonUserLocation(g_CompanyList.length, lon, lat);
+                drawRouteFromBeginToEnd(g_my_lon, g_my_lat, lon, lat, );
+            }
         }
     }
-  }
 
 
     //上传坐标
-    function SendLocationToServer(now_lon,now_lat,order_no,distanceToLastLocation) {
-      var my_location = now_lon + "," + now_lat;
+    function SendLocationToServer(now_lon, now_lat, order_no, distanceToLastLocation) {
+        var my_location = now_lon + "," + now_lat;
         var s = 'http://' + serverIP + '/Order/updateLocation.action';
         api.ajax({
             url: s,
@@ -775,12 +776,12 @@
             if (ret) {
                 if (ret.success) {
 
-                  if(distanceToLastLocation>10){
-                    map.showUserLocation({
-                        isShow: true,
-                        trackingMode: 'none'
-                    });
-                  }
+                    if (distanceToLastLocation > 10) {
+                        map.showUserLocation({
+                            isShow: true,
+                            trackingMode: 'none'
+                        });
+                    }
 
                     g_my_lon = now_lon;
                     g_my_lat = now_lat;
@@ -799,7 +800,7 @@
             filter: 1
         }, function(ret, err) {
             if (ret.status) {
-              //alert("updateOrderUserLocation");
+                //alert("updateOrderUserLocation");
                 var now_lon = ret.lon;
                 var now_lat = ret.lat;
 
@@ -818,11 +819,11 @@
                         if (ret.status) {
                             //var distance = ret.distance;
                             //alert("ret.distance"+ret.distance);
-                            SendLocationToServer(now_lon,now_lat,order_no,ret.distance);
+                            SendLocationToServer(now_lon, now_lat, order_no, ret.distance);
                         }
                     });
-                }else{
-                  SendLocationToServer(now_lon,now_lat,order_no,100);
+                } else {
+                    SendLocationToServer(now_lon, now_lat, order_no, 100);
                 }
             } else {
                 //alert('获取用户信息时出错,错误信息:' + err.code);
@@ -1097,10 +1098,10 @@
         // g_orderStatusInterval = setInterval(function() {
         //     getOrderStatusInfo(order_no);
         // }, 3000);
-        if(order_no!=undefined){
-          g_PersonUserAndCompanyUserLocationInterval = setInterval(function() {
-          getPersonUserAndCompanyUserCurrentLocation();
-          }, 5000);
+        if (order_no != undefined) {
+            g_PersonUserAndCompanyUserLocationInterval = setInterval(function() {
+                getPersonUserAndCompanyUserCurrentLocation();
+            }, 5000);
         }
 
 
@@ -1142,7 +1143,7 @@
                         setCompanyBubble(i, rets[i].company_name);
                     }
 
-                    openCompanyFrame(g_my_lon,g_my_lat,rets);
+                    openCompanyFrame(g_my_lon, g_my_lat, rets);
                     openLocatingButton();
                     openSosButton();
                 } else {
@@ -1194,7 +1195,7 @@
                         setPendingOrderBubble(i, service_type_name, failure_type_name);
                     }
 
-                    openPendingorderFrame(g_my_lon,g_my_lat,rets);
+                    openPendingorderFrame(g_my_lon, g_my_lat, rets);
                     openLocatingButton();
                     openReceiptButton();
                 } else {
@@ -1412,6 +1413,50 @@
                 }
             });
         }
+    }
+    //openEdit
+    function openEdit() {
+        api.openFrame({
+            name: 'mask',
+            url: './html/frames/mask.html',
+            rect: {
+                x: 0,
+                y: 0,
+                w: api.winWidth,
+                h: api.height
+            }
+        });
+        api.openFrame({
+            name: 'account',
+            url: './html/frames/account.html',
+            rect: {
+                x: 0,
+                y: 0,
+                w: api.winWidth - api.winWidth / 3,
+                h: api.height
+            },
+            animation: {
+                type: "movein",
+                subType: "from_left",
+                duration: 300
+            },
+            pageParam: {
+
+            }
+        });
+    }
+    //监听遮罩层点击事件
+    function registerMaskEvent() {
+        api.addEventListener({
+            name: 'MaskClickEvent'
+        }, function(ret, err) {
+            api.closeFrame({
+                name: 'mask'
+            });
+            api.closeFrame({
+                name: 'account'
+            });
+        });
     }
 </script>
 

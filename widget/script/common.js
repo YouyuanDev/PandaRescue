@@ -1,5 +1,5 @@
 var header, headerHeight = 0;
-var serverIP = '192.168.0.102:8080';
+var serverIP = '192.168.0.12:8080';
 
 function fnSettingHeader() {
     var sType = api.systemType;
@@ -90,19 +90,19 @@ function checkNetWork() {
     }
 }
 //图片上传
-function selectPicture() {
+function selectPicture(type) {
     api.actionSheet({
         title: '上传图片',
         cancelTitle: '取消',
         buttons: ['拍照', '从手机相册选择']
     }, function(ret, err) {
         if (ret) {
-            getPicture(ret.buttonIndex);
+            getPicture(ret.buttonIndex, type);
         }
     });
 }
 
-function getPicture(sourceType) {
+function getPicture(sourceType, type) {
     if (sourceType == 1) { // 拍照
         api.getPicture({
             sourceType: 'camera',
@@ -130,7 +130,10 @@ function getPicture(sourceType) {
                 }, function(rets, errs) {
                     ClearLoadingPicture();
                     if (rets) {
-                        $('.imgBox').append(pictureTemplate(rets.imgUrl, ret.base64Data));
+                        if (type == 0) {
+                            $('.personal-header-img').attr("src",ret.base64Data);
+                            //$('.imgBox').append(pictureTemplate(rets.imgUrl, ret.base64Data));
+                        }
                         alert("上传成功!");
                     } else {
                         api.alert({
@@ -169,7 +172,9 @@ function getPicture(sourceType) {
                 }, function(rets, errs) {
                     ClearLoadingPicture();
                     if (rets) {
-                        $('.imgBox').append(pictureTemplate(rets.imgUrl, ret.base64Data));
+                        if (type == 0) {
+                            $('.personal-header-img').attr("src",ret.base64Data);
+                        }
                         alert("上传成功!");
                     } else {
                         api.alert({
@@ -222,12 +227,12 @@ function getDistance(num) {
     return num;
 }
 //秒转分钟
-function convertSecToMin(sec){
-  if (sec != undefined && !isNaN(sec)) {
-      sec = sec / 60;
-      sec = sec.toFixed(0);
-  }
-  return sec;
+function convertSecToMin(sec) {
+    if (sec != undefined && !isNaN(sec)) {
+        sec = sec / 60;
+        sec = sec.toFixed(0);
+    }
+    return sec;
 }
 
 
@@ -274,16 +279,16 @@ function makeEmptyTemplate(con) {
 function bindPush(username) {
     var push = api.require('push');
     push.bind({
-      userName: username,
-      userId: username
-        // userName: api.deviceId,
-        // userId: api.deviceId
+        userName: username,
+        userId: username
+            // userName: api.deviceId,
+            // userId: api.deviceId
     }, function(ret, err) {
         if (ret.status == true) {
             alert(username + "bind成功");
             toastSuccess(username + "bind成功");
         } else {
-            alert(username+ "bind"+err.msg);
+            alert(username + "bind" + err.msg);
             toastFail(err.msg);
         }
     });
@@ -317,7 +322,7 @@ function joinPushGroup(groupName) {
             alert(s);
             toastSuccess(s);
         } else {
-             alert('加入组'+err.msg);
+            alert('加入组' + err.msg);
             toastFail(err.msg);
         }
     });

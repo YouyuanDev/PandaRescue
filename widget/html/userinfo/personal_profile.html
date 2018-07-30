@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0" />
+    <meta name="format-detection" content="telephone=no,email=no,date=no,address=no">
+    <title>个人简介</title>
+    <link rel="stylesheet" type="text/css" href="../../css/api.css" />
+    <link rel="stylesheet" type="text/css" href="../../css/aui.css" />
+    <link rel="stylesheet" type="text/css" href="../../css/font-awesome.min.css" />
+    <link rel="stylesheet" type="text/css" href="../../css/style.css" />
+    <style>
+        #header {
+            padding-top: 50px;
+            border-bottom: 0px;
+            background-color: #61C721;
+        }
+
+        .logo {
+            width: 100%;
+            height: auto;
+            padding: 2rem 0rem;
+        }
+
+        .logo img {
+            margin: auto;
+            width: 80px;
+            height: 80px;
+            background-color: #fff;
+            border-radius: 50%;
+        }
+
+        .login {
+            width: 100%;
+            padding: 0.75rem 0rem;
+            line-height: 0.75rem;
+            background-color: #61C721;
+            text-align: center;
+            color: #fff;
+        }
+
+        .aui-list .aui-list-item:active {
+            background-color: #fff;
+        }
+
+        .aui-list.aui-form-list .aui-list-item:active {
+            background-color: #fff;
+        }
+
+        .userinfo-container {
+            padding: 0rem 0.3rem;
+            background-color: #fff;
+        }
+
+        .forget-password-interval {
+            display: none;
+        }
+
+        .body-bg {
+            background-color: #fff;
+        }
+
+        .userinfo-container ul li {
+            background-color: #fff;
+        }
+
+        .diy-list .diy-list-span {
+            margin: auto;
+            text-align: center;
+        }
+
+        .diy-list .diy-list-username {
+            font-size: 1.2rem;
+        }
+
+        .diy-list .diy-list-gender {
+            color: #61C721;
+        }
+
+        .auth-container .aui-list {
+            border-left: 1px solid #dddddd;
+            border-right: 1px solid #dddddd;
+        }
+    </style>
+</head>
+
+<body class="body-bg">
+    <header id="header" class="aui-bar aui-bar-nav prscue-bg">
+        <a class="aui-pull-left aui-btn" onclick="closeWindow();">
+            <span class="aui-iconfont aui-icon-left"></span>返回
+        </a>
+        <a class="aui-pull-right aui-btn" onclick="editUserInfo();">
+             编辑资料
+        </a>
+    </header>
+    <div class="aui-content aui-margin-b-15 prscue-bg userinfo-container">
+        <ul class="aui-list aui-form-list aui-list-noborder prscue-bg">
+            <li class="aui-list-item-diy">
+                <div class="aui-list-item-inner">
+                    <div class="logo">
+                        <img src="../../image/sos_128.png" />
+                    </div>
+                </div>
+            </li>
+            <li class="aui-list-item-diy">
+                <div class="aui-list-item-inner diy-list">
+                    <span class="diy-list-span"><span class="diy-list-username">AndrewLiu</span><span class="fa fa-mars diy-list-gender"></span></span>
+                </div>
+            </li>
+            <li class="aui-list-item-diy">
+                <div class="aui-list-item-inner diy-list">
+                    <span class="diy-list-span"><span>90后</span></span>
+                </div>
+            </li>
+            <!-- <li class="aui-list-item-diy">
+                <div class="aui-list-item-inner diy-list">
+                    <span class="diy-list-span">还没个性签名,介绍一下自己吧</span>
+                </div>
+            </li> -->
+        </ul>
+    </div>
+    <div class="aui-content aui-margin-b-15 auth-container">
+        <ul class="aui-list aui-list-in">
+            <li class="aui-list-item">
+                <div class="aui-list-item-inner">
+                    <div class="aui-list-item-title">
+                        <span class="fa fa-id-card-o"></span><span class="">实名认证</span>
+                    </div>
+                    <div class="aui-list-item-right">
+                        <span class="fa fa-check-circle-o"></span><span class="">未认证</span>
+                    </div>
+                </div>
+            </li>
+            <li class="aui-list-item">
+                <div class="aui-list-item-inner">
+                    <div class="aui-list-item-title">
+                        <span class="fa fa-vcard-o"></span><span class="">商户认证</span>
+                    </div>
+                    <div class="aui-list-item-right">
+                        <span class="fa fa-check-circle-o"></span><span class="">未认证</span>
+                    </div>
+                </div>
+            </li>
+        </ul>
+    </div>
+</body>
+
+</html>
+<script type="text/javascript" src="../../script/api.js"></script>
+<script type="text/javascript" src="../../script/jquery-3.3.1.min.js"></script>
+<script type="text/javascript" src="../../script/common.js"></script>
+<script type="text/javascript">
+    apiready = function() {
+        fnSettingHeader();
+        var data = api.pageParam;
+        if (data != undefined) {
+            var cellphoneno = data.cellphoneno;
+            var password = data.password;
+            if (cellphoneno != undefined) {
+                $("#phone").val(cellphoneno);
+            }
+            if (password != undefined) {
+                $("#password").val(password);
+            }
+        }
+        //hlLanguage("../../i18n/");
+    }
+
+    function editUserInfo() {
+        api.openWin({
+            name: 'userinfo',
+            url: './personal_details.html',
+            reload: true,
+            pageParam: {}
+        });
+    }
+</script>
