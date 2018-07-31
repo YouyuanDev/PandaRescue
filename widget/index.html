@@ -1410,6 +1410,23 @@
     }
     //侧滑打开账户设置
     function openAccount() {
+        // api.openSlidLayout({
+        //     type: 'left',
+        //     slidPaneStyle: {
+        //             leftEdge:api.winWidth/3*2,
+        //     },
+        //     fixedPane: {
+        //         name: 'index',
+        //         url: './index.html'
+        //     },
+        //     slidPane: {
+        //         name: 'account',
+        //         url: './html/frames/account.html'
+        //     }
+        // }, function(ret, err) {
+        //
+        // });
+
         api.openFrame({
             name: 'mask',
             url: './html/frames/mask.html',
@@ -1423,6 +1440,7 @@
         api.openFrame({
             name: 'account',
             url: './html/frames/account.html',
+            reload:true,
             rect: {
                 x: 0,
                 y: 0,
@@ -1439,36 +1457,37 @@
             }
         });
     }
+
     //监听遮罩层点击事件
     function registerMaskEvent() {
         api.addEventListener({
             name: 'MaskClickEvent'
         }, function(ret, err) {
-          closeMaskAndAccountFrame();
+            closeMaskAndAccountFrame();
         });
     }
     //关闭侧滑Frame
-    function closeMaskAndAccountFrame(){
-      api.closeFrame({
-          name: 'mask'
-      });
-      api.closeFrame({
-          name: 'account'
-      });
+    function closeMaskAndAccountFrame() {
+        api.closeFrame({
+            name: 'mask'
+        });
+        api.closeFrame({
+            name: 'account'
+        });
     }
     //监听账户切换事件
     function registerSwitchAccountTypeEvent() {
         api.addEventListener({
             name: 'SwitchAccountTypeEvent'
         }, function(ret, err) {
-            if(ret){
-              api.closeFrame({
-                  name: 'mask'
-              });
-              api.closeFrame({
-                  name: 'account'
-              });
-              requestSwitchAccounType(ret.value.account_type);
+            if (ret) {
+                api.closeFrame({
+                    name: 'mask'
+                });
+                api.closeFrame({
+                    name: 'account'
+                });
+                requestSwitchAccounType(ret.value.account_type);
             }
         });
     }

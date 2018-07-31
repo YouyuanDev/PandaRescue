@@ -18,7 +18,6 @@
         }
 
         .cancel-order {
-            background: #61C721;
             border-radius: 0px 0px 3px 3px;
         }
     </style>
@@ -103,7 +102,7 @@
     }
 
     function makeButtonTemplate(buttonFunctionName, buttonName) {
-        var template = '<div class="aui-btn aui-btn-block cancel-order" onclick="' + buttonFunctionName + '">' + buttonName + '</div>';
+        var template = '<div class="aui-btn aui-btn-block cancel-order pr-bgcolor" onclick="' + buttonFunctionName + '">' + buttonName + '</div>';
         return template;
     }
     //支付

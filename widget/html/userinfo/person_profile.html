@@ -5,35 +5,21 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0" />
     <meta name="format-detection" content="telephone=no,email=no,date=no,address=no">
-    <title>个人信息页面</title>
+    <title>个人信息简介</title>
     <link rel="stylesheet" type="text/css" href="../../css/api.css" />
     <link rel="stylesheet" type="text/css" href="../../css/aui.css" />
     <link rel="stylesheet" type="text/css" href="../../css/font-awesome.min.css" />
     <link rel="stylesheet" type="text/css" href="../../css/style.css" />
     <style>
-        .personal-header .aui-title {
-            font-size: 1.2rem;
-        }
-        .aui-list .aui-list-item-label {
-            color: #AAAAAA;
-        }
-        .aui-list .aui-list-item-inner.personal-img{
-           padding-top:0.6rem;padding-bottom:0.6rem;
-        }
-        .aui-list .aui-list-item-inner.personal-img img{
-           width:3rem;
-           height:3rem;
-           border-radius:50%;
-        }
     </style>
 </head>
 
 <body class="pr-body-bgcolor">
-    <header id="header" class="aui-bar aui-bar-nav aui-bar-light personal-header pr-bgcolor">
-        <a class="aui-pull-left aui-btn">
-            <span onclick="closeWindow();" class="i18n1" name="cancel">取消</span>
+    <header id="header" class="aui-bar aui-bar-nav prscue-bg pr-bgcolor">
+        <a class="aui-pull-left aui-btn" onclick="closeWindow();">
+            <span class="aui-iconfont aui-icon-left"></span>
         </a>
-        <div class="aui-title pr-fontcolor i18n1"  name="editinginformation">编辑资料</div>
+        <div class="aui-title pr-fontcolor i18n1" name="personalinformation">个人信息</div>
         <a class="aui-pull-right aui-btn">
             <span onclick="submitForm();" class="i18n1" name="confirm">完成</span>
         </a>
@@ -41,12 +27,12 @@
     <div class="aui-content aui-margin-b-15">
         <ul class="aui-list aui-form-list">
             <li class="aui-list-item">
-                <div class="aui-list-item-inner personal-img">
-                    <div class="aui-list-item-label">
-                         <img src="../../image/sos_128.png" class="personal-header-img"/>
+                <div class="aui-list-item-inner">
+                    <div class="aui-list-item-label i18n1" name="name">
+                        姓名
                     </div>
                     <div class="aui-list-item-input">
-                        <div class="aui-label i18n1" onclick="changeHeader();" name="changetheavatar">更换头像</div>
+                        <input type="text" placeholder="姓名">
                     </div>
                 </div>
             </li>
@@ -57,44 +43,43 @@
                     </div>
                     <div class="aui-list-item-input">
                         <select>
-                         <option value="男">男</option>
-                         <option value="女">女</option>
-                        </select>
+                      <option value="男">男</option>
+                      <option value="女">女</option>
+                  </select>
                     </div>
                 </div>
             </li>
-
+            <li class="aui-list-item">
+                <div class="aui-list-item-inner">
+                    <div class="aui-list-item-label i18n1" name="phonenumber">
+                        手机号
+                    </div>
+                    <div class="aui-list-item-input">
+                        <input type="text" readonly="readonly" placeholder="手机号">
+                    </div>
+                </div>
+            </li>
         </ul>
     </div>
     <div class="aui-content aui-margin-b-15">
         <ul class="aui-list aui-form-list">
             <li class="aui-list-item">
                 <div class="aui-list-item-inner">
-                    <div class="aui-list-item-label i18n1" name="accounttype">
-                        账户类型
+                    <div class="aui-list-item-label i18n1" name="idcard">
+                        身份证号
                     </div>
                     <div class="aui-list-item-input">
-                        <input type="text" readonly="readonly" placeholder="">
+                        <input type="text" readonly="readonly" placeholder="身份证号">
                     </div>
                 </div>
             </li>
             <li class="aui-list-item">
-                <div class="aui-list-item-inner">
-                    <div class="aui-list-item-label i18n1" name="accountstate">
-                        账号状态
+                <div class="aui-list-item-inner aui-list-item-arrow">
+                    <div class="aui-list-item-label i18n1" name="realnameauthentication">
+                        实名认证
                     </div>
                     <div class="aui-list-item-input">
-                        <input type="text" readonly="readonly" placeholder="">
-                    </div>
-                </div>
-            </li>
-            <li class="aui-list-item">
-                <div class="aui-list-item-inner">
-                    <div class="aui-list-item-label i18n1" name="registrationtime">
-                        注册时间
-                    </div>
-                    <div class="aui-list-item-input">
-                        <input type="text" readonly="readonly" placeholder="">
+                        <span class="fa fa-check-circle-o"></span><span class="i18n1" name="uncertified">未认证</span>
                     </div>
                 </div>
             </li>
@@ -105,23 +90,32 @@
 </html>
 <script type="text/javascript" src="../../script/api.js"></script>
 <script type="text/javascript" src="../../script/jquery-3.3.1.min.js"></script>
+<script type="text/javascript" src="../../script/common.js"></script>
 <script src="../../script/jquery.i18n.properties-1.0.9.js" type="text/javascript"></script>
 <script src="../../script/language.js" type="text/javascript"></script>
-<script type="text/javascript" src="../../script/common.js"></script>
 <script type="text/javascript">
     apiready = function() {
         fnSettingHeader();
         var data = api.pageParam;
         if (data != undefined) {
-
+            var cellphoneno = data.cellphoneno;
+            var password = data.password;
+            if (cellphoneno != undefined) {
+                $("#phone").val(cellphoneno);
+            }
+            if (password != undefined) {
+                $("#password").val(password);
+            }
         }
         hlLanguage("../../i18n/");
     }
-    //更改头像
-    function changeHeader(){
-       selectPicture(0);
-    }
-    function submitForm() {
 
+    function editUserInfo() {
+        api.openWin({
+            name: 'person_details',
+            url: './person_details.html',
+            reload: true,
+            pageParam: {}
+        });
     }
 </script>

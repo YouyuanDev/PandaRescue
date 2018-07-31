@@ -73,7 +73,7 @@
         <ul class="aui-list aui-form-list">
             <li class="aui-list-item">
                 <div class="aui-list-item-inner">
-                    <div class="aui-list-item-label">
+                    <div class="aui-list-item-label i18n1" name="servicetype">
                         服务类型
                     </div>
                     <div class="aui-list-item-input service-type">
@@ -83,7 +83,7 @@
             </li>
             <li class="aui-list-item">
                 <div class="aui-list-item-inner">
-                    <div class="aui-list-item-label">
+                    <div class="aui-list-item-label i18n1" name="failuretype">
                         故障类型
                     </div>
                     <div class="aui-list-item-input failure-type">
@@ -93,19 +93,19 @@
             </li>
             <li class="aui-list-item">
                 <div class="aui-list-item-inner">
-                    <div class="aui-list-item-label">
+                    <div class="aui-list-item-label i18n1" name="uploadpicture">
                         图片上传
                     </div>
                     <div class="aui-list-item-input select-picture">
                         <p>
-                            <div class="aui-btn" onclick="selectPicture();">选择图片</div>
+                            <div class="aui-btn pr-bgcolor pr-fontcolor i18n1" name="selectpicture" onclick="selectPicture();">选择图片</div>
                         </p>
                     </div>
                 </div>
             </li>
             <li class="aui-list-item">
                 <div class="aui-list-item-inner">
-                    <div class="aui-list-item-label">
+                    <div class="aui-list-item-label i18n1" name="adddescription">
                         添加描述
                     </div>
                     <div class="aui-list-item-input">
@@ -123,13 +123,15 @@
         </ul>
     </div>
     <footer class="aui-bar aui-bar-tab service-footer">
-        <button class="submit-btn pr-color" onclick="submitForm();">提交</button>
+        <button class="submit-btn pr-bgcolor pr-color i18n1" name="submit" onclick="submitForm();">提交</button>
     </footer>
 </body>
 <script type="text/javascript" src="../../script/api.js"></script>
 <script type="text/javascript" src="../../script/jquery-3.3.1.min.js"></script>
 <script type="text/javascript" src="../../script/common.js"></script>
-<script type="text/javascript" src="../../script/aui-tab.js"></script>
+<script src="../../script/jquery.i18n.properties-1.0.9.js" type="text/javascript"></script>
+<script src="../../script/language.js" type="text/javascript"></script>
+<!-- <script type="text/javascript" src="../../script/aui-tab.js"></script> -->
 
 <script type="text/javascript">
     var map;
@@ -138,6 +140,7 @@
         closeServiceTypeForm();
         loadAllServiceType();
         loadAllFaultType();
+        hlLanguage("../../i18n/");
     }
 
     function locating() {

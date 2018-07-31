@@ -5,7 +5,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0" />
     <meta name="format-detection" content="telephone=no,email=no,date=no,address=no">
-    <title>个人简介</title>
+    <title>账户信息简介</title>
     <link rel="stylesheet" type="text/css" href="../../css/api.css" />
     <link rel="stylesheet" type="text/css" href="../../css/aui.css" />
     <link rel="stylesheet" type="text/css" href="../../css/font-awesome.min.css" />
@@ -99,14 +99,15 @@
             </li>
             <li class="aui-list-item-diy">
                 <div class="aui-list-item-inner diy-list">
-                    <span class="diy-list-span"><span class="diy-list-username">AndrewLiu</span><span class="fa fa-mars diy-list-gender"></span></span>
+                    <span class="diy-list-span"><span class="diy-list-username">AndrewLiu</span></span>
                 </div>
             </li>
-            <li class="aui-list-item-diy">
+            <!-- <span class="fa fa-mars diy-list-gender"></span> -->
+            <!-- <li class="aui-list-item-diy">
                 <div class="aui-list-item-inner diy-list">
                     <span class="diy-list-span"><span>90后</span></span>
                 </div>
-            </li>
+            </li> -->
             <!-- <li class="aui-list-item-diy">
                 <div class="aui-list-item-inner diy-list">
                     <span class="diy-list-span">还没个性签名,介绍一下自己吧</span>
@@ -165,8 +166,8 @@
 
     function editUserInfo() {
         api.openWin({
-            name: 'userinfo',
-            url: './personal_details.html',
+            name: 'account_details',
+            url: './account_details.html',
             reload: true,
             pageParam: {}
         });

@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0" />
+    <meta name="format-detection" content="telephone=no,email=no,date=no,address=no">
+    <title>商户信息简介</title>
+    <link rel="stylesheet" type="text/css" href="../../css/api.css" />
+    <link rel="stylesheet" type="text/css" href="../../css/aui.css" />
+    <link rel="stylesheet" type="text/css" href="../../css/font-awesome.min.css" />
+    <link rel="stylesheet" type="text/css" href="../../css/style.css" />
+    <style>
+
+    </style>
+</head>
+
+<body class="pr-body-bgcolor">
+    <header id="header" class="aui-bar aui-bar-nav prscue-bg pr-bgcolor">
+        <a class="aui-pull-left aui-btn" onclick="closeWindow();">
+            <span class="aui-iconfont aui-icon-left"></span>
+        </a>
+        <div class="aui-title pr-fontcolor i18n1" name="businessinformation">商户信息</div>
+        <a class="aui-pull-right aui-btn">
+            <span onclick="submitForm();" class="i18n1" name="confirm">完成</span>
+        </a>
+    </header>
+    <div class="aui-content aui-margin-b-15">
+        <ul class="aui-list aui-form-list">
+            <li class="aui-list-item">
+                <div class="aui-list-item-inner">
+                    <div class="aui-list-item-label i18n1" name="contactname">
+                        联系人姓名
+                    </div>
+                    <div class="aui-list-item-input">
+                        <input type="text" placeholder="联系人姓名">
+                    </div>
+                </div>
+            </li>
+            <li class="aui-list-item">
+                <div class="aui-list-item-inner">
+                    <div class="aui-list-item-label i18n1" name="merchantname">
+                        商户名称
+                    </div>
+                    <div class="aui-list-item-input">
+                        <input type="text" placeholder="商户名称">
+                    </div>
+                </div>
+            </li>
+            <li class="aui-list-item">
+                <div class="aui-list-item-inner">
+                    <div class="aui-list-item-label i18n1" name="merchanttaxnumber">
+                        商户税号
+                    </div>
+                    <div class="aui-list-item-input">
+                        <input type="text" placeholder="商户税号">
+                    </div>
+                </div>
+            </li>
+            <li class="aui-list-item">
+                <div class="aui-list-item-inner">
+                    <div class="aui-list-item-label i18n1" name="cellphoneno">
+                        手机号
+                    </div>
+                    <div class="aui-list-item-input">
+                        <input type="tel" placeholder="手机号">
+                    </div>
+                </div>
+            </li>
+            <li class="aui-list-item">
+                <div class="aui-list-item-inner">
+                    <div class="aui-list-item-label i18n1" name="telephone">
+                        商户座机
+                    </div>
+                    <div class="aui-list-item-input">
+                        <input type="text" placeholder="商户座机">
+                    </div>
+                </div>
+            </li>
+            <li class="aui-list-item">
+                <div class="aui-list-item-inner">
+                    <div class="aui-list-item-label i18n1" name="address">
+                        商户地址
+                    </div>
+                    <div class="aui-list-item-input">
+                        <input type="text" placeholder="商户地址">
+                    </div>
+                </div>
+            </li>
+
+            <li class="aui-list-item">
+                <div class="aui-list-item-inner">
+                    <div class="aui-list-item-label i18n1" name="foundingtime">
+                        成立时间
+                    </div>
+                    <div class="aui-list-item-input">
+                        <input type="text" placeholder="成立时间">
+                    </div>
+                </div>
+            </li>
+        </ul>
+    </div>
+    <div class="aui-content aui-margin-b-15">
+        <ul class="aui-list aui-form-list">
+            <li class="aui-list-item">
+                <div class="aui-list-item-inner">
+                    <div class="aui-list-item-label i18n1" name="longitude">
+                        经度
+                    </div>
+                    <div class="aui-list-item-input">
+                        <input type="text" placeholder="经度">
+                    </div>
+                </div>
+            </li>
+            <li class="aui-list-item">
+                <div class="aui-list-item-inner">
+                    <div class="aui-list-item-label i18n1" name="latitude">
+                        纬度
+                    </div>
+                    <div class="aui-list-item-input">
+                        <input type="text" placeholder="纬度">
+                    </div>
+                </div>
+            </li>
+            <li class="aui-list-item">
+                <div class="aui-list-item-inner aui-list-item-arrow">
+                    <div class="aui-list-item-label i18n1" name="realnameauthentication">
+                        实名认证
+                    </div>
+                    <div class="aui-list-item-input">
+                        <span class="fa fa-check-circle-o"></span><span class="i18n1" name="uncertified">未认证</span>
+                    </div>
+                </div>
+            </li>
+        </ul>
+    </div>
+     <div class="aui-content aui-margin-b-15">
+        <div class="aui-btn aui-btn-block aui-btn-sm pr-bgcolor i18n1" name="autopositioning">自动定位</div>
+        </div>
+</body>
+
+</html>
+<script type="text/javascript" src="../../script/api.js"></script>
+<script type="text/javascript" src="../../script/jquery-3.3.1.min.js"></script>
+<script type="text/javascript" src="../../script/common.js"></script>
+<script src="../../script/jquery.i18n.properties-1.0.9.js" type="text/javascript"></script>
+<script src="../../script/language.js" type="text/javascript"></script>
+<script type="text/javascript">
+    apiready = function() {
+        fnSettingHeader();
+        var data = api.pageParam;
+        if (data != undefined) {
+            var cellphoneno = data.cellphoneno;
+            var password = data.password;
+            if (cellphoneno != undefined) {
+                $("#phone").val(cellphoneno);
+            }
+            if (password != undefined) {
+                $("#password").val(password);
+            }
+        }
+        hlLanguage("../../i18n/");
+    }
+
+    function editUserInfo() {
+        api.openWin({
+            name: 'person_details',
+            url: './person_details.html',
+            reload: true,
+            pageParam: {}
+        });
+    }
+</script>

@@ -28,15 +28,18 @@
             margin: auto;
             font-size: 1.2rem;
         }
-        .account-type p{
-          margin:auto;
+
+        .account-type p {
+            margin: auto;
         }
-        .account-type p span:last-child{
-           color:#73C0B6;
+
+        .account-type p span:last-child {
+            color: #73C0B6;
         }
         /*.account-type span:last-child{
           text-align: left;
         }*/
+
         .aui-content .aui-list .aui-list-item {
             border-top: none;
             border-bottom: none;
@@ -101,7 +104,7 @@
             </li>
             <li class="aui-list-item" onclick="openUserInfo();">
                 <div class="aui-list-item-inner account-type">
-                    <p><span class="i18n1" name="accounttype">账户类型</span>:<span  class="account-type-span"></span></p>
+                    <p><span class="i18n1" name="accounttype">账户类型</span>:<span class="account-type-span"></span></p>
                 </div>
             </li>
             <li class="aui-list-item" onclick="openOrder();">
@@ -119,8 +122,21 @@
                     </div>
                 </div>
             </li>
-
-            <li class="aui-list-item">
+            <li class="aui-list-item" onclick="openPersonalInformation();">
+                <div class="aui-list-item-inner">
+                    <div class="aui-list-item-title diy-list">
+                        <span class="diy-list-span"><span class="fa fa-user-circle-o"></span><span class="diy-list-span-in i18n1" name="personalinformation">个人信息</span></span>
+                    </div>
+                </div>
+            </li>
+            <li class="aui-list-item" onclick="openBusinessInformation();">
+                <div class="aui-list-item-inner">
+                    <div class="aui-list-item-title diy-list">
+                        <span class="diy-list-span"><span class="fa fa-vcard"></span><span class="diy-list-span-in i18n1" name="businessinformation">商户信息</span></span>
+                    </div>
+                </div>
+            </li>
+            <li class="aui-list-item" onclick="openCustomerServicecCenter();">
                 <div class="aui-list-item-inner">
                     <div class="aui-list-item-title diy-list">
                         <span class="diy-list-span"><span class="fa fa-phone"></span><span class="diy-list-span-in i18n1" name="customerservice">客服</span></span>
@@ -130,7 +146,7 @@
             <li class="aui-list-item" onclick="requestSwitchAccounType();">
                 <div class="aui-list-item-inner">
                     <div class="aui-list-item-title diy-list">
-                        <span class="diy-list-span"><span class="fa fa-user-circle-o"></span><span class="diy-list-span-in i18n1" name="switchingaccount">切换账户</span></span>
+                        <span class="diy-list-span"><span class="fa fa-exchange"></span><span class="diy-list-span-in i18n1" name="switchingaccount">切换账户</span></span>
                     </div>
                 </div>
             </li>
@@ -145,24 +161,24 @@
 <script type="text/javascript">
     var g_account_type;
     apiready = function() {
-        fnSettingHeader();
-        var data = api.pageParam;
-        if (data != undefined) {
-            g_account_type = data.account_type;
-            if(g_account_type=="person_user"){
-              $('.account-type-span').text("普通用户");
-            }else if(g_account_type=="company_user"){
-              $('.account-type-span').text("商户");
+            fnSettingHeader();
+            var data = api.pageParam;
+            if (data != undefined) {
+                g_account_type = data.account_type;
+                if (g_account_type == "person_user") {
+                    $('.account-type-span').text("普通用户");
+                } else if (g_account_type == "company_user") {
+                    $('.account-type-span').text("商户");
+                }
             }
+            registerTouchEvent();
+            hlLanguage("../../i18n/");
         }
-        registerTouchEvent();
-        hlLanguage("../../i18n/");
-    }
-
+        //打开账户窗体
     function openUserInfo() {
         api.openWin({
-            name: 'personal_profile',
-            url: '../userinfo/personal_profile.html',
+            name: 'account_profile',
+            url: '../userinfo/account_profile.html',
             reload: true,
             pageParam: {}
         });
@@ -170,7 +186,7 @@
             name: 'MaskClickEvent'
         });
     }
-
+    //打开订单窗体
     function openOrder() {
         api.openWin({
             name: 'order',
@@ -182,11 +198,47 @@
             name: 'MaskClickEvent'
         });
     }
-
+    //打开设置窗体
     function openSetting() {
         api.openWin({
             name: 'account_setting',
             url: '../setting/account_setting.html',
+            reload: true,
+            pageParam: {}
+        });
+        api.sendEvent({
+            name: 'MaskClickEvent'
+        });
+    }
+    //打开个人信息窗体
+    function openPersonalInformation() {
+        api.openWin({
+            name: 'person_profile',
+            url: '../userinfo/person_profile.html',
+            reload: true,
+            pageParam: {}
+        });
+        api.sendEvent({
+            name: 'MaskClickEvent'
+        });
+    }
+    //打开商户信息窗体
+    function openBusinessInformation() {
+        api.openWin({
+            name: 'company_profile',
+            url: '../userinfo/company_profile.html',
+            reload: true,
+            pageParam: {}
+        });
+        api.sendEvent({
+            name: 'MaskClickEvent'
+        });
+    }
+    //打开客服窗体
+    function openCustomerServicecCenter() {
+        api.openWin({
+            name: 'customer_service',
+            url: '../customerservice/customer_service.html',
             reload: true,
             pageParam: {}
         });
@@ -214,36 +266,53 @@
     }
     //监听页面滑动事件
     function registerTouchEvent() {
-        //左右滑动翻页
-          $(document.body).on('touchstart', function(e) {
+        $(document.body).on('touchstart', function(e) {
             //touchstart事件
             var $tb = $(this);
-            var startX = e.touches[0].clientX, //手指触碰屏幕的x坐标
+            var startX = (api.winWidth / 3) * 2, //手指触碰屏幕的x坐标
                 pullDeltaX = 0;
+            var x;
             $tb.on('touchmove', function(e) {
-                //touchmove事件
-                var x = e.touches[0].clientX; //手指移动后所在的坐标
+                x = e.touches[0].clientX; //手指移动后所在的坐标
                 pullDeltaX = x - startX; //移动后的位移
                 if (!pullDeltaX) {
                     return;
                 }
+                console.log(Math.abs(pullDeltaX));
+                if (pullDeltaX <= 0 && Math.abs(pullDeltaX) > 40) {
+                    api.setFrameAttr({
+                        name: 'account',
+                        bounces: false,
+                        rect: {
+                            x: pullDeltaX,
+                            y: 0,
+                            w: api.winWidth - api.winWidth / 3 + pullDeltaX,
+                            h: api.winHeight
+                        }
+                    });
+                }
                 e.preventDefault(); //阻止手机浏览器默认事件
             });
             $tb.on('touchend', function(e) {
-                //touchend事件
-                $tb.off('touchmove touchend'); //解除touchmove和touchend事件
-                //所要执行的代码
-                e.stopPropagation();
-
-                //判断移动距离是否大于30像素
-                if (pullDeltaX > 30 && that.pagerNum > 1) {
-
-                    //右滑，往前翻所执行的代码
-                }
-                //判断当前页面是否为最后一页
-                else if (pullDeltaX < -30 && that.pagerNum < that.$boxToggle.find('i').length) {
-
+                if (pullDeltaX < -30) {
                     //左滑，往后翻所执行的代码
+                    api.closeFrame({
+                        name: 'account'
+                    });
+                    api.closeFrame({
+                        name: 'mask'
+                    });
+                } else {
+                    api.setFrameAttr({
+                        name: 'account',
+                        bounces: false,
+                        rect: {
+                            x: 0,
+                            y: 0,
+                            w: api.winWidth - api.winWidth / 3,
+                            h: api.winHeight
+                        }
+                    });
                 }
             });
         });
