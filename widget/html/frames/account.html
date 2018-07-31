@@ -28,7 +28,15 @@
             margin: auto;
             font-size: 1.2rem;
         }
-
+        .account-type p{
+          margin:auto;
+        }
+        .account-type p span:last-child{
+           color:#73C0B6;
+        }
+        /*.account-type span:last-child{
+          text-align: left;
+        }*/
         .aui-content .aui-list .aui-list-item {
             border-top: none;
             border-bottom: none;
@@ -91,13 +99,19 @@
                     <span class="account-name-span">AndrewLiu</span>
                 </div>
             </li>
-            <li class="aui-list-item" onclick="requestSwitchAccounType();">
+            <li class="aui-list-item" onclick="openUserInfo();">
+                <div class="aui-list-item-inner account-type">
+                    <p><span class="i18n1" name="accounttype">账户类型</span>:<span  class="account-type-span"></span></p>
+                </div>
+            </li>
+            <li class="aui-list-item" onclick="openOrder();">
                 <div class="aui-list-item-inner">
                     <div class="aui-list-item-title diy-list">
-                        <span class="diy-list-span"><span class="fa fa-user-circle-o"></span><span class="diy-list-span-in i18n1" name="switchingaccount">切换账户</span></span>
+                        <span class="diy-list-span"><span class="fa fa-credit-card"></span><span class="diy-list-span-in i18n1" name="order">订单</span></span>
                     </div>
                 </div>
             </li>
+
             <li class="aui-list-item" onclick="openSetting();">
                 <div class="aui-list-item-inner">
                     <div class="aui-list-item-title diy-list">
@@ -105,17 +119,18 @@
                     </div>
                 </div>
             </li>
-            <li class="aui-list-item">
-                <div class="aui-list-item-inner">
-                    <div class="aui-list-item-title diy-list">
-                        <span class="diy-list-span"><span class="fa fa-credit-card"></span><span class="diy-list-span-in i18n1" name="order">订单</span></span>
-                    </div>
-                </div>
-            </li>
+
             <li class="aui-list-item">
                 <div class="aui-list-item-inner">
                     <div class="aui-list-item-title diy-list">
                         <span class="diy-list-span"><span class="fa fa-phone"></span><span class="diy-list-span-in i18n1" name="customerservice">客服</span></span>
+                    </div>
+                </div>
+            </li>
+            <li class="aui-list-item" onclick="requestSwitchAccounType();">
+                <div class="aui-list-item-inner">
+                    <div class="aui-list-item-title diy-list">
+                        <span class="diy-list-span"><span class="fa fa-user-circle-o"></span><span class="diy-list-span-in i18n1" name="switchingaccount">切换账户</span></span>
                     </div>
                 </div>
             </li>
@@ -134,7 +149,13 @@
         var data = api.pageParam;
         if (data != undefined) {
             g_account_type = data.account_type;
+            if(g_account_type=="person_user"){
+              $('.account-type-span').text("普通用户");
+            }else if(g_account_type=="company_user"){
+              $('.account-type-span').text("商户");
+            }
         }
+        registerTouchEvent();
         hlLanguage("../../i18n/");
     }
 
@@ -142,6 +163,18 @@
         api.openWin({
             name: 'personal_profile',
             url: '../userinfo/personal_profile.html',
+            reload: true,
+            pageParam: {}
+        });
+        api.sendEvent({
+            name: 'MaskClickEvent'
+        });
+    }
+
+    function openOrder() {
+        api.openWin({
+            name: 'order',
+            url: '../order/order.html',
             reload: true,
             pageParam: {}
         });
@@ -178,6 +211,42 @@
         } else {
             toastFail("切换失败,请稍后重试!");
         }
+    }
+    //监听页面滑动事件
+    function registerTouchEvent() {
+        //左右滑动翻页
+          $(document.body).on('touchstart', function(e) {
+            //touchstart事件
+            var $tb = $(this);
+            var startX = e.touches[0].clientX, //手指触碰屏幕的x坐标
+                pullDeltaX = 0;
+            $tb.on('touchmove', function(e) {
+                //touchmove事件
+                var x = e.touches[0].clientX; //手指移动后所在的坐标
+                pullDeltaX = x - startX; //移动后的位移
+                if (!pullDeltaX) {
+                    return;
+                }
+                e.preventDefault(); //阻止手机浏览器默认事件
+            });
+            $tb.on('touchend', function(e) {
+                //touchend事件
+                $tb.off('touchmove touchend'); //解除touchmove和touchend事件
+                //所要执行的代码
+                e.stopPropagation();
+
+                //判断移动距离是否大于30像素
+                if (pullDeltaX > 30 && that.pagerNum > 1) {
+
+                    //右滑，往前翻所执行的代码
+                }
+                //判断当前页面是否为最后一页
+                else if (pullDeltaX < -30 && that.pagerNum < that.$boxToggle.find('i').length) {
+
+                    //左滑，往后翻所执行的代码
+                }
+            });
+        });
     }
 </script>
 
