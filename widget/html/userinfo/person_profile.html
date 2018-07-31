@@ -11,6 +11,7 @@
     <link rel="stylesheet" type="text/css" href="../../css/font-awesome.min.css" />
     <link rel="stylesheet" type="text/css" href="../../css/style.css" />
     <style>
+
     </style>
 </head>
 
@@ -32,7 +33,7 @@
                         姓名
                     </div>
                     <div class="aui-list-item-input">
-                        <input type="text" placeholder="姓名">
+                        <input class="person-name-input" type="text" placeholder="姓名">
                     </div>
                 </div>
             </li>
@@ -42,7 +43,7 @@
                         性别
                     </div>
                     <div class="aui-list-item-input">
-                        <select>
+                        <select class="person-gender-input">
                       <option value="男">男</option>
                       <option value="女">女</option>
                   </select>
@@ -55,7 +56,7 @@
                         手机号
                     </div>
                     <div class="aui-list-item-input">
-                        <input type="text" readonly="readonly" placeholder="手机号">
+                        <input class="person-cellphone-input" type="text" readonly="readonly" placeholder="手机号">
                     </div>
                 </div>
             </li>
@@ -69,7 +70,7 @@
                         身份证号
                     </div>
                     <div class="aui-list-item-input">
-                        <input type="text" readonly="readonly" placeholder="身份证号">
+                        <input class="person-card-input" type="text" readonly="readonly" placeholder="身份证号">
                     </div>
                 </div>
             </li>
@@ -79,7 +80,7 @@
                         实名认证
                     </div>
                     <div class="aui-list-item-input">
-                        <span class="fa fa-check-circle-o"></span><span class="i18n1" name="uncertified">未认证</span>
+                        <span class="fa fa-check-circle-o"></span><span class="i18n1 person-certified" name="uncertified"></span>
                     </div>
                 </div>
             </li>
@@ -94,28 +95,104 @@
 <script src="../../script/jquery.i18n.properties-1.0.9.js" type="text/javascript"></script>
 <script src="../../script/language.js" type="text/javascript"></script>
 <script type="text/javascript">
+    var g_person_user_no,g_id;
     apiready = function() {
-        fnSettingHeader();
-        var data = api.pageParam;
-        if (data != undefined) {
-            var cellphoneno = data.cellphoneno;
-            var password = data.password;
-            if (cellphoneno != undefined) {
-                $("#phone").val(cellphoneno);
+            fnSettingHeader();
+            var data = api.pageParam;
+            if (data != undefined) {
+                g_person_user_no = data.person_user_no;
+                loadPersonalInfo();
             }
-            if (password != undefined) {
-                $("#password").val(password);
-            }
+            hlLanguage("../../i18n/");
         }
-        hlLanguage("../../i18n/");
-    }
+        //根据语言环境不同设置占位符
+    function setPlaceholder() {
 
-    function editUserInfo() {
-        api.openWin({
-            name: 'person_details',
-            url: './person_details.html',
-            reload: true,
-            pageParam: {}
+    }
+    function submitForm() {
+      if(g_id==undefined&&g_id==""){
+        toastFail("系统繁忙,请稍后重试!");
+        return;
+      }
+      var s = 'http://' + serverIP + '/PersonUser/savePersonUserInfo.action';
+      api.ajax({
+          url: s,
+          method: 'post',
+          timeout: 30,
+          dataType: 'json',
+          data: {
+            values: {
+              id:g_id,
+              person_name:$('.person-name-input').val(),
+              sex:$('.person-gender-input').val(),
+              cell_phone:$('.person-cellphone-input').val(),
+              id_card:$('.person-card-input').val()
+            }
+          }
+      }, function(ret, err) {
+          if (ret) {
+            if(ret.success){
+              toastSuccess(ret.message);
+            }else{
+              toastFail(ret.message);
+            }
+          } else {
+              toastFail('保存个人信息时出错,错误信息:' + err.code);
+          }
+      });
+    }
+    //加载个人信息
+    function loadPersonalInfo() {
+        if(g_person_user_no==undefined&&g_person_user_no==""){
+           toastFail("个人信息不存在!");
+           return;
+        }
+        var s = 'http://' + serverIP + '/PersonUser/getPersonUserInfo.action';
+        api.ajax({
+            url: s,
+            method: 'post',
+            timeout: 30,
+            dataType: 'json',
+            data: {
+              values: {
+                person_user_no:g_person_user_no
+              }
+            }
+        }, function(ret, err) {
+            if (ret) {
+                var name, gender, cell_phone, id_card, is_verified;
+                if (ret.success) {
+                    g_id=ret.personUser.id;
+                    name = ret.personUser.person_name;
+                    gender = ret.personUser.sex;
+                    cell_phone = ret.personUser.cell_phone;
+                    id_card = ret.personUser.id_card;
+                    is_verified = ret.personUser.is_verified;
+                } else {
+                    toastFail(ret.message);
+                }
+                if (name != undefined && name != "") {
+                    $('.person-name-input').val(name);
+                }
+                if (gender != undefined && gender != "") {
+                    $('.person-gender-input').val(gender);
+                }
+                if (cell_phone != undefined && cell_phone != "") {
+                    $('.person-cellphone-input').val(cell_phone);
+                }
+                if (id_card != undefined && id_card != "") {
+                    $('.person-card-input').val(id_card);
+                }
+                if (is_verified != undefined && is_verified != "") {
+                   if(is_verified==0){
+                     $('.person-certified').text("未认证");
+                   }else if(is_verified==1){
+                     $('.person-certified').text("已认证");
+                   }
+                }
+            } else {
+                toastFail('获取个人信息时出错,错误信息:' + err.code);
+            }
         });
     }
 </script>

@@ -28,7 +28,9 @@
             margin: auto;
             font-size: 1.2rem;
         }
-
+        .account-name .account-name-samll-span {
+            font-size:0.6rem;
+        }
         .account-type p {
             margin: auto;
         }
@@ -99,7 +101,7 @@
             </li>
             <li class="aui-list-item" onclick="openUserInfo();">
                 <div class="aui-list-item-inner account-name">
-                    <span class="account-name-span">AndrewLiu</span>
+                    <span class="account-name-span"></span>
                 </div>
             </li>
             <li class="aui-list-item" onclick="openUserInfo();">
@@ -159,9 +161,10 @@
 <script src="../../script/jquery.i18n.properties-1.0.9.js" type="text/javascript"></script>
 <script src="../../script/language.js" type="text/javascript"></script>
 <script type="text/javascript">
-    var g_account_type;
+    var g_account,g_account_type,g_account_nickname,g_account_icon,g_account_person_user_no,g_account_company_user_no;
     apiready = function() {
             fnSettingHeader();
+            loadAccountInfo();
             var data = api.pageParam;
             if (data != undefined) {
                 g_account_type = data.account_type;
@@ -180,7 +183,9 @@
             name: 'account_profile',
             url: '../userinfo/account_profile.html',
             reload: true,
-            pageParam: {}
+            pageParam: {
+              g_account:g_account
+            }
         });
         api.sendEvent({
             name: 'MaskClickEvent'
@@ -212,11 +217,17 @@
     }
     //打开个人信息窗体
     function openPersonalInformation() {
+        if(g_account_person_user_no==undefined||g_account_person_user_no==""){
+          toastFail("暂无个人信息!");
+          return;
+        }
         api.openWin({
             name: 'person_profile',
             url: '../userinfo/person_profile.html',
             reload: true,
-            pageParam: {}
+            pageParam: {
+              person_user_no:g_account_person_user_no
+            }
         });
         api.sendEvent({
             name: 'MaskClickEvent'
@@ -224,11 +235,17 @@
     }
     //打开商户信息窗体
     function openBusinessInformation() {
+      if(g_account_company_user_no==undefined||g_account_company_user_no==""){
+        toastFail("暂无商户信息!");
+        return;
+      }
         api.openWin({
             name: 'company_profile',
             url: '../userinfo/company_profile.html',
             reload: true,
-            pageParam: {}
+            pageParam: {
+              company_user_no:g_account_company_user_no
+            }
         });
         api.sendEvent({
             name: 'MaskClickEvent'
@@ -246,7 +263,7 @@
             name: 'MaskClickEvent'
         });
     }
-
+    //账户切换事件
     function requestSwitchAccounType() {
         if (g_account_type != undefined) {
             if (g_account_type == "person_user") {
@@ -316,6 +333,41 @@
                 }
             });
         });
+    }
+    //加载账户信息
+    function loadAccountInfo(){
+      var s = 'http://' + serverIP + '/AccountOperation/getAccountInfo.action';
+      api.ajax({
+          url: s,
+          method: 'post',
+          timeout: 30,
+          dataType: 'json',
+          data: {}
+      }, function(ret, err) {
+          if (ret) {
+              if (ret.success) {
+                    g_account=ret.account;
+                    g_account_nickname=ret.account.nickname;
+                    g_account_icon=ret.account.icon_url;
+                    g_account_person_user_no=ret.account.person_user_no;
+                    g_account_company_user_no=ret.account.company_user_no;
+              } else {
+                  toastFail(ret.message);
+              }
+              if(g_account_icon!=undefined&&g_account_icon!=""){
+                  $('.account-header').attr('src',g_account_icon);
+              }
+              if(g_account_nickname!=undefined&&g_account_nickname!=""){
+                $('.account-name-span').removeClass('account-name-samll-span');
+                $('.account-name-span').text(g_account_nickname);
+              }else{
+                 $('.account-name-span').text('点击修改签名吧!');
+                 $('.account-name-span').addClass('account-name-samll-span');
+              }
+          } else {
+              toastFail('获取账户信息时出错,错误信息:' + err.code);
+          }
+      });
     }
 </script>
 

@@ -5,135 +5,105 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0" />
     <meta name="format-detection" content="telephone=no,email=no,date=no,address=no">
-    <title>账户信息简介</title>
+    <title>账户信息页面</title>
     <link rel="stylesheet" type="text/css" href="../../css/api.css" />
     <link rel="stylesheet" type="text/css" href="../../css/aui.css" />
     <link rel="stylesheet" type="text/css" href="../../css/font-awesome.min.css" />
     <link rel="stylesheet" type="text/css" href="../../css/style.css" />
     <style>
-        .logo {
-            width: 100%;
-            height: auto;
-            padding: 2rem 0rem;
-        }
-
-        .logo img {
-            margin: auto;
-            width: 80px;
-            height: 80px;
-            background-color: #fff;
-            border-radius: 50%;
-        }
-
-        .login {
-            width: 100%;
-            padding: 0.75rem 0rem;
-            line-height: 0.75rem;
-            background-color: #61C721;
-            text-align: center;
-            color: #fff;
-        }
-
-        .aui-list .aui-list-item:active {
-            background-color: #fff;
-        }
-
-        .aui-list.aui-form-list .aui-list-item:active {
-            background-color: #fff;
-        }
-
-        .userinfo-container {
-            padding: 0rem 0.3rem;
-            background-color: #fff;
-        }
-
-        .forget-password-interval {
-            display: none;
-        }
-
-        .body-bg {
-            background-color: #fff;
-        }
-
-        .userinfo-container ul li {
-            background-color: #fff;
-        }
-
-        .diy-list .diy-list-span {
-            margin: auto;
-            text-align: center;
-        }
-
-        .diy-list .diy-list-username {
+        .personal-header .aui-title {
             font-size: 1.2rem;
         }
-
-        .diy-list .diy-list-gender {
-            color: #61C721;
+        .aui-list .aui-list-item-label {
+            color: #AAAAAA;
+        }
+        .aui-list .aui-list-item-inner.personal-img {
+            padding-top: 0.6rem;
+            padding-bottom: 0.6rem;
         }
 
-        .auth-container .aui-list {
-            border-left: 1px solid #dddddd;
-            border-right: 1px solid #dddddd;
+        .aui-list .aui-list-item-inner.personal-img img {
+            width: 3rem;
+            height: 3rem;
+            border-radius: 50%;
         }
     </style>
 </head>
 
 <body class="pr-body-bgcolor">
-    <header id="header" class="aui-bar aui-bar-nav prscue-bg pr-bgcolor">
+    <header id="header" class="aui-bar aui-bar-nav aui-bar-light personal-header pr-bgcolor">
         <a class="aui-pull-left aui-btn" onclick="closeWindow();">
-            <span class="aui-iconfont aui-icon-left"></span>
+            <span class="fa fa-chevron-left pr-fontcolor"></span>
         </a>
-        <a class="aui-pull-right aui-btn i18n1" onclick="editUserInfo();" name="editinginformation">
-             编辑资料
+        <div class="aui-title pr-fontcolor i18n1" name="accountinformation">账户信息</div>
+        <a class="aui-pull-right aui-btn">
+            <span onclick="submitForm();" class="i18n1" name="confirm">完成</span>
         </a>
     </header>
-    <div class="aui-content aui-margin-b-15 prscue-bg userinfo-container">
-        <ul class="aui-list aui-form-list aui-list-noborder prscue-bg">
-            <li class="aui-list-item-diy">
-                <div class="aui-list-item-inner">
-                    <div class="logo">
-                        <img src="../../image/sos_128.png" />
+    <div class="aui-content aui-margin-b-15">
+        <ul class="aui-list aui-form-list">
+            <li class="aui-list-item">
+                <div class="aui-list-item-inner personal-img">
+                    <div class="aui-list-item-label">
+                        <img src="../../image/sos_128.png" class="personal-header-img" />
+                    </div>
+                    <div class="aui-list-item-input">
+                        <div class="aui-label i18n1" onclick="changeHeader();" name="changetheavatar">更换头像</div>
                     </div>
                 </div>
             </li>
-            <li class="aui-list-item-diy">
-                <div class="aui-list-item-inner diy-list">
-                    <span class="diy-list-span"><span class="diy-list-username">AndrewLiu</span></span>
+            <li class="aui-list-item">
+                <div class="aui-list-item-inner">
+                    <div class="aui-list-item-label i18n1" name="nickname">
+                        昵称
+                    </div>
+                    <div class="aui-list-item-input">
+                        <input class="account-name-input" type="text" placeholder="昵称">
+                    </div>
                 </div>
             </li>
-            <!-- <span class="fa fa-mars diy-list-gender"></span> -->
-            <!-- <li class="aui-list-item-diy">
-                <div class="aui-list-item-inner diy-list">
-                    <span class="diy-list-span"><span>90后</span></span>
-                </div>
-            </li> -->
-            <!-- <li class="aui-list-item-diy">
-                <div class="aui-list-item-inner diy-list">
-                    <span class="diy-list-span">还没个性签名,介绍一下自己吧</span>
-                </div>
-            </li> -->
+
         </ul>
     </div>
-    <div class="aui-content aui-margin-b-15 auth-container">
-        <ul class="aui-list aui-list-in">
+    <div class="aui-content aui-margin-b-15">
+        <ul class="aui-list aui-form-list">
             <li class="aui-list-item">
                 <div class="aui-list-item-inner">
-                    <div class="aui-list-item-title">
-                        <span class="fa fa-id-card-o"></span><span class="i18n1" name="realnameauthentication">实名认证</span>
+                    <div class="aui-list-item-label i18n1" name="accounttype">
+                        账户类型
                     </div>
-                    <div class="aui-list-item-right">
-                        <span class="fa fa-check-circle-o"></span><span class="i18n1" name="uncertified">未认证</span>
+                    <div class="aui-list-item-input">
+                        <input class="account-type-input" type="text" readonly="readonly" placeholder="">
                     </div>
                 </div>
             </li>
             <li class="aui-list-item">
                 <div class="aui-list-item-inner">
-                    <div class="aui-list-item-title">
-                        <span class="fa fa-vcard-o"></span><span class="i18n1" name="merchantCA">商户认证</span>
+                    <div class="aui-list-item-label i18n1" name="accountstate">
+                        账号状态
                     </div>
-                    <div class="aui-list-item-right">
-                        <span class="fa fa-check-circle-o"></span><span class="i18n1" name="uncertified">未认证</span>
+                    <div class="aui-list-item-input">
+                        <input class="account-state-input" type="text" readonly="readonly" placeholder="">
+                    </div>
+                </div>
+            </li>
+            <li class="aui-list-item">
+                <div class="aui-list-item-inner">
+                    <div class="aui-list-item-label i18n1" name="registrationtime">
+                        注册时间
+                    </div>
+                    <div class="aui-list-item-input">
+                        <input class="account-register-time-input" type="text" readonly="readonly" placeholder="">
+                    </div>
+                </div>
+            </li>
+            <li class="aui-list-item">
+                <div class="aui-list-item-inner">
+                    <div class="aui-list-item-label i18n1" name="lastlogintime">
+                        上次登录时间
+                    </div>
+                    <div class="aui-list-item-input">
+                        <input class="account-logon-time-input" type="text" readonly="readonly" placeholder="">
                     </div>
                 </div>
             </li>
@@ -148,28 +118,73 @@
 <script src="../../script/jquery.i18n.properties-1.0.9.js" type="text/javascript"></script>
 <script src="../../script/language.js" type="text/javascript"></script>
 <script type="text/javascript">
+    var g_account, g_id;
     apiready = function() {
         fnSettingHeader();
         var data = api.pageParam;
         if (data != undefined) {
-            var cellphoneno = data.cellphoneno;
-            var password = data.password;
-            if (cellphoneno != undefined) {
-                $("#phone").val(cellphoneno);
-            }
-            if (password != undefined) {
-                $("#password").val(password);
+            g_account = data.g_account;
+            if (g_account != undefined) {
+                g_id = g_account.id;
+                var g_account_nickname = g_account.nickname;
+                var g_account_icon = g_account.icon_url;
+                var g_account_type = g_account.account_type;
+                var g_account_state = g_account.account_status;
+                var g_account_register_time = g_account.register_time;
+                var g_account_lastlogin_time = g_account.last_login_time;
+                if (g_account_nickname != undefined && g_account_nickname != "") {
+                    $('.account-name-input').val(g_account_nickname);
+                }
+                if (g_account_icon != undefined && g_account_icon != "") {
+                    $('.personal-header-img').attr('src', g_account_icon);
+                }
+                if (g_account_type != undefined && g_account_type != "") {
+                    $('.account-type-input').val(g_account_type);
+                }
+                if (g_account_state != undefined && g_account_state != "") {
+                    if(g_account_state==0){
+                      $('.account-state-input').val('正常');
+                    }else if(g_account_state==1){
+                      $('.account-state-input').val('锁定');
+                    }
+                }
+                if (g_account_register_time != undefined && g_account_register_time != "") {
+                    $('.account-register-time-input').val(getDate1(g_account_register_time));
+                }
+                if (g_account_lastlogin_time != undefined && g_account_lastlogin_time != "") {
+                    $('.account-logon-time-input').val(getDate1(g_account_lastlogin_time));
+                }
             }
         }
         hlLanguage("../../i18n/");
     }
 
-    function editUserInfo() {
-        api.openWin({
-            name: 'account_details',
-            url: './account_details.html',
-            reload: true,
-            pageParam: {}
+    function submitForm() {
+        if (g_id == undefined && g_id == "") {
+            toastFail("系统繁忙,请稍后重试!");
+        }
+        var s = 'http://' + serverIP + '/AccountOperation/saveAccount.action';
+        api.ajax({
+            url: s,
+            method: 'post',
+            timeout: 30,
+            dataType: 'json',
+            data: {
+                values: {
+                    id:g_id,
+                    nickname:$('.account-name-input').val()
+                }
+            }
+        }, function(ret, err) {
+            if (ret) {
+                if (ret.success) {
+                   toastSuccess(ret.message);
+                } else {
+                   toastFail(ret.message);
+                }
+            } else {
+                toastFail('修改账户信息时出错,错误信息:' + err.code);
+            }
         });
     }
 </script>

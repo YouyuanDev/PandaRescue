@@ -50,22 +50,30 @@ function formatterdate(value, row, index) {
 }
 
 function getDateOnly(str) {
-    var oDate = new Date(str);
-    y = oDate.getFullYear();
-    m = oDate.getMonth() + 1;
-    d = oDate.getDate();
-    return y + '-' + (m < 10 ? ('0' + m) : m) + '-' + (d < 10 ? ('0' + d) : d);
+    if (str != undefined && str != "") {
+        var oDate = new Date(str);
+        y = oDate.getFullYear();
+        m = oDate.getMonth() + 1;
+        d = oDate.getDate();
+        return y + '-' + (m < 10 ? ('0' + m) : m) + '-' + (d < 10 ? ('0' + d) : d);
+    } else {
+        return "";
+    }
 }
 
 function getDate1(str) {
-    var oDate = new Date(str);
-    y = oDate.getFullYear();
-    m = oDate.getMonth() + 1;
-    d = oDate.getDate();
-    h = oDate.getHours();
-    mins = oDate.getMinutes();
-    s = oDate.getSeconds();
-    return y + '-' + (m < 10 ? ('0' + m) : m) + '-' + (d < 10 ? ('0' + d) : d) + ' ' + (h < 10 ? ('0' + h) : h) + ':' + (mins < 10 ? ('0' + mins) : mins) + ':' + (s < 10 ? ('0' + s) : s);
+    if (str != undefined && str != "") {
+        var oDate = new Date(str);
+        y = oDate.getFullYear();
+        m = oDate.getMonth() + 1;
+        d = oDate.getDate();
+        h = oDate.getHours();
+        mins = oDate.getMinutes();
+        s = oDate.getSeconds();
+        return y + '-' + (m < 10 ? ('0' + m) : m) + '-' + (d < 10 ? ('0' + d) : d) + ' ' + (h < 10 ? ('0' + h) : h) + ':' + (mins < 10 ? ('0' + mins) : mins) + ':' + (s < 10 ? ('0' + s) : s);
+    } else {
+        return "";
+    }
 }
 //字符串转date
 function parseMobiDate(str) {
@@ -131,7 +139,7 @@ function getPicture(sourceType, type) {
                     ClearLoadingPicture();
                     if (rets) {
                         if (type == 0) {
-                            $('.personal-header-img').attr("src",ret.base64Data);
+                            $('.personal-header-img').attr("src", ret.base64Data);
                             //$('.imgBox').append(pictureTemplate(rets.imgUrl, ret.base64Data));
                         }
                         alert("上传成功!");
@@ -173,7 +181,7 @@ function getPicture(sourceType, type) {
                     ClearLoadingPicture();
                     if (rets) {
                         if (type == 0) {
-                            $('.personal-header-img').attr("src",ret.base64Data);
+                            $('.personal-header-img').attr("src", ret.base64Data);
                         }
                         alert("上传成功!");
                     } else {
