@@ -122,8 +122,8 @@ function getPicture(sourceType, type) {
             saveToPhotoAlbum: true
         }, function(ret, err) {
             if (ret) {
+                openLoading();
                 var s = 'http://' + serverIP + '/UploadFile/uploadPicture.action';
-                DoLoadingPicture();
                 api.ajax({
                     url: s,
                     method: 'post',
@@ -136,7 +136,7 @@ function getPicture(sourceType, type) {
                         }
                     }
                 }, function(rets, errs) {
-                    ClearLoadingPicture();
+                    closeLoading();
                     if (rets) {
                         if (type == 0) {
                             $('.personal-header-img').attr("src", ret.base64Data);
@@ -165,7 +165,7 @@ function getPicture(sourceType, type) {
         }, function(ret, err) {
             if (ret) {
                 var s = 'http://' + serverIP + '/UploadFile/uploadPicture.action';
-                DoLoadingPicture();
+                openLoading();
                 api.ajax({
                     url: s,
                     method: 'post',
@@ -178,7 +178,7 @@ function getPicture(sourceType, type) {
                         }
                     }
                 }, function(rets, errs) {
-                    ClearLoadingPicture();
+                    closeLoading();
                     if (rets) {
                         if (type == 0) {
                             $('.personal-header-img').attr("src", ret.base64Data);
