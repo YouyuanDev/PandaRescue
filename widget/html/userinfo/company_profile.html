@@ -146,14 +146,13 @@
 <script src="../../script/jquery.i18n.properties-1.0.9.js" type="text/javascript"></script>
 <script src="../../script/language.js" type="text/javascript"></script>
 <script type="text/javascript">
-    var g_company_user_no, g_id;
+    var g_id;
     var map;
     apiready = function() {
             fnSettingHeader();
             map = api.require('bMap');
             var data = api.pageParam;
             if (data != undefined) {
-                g_company_user_no = data.company_user_no;
                 loadCompanyInfo();
             }
             hlLanguage("../../i18n/");
@@ -197,22 +196,13 @@
     }
     //加载商户信息
     function loadCompanyInfo() {
-        if (g_company_user_no == undefined && g_company_user_no == "") {
-            toastFail("商户信息不存在!");
-            return;
-        }
         openLoading();
         var s = 'http://' + serverIP + '/CompanyUser/getCompanyUserInfo.action';
         api.ajax({
             url: s,
             method: 'post',
             timeout: 30,
-            dataType: 'json',
-            data: {
-                values: {
-                    company_user_no: g_company_user_no
-                }
-            }
+            dataType: 'json'
         }, function(ret, err) {
             if (ret) {
                 var company_name, company_found_date, company_tax_code, company_location_lon, company_location_lat, contact_person, cell_phone, address, lane_line, is_verified;
@@ -231,6 +221,11 @@
 
                 } else {
                     toastFail(ret.message);
+                    if(ret.relogin){
+                      api.sendEvent({
+                          name: 'reloginEvent'
+                      });
+                    }
                 }
                 if (company_name != undefined && company_name != "") {
                     $('.company-name-input').val(company_name);

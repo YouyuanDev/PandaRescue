@@ -1,4 +1,5 @@
-var header, headerHeight = 0,g_loadingID;
+var header, headerHeight = 0,
+    g_loadingID;
 var serverIP = '192.168.0.12:8080';
 
 function fnSettingHeader() {
@@ -135,12 +136,18 @@ function getPicture(sourceType, type) {
                             file: ret.data
                         }
                     }
-                }, function(rets, errs) {
+                }, function(ret, errs) {
                     closeLoading();
-                    if (rets) {
+                    if (ret) {
                         if (type == 0) {
-                            $('.personal-header-img').attr("src", ret.base64Data);
-                            //$('.imgBox').append(pictureTemplate(rets.imgUrl, ret.base64Data));
+                            api.sendEvent({
+                                name: 'UploadAccountIconEvent',
+                                extra: {
+                                    imgUrl:ret.imgUrl,
+                                    base64Data:ret.base64Data
+                                }
+                            });
+                            //$('.personal-header-img').attr("src", ret.base64Data);
                         }
                         alert("上传成功!");
                     } else {
@@ -177,11 +184,18 @@ function getPicture(sourceType, type) {
                             file: ret.data
                         }
                     }
-                }, function(rets, errs) {
+                }, function(ret, errs) {
                     closeLoading();
-                    if (rets) {
+                    if (ret) {
                         if (type == 0) {
-                            $('.personal-header-img').attr("src", ret.base64Data);
+                            api.sendEvent({
+                              name: 'UploadAccountIconEvent',
+                              extra: {
+                                  imgUrl:ret.imgUrl,
+                                  base64Data:ret.base64Data
+                              }
+                            });
+                            //$('.personal-header-img').attr("src", ret.base64Data);
                         }
                         alert("上传成功!");
                     } else {
@@ -227,7 +241,7 @@ function openLoading() {
 }
 //关闭加载进度条
 function closeLoading() {
-    var uiloading= api.require('UILoading');
+    var uiloading = api.require('UILoading');
     uiloading.closeFlower({
         id: g_loadingID
     });
@@ -250,14 +264,13 @@ function convertSecToMin(sec) {
     return sec;
 }
 
-
-function ClearLoadingPicture() {
-    var uiloading = api.require('UILoading');
-    uiloading.closeFlower({
-        id: g_loadingID
-    });
-    g_loadingID = 0;
-}
+// function ClearLoadingPicture() {
+//     var uiloading = api.require('UILoading');
+//     uiloading.closeFlower({
+//         id: g_loadingID
+//     });
+//     g_loadingID = 0;
+// }
 //验证手机号是否合法
 function isPhoneNo(phone) {
     var pattern = /^1[34578]\d{9}$/;

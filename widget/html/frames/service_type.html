@@ -154,12 +154,12 @@
         api.ajax({
             url: s,
             method: 'post'
-        }, function(rets, errs) {
-            if (rets) {
-                for (var i = 0; i < rets.length; i++) {
-                    var service_type_code = rets[i].service_type_code;
-                    var service_type_name = rets[i].service_type_name;
-                    var service_type_name_en = rets[i].service_type_name_en;
+        }, function(ret, errs) {
+            if (ret) {
+                for (var i = 0; i < ret.length; i++) {
+                    var service_type_code = ret[i].service_type_code;
+                    var service_type_name = ret[i].service_type_name;
+                    var service_type_name_en = ret[i].service_type_name_en;
                     var template = serviceTypeTempalte(service_type_code, service_type_name);
                     $('.service-type').append(template);
                 }
@@ -176,12 +176,12 @@
         api.ajax({
             url: s,
             method: 'post'
-        }, function(rets, errs) {
-            if (rets) {
-                for (var i = 0; i < rets.length; i++) {
-                    var failure_type_code = rets[i].failure_type_code;
-                    var failure_type_name = rets[i].failure_type_name;
-                    var failure_type_name_en = rets[i].failure_type_name_en;
+        }, function(ret, errs) {
+            if (ret) {
+                for (var i = 0; i < ret.length; i++) {
+                    var failure_type_code = ret[i].failure_type_code;
+                    var failure_type_name = ret[i].failure_type_name;
+                    var failure_type_name_en = ret[i].failure_type_name_en;
                     var template = failureTypeTemplate(failure_type_code, failure_type_name);
                     $('.failure-type').append(template);
                 }
@@ -278,7 +278,7 @@
                                             name: 'service_type'
                                         });
                                     }else{
-                                        toastFail(rets.message);
+                                        toastFail(ret.message);
                                       if(ret.relogin){
                                         api.sendEvent({
                                             name: 'reloginEvent'

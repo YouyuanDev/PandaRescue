@@ -161,7 +161,7 @@
 <script src="../../script/jquery.i18n.properties-1.0.9.js" type="text/javascript"></script>
 <script src="../../script/language.js" type="text/javascript"></script>
 <script type="text/javascript">
-    var g_account,g_account_type,g_account_nickname,g_account_icon,g_account_person_user_no,g_account_company_user_no;
+    var g_account,g_account_type,g_account_nickname,g_account_icon;
     apiready = function() {
             fnSettingHeader();
             loadAccountInfo();
@@ -217,16 +217,11 @@
     }
     //打开个人信息窗体
     function openPersonalInformation() {
-        if(g_account_person_user_no==undefined||g_account_person_user_no==""){
-          toastFail("暂无个人信息!");
-          return;
-        }
         api.openWin({
             name: 'person_profile',
             url: '../userinfo/person_profile.html',
             reload: true,
             pageParam: {
-              person_user_no:g_account_person_user_no
             }
         });
         api.sendEvent({
@@ -235,16 +230,11 @@
     }
     //打开商户信息窗体
     function openBusinessInformation() {
-      if(g_account_company_user_no==undefined||g_account_company_user_no==""){
-        toastFail("暂无商户信息!");
-        return;
-      }
         api.openWin({
             name: 'company_profile',
             url: '../userinfo/company_profile.html',
             reload: true,
             pageParam: {
-              company_user_no:g_account_company_user_no
             }
         });
         api.sendEvent({
@@ -295,19 +285,19 @@
                 if (!pullDeltaX) {
                     return;
                 }
-                console.log(Math.abs(pullDeltaX));
-                if (pullDeltaX <= 0 && Math.abs(pullDeltaX) > 40) {
-                    api.setFrameAttr({
-                        name: 'account',
-                        bounces: false,
-                        rect: {
-                            x: pullDeltaX,
-                            y: 0,
-                            w: api.winWidth - api.winWidth / 3 + pullDeltaX,
-                            h: api.winHeight
-                        }
-                    });
-                }
+                // console.log(Math.abs(pullDeltaX));
+                // if (pullDeltaX <= 0 && Math.abs(pullDeltaX) > 40) {
+                //     api.setFrameAttr({
+                //         name: 'account',
+                //         bounces: false,
+                //         rect: {
+                //             x: pullDeltaX,
+                //             y: 0,
+                //             w: api.winWidth - api.winWidth / 3 + pullDeltaX,
+                //             h: api.winHeight
+                //         }
+                //     });
+                // }
                 e.preventDefault(); //阻止手机浏览器默认事件
             });
             $tb.on('touchend', function(e) {
@@ -349,8 +339,6 @@
                     g_account=ret.account;
                     g_account_nickname=ret.account.nickname;
                     g_account_icon=ret.account.icon_url;
-                    g_account_person_user_no=ret.account.person_user_no;
-                    g_account_company_user_no=ret.account.company_user_no;
               } else {
                   toastFail(ret.message);
               }

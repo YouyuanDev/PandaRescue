@@ -179,15 +179,15 @@
                         cellphoneno: phone
                     }
                 }
-            }, function(rets, errs) {
-                if (rets) {
-                    if (rets.success) {
-                        toastSuccess(rets.msg);
+            }, function(ret, errs) {
+                if (ret) {
+                    if (ret.success) {
+                        toastSuccess(ret.msg);
                         forgetPasswordInterval = setInterval("forgetPasswordSetInterval()", 1000);
                         $('.forget-password').hide();
                         $('.forget-password-interval').show();
                     } else {
-                        toastFail(rets.msg);
+                        toastFail(ret.msg);
                     }
                 } else {
                     toastFail("发送异常,请稍后重试!");
@@ -212,12 +212,11 @@
                         password: password
                     }
                 }
-            }, function(rets, errs) {
-                alert(JSON.stringify(rets));
-                if (rets) {
-                    if (rets.success) {
-                        var account_type = rets.accountType;
-                        toastSuccess(rets.msg);
+            }, function(ret, errs) {
+                if (ret) {
+                    if (ret.success) {
+                        var account_type = ret.accountType;
+                        toastSuccess(ret.msg);
                         var userInfo = {};
                         userInfo["phone"] = phone;
                         userInfo["password"] = password;
@@ -229,7 +228,7 @@
                         });
                         //绑定推送
                         bindPush(phone);
-                        var roles = rets.roles;
+                        var roles = ret.roles;
                         //加入现在的组
                         if (roles != undefined) {
                             var rolelist = roles.split(";");
@@ -250,7 +249,7 @@
                         //     name: 'root'
                         // });
                     } else {
-                        toastFail(rets.msg);
+                        toastFail(ret.msg);
                     }
                 } else {
                     toastFail("登录异常,请稍后重试!");

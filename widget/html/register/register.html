@@ -247,10 +247,10 @@
                   verifycode:verificationCode
               }
           }
-      }, function(rets, errs) {
-          if (rets) {
-             if(rets.success){
-                 toastSuccess(rets.msg);
+      }, function(ret, errs) {
+          if (ret) {
+             if(ret.success){
+                 toastSuccess(ret.msg);
                  setTimeout(function(){
                    //直接跳转到登录页面
                    api.openWin({
@@ -265,7 +265,7 @@
                    closeWindow();
                  },1500);
              }else{
-                 toastFail(rets.msg);
+                 toastFail(ret.msg);
              }
           } else {
             toastFail("发送异常,请稍后重试!");
@@ -305,16 +305,16 @@
                       cellphoneno: phone
                   }
               }
-          }, function(rets, errs) {
-              if (rets) {
-                 if(rets.success){
-                   toastSuccess(rets.msg);
+          }, function(ret, errs) {
+              if (ret) {
+                 if(ret.success){
+                   toastSuccess(ret.msg);
                    $('.send-btn').attr("disabled", "disabled");
                    $('.send-btn').text("剩余" + count + "s");
                    $('.send-btn').removeClass('send-btn-active');
                    codeInterval = setInterval("codeSetInterval()", 1000);
                  }else{
-                     toastFail(rets.msg);
+                     toastFail(ret.msg);
                  }
               } else {
                 toastFail("发送异常,请稍后重试!");
@@ -358,12 +358,12 @@
                   cellphoneno: phone
               }
           }
-      }, function(rets, errs) {
-          if (rets) {
-             if(rets.success){
+      }, function(ret, errs) {
+          if (ret) {
+             if(ret.success){
                 sendVerificationCode(phone);
              }else{
-                 toastFail(rets.msg);
+                 toastFail(ret.msg);
              }
           } else {
             toastFail("出现异常,请稍后重试!");

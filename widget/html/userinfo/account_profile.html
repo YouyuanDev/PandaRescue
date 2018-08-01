@@ -14,9 +14,11 @@
         .personal-header .aui-title {
             font-size: 1.2rem;
         }
+
         .aui-list .aui-list-item-label {
             color: #AAAAAA;
         }
+
         .aui-list .aui-list-item-inner.personal-img {
             padding-top: 0.6rem;
             padding-bottom: 0.6rem;
@@ -121,6 +123,7 @@
     var g_account, g_id;
     apiready = function() {
         fnSettingHeader();
+        registerUploadPhotosEvent();
         var data = api.pageParam;
         if (data != undefined) {
             g_account = data.g_account;
@@ -142,10 +145,10 @@
                     $('.account-type-input').val(g_account_type);
                 }
                 if (g_account_state != undefined && g_account_state != "") {
-                    if(g_account_state==0){
-                      $('.account-state-input').val('正常');
-                    }else if(g_account_state==1){
-                      $('.account-state-input').val('锁定');
+                    if (g_account_state == 0) {
+                        $('.account-state-input').val('正常');
+                    } else if (g_account_state == 1) {
+                        $('.account-state-input').val('锁定');
                     }
                 }
                 if (g_account_register_time != undefined && g_account_register_time != "") {
@@ -171,16 +174,16 @@
             dataType: 'json',
             data: {
                 values: {
-                    id:g_id,
-                    nickname:$('.account-name-input').val()
+                    id: g_id,
+                    nickname: $('.account-name-input').val()
                 }
             }
         }, function(ret, err) {
             if (ret) {
                 if (ret.success) {
-                   toastSuccess(ret.message);
+                    toastSuccess(ret.message);
                 } else {
-                   toastFail(ret.message);
+                    toastFail(ret.message);
                 }
             } else {
                 toastFail('修改账户信息时出错,错误信息:' + err.code);
@@ -188,7 +191,45 @@
         });
     }
     //更换头像
-    function changeHeader(){
-      selectPicture(0);
+    function changeHeader() {
+        selectPicture(0);
+    }
+    //更新用户头像
+    function updateAccountIcon(id) {
+        var s = 'http://' + serverIP + '/UploadFile/uploadPicture.action';
+        api.ajax({
+            url: s,
+            method: 'post',
+            data: {
+                values: {
+                    id: id,
+                    icon_url: icon_url
+                }
+            }
+        }, function(ret, errs) {
+            if (ret) {
+                if (ret.success) {
+                    toastSuccess(ret.message);
+                } else {
+                    toastFail(ret.message);
+                }
+            } else {
+                api.alert({
+                    msg: JSON.stringify(errs)
+                });
+            }
+        });
+    }
+    //监听头像更换成功事件
+    function registerUploadPhotosEvent() {
+        //如监听网络连接事件
+        api.addEventListener({
+            name: 'UploadAccountIconEvent'
+        }, function(ret, err) {
+             var imgUrl=ret.value.imgUrl;
+             var base64Data=ret.value.base64Data;
+             alert(imgUrl+":"+base64Data);
+        });
+
     }
 </script>

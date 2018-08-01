@@ -115,12 +115,12 @@
             data: {
                 values: {}
             }
-        }, function(rets, errs) {
-            if (rets) {
-                if (rets.success) {
-                    toastSuccess(rets.message);
+        }, function(ret, errs) {
+            if (ret) {
+                if (ret.success) {
+                    toastSuccess(ret.message);
                 } else {
-                    toastFail(rets.message);
+                    toastFail(ret.message);
                     if(ret.relogin){
                       api.sendEvent({
                           name: 'reloginEvent'
@@ -146,12 +146,12 @@
             data: {
                 values: {}
             }
-        }, function(rets, errs) {
-            if (rets) {
-                if (rets.success) {
-                    toastSuccess(rets.message);
+        }, function(ret, errs) {
+            if (ret) {
+                if (ret.success) {
+                    toastSuccess(ret.message);
                 } else {
-                    toastFail(rets.message);
+                    toastFail(ret.message);
                     if(ret.relogin){
                       api.sendEvent({
                           name: 'reloginEvent'
@@ -172,12 +172,12 @@
             data: {
                 values: {}
             }
-        }, function(rets, errs) {
-            if (rets) {
-                if (rets.success) {
-                    toastSuccess(rets.message);
+        }, function(ret, errs) {
+            if (ret) {
+                if (ret.success) {
+                    toastSuccess(ret.message);
                 } else {
-                    toastFail(rets.message);
+                    toastFail(ret.message);
                     if(ret.relogin){
                       api.sendEvent({
                           name: 'reloginEvent'
@@ -198,12 +198,12 @@
             data: {
                 values: {}
             }
-        }, function(rets, errs) {
-            if (rets) {
-                if (rets.success) {
-                    toastSuccess(rets.message);
+        }, function(ret, errs) {
+            if (ret) {
+                if (ret.success) {
+                    toastSuccess(ret.message);
                 } else {
-                    toastFail(rets.message);
+                    toastFail(ret.message);
                     if(ret.relogin){
                       api.sendEvent({
                           name: 'reloginEvent'
@@ -224,12 +224,12 @@
             data: {
                 values: {}
             }
-        }, function(rets, errs) {
-            if (rets) {
-                if (rets.success) {
-                    toastSuccess(rets.message);
+        }, function(ret, errs) {
+            if (ret) {
+                if (ret.success) {
+                    toastSuccess(ret.message);
                 } else {
-                    toastFail(rets.message);
+                    toastFail(ret.message);
                     if(ret.relogin){
                       api.sendEvent({
                           name: 'reloginEvent'
