@@ -59,7 +59,7 @@
         $('.buttons').empty();
         $('.order-status').empty();
         $('.order-status').text(status_name);
-        $('.buttons').append(makeButtonTemplate("cancelOrder('"+account_type+"');", "取消订单"));
+        $('.buttons').append(makeButtonTemplate("cancelOrder('" + account_type + "');", "取消订单"));
         if (account_type == "person_user") {
             //pending,confirmed,confirmedpaid,inservice,finished,cancelled,finishedconfirmed
             if (status_code == "confirmed") { //支付
@@ -105,9 +105,27 @@
         var template = '<div class="aui-btn aui-btn-block cancel-order pr-bgcolor" onclick="' + buttonFunctionName + '">' + buttonName + '</div>';
         return template;
     }
+
+
+    function aliPay(order_no) {
+        var aliPay = api.require('aliPay');
+        aliPay.payOrder({
+            orderInfo: 'partner="2088101568358171"&seller_id="xxx@alipay.com"&out_trade_no="'+order_no+'"&subject="测试"&body="测试测试"&total_fee="0.01"&notify_url="http://notify.msp.hk/notify.htm"&service="mobile.securitypay.pay"&payment_type="1"&_input_charset="utf-8"&it_b_pay="30m"&sign="lBBK%2F0w5LOajrMrji7DUgEqNjIhQbidR13GovA5r3TgIbNqv231yC1NksLdw%2Ba3JnfHXoXuet6XNNHtn7VE%2BeCoRO1O%2BR1KugLrQEZMtG5jmJIe2pbjm%2F3kb%2FuGkpG%2BwYQYI51%2BhA3YBbvZHVQBYveBqK%2Bh8mUyb7GM1HxWs9k4%3D"&sign_type="RSA"'
+        }, function(ret, err) {
+            api.alert({
+                title: '支付结果',
+                msg: ret.code,
+                buttons: ['确定']
+            });
+        });
+    }
+
+
     //支付
     function payOrder() {
-        //弹出支付界面
+      aliPay();
+      return;
+        //
         var s = 'http://' + serverIP + '/PersonUser/PersonUserPayOrder.action';
         api.ajax({
             url: s,
@@ -121,10 +139,10 @@
                     toastSuccess(ret.message);
                 } else {
                     toastFail(ret.message);
-                    if(ret.relogin){
-                      api.sendEvent({
-                          name: 'reloginEvent'
-                      });
+                    if (ret.relogin) {
+                        api.sendEvent({
+                            name: 'reloginEvent'
+                        });
                     }
                 }
             } else {
@@ -134,11 +152,11 @@
     }
     //取消支付
     function cancelOrder(account_type) {
-        var s="";
-        if(account_type=="person_user"){
-          s= 'http://' + serverIP + '/PersonUser/PersonUserCancelOrder.action';
-        }else if(account_type=="company_user"){
-          s= 'http://' + serverIP + '/CompanyUser/CompanyUserCancelOrder.action';
+        var s = "";
+        if (account_type == "person_user") {
+            s = 'http://' + serverIP + '/PersonUser/PersonUserCancelOrder.action';
+        } else if (account_type == "company_user") {
+            s = 'http://' + serverIP + '/CompanyUser/CompanyUserCancelOrder.action';
         }
         api.ajax({
             url: s,
@@ -152,10 +170,10 @@
                     toastSuccess(ret.message);
                 } else {
                     toastFail(ret.message);
-                    if(ret.relogin){
-                      api.sendEvent({
-                          name: 'reloginEvent'
-                      });
+                    if (ret.relogin) {
+                        api.sendEvent({
+                            name: 'reloginEvent'
+                        });
                     }
                 }
             } else {
@@ -178,10 +196,10 @@
                     toastSuccess(ret.message);
                 } else {
                     toastFail(ret.message);
-                    if(ret.relogin){
-                      api.sendEvent({
-                          name: 'reloginEvent'
-                      });
+                    if (ret.relogin) {
+                        api.sendEvent({
+                            name: 'reloginEvent'
+                        });
                     }
                 }
             } else {
@@ -204,10 +222,10 @@
                     toastSuccess(ret.message);
                 } else {
                     toastFail(ret.message);
-                    if(ret.relogin){
-                      api.sendEvent({
-                          name: 'reloginEvent'
-                      });
+                    if (ret.relogin) {
+                        api.sendEvent({
+                            name: 'reloginEvent'
+                        });
                     }
                 }
             } else {
@@ -230,10 +248,10 @@
                     toastSuccess(ret.message);
                 } else {
                     toastFail(ret.message);
-                    if(ret.relogin){
-                      api.sendEvent({
-                          name: 'reloginEvent'
-                      });
+                    if (ret.relogin) {
+                        api.sendEvent({
+                            name: 'reloginEvent'
+                        });
                     }
                 }
             } else {
