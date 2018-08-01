@@ -123,7 +123,7 @@
                 </div>
             </li>
             <li class="aui-list-item">
-                <div class="aui-list-item-inner aui-list-item-arrow">
+                <div class="aui-list-item-inner aui-list-item-arrow" onclick="openCompanyAuthentication();">
                     <div class="aui-list-item-label i18n1" name="realnameauthentication">
                         实名认证
                     </div>
@@ -268,7 +268,7 @@
             closeLoading();
         });
     }
-
+    //开启定位
     function openAutomaticPositioning() {
         map.getLocation({
             accuracy: '10m',
@@ -285,5 +285,23 @@
                 toastFail("定位错误,错误代码:"+err.code);
             }
         });
+    }
+    //打开商户认证通道
+    function openCompanyAuthentication(){
+      api.openFrame({
+          name: 'company_authentication',
+          url: '../authentication/company_authentication.html',
+          rect: {
+              x: 0,
+              y: 0,
+              w: api.winWidth,
+              h: api.height
+          },
+          animation: {
+              type: "push",
+              subType: "from_right",
+              duration: 300
+          }
+      });
     }
 </script>

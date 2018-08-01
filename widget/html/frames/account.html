@@ -209,7 +209,9 @@
             name: 'account_setting',
             url: '../setting/account_setting.html',
             reload: true,
-            pageParam: {}
+            pageParam: {
+              g_account:g_account
+            }
         });
         api.sendEvent({
             name: 'MaskClickEvent'

@@ -76,6 +76,9 @@ function getDate1(str) {
         return "";
     }
 }
+
+
+
 //字符串转date
 function parseMobiDate(str) {
     if (str != undefined)
