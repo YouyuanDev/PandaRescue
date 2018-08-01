@@ -1,6 +1,6 @@
 var header, headerHeight = 0,
     g_loadingID;
-var serverIP = '192.168.0.12:8080';
+var serverIP = '192.168.0.100:8080';
 
 function fnSettingHeader() {
     var sType = api.systemType;
