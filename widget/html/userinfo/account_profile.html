@@ -139,7 +139,8 @@
                     $('.account-name-input').val(g_account_nickname);
                 }
                 if (g_account_icon != undefined && g_account_icon != "") {
-                    $('.personal-header-img').attr('src', g_account_icon);
+                    var url='http://' + serverIP +'/upload/pictures/'+g_account_icon;
+                    $('.personal-header-img').attr('src', url);
                 }
                 if (g_account_type != undefined && g_account_type != "") {
                     $('.account-type-input').val(g_account_type);
@@ -195,23 +196,33 @@
         selectPicture(0);
     }
     //更新用户头像
-    function updateAccountIcon(id) {
-        var s = 'http://' + serverIP + '/UploadFile/uploadPicture.action';
+    function updateAccountIcon(imgUrl) {
+        if(g_id==undefined&&g_id==""&&imgUrl==undefined&&imgUrl==""){
+           toastFail("更换头像失败!");return;
+        }
+        var s = 'http://' + serverIP + '/AccountOperation/saveAccount.action';
         api.ajax({
             url: s,
             method: 'post',
             data: {
                 values: {
-                    id: id,
-                    icon_url: icon_url
+                    id: g_id,
+                    icon_url: imgUrl
                 }
             }
         }, function(ret, errs) {
             if (ret) {
                 if (ret.success) {
                     toastSuccess(ret.message);
+                    var url='http://' + serverIP +'/upload/pictures/'+imgUrl;
+                    $('.personal-header-img').attr('src',url);
                 } else {
                     toastFail(ret.message);
+                    if(ret.relogin){
+                      api.sendEvent({
+                          name: 'reloginEvent'
+                      });
+                    }
                 }
             } else {
                 api.alert({
@@ -228,7 +239,7 @@
         }, function(ret, err) {
              var imgUrl=ret.value.imgUrl;
              var base64Data=ret.value.base64Data;
-             alert(imgUrl+":"+base64Data);
+             updateAccountIcon(imgUrl);
         });
 
     }

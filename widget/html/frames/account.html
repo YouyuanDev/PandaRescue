@@ -342,8 +342,10 @@
               } else {
                   toastFail(ret.message);
               }
+
               if(g_account_icon!=undefined&&g_account_icon!=""){
-                  $('.account-header').attr('src',g_account_icon);
+                  var url='http://' + serverIP +'/upload/pictures/'+g_account_icon;
+                  $('.account-header').attr('src',url);
               }
               if(g_account_nickname!=undefined&&g_account_nickname!=""){
                 $('.account-name-span').removeClass('account-name-samll-span');

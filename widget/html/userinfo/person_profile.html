@@ -188,6 +188,11 @@
                 }
             } else {
                 toastFail('获取个人信息时出错,错误信息:' + err.code);
+                if(ret.relogin){
+                  api.sendEvent({
+                      name: 'reloginEvent'
+                  });
+                }
             }
             closeLoading();
         });
