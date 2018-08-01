@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0" />
+    <meta name="format-detection" content="telephone=no,email=no,date=no,address=no">
+    <title>个人信息保护和隐私政策</title>
+    <link rel="stylesheet" type="text/css" href="../../css/api.css" />
+    <link rel="stylesheet" type="text/css" href="../../css/aui.css" />
+    <link rel="stylesheet" type="text/css" href="../../css/font-awesome.min.css" />
+    <link rel="stylesheet" type="text/css" href="../../css/style.css" />
+    <style>
+        .diy-img img {
+            margin: auto;
+        }
+        .diy-title-p{
+          text-align:center;font-size:0.8rem;color: #000;
+          margin:auto;
+        }
+        .diy-p {
+            text-align: left;
+        }
+        .diy-font-p{
+          font-size:0.8rem;color:#000;
+        }
+    </style>
+</head>
+
+<body class="pr-body-bgcolor">
+    <header id="header" class="aui-bar aui-bar-nav aui-bar-light personal-header pr-bgcolor ">
+        <a class="aui-pull-left aui-btn">
+            <span onclick="closeMyself();" class="fa fa-chevron-left"></span>
+        </a>
+        <div class="aui-title pr-fontcolor i18n1" name="personalandprivacy">个人信息保护及隐私政策</div>
+    </header>
+    <section class="aui-content-padded">
+        <div class="aui-card-list">
+          <div class="aui-card-list-header">
+              <p class="diy-title-p i18n1" name="personalandprivacy">个人信息保护及隐私政策</p>
+          </div>
+            <div class="aui-card-list-content-padded">
+                <p class="diy-p diy-font-p i18n1" name="pandarescue">隐私政策</p>
+                <p class="diy-p">
+                   熊猫救援非常重视对您的个人隐私保护，我们将按照本隐私政策（以下称“本政策”)收集、 使用、共享和保护您的个人信息。
+                   在您使用熊猫救援的产品及服务前，请您仔细阅读并全面 了解本政策。 如果您是未成年人， 您的监护人需要仔细阅读本政策并同意您依照本政策使用 我们的产品及服务。
+                   对于本政策中与您的权益存在重大关系的条款，
+                   我们已将字体加粗以提 示您注意。当您浏览、访问熊猫救援平台及/或使用熊猫救援的任一产品或服务时，
+                   即表示 您已经同意我们按照本政策来收集、使用、共享和保护您的个人信息。</p>
+            </div>
+        </div>
+    </section>
+    <!-- <section class="aui-content-padded">
+        <div class="aui-card-list">
+            <div class="aui-card-list-content-padded">
+                <p class="diy-p diy-font-p i18n1" name="versionintroduction">版本介绍</p>
+                <p class="diy-p version-p"></p>
+                <p class="diy-p">欢迎使用</p>
+            </div>
+        </div>
+    </section> -->
+</body>
+
+</html>
+<script type="text/javascript" src="../../script/api.js"></script>
+<script type="text/javascript" src="../../script/jquery-3.3.1.min.js"></script>
+<script src="../../script/jquery.i18n.properties-1.0.9.js" type="text/javascript"></script>
+<script src="../../script/language.js" type="text/javascript"></script>
+<script type="text/javascript" src="../../script/common.js"></script>
+<script type="text/javascript">
+    var language_id = 0;
+    apiready = function() {
+            fnSettingHeader();
+            $('.version-p').text("V"+api.appVersion);
+            hlLanguage("../../i18n/");
+        }
+
+    function closeMyself() {
+        api.closeFrame({
+            name: 'about_legalprivacy_personalprivacy'
+        });
+    }
+</script>

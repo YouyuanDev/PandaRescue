@@ -62,6 +62,9 @@ input{
 .pr-fontcolor{
   color:#fff;
 }
+.aui-list .aui-list-item-title.pr-fontcolor-one{
+    color:#A7A9A9;
+}
 .pr-body-bgcolor{
   background:#F2F5F6;
 }

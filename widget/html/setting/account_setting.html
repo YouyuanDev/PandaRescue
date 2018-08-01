@@ -59,6 +59,11 @@
             transform-origin: 50% 100%;
             pointer-events: none;
         }
+
+        .aui-list .aui-list-item {
+            padding-top: 0.2rem;
+            padding-bottom: 0.2rem;
+        }
     </style>
 </head>
 
@@ -73,53 +78,53 @@
         <ul class="aui-list aui-list-in">
             <li class="aui-list-item aui-list-item-middle" onclick="accountsAndSecurity();">
                 <div class="aui-list-item-inner aui-list-item-arrow">
-                    <div class="aui-list-item-title i18n1" name="accountsandsecurity">账号与安全</div>
+                    <div class="aui-list-item-title pr-fontcolor-one i18n1" name="accountsandsecurity">账号与安全</div>
                 </div>
             </li>
             <li class="aui-list-item aui-list-item-middle" onclick="changeLanguage();">
                 <div class="aui-list-item-inner aui-list-item-arrow">
-                    <div class="aui-list-item-title i18n1" name="switchlanguage">切换语言</div>
+                    <div class="aui-list-item-title pr-fontcolor-one i18n1" name="switchlanguage">切换语言</div>
                 </div>
             </li>
         </ul>
     </div>
     <div class="aui-content aui-margin-b-15">
         <ul class="aui-list aui-list-in">
-            <li class="aui-list-item aui-list-item-middle">
+            <li class="aui-list-item aui-list-item-middle" onclick="clearAppCache();">
                 <div class="aui-list-item-inner aui-list-item-arrow">
-                    <div class="aui-list-item-title i18n1" name="clearcache">清除缓存</div>
+                    <div class="aui-list-item-title pr-fontcolor-one i18n1" name="clearcache">清除缓存</div>
+                    <div class="aui-list-item-right">
+                        <span class="app-cache"></span>
+                    </div>
                 </div>
             </li>
             <li class="aui-list-item aui-list-item-middle">
                 <div class="aui-list-item-inner aui-list-item-arrow">
-                    <div class="aui-list-item-title i18n1" name="checkforupdates">版本更新</div>
+                    <div class="aui-list-item-title pr-fontcolor-one i18n1" name="checkforupdates">版本更新</div>
+                    <div class="aui-list-item-right">
+                        <span class="app-version"></span>
+                    </div>
+                </div>
+            </li>
+            <li class="aui-list-item aui-list-item-middle" onclick="openAboutLegalPrivacy();">
+                <div class="aui-list-item-inner aui-list-item-arrow">
+                    <div class="aui-list-item-title pr-fontcolor-one i18n1" name="legaltermsandprivacypolicy">法律条款与隐私政策</div>
                 </div>
             </li>
             <li class="aui-list-item aui-list-item-middle">
                 <div class="aui-list-item-inner aui-list-item-arrow">
-                    <div class="aui-list-item-title i18n1" name="legaltermsandprivacypolicy">法律条款与隐私政策</div>
+                    <div class="aui-list-item-title pr-fontcolor-one i18n1" name="userguide">熊猫救援指南</div>
                 </div>
             </li>
-            <li class="aui-list-item aui-list-item-middle">
+            <li class="aui-list-item aui-list-item-middle" onclick="openAboutPandaRescue();">
                 <div class="aui-list-item-inner aui-list-item-arrow">
-                    <div class="aui-list-item-title i18n1" name="userguide">熊猫救援指南</div>
-                </div>
-            </li>
-            <li class="aui-list-item aui-list-item-middle">
-                <div class="aui-list-item-inner aui-list-item-arrow">
-                    <div class="aui-list-item-title i18n1" name="aboutapp">关于熊猫救援</div>
+                    <div class="aui-list-item-title pr-fontcolor-one i18n1" name="aboutapp">关于熊猫救援</div>
                 </div>
             </li>
         </ul>
     </div>
     <div class="aui-content aui-margin-b-15">
-        <ul class="aui-list aui-list-in exit-ul aui-list-noborder">
-            <li class="aui-list-item aui-list-item-middle">
-                <div class="aui-list-item-inner">
-                    <div class="aui-btn aui-btn-block exit-logon pr-bgcolor i18n1" name="logout" onclick="exitLogon();">退出登录</div>
-                </div>
-            </li>
-        </ul>
+        <div class="aui-btn aui-btn-block exit-logon pr-fontcolor pr-bgcolor i18n1" name="logout" onclick="exitLogon();">退出登录</div>
     </div>
 </body>
 
@@ -136,6 +141,13 @@
             if (data != undefined) {
 
             }
+            //获取版本号
+            $('.app-version').text("V" + api.appVersion);
+            //获取缓存大小
+            api.getCacheSize(function(ret) {
+                var size = ret.size;
+                $('.app-cache').text(size + "MB");
+            });
             hlLanguage("../../i18n/");
         }
         //退出登录
@@ -185,10 +197,49 @@
         });
     }
     //账号和安全
-    function accountsAndSecurity(){
+    function accountsAndSecurity() {
+        api.openFrame({
+            name: 'account_setting_security',
+            url: './account_setting_security.html',
+            rect: {
+                x: 0,
+                y: 0,
+                w: api.winWidth,
+                h: api.height
+            },
+            animation: {
+                type: "push",
+                subType: "from_right",
+                duration: 300
+            },
+            pageParam: {
+
+            }
+        });
+    }
+    //打开关于熊猫救援
+    function openAboutPandaRescue() {
+        api.openFrame({
+            name: 'about_pandarescue',
+            url: '../about/about_pandarescue.html',
+            rect: {
+                x: 0,
+                y: 0,
+                w: api.winWidth,
+                h: api.height
+            },
+            animation: {
+                type: "push",
+                subType: "from_right",
+                duration: 300
+            }
+        });
+    }
+    //打开法律条款和隐私政策
+    function openAboutLegalPrivacy(){
       api.openFrame({
-          name: 'account_setting_security',
-          url: './account_setting_security.html',
+          name: 'about_legalprivacy',
+          url: '../about/about_legalprivacy.html',
           rect: {
               x: 0,
               y: 0,
@@ -199,10 +250,14 @@
               type: "push",
               subType: "from_right",
               duration: 300
-          },
-          pageParam: {
-
           }
       });
+    }
+    //清理缓存
+    function clearAppCache() {
+        api.clearCache(function() {
+             toastSuccess("清理完成!");
+             $('.app-cache').text("0MB");
+        });
     }
 </script>
