@@ -74,7 +74,7 @@
                     </div>
                 </div>
             </li>
-            <li class="aui-list-item">
+            <li class="aui-list-item" onclick="openPersonAuthentication();">
                 <div class="aui-list-item-inner aui-list-item-arrow">
                     <div class="aui-list-item-label i18n1" name="realnameauthentication">
                         实名认证
@@ -196,5 +196,23 @@
             }
             closeLoading();
         });
+    }
+    //打开个人实名认证通道
+    function openPersonAuthentication(){
+      api.openFrame({
+          name: 'person_authentication',
+          url: '../authentication/person_authentication.html',
+          rect: {
+              x: 0,
+              y: 0,
+              w: api.winWidth,
+              h: api.height
+          },
+          animation: {
+              type: "push",
+              subType: "from_right",
+              duration: 300
+          }
+      });
     }
 </script>

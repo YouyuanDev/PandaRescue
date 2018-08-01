@@ -135,11 +135,12 @@
 <script src="../../script/jquery.i18n.properties-1.0.9.js" type="text/javascript"></script>
 <script src="../../script/language.js" type="text/javascript"></script>
 <script type="text/javascript">
+    var g_account;
     apiready = function() {
             fnSettingHeader();
             var data = api.pageParam;
             if (data != undefined) {
-
+                g_account=data.g_account;
             }
             //获取版本号
             $('.app-version').text("V" + api.appVersion);
@@ -213,7 +214,7 @@
                 duration: 300
             },
             pageParam: {
-
+               g_account:g_account
             }
         });
     }

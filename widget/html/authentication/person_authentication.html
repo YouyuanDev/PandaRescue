@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0" />
+    <meta name="format-detection" content="telephone=no,email=no,date=no,address=no">
+    <title>实名认证</title>
+    <link rel="stylesheet" type="text/css" href="../../css/api.css" />
+    <link rel="stylesheet" type="text/css" href="../../css/aui.css" />
+    <link rel="stylesheet" type="text/css" href="../../css/font-awesome.min.css" />
+    <link rel="stylesheet" type="text/css" href="../../css/style.css" />
+    <style>
+    .diy-p {
+        text-align: center;
+    }
+    .diy-font-p {
+        font-size:1rem;
+        color: #000;
+    }
+    .diy-card-bg{
+      margin: auto;
+      background-color:#F2F5F6;
+      margin-left:4.33333333%;
+    }
+    </style>
+</head>
+
+<body class="pr-body-bgcolor">
+    <header id="header" class="aui-bar aui-bar-nav aui-bar-light personal-header pr-bgcolor ">
+        <a class="aui-pull-left aui-btn">
+            <span onclick="closeMyself();" class="fa fa-chevron-left"></span>
+        </a>
+        <div class="aui-title pr-fontcolor i18n1" name="realnameauthentication">实名认证</div>
+    </header>
+    <section class="aui-content-padded">
+        <div class="aui-card-list">
+            <div class="aui-card-list-content-padded">
+
+            </div>
+        </div>
+    </section>
+    <section class="aui-content-padded">
+        <div class="aui-card-list">
+            <div class="aui-card-list-content-padded">
+                <p class="diy-font-p i18n1" name="documentinformation">证件信息</p>
+                <section class="aui-grid aui-margin-b-15">
+                    <div class="aui-row">
+                        <div class="aui-col-xs-5 diy-card-bg">
+                            <i class="fa fa-plus"></i>
+                            <div class="aui-grid-label i18n1" name="idcardfront">身份证(正面)</div>
+                        </div>
+
+                        <div class="aui-col-xs-5 diy-card-bg">
+                            <i class="fa fa-plus"></i>
+                            <div class="aui-grid-label i18n1" name="idcardopposite">身份证(反面)</div>
+                        </div>
+                    </div>
+                </section>
+            </div>
+        </div>
+    </section>
+</body>
+
+</html>
+<script type="text/javascript" src="../../script/api.js"></script>
+<script type="text/javascript" src="../../script/jquery-3.3.1.min.js"></script>
+<script src="../../script/jquery.i18n.properties-1.0.9.js" type="text/javascript"></script>
+<script src="../../script/language.js" type="text/javascript"></script>
+<script type="text/javascript" src="../../script/common.js"></script>
+<script type="text/javascript">
+    var language_id = 0;
+    apiready = function() {
+        fnSettingHeader();
+        hlLanguage("../../i18n/");
+    }
+
+    function closeMyself() {
+        api.closeFrame({
+            name: 'person_authentication'
+        });
+    }
+</script>

@@ -27,19 +27,19 @@
             <li class="aui-list-item aui-list-item-middle" onclick="changePhoneNumber();">
                 <div class="aui-list-item-inner aui-list-item-arrow">
                     <div class="aui-list-item-title pr-fontcolor-one i18n1" name="changephonenumber">修改手机号</div>
-                    <div class="aui-list-item-right">187****1326</div>
+                    <div class="aui-list-item-right account-phone">187****1326</div>
                 </div>
             </li>
         </ul>
     </div>
     <div class="aui-content aui-margin-b-15">
         <ul class="aui-list aui-list-in">
-            <li class="aui-list-item aui-list-item-middle" onclick="realnameAuthentication();">
+            <!-- <li class="aui-list-item aui-list-item-middle" onclick="realnameAuthentication();">
                 <div class="aui-list-item-inner aui-list-item-arrow">
                     <div class="aui-list-item-title pr-fontcolor-one i18n1" name="realnameauthentication">实名认证</div>
-                    <div class="aui-list-item-right">未认证</div>
+                    <div class="aui-list-item-right account-authentication">未认证</div>
                 </div>
-            </li>
+            </li> -->
             <li class="aui-list-item aui-list-item-middle" onclick="changePassword();">
                 <div class="aui-list-item-inner aui-list-item-arrow">
                     <div class="aui-list-item-title pr-fontcolor-one i18n1" name="passwordsettings">密码设置</div>
@@ -61,8 +61,20 @@
 <script src="../../script/language.js" type="text/javascript"></script>
 <script type="text/javascript" src="../../script/common.js"></script>
 <script type="text/javascript">
-    var language_id = 0;
+    var language_id = 0,
+        g_account;
     apiready = function() {
+            var data = api.pageParam;
+            if (data != undefined) {
+                g_account = data.g_account;
+                if(g_account!=undefined){
+                    var phone=g_account.cell_phone;
+                    if(phone!=undefined&&phone!=""){
+                      phone=phone.substring(0,3)+"****"+phone.substring(7,11);
+                      $('.account-phone').text(phone);
+                    }
+                }
+            }
             fnSettingHeader();
             hlLanguage("../../i18n/");
         }
@@ -87,10 +99,6 @@
             }
         });
     }
-    //实名认证
-    function realnameAuthentication() {
-
-    }
     //修改密码
     function changePassword() {
         api.openFrame({
@@ -114,24 +122,24 @@
     }
     //注销账号
     function deleteAccount() {
-      api.openFrame({
-          name: 'account_setting_security_cancellation',
-          url: './account_setting_security_cancellation.html',
-          rect: {
-              x: 0,
-              y: 0,
-              w: api.winWidth,
-              h: api.height
-          },
-          animation: {
-              type: "push",
-              subType: "from_right",
-              duration: 300
-          },
-          pageParam: {
+        api.openFrame({
+            name: 'account_setting_security_cancellation',
+            url: './account_setting_security_cancellation.html',
+            rect: {
+                x: 0,
+                y: 0,
+                w: api.winWidth,
+                h: api.height
+            },
+            animation: {
+                type: "push",
+                subType: "from_right",
+                duration: 300
+            },
+            pageParam: {
 
-          }
-      });
+            }
+        });
     }
 
     function closeMyself() {
