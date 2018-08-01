@@ -147,6 +147,7 @@
            toastFail("个人信息不存在!");
            return;
         }
+        openLoading();
         var s = 'http://' + serverIP + '/PersonUser/getPersonUserInfo.action';
         api.ajax({
             url: s,
@@ -193,6 +194,7 @@
             } else {
                 toastFail('获取个人信息时出错,错误信息:' + err.code);
             }
+            closeLoading();
         });
     }
 </script>

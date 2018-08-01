@@ -1,4 +1,4 @@
-var header, headerHeight = 0;
+var header, headerHeight = 0,g_loadingID;
 var serverIP = '192.168.0.12:8080';
 
 function fnSettingHeader() {
@@ -209,8 +209,8 @@ function delSelectPicture(obj) {
     var picUrl = $(obj).siblings('img').attr('data-url');
     $(obj).parent().remove();
 }
-//loading动画效果
-function DoLoadingPicture() {
+//打开加载进度条
+function openLoading() {
     var UILoading = api.require('UILoading');
     UILoading.flower({
         center: {
@@ -225,7 +225,14 @@ function DoLoadingPicture() {
         g_loadingID = ret.id;
     });
 }
-
+//关闭加载进度条
+function closeLoading() {
+    var uiloading= api.require('UILoading');
+    uiloading.closeFlower({
+        id: g_loadingID
+    });
+    g_loadingID = 0;
+}
 //计算模板中所需直线距离
 function getDistance(num) {
     if (num != undefined && !isNaN(num)) {
