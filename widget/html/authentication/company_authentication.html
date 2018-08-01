@@ -68,14 +68,18 @@
         .process-tips-container,
         .process-content-container,
         .process-cancel-container,
-        .process-show-container{
+        .process-show-container {
             display: none;
         }
 
         .bg-picture {
             background-color: #F2F5F6;
             background-repeat: no-repeat;
-          	background-size:100% 100%;
+            background-size: 100% 100%;
+        }
+        .bg-picture img {
+            width: 100%;
+            max-height:10rem;
         }
     </style>
 </head>
@@ -98,10 +102,12 @@
                         <div class="process-content-title i18n1" name="submitdocumentinformation">提交证件信息</div>
                     </div>
                     <div class="aui-col-xs-4 process-content-info">
+                        <img src=""/>
                         <div class="process-content-tag"><span>2</span></div>
                         <div class="process-content-title i18n1" name="audit">审核中</div>
                     </div>
                     <div class="aui-col-xs-4 process-content-info">
+                        <img src=""/>
                         <div class="process-content-tag"><span>3</span></div>
                         <div class="process-content-title i18n1" name="attestationcompletion">认证完成</div>
                     </div>
@@ -116,22 +122,18 @@
                 <p class="diy-font-p i18n1" name="documentinformation">证件信息</p>
                 <section class="aui-grid aui-margin-b-15">
                     <div class="aui-row">
-                        <div class="aui-col-xs-5 diy-card-bg bg-picture idcardfront-picture" onclick="uploadIdCardPictureFront();">
+                        <div class="aui-col-xs-5 diy-card-bg bg-picture idcardfront-picture-active" onclick="uploadIdCardPictureFront();">
                             <i class="fa fa-plus"></i>
                             <div class="aui-grid-label i18n1" name="idcardfront">身份证(正面)</div>
                         </div>
 
-                        <div class="aui-col-xs-5 diy-card-bg bg-picture idcardopposite-picture" onclick="uploadIdCardPictureOpposite();">
+                        <div class="aui-col-xs-5 diy-card-bg bg-picture idcardopposite-picture-active" onclick="uploadIdCardPictureOpposite();">
                             <i class="fa fa-plus"></i>
                             <div class="aui-grid-label i18n1" name="idcardopposite">身份证(反面)</div>
                         </div>
-                        <div class="aui-col-xs-5 diy-card-bg bg-picture businesslicense-picture" onclick="uploadLicensePictureOpposite();">
+                        <div class="aui-col-xs-5 diy-card-bg bg-picture businesslicense-picture-active" onclick="uploadLicensePictureOpposite();">
                             <i class="fa fa-plus"></i>
                             <div class="aui-grid-label i18n1" name="businesslicense">商户营业执照</div>
-                        </div>
-                        <div class="aui-col-xs-5 diy-card-bg bg-picture facadephotograph-picture" onclick="uploadFacadePictureOpposite();">
-                            <i class="fa fa-plus"></i>
-                            <div class="aui-grid-label i18n1" name="facadephotograph">商户门面照片</div>
                         </div>
                     </div>
                 </section>
@@ -144,20 +146,25 @@
                 <p class="diy-font-p i18n1" name="documentinformation">证件信息</p>
                 <section class="aui-grid aui-margin-b-15">
                     <div class="aui-row">
-                        <div class="aui-col-xs-5 diy-card-bg bg-picture idcardfront-picture" onclick="uploadIdCardPictureFront();">
-
+                        <div class="aui-col-xs-5 diy-card-bg bg-picture idcardfront-picture active">
+                            <img src="" />
                         </div>
-                        <div class="aui-col-xs-5 diy-card-bg bg-picture idcardopposite-picture" onclick="uploadIdCardPictureOpposite();">
-
+                        <div class="aui-col-xs-5 diy-card-bg bg-picture idcardopposite-picture active">
+                            <img src="" />
                         </div>
-                        <div class="aui-col-xs-5 diy-card-bg bg-picture businesslicense-picture" onclick="uploadLicensePictureOpposite();">
-
-                        </div>
-                        <div class="aui-col-xs-5 diy-card-bg bg-picture facadephotograph-picture" onclick="uploadFacadePictureOpposite();">
-
+                        <div class="aui-col-xs-5 diy-card-bg bg-picture businesslicense-picture active">
+                            <img src="" />
                         </div>
                     </div>
                 </section>
+            </div>
+        </div>
+    </section>
+    <section class="aui-content-padded process-tips-container">
+        <div class="aui-card-list">
+            <div class="aui-card-list-content-padded process-check">
+                <p class="process-tips-p"></p>
+                <p class="process-tips-dsc"></p>
             </div>
         </div>
     </section>
@@ -165,16 +172,9 @@
         <div class="aui-btn aui-btn-block exit-logon pr-fontcolor pr-bgcolor i18n1" name="revocationverification" onclick="cancelAuthenticationForm();">撤销验证</div>
     </div>
     <div class="aui-content aui-margin-b-15 process-btn-container">
-        <div class="aui-btn aui-btn-block exit-logon pr-fontcolor pr-bgcolor i18n1" name="confirm" onclick="submit();">确定</div>
+        <button class="aui-btn aui-btn-block exit-logon pr-fontcolor pr-bgcolor process-submit-btn i18n1" name="confirm" onclick="submitForm();">确定</button>
     </div>
-    <section class="aui-content-padded process-tips-container">
-        <div class="aui-card-list">
-            <div class="aui-card-list-content-padded process-check">
-              <p class="process-tips-p"></p>
-              <p class="process-tips-dsc"></p>
-            </div>
-        </div>
-    </section>
+
 </body>
 
 </html>
@@ -185,7 +185,7 @@
 <script type="text/javascript" src="../../script/common.js"></script>
 <script type="text/javascript">
     var language_id = 0,
-        g_idcard_front_picture, g_idcard_opposite_picture, g_businesslicense_picture, g_facade_picture, select_type = 0;
+        g_idcard_front_picture, g_idcard_opposite_picture, g_businesslicense_picture, select_type = 0;
     apiready = function() {
             fnSettingHeader();
             loadAuthenticationInfo();
@@ -207,48 +207,65 @@
             if (ret) {
                 if (ret.success) {
                     var is_verified = ret.company.is_verified;
+                    var id_card_picture_front = ret.company.id_card_picture_front;
+                    var id_card_picture_back = ret.company.id_card_picture_back;
+                    var business_certificate_picture = ret.company.business_certificate_picture;
+                    var front_url, back_url, license_url;
+                    if (id_card_picture_front != undefined && id_card_picture_front != "") {
+                        front_url = 'http://' + serverIP + '/upload/pictures/' + id_card_picture_front;
+                    }
+                    if (id_card_picture_back != undefined && id_card_picture_back != "") {
+                        back_url = 'http://' + serverIP + '/upload/pictures/' + id_card_picture_back;
+                    }
+                    if (business_certificate_picture != undefined && business_certificate_picture != "") {
+                        license_url = 'http://' + serverIP + '/upload/pictures/' + business_certificate_picture;
+                    }
+                    if (front_url != undefined && back_url != undefined && license_url != undefined) {
+                        $('.process-show-container .idcardfront-picture img').attr('src', front_url);
+                        $('.process-show-container .idcardopposite-picture img').attr('src', back_url);
+                        $('.process-show-container .businesslicense-picture img').attr('src', license_url);
+
+                    }
                     if (is_verified != undefined && is_verified != "") {
-                      if (is_verified == 0) {
-                          //未认证
-                          $('.process-content').find('span').eq(0).css("background-color", "#73C0B6");
-                          $('.process-content-container').show();
-                          $('.process-btn-container').show();
-                      } else if (is_verified == 1) {
-                          //已完成
-                          $('.process-content').find('span').eq(0).css("background-color", "#73C0B6");
-                          $('.process-content').find('span').eq(1).css("background-color", "#73C0B6");
-                          $('.process-content').find('span').eq(2).css("background-color", "#73C0B6");
-                          $('.process-tips-p').empty();
-                          $('.process-tips-p').append('<i class="fa fa-check"></i>');
-                          $('.process-tips-dsc').text("认证完成");
-                          $('.process-tips-container').show();
-                      }else if (is_verified == 2) {
-                          //审核中
-                          $('.process-content').find('span').eq(0).css("background-color", "#73C0B6");
-                          $('.process-content').find('span').eq(1).css("background-color", "#73C0B6");
-                          $('.process-tips-p').empty();
-                          $('.process-tips-p').append('<i class="fa fa-exclamation-circle"></i>');
-                          $('.process-tips-dsc').text("信息审核中");
-                          $('.process-tips-container').show();
-                      } else if (is_verified ==3) {
-                          //失败
-                          $('.process').hide();
-                          $('.process-tips-p').empty();
-                          $('.process-tips-p').append('<i class="fa fa-close"></i>');
-                          $('.process-tips-dsc').text("认证失败,请联系客服!");
-                          $('.process-tips-container').show();
-                      }
-                    }else{
-                      $('.process-content').find('span').eq(0).css("background-color", "#73C0B6");
-                      $('.process-content-container').show();
-                      $('.process-btn-container').show();
+                        if (is_verified == 0) {
+                            //未认证
+                            $('.process-content').find('span').eq(0).css("background-color", "#73C0B6");
+                            $('.process-content-container').show();
+                            $('.process-btn-container').show();
+                        } else if (is_verified == 1) {
+                            //已完成
+                            $('.process-content').find('span').eq(0).css("background-color", "#73C0B6");
+                            $('.process-content').find('span').eq(1).css("background-color", "#73C0B6");
+                            $('.process-content').find('span').eq(2).css("background-color", "#73C0B6");
+                            $('.process-show-container').show();
+                            $('.process-submit-btn').attr('disabled', 'disabled').css('background-color', '#dddddd');
+                        } else if (is_verified == 2) {
+                            //审核中
+                            $('.process-content').find('span').eq(0).css("background-color", "#73C0B6");
+                            $('.process-content').find('span').eq(1).css("background-color", "#73C0B6");
+                            $('.process-show-container').show();
+                            $('.process-submit-btn').attr('disabled', 'disabled').css('background-color', '#dddddd');
+                            $('.process-cancel-container').show();
+                        } else if (is_verified == 3) {
+                            //失败
+                            $('.process').hide();
+                            $('.process-tips-p').empty();
+                            $('.process-tips-p').append('<i class="fa fa-close"></i>');
+                            $('.process-tips-dsc').text("认证失败,请联系客服!");
+                            $('.process-submit-btn').attr('disabled', 'disabled').css('background-color', '#dddddd');
+                            $('.process-tips-container').show();
+                        }
+                    } else {
+                        $('.process-content').find('span').eq(0).css("background-color", "#73C0B6");
+                        $('.process-content-container').show();
+                        $('.process-btn-container').show();
                     }
                 } else {
                     toastFail(ret.message);
-                    if(ret.relogin){
-                      api.sendEvent({
-                          name: 'reloginEvent'
-                      });
+                    if (ret.relogin) {
+                        api.sendEvent({
+                            name: 'reloginEvent'
+                        });
                     }
                 }
             } else {
@@ -257,7 +274,7 @@
             closeLoading();
         });
     }
-        //上传身份证正面
+    //上传身份证正面
     function uploadIdCardPictureFront() {
         select_type = 0;
         selectPicture();
@@ -272,11 +289,6 @@
         select_type = 2;
         selectPicture();
     }
-    //上传商户门面照片
-    function uploadFacadePictureOpposite() {
-        select_type = 3;
-        selectPicture();
-    }
     //关闭当前窗体
     function closeMyself() {
         api.closeFrame({
@@ -289,26 +301,112 @@
         api.addEventListener({
             name: 'UploadPictureEvent'
         }, function(ret, err) {
-            if(ret){
-              var imgUrl = ret.value.imgUrl;
-              var base64Data = ret.value.base64Data;
-              var url = 'http://' + serverIP + '/upload/pictures/' + imgUrl;
-              if (select_type == 0) {
-                  g_idcard_front_picture = imgUrl;
-                  $('.idcardfront-picture').css('background', 'url(' + url + ')');
-              } else if (select_type == 1) {
-                  g_idcard_opposite_picture = imgUrl;
-                  $('.idcardopposite-picture').css('background', 'url(' + url + ')');
-              } else if (select_type == 2) {
-                  g_businesslicense_picture = imgUrl;
-                  $('.businesslicense-picture').css('background', 'url(' + url + ')');
-              } else if (select_type == 3) {
-                  g_facade_picture = imgUrl;
-                  $('.facadephotograph-picture').css('background', 'url(' + url + ')');
-              }
+            if (ret) {
+                var imgUrl = ret.value.imgUrl;
+                var base64Data = ret.value.base64Data;
+                var url = 'http://' + serverIP + '/upload/pictures/' + imgUrl;
+                if (select_type == 0) {
+                    g_idcard_front_picture = imgUrl;
+                    $('.idcardfront-picture-active').css('background', 'url(' + url + ')');
+                } else if (select_type == 1) {
+                    g_idcard_opposite_picture = imgUrl;
+                    $('.idcardopposite-picture-active').css('background', 'url(' + url + ')');
+                } else if (select_type == 2) {
+                    g_businesslicense_picture = imgUrl;
+                    $('.businesslicense-picture-active').css('background', 'url(' + url + ')');
+                }
             }
             //updateAccountIcon(imgUrl);
         });
 
+    }
+    //提交认证
+    function submitForm() {
+        if (g_idcard_front_picture== undefined|| g_idcard_opposite_picture== undefined|| g_businesslicense_picture==undefined) {
+            toastFail("请提交所需照片!");
+            return;
+        }
+        openLoading();
+        var s = 'http://' + serverIP + '/CompanyUser/verifyCompanyUserInfo.action';
+        api.ajax({
+            url: s,
+            method: 'post',
+            timeout: 30,
+            dataType: 'json',
+            data: {
+                values: {
+                    id_card_picture_front: g_idcard_front_picture,
+                    id_card_picture_back: g_idcard_opposite_picture,
+                    business_certificate_picture: g_businesslicense_picture
+                }
+            }
+        }, function(ret, err) {
+            if (ret) {
+                if (ret.success) {
+                    toastSuccess(ret.message);
+                    $('.process-content-container').hide();
+                    loadAuthenticationInfo();
+                } else {
+                    toastFail(ret.message);
+                    if (ret.relogin) {
+                        api.sendEvent({
+                            name: 'reloginEvent'
+                        });
+                    }
+                }
+            } else {
+                toastFail('系统出错,错误信息:' + err.code);
+                if (ret.relogin) {
+                    api.sendEvent({
+                        name: 'reloginEvent'
+                    });
+                }
+            }
+            closeLoading();
+        });
+    }
+    //撤销认证
+    function cancelAuthenticationForm() {
+        openLoading();
+        var s = 'http://' + serverIP + '/CompanyUser/cancelVerifyCompanyUserInfo.action';
+        api.ajax({
+            url: s,
+            method: 'post',
+            timeout: 30,
+            dataType: 'json'
+        }, function(ret, err) {
+            if (ret) {
+                if (ret.success) {
+                    toastSuccess(ret.message);
+                      $('.process-content').find('span').eq(0).css("background-color", "#73C0B6");
+                    $('.process-content').find('span').eq(1).css("background-color", "#F2F5F6");
+                    $('.process-content').find('span').eq(2).css("background-color", "#F2F5F6");
+                    $('.process-content-container').show();
+                    $('.process-btn-container').show();
+                    $('.process-submit-btn').attr('disabled', false).css('background-color', '#73C0B6');
+                    $('.bg-picture').css({}'background-image':'','background-color':'#F2F5F6'});
+                    $('.process-cancel-container').hide();
+                    $('.process-show-container').hide();
+                    g_idcard_front_picture=undefined;
+                    g_idcard_opposite_picture=undefined;
+                    g_businesslicense_picture=undefined;
+                } else {
+                    toastFail(ret.message);
+                    if (ret.relogin) {
+                        api.sendEvent({
+                            name: 'reloginEvent'
+                        });
+                    }
+                }
+            } else {
+                toastFail('系统出错,错误信息:' + err.code);
+                if (ret.relogin) {
+                    api.sendEvent({
+                        name: 'reloginEvent'
+                    });
+                }
+            }
+            closeLoading();
+        });
     }
 </script>

@@ -63,10 +63,11 @@
             color: #000;
             font-size: 0.8rem;
         }
+
         .process-tips-container,
         .process-content-container,
         .process-cancel-container,
-        .process-show-container{
+        .process-show-container {
             display: none;
         }
 
@@ -74,6 +75,11 @@
             background-color: #F2F5F6;
             background-repeat: no-repeat;
             background-size: 100% 100%;
+        }
+
+        .bg-picture img {
+            width: 100%;
+            max-height:10rem;
         }
     </style>
 </head>
@@ -114,11 +120,11 @@
                 <p class="diy-font-p i18n1" name="documentinformation">证件信息</p>
                 <section class="aui-grid aui-margin-b-15">
                     <div class="aui-row">
-                        <div class="aui-col-xs-5 diy-card-bg bg-picture idcardfront-picture" onclick="uploadIdCardPictureFront();">
+                        <div class="aui-col-xs-5 diy-card-bg bg-picture idcardfront-picture-active" onclick="uploadIdCardPictureFront();">
                             <i class="fa fa-plus"></i>
                             <div class="aui-grid-label i18n1" name="idcardfront">身份证(正面)</div>
                         </div>
-                        <div class="aui-col-xs-5 diy-card-bg bg-picture idcardopposite-picture" onclick="uploadIdCardPictureOpposite();">
+                        <div class="aui-col-xs-5 diy-card-bg bg-picture idcardopposite-picture-active" onclick="uploadIdCardPictureOpposite();">
                             <i class="fa fa-plus"></i>
                             <div class="aui-grid-label i18n1" name="idcardopposite">身份证(反面)</div>
                         </div>
@@ -133,23 +139,17 @@
                 <p class="diy-font-p i18n1" name="documentinformation">证件信息</p>
                 <section class="aui-grid aui-margin-b-15">
                     <div class="aui-row">
-                        <div class="aui-col-xs-5 diy-card-bg bg-picture idcardfront-picture" onclick="uploadIdCardPictureFront();">
-
+                        <div class="aui-col-xs-5 diy-card-bg bg-picture idcardfront-picture">
+                           <img src=""/>
                         </div>
-                        <div class="aui-col-xs-5 diy-card-bg bg-picture idcardopposite-picture" onclick="uploadIdCardPictureOpposite();">
-
+                        <div class="aui-col-xs-5 diy-card-bg bg-picture idcardopposite-picture">
+                           <img src=""/>
                         </div>
                     </div>
                 </section>
             </div>
         </div>
     </section>
-    <div class="aui-content aui-margin-b-15 process-cancel-container">
-        <div class="aui-btn aui-btn-block exit-logon pr-fontcolor pr-bgcolor i18n1" name="revocationverification" onclick="cancelAuthenticationForm();">撤销验证</div>
-    </div>
-    <div class="aui-content aui-margin-b-15 process-btn-container">
-        <div class="aui-btn aui-btn-block exit-logon pr-fontcolor pr-bgcolor i18n1" name="confirm" onclick="submitForm();">确定</div>
-    </div>
     <section class="aui-content-padded process-tips-container">
         <div class="aui-card-list">
             <div class="aui-card-list-content-padded process-check">
@@ -158,6 +158,13 @@
             </div>
         </div>
     </section>
+    <div class="aui-content aui-margin-b-15 process-cancel-container">
+        <div class="aui-btn aui-btn-block exit-logon pr-fontcolor pr-bgcolor i18n1" name="revocationverification" onclick="cancelAuthenticationForm();">撤销验证</div>
+    </div>
+    <div class="aui-content aui-margin-b-15 process-btn-container">
+        <button class="aui-btn aui-btn-block exit-logon pr-fontcolor pr-bgcolor i18n1 process-submit-btn" name="confirm" onclick="submitForm();">确定</button>
+    </div>
+
 </body>
 
 </html>
@@ -189,6 +196,20 @@
             if (ret) {
                 if (ret.success) {
                     var is_verified = ret.personUser.is_verified;
+                    var id_card_picture_front = ret.personUser.id_card_picture_front;
+                    var id_card_picture_back = ret.personUser.id_card_picture_back;
+                    var front_url, back_url;
+                    if (id_card_picture_front != undefined && id_card_picture_front != "") {
+                        front_url = 'http://' + serverIP + '/upload/pictures/' + id_card_picture_front;
+                    }
+                    if (id_card_picture_back != undefined && id_card_picture_back != "") {
+                        back_url = 'http://' + serverIP + '/upload/pictures/' + id_card_picture_back;
+                    }
+                    if (front_url != undefined && back_url != undefined) {
+                      // alert(front_url+":"+back_url);
+                      $('.process-show-container .idcardfront-picture img').attr('src',front_url);
+                      $('.process-show-container .idcardopposite-picture img').attr('src',back_url);
+                    }
                     // 0:未认证 1:已认证 2:审核中  3:认证失败
                     if (is_verified != undefined && is_verified != "") {
                         if (is_verified == 0) {
@@ -201,25 +222,22 @@
                             $('.process-content').find('span').eq(0).css("background-color", "#73C0B6");
                             $('.process-content').find('span').eq(1).css("background-color", "#73C0B6");
                             $('.process-content').find('span').eq(2).css("background-color", "#73C0B6");
-                            $('.process-tips-p').empty();
-                            $('.process-tips-p').append('<i class="fa fa-check"></i>');
-                            $('.process-tips-dsc').text("认证完成");
-                            $('.process-tips-container').show();
-                        }else if (is_verified == 2) {
+                            $('.process-show-container').show();
+                            $('.process-submit-btn').attr('disabled', 'disabled').css('background-color', '#dddddd');
+                        } else if (is_verified == 2) {
                             //审核中
                             $('.process-content').find('span').eq(0).css("background-color", "#73C0B6");
                             $('.process-content').find('span').eq(1).css("background-color", "#73C0B6");
-                            $('.process-tips-p').empty();
-                            $('.process-tips-p').append('<i class="fa fa-exclamation-circle"></i>');
-                            $('.process-tips-dsc').text("信息审核中");
-                            $('.process-tips-container').show();
+                            $('.process-show-container').show();
+                            $('.process-submit-btn').attr('disabled', 'disabled').css('background-color', '#dddddd');
                             $('.process-cancel-container').show();
-                        } else if (is_verified ==3) {
+                        } else if (is_verified == 3) {
                             //失败
                             $('.process').hide();
                             $('.process-tips-p').empty();
                             $('.process-tips-p').append('<i class="fa fa-close"></i>');
                             $('.process-tips-dsc').text("认证失败,请联系客服!");
+                            $('.process-submit-btn').attr('disabled', 'disabled').css('background-color', '#dddddd');
                             $('.process-tips-container').show();
                         }
                     } else {
@@ -272,26 +290,104 @@
             if (ret) {
                 var imgUrl = ret.value.imgUrl;
                 var base64Data = ret.value.base64Data;
-                alert(imgUrl + "--" + base64Data);
+
                 var url = 'http://' + serverIP + '/upload/pictures/' + imgUrl;
                 if (select_type == 0) {
                     g_idcard_front_picture = imgUrl;
-                    $('.idcardfront-picture').css('background', 'url(' + url + ')');
+                    $('.idcardfront-picture-active').css('background', 'url(' + url + ')');
                 } else if (select_type == 1) {
                     g_idcard_opposite_picture = imgUrl;
-                    $('.idcardopposite-picture').css('background', 'url(' + url + ')');
+                    $('.idcardopposite-picture-active').css('background', 'url(' + url + ')');
                 }
             }
-            //updateAccountIcon(imgUrl);
         });
 
     }
     //提交
     function submitForm() {
-
+        if (g_idcard_front_picture == undefined || g_idcard_opposite_picture == undefined) {
+            toastFail("请提交所需照片!");
+            return;
+        }
+        openLoading();
+        var s = 'http://' + serverIP + '/PersonUser/verifyPersonUserInfo.action';
+        api.ajax({
+            url: s,
+            method: 'post',
+            timeout: 30,
+            dataType: 'json',
+            data: {
+                values: {
+                    id_card_picture_front: g_idcard_front_picture,
+                    id_card_picture_back: g_idcard_opposite_picture
+                }
+            }
+        }, function(ret, err) {
+            if (ret) {
+                if (ret.success) {
+                    toastSuccess(ret.message);
+                    $('.process-content-container').hide();
+                    loadAuthenticationInfo();
+                } else {
+                    toastFail(ret.message);
+                    if (ret.relogin) {
+                        api.sendEvent({
+                            name: 'reloginEvent'
+                        });
+                    }
+                }
+            } else {
+                toastFail('系统出错,错误信息:' + err.code);
+                if (ret.relogin) {
+                    api.sendEvent({
+                        name: 'reloginEvent'
+                    });
+                }
+            }
+            closeLoading();
+        });
     }
     //撤销认证
-    function cancelAuthenticationForm(){
-
+    function cancelAuthenticationForm() {
+        openLoading();
+        var s = 'http://' + serverIP + '/PersonUser/cancelVerifyPersonUserInfo.action';
+        api.ajax({
+            url: s,
+            method: 'post',
+            timeout: 30,
+            dataType: 'json'
+        }, function(ret, err) {
+            if (ret) {
+                if (ret.success) {
+                    toastSuccess(ret.message);
+                      $('.process-content').find('span').eq(0).css("background-color", "#73C0B6");
+                    $('.process-content').find('span').eq(1).css("background-color", "#F2F5F6");
+                    $('.process-content').find('span').eq(2).css("background-color", "#F2F5F6");
+                    $('.process-content-container').show();
+                    $('.process-btn-container').show();
+                    $('.process-submit-btn').attr('disabled', false).css('background-color', '#73C0B6');
+                    $('.process-cancel-container').hide();
+                    $('.process-show-container').hide();
+                    $('.bg-picture').css({}'background-image':'','background-color':'#F2F5F6'});
+                    g_idcard_front_picture=undefined;
+                    g_idcard_opposite_picture=undefined;
+                } else {
+                    toastFail(ret.message);
+                    if (ret.relogin) {
+                        api.sendEvent({
+                            name: 'reloginEvent'
+                        });
+                    }
+                }
+            } else {
+                toastFail('系统出错,错误信息:' + err.code);
+                if (ret.relogin) {
+                    api.sendEvent({
+                        name: 'reloginEvent'
+                    });
+                }
+            }
+            closeLoading();
+        });
     }
 </script>

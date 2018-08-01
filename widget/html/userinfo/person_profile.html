@@ -184,6 +184,10 @@
                      $('.person-certified').text("未认证");
                    }else if(is_verified==1){
                      $('.person-certified').text("已认证");
+                   }else if(is_verified==2){
+                     $('.person-certified').text("审核中");
+                   }else if(is_verified==3){
+                     $('.person-certified').text("认证失败");
                    }
                 }
             } else {
@@ -208,6 +212,7 @@
               w: api.winWidth,
               h: api.height
           },
+          reload:true,
           animation: {
               type: "push",
               subType: "from_right",
