@@ -16,10 +16,13 @@
     </feature>
     <meta-data name="com.baidu.lbsapi.API_KEY" value="wDgywoNbKVxojUTb0cGG8K4odicYWGfd"/> -->
     <feature name="bMap">
-       <param name="android_api_key" value="olAkqioBRzzey2P9zzLo1ZoesXoi4nLj" />
-       <param name="ios_api_key" value="uhMNF5USSpeqFmlekx1w3VbPtcFgbDzw" />
-     </feature>
+        <param name="android_api_key" value="olAkqioBRzzey2P9zzLo1ZoesXoi4nLj"/>
+        <param name="ios_api_key" value="uhMNF5USSpeqFmlekx1w3VbPtcFgbDzw"/>
+    </feature>
 
+    <feature name="aliPay">
+        <param name="urlScheme" value="AliPayA6087851424740"/>
+    </feature>
 
     <preference name="backgroundMode" value="location | fetch"/>
 
