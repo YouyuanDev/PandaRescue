@@ -193,7 +193,7 @@
     }
     //更换头像
     function changeHeader() {
-        selectPicture(0);
+        selectPicture();
     }
     //更新用户头像
     function updateAccountIcon(imgUrl) {
@@ -235,7 +235,7 @@
     function registerUploadPhotosEvent() {
         //如监听网络连接事件
         api.addEventListener({
-            name: 'UploadAccountIconEvent'
+            name: 'UploadPictureEvent'
         }, function(ret, err) {
              var imgUrl=ret.value.imgUrl;
              var base64Data=ret.value.base64Data;

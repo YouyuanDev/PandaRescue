@@ -11,18 +11,70 @@
     <link rel="stylesheet" type="text/css" href="../../css/font-awesome.min.css" />
     <link rel="stylesheet" type="text/css" href="../../css/style.css" />
     <style>
-    .diy-p {
-        text-align: center;
-    }
-    .diy-font-p {
-        font-size:1rem;
-        color: #000;
-    }
-    .diy-card-bg{
-      margin: auto;
-      background-color:#F2F5F6;
-      margin-left:4.33333333%;
-    }
+        .diy-p {
+            text-align: center;
+        }
+
+        .diy-font-p {
+            font-size: 1rem;
+            color: #000;
+        }
+
+        .diy-card-bg {
+            margin: auto;
+            background-color: #F2F5F6;
+            margin-left: 4.33333333%;
+        }
+
+        .process-container {
+            position: relative;
+        }
+
+        .process-line {
+            position: absolute;
+            left: 0;
+            top: 1rem;
+            width: 100%;
+            height: 0.2rem;
+            background-color: #F2F5F6;
+        }
+
+        .process-content-tag,
+        .process-content-title {
+            width: 100%;
+            text-align: center;
+        }
+
+        .process-content-tag span {
+            width: 1rem;
+            height: 1rem;
+            border-radius: 50%;
+            background-color: #F2F5F6;
+        }
+
+        .process-check,
+        .process-success {
+            padding-top: 3rem;
+            padding-bottom: 3rem;
+            text-align: center;
+        }
+
+        .process-check p:first-child {
+            color: #000;
+            font-size: 0.8rem;
+        }
+        .process-tips-container,
+        .process-content-container,
+        .process-cancel-container,
+        .process-show-container{
+            display: none;
+        }
+
+        .bg-picture {
+            background-color: #F2F5F6;
+            background-repeat: no-repeat;
+            background-size: 100% 100%;
+        }
     </style>
 </head>
 
@@ -33,30 +85,76 @@
         </a>
         <div class="aui-title pr-fontcolor i18n1" name="realnameauthentication">实名认证</div>
     </header>
-    <section class="aui-content-padded">
+    <section class="aui-content-padded process">
         <div class="aui-card-list">
-            <div class="aui-card-list-content-padded">
+            <div class="aui-card-list-content-padded process-container">
+                <div class="process-line">
+                </div>
+                <div class="aui-row process-content">
+                    <div class="aui-col-xs-4 process-content-info" onclick="">
+                        <div class="process-content-tag"><span>1</span></div>
+                        <div class="process-content-title i18n1" name="submitdocumentinformation">提交证件信息</div>
+                    </div>
+                    <div class="aui-col-xs-4 process-content-info">
+                        <div class="process-content-tag"><span>2</span></div>
+                        <div class="process-content-title i18n1" name="audit">审核中</div>
+                    </div>
+                    <div class="aui-col-xs-4 process-content-info">
+                        <div class="process-content-tag"><span>3</span></div>
+                        <div class="process-content-title i18n1" name="attestationcompletion">认证完成</div>
+                    </div>
+                </div>
 
             </div>
         </div>
     </section>
-    <section class="aui-content-padded">
+    <section class="aui-content-padded process-content-container">
         <div class="aui-card-list">
             <div class="aui-card-list-content-padded">
                 <p class="diy-font-p i18n1" name="documentinformation">证件信息</p>
                 <section class="aui-grid aui-margin-b-15">
                     <div class="aui-row">
-                        <div class="aui-col-xs-5 diy-card-bg">
+                        <div class="aui-col-xs-5 diy-card-bg bg-picture idcardfront-picture" onclick="uploadIdCardPictureFront();">
                             <i class="fa fa-plus"></i>
                             <div class="aui-grid-label i18n1" name="idcardfront">身份证(正面)</div>
                         </div>
-
-                        <div class="aui-col-xs-5 diy-card-bg">
+                        <div class="aui-col-xs-5 diy-card-bg bg-picture idcardopposite-picture" onclick="uploadIdCardPictureOpposite();">
                             <i class="fa fa-plus"></i>
                             <div class="aui-grid-label i18n1" name="idcardopposite">身份证(反面)</div>
                         </div>
                     </div>
                 </section>
+            </div>
+        </div>
+    </section>
+    <section class="aui-content-padded process-show-container">
+        <div class="aui-card-list">
+            <div class="aui-card-list-content-padded">
+                <p class="diy-font-p i18n1" name="documentinformation">证件信息</p>
+                <section class="aui-grid aui-margin-b-15">
+                    <div class="aui-row">
+                        <div class="aui-col-xs-5 diy-card-bg bg-picture idcardfront-picture" onclick="uploadIdCardPictureFront();">
+
+                        </div>
+                        <div class="aui-col-xs-5 diy-card-bg bg-picture idcardopposite-picture" onclick="uploadIdCardPictureOpposite();">
+
+                        </div>
+                    </div>
+                </section>
+            </div>
+        </div>
+    </section>
+    <div class="aui-content aui-margin-b-15 process-cancel-container">
+        <div class="aui-btn aui-btn-block exit-logon pr-fontcolor pr-bgcolor i18n1" name="revocationverification" onclick="cancelAuthenticationForm();">撤销验证</div>
+    </div>
+    <div class="aui-content aui-margin-b-15 process-btn-container">
+        <div class="aui-btn aui-btn-block exit-logon pr-fontcolor pr-bgcolor i18n1" name="confirm" onclick="submitForm();">确定</div>
+    </div>
+    <section class="aui-content-padded process-tips-container">
+        <div class="aui-card-list">
+            <div class="aui-card-list-content-padded process-check">
+                <p class="process-tips-p"></p>
+                <p class="process-tips-dsc"></p>
             </div>
         </div>
     </section>
@@ -69,15 +167,131 @@
 <script src="../../script/language.js" type="text/javascript"></script>
 <script type="text/javascript" src="../../script/common.js"></script>
 <script type="text/javascript">
-    var language_id = 0;
+    var language_id = 0,
+        g_idcard_front_picture, g_idcard_opposite_picture, select_type = 0;
     apiready = function() {
-        fnSettingHeader();
-        hlLanguage("../../i18n/");
-    }
+            fnSettingHeader();
+            loadAuthenticationInfo();
+            registerUploadPhotosEvent();
+            hlLanguage("../../i18n/");
+        }
+        //获取身份验证信息
+    function loadAuthenticationInfo() {
+        //加载个人信息
+        openLoading();
+        var s = 'http://' + serverIP + '/PersonUser/getPersonUserInfo.action';
+        api.ajax({
+            url: s,
+            method: 'post',
+            timeout: 30,
+            dataType: 'json'
+        }, function(ret, err) {
+            if (ret) {
+                if (ret.success) {
+                    var is_verified = ret.personUser.is_verified;
+                    // 0:未认证 1:已认证 2:审核中  3:认证失败
+                    if (is_verified != undefined && is_verified != "") {
+                        if (is_verified == 0) {
+                            //未认证
+                            $('.process-content').find('span').eq(0).css("background-color", "#73C0B6");
+                            $('.process-content-container').show();
+                            $('.process-btn-container').show();
+                        } else if (is_verified == 1) {
+                            //已完成
+                            $('.process-content').find('span').eq(0).css("background-color", "#73C0B6");
+                            $('.process-content').find('span').eq(1).css("background-color", "#73C0B6");
+                            $('.process-content').find('span').eq(2).css("background-color", "#73C0B6");
+                            $('.process-tips-p').empty();
+                            $('.process-tips-p').append('<i class="fa fa-check"></i>');
+                            $('.process-tips-dsc').text("认证完成");
+                            $('.process-tips-container').show();
+                        }else if (is_verified == 2) {
+                            //审核中
+                            $('.process-content').find('span').eq(0).css("background-color", "#73C0B6");
+                            $('.process-content').find('span').eq(1).css("background-color", "#73C0B6");
+                            $('.process-tips-p').empty();
+                            $('.process-tips-p').append('<i class="fa fa-exclamation-circle"></i>');
+                            $('.process-tips-dsc').text("信息审核中");
+                            $('.process-tips-container').show();
+                            $('.process-cancel-container').show();
+                        } else if (is_verified ==3) {
+                            //失败
+                            $('.process').hide();
+                            $('.process-tips-p').empty();
+                            $('.process-tips-p').append('<i class="fa fa-close"></i>');
+                            $('.process-tips-dsc').text("认证失败,请联系客服!");
+                            $('.process-tips-container').show();
+                        }
+                    } else {
+                        $('.process-content').find('span').eq(0).css("background-color", "#73C0B6");
+                        $('.process-content-container').show();
+                        $('.process-btn-container').show();
+                    }
+                } else {
+                    toastFail(ret.message);
+                    if (ret.relogin) {
+                        api.sendEvent({
+                            name: 'reloginEvent'
+                        });
+                    }
+                }
+            } else {
+                toastFail('获取个人信息时出错,错误信息:' + err.code);
+                if (ret.relogin) {
+                    api.sendEvent({
+                        name: 'reloginEvent'
+                    });
+                }
+            }
+            closeLoading();
+        });
 
+    }
+    //上传身份证正面
+    function uploadIdCardPictureFront() {
+        select_type = 0;
+        selectPicture();
+    }
+    //上传身份证背面
+    function uploadIdCardPictureOpposite() {
+        select_type = 1;
+        selectPicture();
+    }
+    //关闭窗体
     function closeMyself() {
         api.closeFrame({
             name: 'person_authentication'
         });
+    }
+    //监听图片上传成功事件
+    function registerUploadPhotosEvent() {
+        //如监听网络连接事件
+        api.addEventListener({
+            name: 'UploadPictureEvent'
+        }, function(ret, err) {
+            if (ret) {
+                var imgUrl = ret.value.imgUrl;
+                var base64Data = ret.value.base64Data;
+                alert(imgUrl + "--" + base64Data);
+                var url = 'http://' + serverIP + '/upload/pictures/' + imgUrl;
+                if (select_type == 0) {
+                    g_idcard_front_picture = imgUrl;
+                    $('.idcardfront-picture').css('background', 'url(' + url + ')');
+                } else if (select_type == 1) {
+                    g_idcard_opposite_picture = imgUrl;
+                    $('.idcardopposite-picture').css('background', 'url(' + url + ')');
+                }
+            }
+            //updateAccountIcon(imgUrl);
+        });
+
+    }
+    //提交
+    function submitForm() {
+
+    }
+    //撤销认证
+    function cancelAuthenticationForm(){
+
     }
 </script>

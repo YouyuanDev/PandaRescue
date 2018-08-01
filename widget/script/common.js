@@ -102,19 +102,19 @@ function checkNetWork() {
     }
 }
 //图片上传
-function selectPicture(type) {
+function selectPicture() {
     api.actionSheet({
         title: '上传图片',
         cancelTitle: '取消',
         buttons: ['拍照', '从手机相册选择']
     }, function(ret, err) {
         if (ret) {
-            getPicture(ret.buttonIndex, type);
+            getPicture(ret.buttonIndex);
         }
     });
 }
 
-function getPicture(sourceType, type) {
+function getPicture(sourceType) {
     if (sourceType == 1) { // 拍照
         api.getPicture({
             sourceType: 'camera',
@@ -142,16 +142,14 @@ function getPicture(sourceType, type) {
                 }, function(ret, errs) {
                     closeLoading();
                     if (ret) {
-                        if (type == 0) {
                             api.sendEvent({
-                                name: 'UploadAccountIconEvent',
+                                name: 'UploadPictureEvent',
                                 extra: {
                                     imgUrl:ret.imgUrl,
                                     base64Data:ret.base64Data
                                 }
                             });
-                            //$('.personal-header-img').attr("src", ret.base64Data);
-                        }
+
                         alert("上传成功!");
                     } else {
                         api.alert({
@@ -190,16 +188,13 @@ function getPicture(sourceType, type) {
                 }, function(ret, errs) {
                     closeLoading();
                     if (ret) {
-                        if (type == 0) {
                             api.sendEvent({
-                              name: 'UploadAccountIconEvent',
+                              name: 'UploadPictureEvent',
                               extra: {
                                   imgUrl:ret.imgUrl,
                                   base64Data:ret.base64Data
                               }
                             });
-                            //$('.personal-header-img').attr("src", ret.base64Data);
-                        }
                         alert("上传成功!");
                     } else {
                         api.alert({
