@@ -84,16 +84,16 @@
         }
 
         .bg-picture img {
-            width: 100%;
-            max-height: 10rem;
+          width: 6rem;
+          height: 6rem;
         }
     </style>
 </head>
 
 <body class="pr-body-bgcolor">
     <header id="header" class="aui-bar aui-bar-nav aui-bar-light personal-header pr-bgcolor ">
-        <a class="aui-pull-left aui-btn">
-            <span onclick="closeMyself();" class="fa fa-chevron-left"></span>
+        <a class="aui-pull-left aui-btn" onclick="closeMyself();">
+            <span  class="fa fa-chevron-left"></span>
         </a>
         <div class="aui-title pr-fontcolor i18n1" name="realnameauthentication">实名认证</div>
     </header>
@@ -224,8 +224,8 @@
                         back_url = 'http://' + serverIP + '/upload/pictures/' + id_card_picture_back;
                     }
                     if (front_url != undefined && back_url != undefined) {
-                        $('.process-show-container .idcardfront-picture img').attr('src', front_url);
-                        $('.process-show-container .idcardopposite-picture img').attr('src', back_url);
+                      $('.process-show-container .idcardfront-picture img').attr('src', front_url);
+                      $('.process-show-container .idcardopposite-picture img').attr('src', back_url);
                     }
                     // 0:未认证 1:已认证 2:审核中  3:认证失败
                     if (is_verified != undefined && is_verified != "") {

@@ -80,16 +80,16 @@
         }
 
         .bg-picture img {
-            width: 100%;
-            max-height: 10rem;
+          width: 6rem;
+          height: 6rem;
         }
     </style>
 </head>
 
 <body class="pr-body-bgcolor">
     <header id="header" class="aui-bar aui-bar-nav aui-bar-light personal-header pr-bgcolor ">
-        <a class="aui-pull-left aui-btn">
-            <span onclick="closeMyself();" class="fa fa-chevron-left"></span>
+        <a class="aui-pull-left aui-btn" onclick="closeMyself();">
+            <span  class="fa fa-chevron-left"></span>
         </a>
         <div class="aui-title  pr-fontcolor i18n1" name="merchantCA">商户认证</div>
     </header>
@@ -104,12 +104,10 @@
                         <div class="process-content-title i18n1" name="submitdocumentinformation">提交证件信息</div>
                     </div>
                     <div class="aui-col-xs-4 process-content-info">
-                        <img src="" />
                         <div class="process-content-tag"><span>2</span></div>
                         <div class="process-content-title i18n1" name="audit">审核中</div>
                     </div>
                     <div class="aui-col-xs-4 process-content-info">
-                        <img src="" />
                         <div class="process-content-tag"><span>3</span></div>
                         <div class="process-content-title i18n1" name="attestationcompletion">认证完成</div>
                     </div>
@@ -196,20 +194,20 @@
         }
         //获取身份验证信息
     function loadAuthenticationInfo() {
-      $('.process-content').find('span').eq(0).css("background-color", "#73C0B6");
-      $('.process-content').find('span').eq(1).css("background-color", "#F2F5F6");
-      $('.process-content').find('span').eq(2).css("background-color", "#F2F5F6");
-      $('.process-content-container').hide();
-      $('.process-show-container').hide();
-      $('.process-submit-btn').attr('disabled','disabled').css('background-color', '#dddddd');
-      $('.process-cancel-container').hide();
-      $('.bg-picture').css({
-          'background-image': '',
-          'background-color': '#F2F5F6'
-      });
-      g_idcard_front_picture = undefined;
-      g_idcard_opposite_picture = undefined;
-      g_businesslicense_picture=undefined;
+        $('.process-content').find('span').eq(0).css("background-color", "#73C0B6");
+        $('.process-content').find('span').eq(1).css("background-color", "#F2F5F6");
+        $('.process-content').find('span').eq(2).css("background-color", "#F2F5F6");
+        $('.process-content-container').hide();
+        $('.process-show-container').hide();
+        $('.process-submit-btn').attr('disabled', 'disabled').css('background-color', '#dddddd');
+        $('.process-cancel-container').hide();
+        $('.bg-picture').css({
+            'background-image': '',
+            'background-color': '#F2F5F6'
+        });
+        g_idcard_front_picture = undefined;
+        g_idcard_opposite_picture = undefined;
+        g_businesslicense_picture = undefined;
         //var type= 0;
         openLoading();
         var s = 'http://' + serverIP + '/CompanyUser/getCompanyUserInfo.action';
@@ -244,7 +242,7 @@
                         if (is_verified == 0) {
                             //未认证
                             $('.process-content-container').show();
-                            $('.process-submit-btn').attr('disabled',false).css('background-color', '#73C0B6');
+                            $('.process-submit-btn').attr('disabled', false).css('background-color', '#73C0B6');
                         } else if (is_verified == 1) {
                             //已完成
                             $('.process-content').find('span').eq(0).css("background-color", "#73C0B6");
@@ -408,7 +406,7 @@
             if (ret) {
                 if (ret.success) {
                     toastSuccess(ret.message);
-                     loadAuthenticationInfo();
+                    loadAuthenticationInfo();
                 } else {
                     toastFail(ret.message);
                     if (ret.relogin) {
