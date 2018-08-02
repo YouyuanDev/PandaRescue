@@ -27,7 +27,7 @@
     <div class="container">
         <div class="aui-content aui-margin-b-15">
             <div class="aui-bar aui-bar-nav order-status"><i class="fa fa-spinner fa-spin"></i></div>
-            <div class="aui-bar aui-bar-nav cancel-order buttons">
+            <div class="aui-bar aui-bar-nav cancel-order buttons pr-bgcolor">
                 <!-- <div class="aui-btn aui-btn-block cancel-order" onclick="cacelOrder();">取消订单</div> -->
             </div>
         </div>
@@ -102,7 +102,7 @@
     }
 
     function makeButtonTemplate(buttonFunctionName, buttonName) {
-        var template = '<div class="aui-btn aui-btn-block cancel-order pr-bgcolor" onclick="' + buttonFunctionName + '">' + buttonName + '</div>';
+        var template = '<div class="aui-btn aui-btn-block cancel-order" onclick="' + buttonFunctionName + '">' + buttonName + '</div>';
         return template;
     }
 
