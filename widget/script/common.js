@@ -1,6 +1,6 @@
 var header, headerHeight = 0,
     g_loadingID;
-var serverIP = '192.168.0.100:8080';
+var serverIP = '192.168.0.10:8080';
 
 function fnSettingHeader() {
     var sType = api.systemType;
@@ -126,37 +126,41 @@ function getPicture(sourceType) {
             saveToPhotoAlbum: true
         }, function(ret, err) {
             if (ret) {
-                openLoading();
-                var s = 'http://' + serverIP + '/UploadFile/uploadPicture.action';
-                api.ajax({
-                    url: s,
-                    method: 'post',
-                    data: {
-                        values: {
-                            name: 'haha'
-                        },
-                        files: {
-                            file: ret.data
+                if (ret.data != undefined) {
+                    openLoading();
+                    var s = 'http://' + serverIP + '/UploadFile/uploadPicture.action';
+                    api.ajax({
+                        url: s,
+                        method: 'post',
+                        data: {
+                            values: {
+                                name: 'haha'
+                            },
+                            files: {
+                                file: ret.data
+                            }
                         }
-                    }
-                }, function(ret, errs) {
-                    closeLoading();
-                    if (ret) {
-                            api.sendEvent({
-                                name: 'UploadPictureEvent',
-                                extra: {
-                                    imgUrl:ret.imgUrl,
-                                    base64Data:ret.base64Data
-                                }
+                    }, function(ret, errs) {
+                        closeLoading();
+                        if (ret) {
+                            if(ret.imgUrl!=undefined&&ret.imgUrl!=""){
+                              api.sendEvent({
+                                  name: 'UploadPictureEvent',
+                                  extra: {
+                                      imgUrl: ret.imgUrl
+                                  }
+                              });
+                              toastSuccess("上传成功!");
+                            }else{
+                              toastFail("上传失败!");
+                            }
+                        } else {
+                            api.alert({
+                                msg: JSON.stringify(errs)
                             });
-
-                        alert("上传成功!");
-                    } else {
-                        api.alert({
-                            msg: JSON.stringify(errs)
-                        });
-                    }
-                });
+                        }
+                    });
+                }
             } else {
                 alert(JSON.stringify(err));
             }
@@ -172,36 +176,41 @@ function getPicture(sourceType) {
             targetHeight: 750
         }, function(ret, err) {
             if (ret) {
-                var s = 'http://' + serverIP + '/UploadFile/uploadPicture.action';
-                openLoading();
-                api.ajax({
-                    url: s,
-                    method: 'post',
-                    data: {
-                        values: {
-                            name: 'haha'
-                        },
-                        files: {
-                            file: ret.data
+                if (ret.data != undefined) {
+                    var s = 'http://' + serverIP + '/UploadFile/uploadPicture.action';
+                    openLoading();
+                    api.ajax({
+                        url: s,
+                        method: 'post',
+                        data: {
+                            values: {
+                                name: 'haha'
+                            },
+                            files: {
+                                file: ret.data
+                            }
                         }
-                    }
-                }, function(ret, errs) {
-                    closeLoading();
-                    if (ret) {
-                            api.sendEvent({
-                              name: 'UploadPictureEvent',
-                              extra: {
-                                  imgUrl:ret.imgUrl,
-                                  base64Data:ret.base64Data
-                              }
+                    }, function(ret, errs) {
+                        closeLoading();
+                        if (ret) {
+                            if (ret.imgUrl != undefined&&ret.imgUrl!="") {
+                                api.sendEvent({
+                                    name: 'UploadPictureEvent',
+                                    extra: {
+                                        imgUrl: ret.imgUrl
+                                    }
+                                });
+                                toastSuccess("上传成功!");
+                            } else {
+                                toastFail("上传失败!");
+                            }
+                        } else {
+                            api.alert({
+                                msg: JSON.stringify(errs)
                             });
-                        alert("上传成功!");
-                    } else {
-                        api.alert({
-                            msg: JSON.stringify(errs)
-                        });
-                    }
-                });
+                        }
+                    });
+                }
             } else {
                 alert(JSON.stringify(err));
             }

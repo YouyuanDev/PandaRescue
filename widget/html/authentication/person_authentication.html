@@ -24,6 +24,7 @@
             margin: auto;
             background-color: #F2F5F6;
             margin-left: 4.33333333%;
+            position: relative;
         }
 
         .process-container {
@@ -72,14 +73,19 @@
         }
 
         .bg-picture {
+            width: 6rem;
+            height: 6rem;
             background-color: #F2F5F6;
             background-repeat: no-repeat;
-            background-size: 100% 100%;
+            background-size: 6rem 6rem;
+            -moz-background-size: 6rem 6rem;
+            -webkit-background-size: 6rem 6rem;
+            -o-background-size: 6rem 6rem;
         }
 
         .bg-picture img {
             width: 100%;
-            max-height:10rem;
+            max-height: 10rem;
         }
     </style>
 </head>
@@ -91,7 +97,7 @@
         </a>
         <div class="aui-title pr-fontcolor i18n1" name="realnameauthentication">实名认证</div>
     </header>
-    <section class="aui-content-padded process">
+    <section class="aui-content-padded process-bar">
         <div class="aui-card-list">
             <div class="aui-card-list-content-padded process-container">
                 <div class="process-line">
@@ -140,10 +146,10 @@
                 <section class="aui-grid aui-margin-b-15">
                     <div class="aui-row">
                         <div class="aui-col-xs-5 diy-card-bg bg-picture idcardfront-picture">
-                           <img src=""/>
+                            <img src="" />
                         </div>
                         <div class="aui-col-xs-5 diy-card-bg bg-picture idcardopposite-picture">
-                           <img src=""/>
+                            <img src="" />
                         </div>
                     </div>
                 </section>
@@ -164,7 +170,6 @@
     <div class="aui-content aui-margin-b-15 process-btn-container">
         <button class="aui-btn aui-btn-block exit-logon pr-fontcolor pr-bgcolor i18n1 process-submit-btn" name="confirm" onclick="submitForm();">确定</button>
     </div>
-
 </body>
 
 </html>
@@ -184,6 +189,19 @@
         }
         //获取身份验证信息
     function loadAuthenticationInfo() {
+        $('.process-content').find('span').eq(0).css("background-color", "#73C0B6");
+        $('.process-content').find('span').eq(1).css("background-color", "#F2F5F6");
+        $('.process-content').find('span').eq(2).css("background-color", "#F2F5F6");
+        $('.process-content-container').hide();
+        $('.process-show-container').hide();
+        $('.process-submit-btn').attr('disabled','disabled').css('background-color', '#dddddd');
+        $('.process-cancel-container').hide();
+        $('.bg-picture').css({
+            'background-image': '',
+            'background-color': '#F2F5F6'
+        });
+        g_idcard_front_picture = undefined;
+        g_idcard_opposite_picture = undefined;
         //加载个人信息
         openLoading();
         var s = 'http://' + serverIP + '/PersonUser/getPersonUserInfo.action';
@@ -206,17 +224,15 @@
                         back_url = 'http://' + serverIP + '/upload/pictures/' + id_card_picture_back;
                     }
                     if (front_url != undefined && back_url != undefined) {
-                      // alert(front_url+":"+back_url);
-                      $('.process-show-container .idcardfront-picture img').attr('src',front_url);
-                      $('.process-show-container .idcardopposite-picture img').attr('src',back_url);
+                        $('.process-show-container .idcardfront-picture img').attr('src', front_url);
+                        $('.process-show-container .idcardopposite-picture img').attr('src', back_url);
                     }
                     // 0:未认证 1:已认证 2:审核中  3:认证失败
                     if (is_verified != undefined && is_verified != "") {
                         if (is_verified == 0) {
                             //未认证
-                            $('.process-content').find('span').eq(0).css("background-color", "#73C0B6");
                             $('.process-content-container').show();
-                            $('.process-btn-container').show();
+                            $('.process-submit-btn').attr('disabled',false).css('background-color', '#73C0B6');
                         } else if (is_verified == 1) {
                             //已完成
                             $('.process-content').find('span').eq(0).css("background-color", "#73C0B6");
@@ -233,12 +249,13 @@
                             $('.process-cancel-container').show();
                         } else if (is_verified == 3) {
                             //失败
-                            $('.process').hide();
+                            $('.process-bar').hide();
                             $('.process-tips-p').empty();
                             $('.process-tips-p').append('<i class="fa fa-close"></i>');
                             $('.process-tips-dsc').text("认证失败,请联系客服!");
                             $('.process-submit-btn').attr('disabled', 'disabled').css('background-color', '#dddddd');
                             $('.process-tips-container').show();
+                            $('.process-btn-container').hide();
                         }
                     } else {
                         $('.process-content').find('span').eq(0).css("background-color", "#73C0B6");
@@ -289,19 +306,28 @@
         }, function(ret, err) {
             if (ret) {
                 var imgUrl = ret.value.imgUrl;
-                var base64Data = ret.value.base64Data;
-
                 var url = 'http://' + serverIP + '/upload/pictures/' + imgUrl;
                 if (select_type == 0) {
                     g_idcard_front_picture = imgUrl;
-                    $('.idcardfront-picture-active').css('background', 'url(' + url + ')');
+                    $('.idcardfront-picture-active').css({
+                        'background': 'url(' + url + ')',
+                        'background-size': '6rem 6rem',
+                        '-webkit-background-size': '6rem 6rem',
+                        '-moz-background-size': '6rem 6rem',
+                        '-o-background-size': '6rem 6rem'
+                    });
                 } else if (select_type == 1) {
                     g_idcard_opposite_picture = imgUrl;
-                    $('.idcardopposite-picture-active').css('background', 'url(' + url + ')');
+                    $('.idcardopposite-picture-active').css({
+                        'background': 'url(' + url + ')',
+                        'background-size': '6rem 6rem',
+                        '-webkit-background-size': '6rem 6rem',
+                        '-moz-background-size': '6rem 6rem',
+                        '-o-background-size': '6rem 6rem'
+                    });
                 }
             }
         });
-
     }
     //提交
     function submitForm() {
@@ -326,7 +352,6 @@
             if (ret) {
                 if (ret.success) {
                     toastSuccess(ret.message);
-                    $('.process-content-container').hide();
                     loadAuthenticationInfo();
                 } else {
                     toastFail(ret.message);
@@ -360,17 +385,7 @@
             if (ret) {
                 if (ret.success) {
                     toastSuccess(ret.message);
-                      $('.process-content').find('span').eq(0).css("background-color", "#73C0B6");
-                    $('.process-content').find('span').eq(1).css("background-color", "#F2F5F6");
-                    $('.process-content').find('span').eq(2).css("background-color", "#F2F5F6");
-                    $('.process-content-container').show();
-                    $('.process-btn-container').show();
-                    $('.process-submit-btn').attr('disabled', false).css('background-color', '#73C0B6');
-                    $('.process-cancel-container').hide();
-                    $('.process-show-container').hide();
-                    $('.bg-picture').css({}'background-image':'','background-color':'#F2F5F6'});
-                    g_idcard_front_picture=undefined;
-                    g_idcard_opposite_picture=undefined;
+                    loadAuthenticationInfo();
                 } else {
                     toastFail(ret.message);
                     if (ret.relogin) {

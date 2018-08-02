@@ -27,10 +27,6 @@
             margin-top: 4.33333333%;
         }
 
-        .process-container {
-            position: relative;
-        }
-
         .process-line {
             position: absolute;
             left: 0;
@@ -73,13 +69,19 @@
         }
 
         .bg-picture {
+            width: 6rem;
+            height: 6rem;
             background-color: #F2F5F6;
             background-repeat: no-repeat;
-            background-size: 100% 100%;
+            background-size: 6rem 6rem;
+            -moz-background-size: 6rem 6rem;
+            -webkit-background-size: 6rem 6rem;
+            -o-background-size: 6rem 6rem;
         }
+
         .bg-picture img {
             width: 100%;
-            max-height:10rem;
+            max-height: 10rem;
         }
     </style>
 </head>
@@ -91,9 +93,9 @@
         </a>
         <div class="aui-title  pr-fontcolor i18n1" name="merchantCA">商户认证</div>
     </header>
-    <section class="aui-content-padded">
+    <section class="aui-content-padded process-bar">
         <div class="aui-card-list">
-            <div class="aui-card-list-content-padded process-container">
+            <div class="aui-card-list-content-padded">
                 <div class="process-line">
                 </div>
                 <div class="aui-row process-content">
@@ -102,12 +104,12 @@
                         <div class="process-content-title i18n1" name="submitdocumentinformation">提交证件信息</div>
                     </div>
                     <div class="aui-col-xs-4 process-content-info">
-                        <img src=""/>
+                        <img src="" />
                         <div class="process-content-tag"><span>2</span></div>
                         <div class="process-content-title i18n1" name="audit">审核中</div>
                     </div>
                     <div class="aui-col-xs-4 process-content-info">
-                        <img src=""/>
+                        <img src="" />
                         <div class="process-content-tag"><span>3</span></div>
                         <div class="process-content-title i18n1" name="attestationcompletion">认证完成</div>
                     </div>
@@ -194,7 +196,20 @@
         }
         //获取身份验证信息
     function loadAuthenticationInfo() {
-        //判断如果尚未验证显示区域
+      $('.process-content').find('span').eq(0).css("background-color", "#73C0B6");
+      $('.process-content').find('span').eq(1).css("background-color", "#F2F5F6");
+      $('.process-content').find('span').eq(2).css("background-color", "#F2F5F6");
+      $('.process-content-container').hide();
+      $('.process-show-container').hide();
+      $('.process-submit-btn').attr('disabled','disabled').css('background-color', '#dddddd');
+      $('.process-cancel-container').hide();
+      $('.bg-picture').css({
+          'background-image': '',
+          'background-color': '#F2F5F6'
+      });
+      g_idcard_front_picture = undefined;
+      g_idcard_opposite_picture = undefined;
+      g_businesslicense_picture=undefined;
         //var type= 0;
         openLoading();
         var s = 'http://' + serverIP + '/CompanyUser/getCompanyUserInfo.action';
@@ -224,14 +239,12 @@
                         $('.process-show-container .idcardfront-picture img').attr('src', front_url);
                         $('.process-show-container .idcardopposite-picture img').attr('src', back_url);
                         $('.process-show-container .businesslicense-picture img').attr('src', license_url);
-
                     }
                     if (is_verified != undefined && is_verified != "") {
                         if (is_verified == 0) {
                             //未认证
-                            $('.process-content').find('span').eq(0).css("background-color", "#73C0B6");
                             $('.process-content-container').show();
-                            $('.process-btn-container').show();
+                            $('.process-submit-btn').attr('disabled',false).css('background-color', '#73C0B6');
                         } else if (is_verified == 1) {
                             //已完成
                             $('.process-content').find('span').eq(0).css("background-color", "#73C0B6");
@@ -248,12 +261,13 @@
                             $('.process-cancel-container').show();
                         } else if (is_verified == 3) {
                             //失败
-                            $('.process').hide();
+                            $('.process-bar').hide();
                             $('.process-tips-p').empty();
                             $('.process-tips-p').append('<i class="fa fa-close"></i>');
                             $('.process-tips-dsc').text("认证失败,请联系客服!");
                             $('.process-submit-btn').attr('disabled', 'disabled').css('background-color', '#dddddd');
                             $('.process-tips-container').show();
+                            $('.process-btn-container').hide();
                         }
                     } else {
                         $('.process-content').find('span').eq(0).css("background-color", "#73C0B6");
@@ -303,17 +317,34 @@
         }, function(ret, err) {
             if (ret) {
                 var imgUrl = ret.value.imgUrl;
-                var base64Data = ret.value.base64Data;
                 var url = 'http://' + serverIP + '/upload/pictures/' + imgUrl;
                 if (select_type == 0) {
                     g_idcard_front_picture = imgUrl;
-                    $('.idcardfront-picture-active').css('background', 'url(' + url + ')');
+                    $('.idcardfront-picture-active').css({
+                        'background': 'url(' + url + ')',
+                        'background-size': '6rem 6rem',
+                        '-webkit-background-size': '6rem 6rem',
+                        '-moz-background-size': '6rem 6rem',
+                        '-o-background-size': '6rem 6rem'
+                    });
                 } else if (select_type == 1) {
                     g_idcard_opposite_picture = imgUrl;
-                    $('.idcardopposite-picture-active').css('background', 'url(' + url + ')');
+                    $('.idcardopposite-picture-active').css({
+                        'background': 'url(' + url + ')',
+                        'background-size': '6rem 6rem',
+                        '-webkit-background-size': '6rem 6rem',
+                        '-moz-background-size': '6rem 6rem',
+                        '-o-background-size': '6rem 6rem'
+                    });
                 } else if (select_type == 2) {
                     g_businesslicense_picture = imgUrl;
-                    $('.businesslicense-picture-active').css('background', 'url(' + url + ')');
+                    $('.businesslicense-picture-active').css({
+                        'background': 'url(' + url + ')',
+                        'background-size': '6rem 6rem',
+                        '-webkit-background-size': '6rem 6rem',
+                        '-moz-background-size': '6rem 6rem',
+                        '-o-background-size': '6rem 6rem'
+                    });
                 }
             }
             //updateAccountIcon(imgUrl);
@@ -322,7 +353,7 @@
     }
     //提交认证
     function submitForm() {
-        if (g_idcard_front_picture== undefined|| g_idcard_opposite_picture== undefined|| g_businesslicense_picture==undefined) {
+        if (g_idcard_front_picture == undefined || g_idcard_opposite_picture == undefined || g_businesslicense_picture == undefined) {
             toastFail("请提交所需照片!");
             return;
         }
@@ -344,7 +375,6 @@
             if (ret) {
                 if (ret.success) {
                     toastSuccess(ret.message);
-                    $('.process-content-container').hide();
                     loadAuthenticationInfo();
                 } else {
                     toastFail(ret.message);
@@ -378,18 +408,7 @@
             if (ret) {
                 if (ret.success) {
                     toastSuccess(ret.message);
-                      $('.process-content').find('span').eq(0).css("background-color", "#73C0B6");
-                    $('.process-content').find('span').eq(1).css("background-color", "#F2F5F6");
-                    $('.process-content').find('span').eq(2).css("background-color", "#F2F5F6");
-                    $('.process-content-container').show();
-                    $('.process-btn-container').show();
-                    $('.process-submit-btn').attr('disabled', false).css('background-color', '#73C0B6');
-                    $('.bg-picture').css({}'background-image':'','background-color':'#F2F5F6'});
-                    $('.process-cancel-container').hide();
-                    $('.process-show-container').hide();
-                    g_idcard_front_picture=undefined;
-                    g_idcard_opposite_picture=undefined;
-                    g_businesslicense_picture=undefined;
+                     loadAuthenticationInfo();
                 } else {
                     toastFail(ret.message);
                     if (ret.relogin) {
