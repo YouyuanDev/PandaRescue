@@ -110,13 +110,41 @@
     function aliPay(orderInfo) {
         var aliPay = api.require('aliPay');
         aliPay.payOrder({
-            orderInfo:orderInfo
+            orderInfo: orderInfo
         }, function(ret, err) {
-            api.alert({
-                title: '支付结果',
-                msg: ret.code,
-                buttons: ['确定']
-            });
+            if (ret) {
+                if (ret.code == "9000") {
+                    toastSuccess("支付成功");
+                } else if (ret.code == "4000") {
+                    toastFail("系统异常");
+                } else if (ret.code == "4001") {
+                    toastFail("数据格式不正确");
+                } else if (ret.code == "4003") {
+                    toastFail("该用户绑定的支付宝账户被冻结或不允许支付");
+                } else if (ret.code == "4004") {
+                    toastFail("该用户已解除绑定");
+                } else if (ret.code == "4005") {
+                    toastFail("绑定失败或没有绑定");
+                } else if (ret.code == "4006") {
+                    toastFail("订单支付失败");
+                } else if (ret.code == "4010") {
+                    toastFail("重新绑定账户");
+                } else if (ret.code == "6000") {
+                    toastFail("支付服务正在进行升级操作");
+                } else if (ret.code == "6001") {
+                    toastFail("用户中途取消支付操作");
+                } else{
+                  toastFail("返回码:"+ret.code);
+                }
+
+            }else{
+              api.alert({
+                  title: '系统错误，支付失败',
+                  msg: ret.code,
+                  buttons: ['确定']
+              });
+            }
+
         });
     }
 
@@ -125,7 +153,7 @@
     function payOrder() {
 
         //var s = 'http://' + serverIP + '/PersonUser/PersonUserPayOrder.action';
-        var s='http://' + serverIP + '/Order/getCurrentOrderAliPayInfo.action';
+        var s = 'http://' + serverIP + '/Order/getCurrentOrderAliPayInfo.action';
 
         api.ajax({
             url: s,
@@ -137,7 +165,7 @@
             if (ret) {
                 if (ret.success) {
                     toastSuccess(ret.message);
-                     aliPay(ret.orderInfo);
+                    aliPay(ret.orderInfo);
                 } else {
                     toastFail(ret.message);
                     if (ret.relogin) {
