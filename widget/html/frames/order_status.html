@@ -212,7 +212,7 @@
     }
     //确认完成
     function confirmFinishedOrder() {
-        var s = 'http://' + serverIP + '/PersonUser/PersonUserConfirmFinishedOrder.action';
+        var s = 'http://' + serverIP + '/PersonUser/confirmOrderFinish.action';
         api.ajax({
             url: s,
             method: 'post',
@@ -222,9 +222,9 @@
         }, function(ret, errs) {
             if (ret) {
                 if (ret.success) {
-                    toastSuccess(ret.message);
+                    toastSuccess(ret.msg);
                 } else {
-                    toastFail(ret.message);
+                    toastFail(ret.msg);
                     if (ret.relogin) {
                         api.sendEvent({
                             name: 'reloginEvent'
