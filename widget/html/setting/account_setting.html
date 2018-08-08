@@ -111,7 +111,7 @@
                     <div class="aui-list-item-title pr-fontcolor-one i18n1" name="legaltermsandprivacypolicy">法律条款与隐私政策</div>
                 </div>
             </li>
-            <li class="aui-list-item aui-list-item-middle">
+            <li class="aui-list-item aui-list-item-middle" onclick="openResuceGuide();">
                 <div class="aui-list-item-inner aui-list-item-arrow">
                     <div class="aui-list-item-title pr-fontcolor-one i18n1" name="userguide">熊猫救援指南</div>
                 </div>
@@ -140,7 +140,7 @@
             fnSettingHeader();
             var data = api.pageParam;
             if (data != undefined) {
-                g_account=data.g_account;
+                g_account = data.g_account;
             }
             //获取版本号
             $('.app-version').text("V" + api.appVersion);
@@ -214,7 +214,7 @@
                 duration: 300
             },
             pageParam: {
-               g_account:g_account
+                g_account: g_account
             }
         });
     }
@@ -237,28 +237,46 @@
         });
     }
     //打开法律条款和隐私政策
-    function openAboutLegalPrivacy(){
-      api.openFrame({
-          name: 'about_legalprivacy',
-          url: '../about/about_legalprivacy.html',
-          rect: {
-              x: 0,
-              y: 0,
-              w: api.winWidth,
-              h: api.height
-          },
-          animation: {
-              type: "push",
-              subType: "from_right",
-              duration: 300
-          }
-      });
+    function openAboutLegalPrivacy() {
+        api.openFrame({
+            name: 'about_legalprivacy',
+            url: '../about/about_legalprivacy.html',
+            rect: {
+                x: 0,
+                y: 0,
+                w: api.winWidth,
+                h: api.height
+            },
+            animation: {
+                type: "push",
+                subType: "from_right",
+                duration: 300
+            }
+        });
     }
     //清理缓存
     function clearAppCache() {
         api.clearCache(function() {
-             toastSuccess("清理完成!");
-             $('.app-cache').text("0MB");
+            toastSuccess("清理完成!");
+            $('.app-cache').text("0MB");
+        });
+    }
+    //打开熊猫救援指南
+    function openResuceGuide() {
+        api.openFrame({
+            name: 'resuce_guide',
+            url: '../guide/resuce_guide.html',
+            rect: {
+                x: 0,
+                y: 0,
+                w: api.winWidth,
+                h: api.height
+            },
+            animation: {
+                type: "push",
+                subType: "from_right",
+                duration: 300
+            }
         });
     }
 </script>

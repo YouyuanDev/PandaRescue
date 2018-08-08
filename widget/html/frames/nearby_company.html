@@ -26,12 +26,30 @@
         }
 
         .container {
-            padding: 1px;  overflow-y: scroll;
+            padding: 1px;
+            overflow-y: scroll;
+        }
+
+        .pr-empty {
+            width: 100%;
+            height: 100%;
+            text-align: center;
+            justify-content: center;
+            align-items: center;
+            display: -webkit-flex;
+        }
+
+        .pr-empty .empty-title {
+            width: 100%;
+            font-size: 1rem;
         }
     </style>
 </head>
 
 <body class="wrap pr-body-bgcolor">
+    <div class="pr-empty">
+        <span class="empty-title"><span class="fa fa-info" style="padding-right:0.3rem;"></span><span class="i18n1" name="nobusiness">附近暂无商家!</span><span>
+  </div>
     <div class="container">
         <div class="aui-content aui-margin-b-15">
             <div class="poilist-container">
@@ -53,6 +71,7 @@
     var my_lat;
     var map;
     apiready = function() {
+        $('.pr-empty').hide();
         var data = api.pageParam;
         company_data = data.company;
         my_lon = data.g_my_lon;
@@ -75,14 +94,15 @@
             $('#poilist-ul').append(template);
             if (company_data.length <= 0) {
                 $('.container').hide();
-                $(document.body).append(makeEmptyTemplate("暂无数据!"));
+                $('.pr-empty').show();
+                //$(document.body).append(makeEmptyTemplate("暂无数据!"));
             } else {
-                $('.pr-empty').remove();
+                $('.pr-empty').hide();
                 $('.container').show();
             }
         } else {
-            $('.container').hide();
-            $(document.body).append(makeEmptyTemplate("暂无数据!"));
+              $('.container').hide();
+              $('.pr-empty').show();
         }
     }
 

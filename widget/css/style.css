@@ -68,11 +68,3 @@ input{
 .pr-body-bgcolor{
   background:#F2F5F6;
 }
-.pr-empty{
-  width:100%;
-  height:100%;
-  text-align: center;
-  display: table-cell;
-  vertical-align:middle;
-  color:#000;
-}

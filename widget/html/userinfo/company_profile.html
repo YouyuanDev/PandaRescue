@@ -150,7 +150,7 @@
                         余额
                     </div>
                     <div class="aui-list-item-input">
-                        <input readonly="readonly" type="text" placeholder="余额">
+                       <div class="aui-label company-balance"></div>
                     </div>
                 </div>
             </li>
@@ -165,7 +165,7 @@
 <script src="../../script/jquery.i18n.properties-1.0.9.js" type="text/javascript"></script>
 <script src="../../script/language.js" type="text/javascript"></script>
 <script type="text/javascript">
-    var g_id,g_is_verified;
+    var g_id, g_is_verified;
     var map;
     apiready = function() {
             fnSettingHeader();
@@ -182,17 +182,17 @@
             toastFail("系统繁忙,请稍后重试!");
             return;
         }
-        if(g_is_verified==undefined&&g_is_verified==""){
-          toastFail("修改失败!");
-          return;
-        }else{
-          if(g_is_verified==1){
-            toastFail("审核中,信息不能修改!");
+        if (g_is_verified == undefined && g_is_verified == "") {
+            toastFail("修改失败!");
             return;
-          }else if(g_is_verified==2){
-            toastFail("审核成功,信息不能修改!");
-            return;
-          }
+        } else {
+            if (g_is_verified == 1) {
+                toastFail("审核中,信息不能修改!");
+                return;
+            } else if (g_is_verified == 2) {
+                toastFail("审核成功,信息不能修改!");
+                return;
+            }
         }
         var s = 'http://' + serverIP + '/CompanyUser/saveCompanyUserInfo.action';
         api.ajax({
@@ -236,7 +236,7 @@
             dataType: 'json'
         }, function(ret, err) {
             if (ret) {
-                var company_name, company_found_date, company_tax_code, company_location_lon, company_location_lat, contact_person, cell_phone, address, lane_line, is_verified;
+                var company_name, company_found_date, company_tax_code, company_location_lon, company_location_lat, contact_person, cell_phone, address, lane_line, is_verified, balance;
                 if (ret.success) {
                     g_id = ret.company.id;
                     company_name = ret.company.company_name;
@@ -249,7 +249,7 @@
                     lane_line = ret.company.lane_line;
                     is_verified = ret.company.is_verified;
                     company_found_date = ret.company.company_found_date;
-
+                    balance = ret.company.pr_account_amount;
                 } else {
                     toastFail(ret.message);
                     if (ret.relogin) {
@@ -285,9 +285,11 @@
                 if (company_found_date != undefined && company_found_date != "") {
                     $('.company-foundtime-input').val(getDate1(company_found_date));
                 }
-
+                if (balance != undefined && balance != "") {
+                    $('.company-balance').text(balance+"￥");
+                }
                 if (is_verified != undefined && is_verified != "") {
-                    g_is_verified=is_verified;
+                    g_is_verified = is_verified;
                     if (is_verified == 0) {
                         $('.company-certified').text("未认证");
                     } else if (is_verified == 1) {

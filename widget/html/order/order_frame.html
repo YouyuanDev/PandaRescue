@@ -30,13 +30,29 @@
             font-size: 0.5rem;
             padding-right: 0.2rem;
         }
+        .pr-empty {
+            width: 100%;
+            height: 100%;
+            text-align: center;
+            justify-content: center;
+            align-items: center;
+            display: -webkit-flex;
+        }
+
+        .pr-empty .empty-title {
+            width: 100%;
+            font-size: 1rem;
+        }
     </style>
 </head>
 
 <body>
+  <!-- <div class="pr-empty">
+      <span class="empty-title"><span class="fa fa-info" style="padding-right:0.3rem;"></span><span class="i18n1" name="nohistoricalorder">暂无历史订单!</span><span>
+</div> -->
     <div  class="aui-content aui-margin-b-15">
         <ul class="aui-list aui-media-list">
-            <li class="aui-list-item aui-list-item-arrow">
+            <!-- <li class="aui-list-item aui-list-item-arrow">
                 <div class="aui-media-list-item-inner">
                     <div class="aui-list-item-inner">
                         <div class="aui-list-item-text">
@@ -59,7 +75,7 @@
                         <p><span class="fa fa-circle fa-failure"></span><span>轮胎故障,机械故障<span></p>
                     </div>
                 </div>
-            </li>
+            </li> -->
         </ul>
     </div>
 </body>
@@ -71,8 +87,13 @@
 <script src="../../script/language.js" type="text/javascript"></script>
 <script type="text/javascript" src="../../script/common.js"></script>
 <script type="text/javascript">
-    var language_id = 0,start = 1;
+    var language_id = 0,start = 1,g_service_type_dict,g_failure_type_dict;
     apiready = function() {
+        $('.pr-empty').hide();
+        registerLoadAllServiceTypeEvent();
+        registerLoadAllFaultTypeEvent();
+        loadAllServiceType();
+        loadAllFaultType();
         //下拉刷新,下拉加载
         //dropdownLoading();
         //是否滚动到底部
@@ -116,7 +137,7 @@
     //加载订单
     function loadAccountOrder(){
       openLoading();
-      var s = 'http://' + serverIP + '/Order/getOrderInfo.action';
+      var s = 'http://' + serverIP + '/Order/getAllOrderList.action';
       api.ajax({
           url: s,
           method: 'post',
@@ -131,9 +152,27 @@
       }, function(ret, err) {
           if (ret) {
               if (ret.success) {
-                  // for (var i = 0; i < ret.order.length; i++) {
-                  //    getOrderTemplate();
-                  // }
+                  //alert(JSON.stringify(ret));
+                  if(ret.orderList.length>0){
+                    var data=ret.orderList;
+                    for (var i = 0; i < data.length; i++) {
+                       var order_no=data[i].order_no;
+                       var order_time=getDate1(data[i].order_time);
+                       var order_status=data[i].order_status;
+                       var service_type_code=data[i].service_type_code;
+                       var failure_type_code_list=data[i].failure_type_code_list;
+                        $('.aui-content .aui-list').append(getOrderTemplate(order_no,order_time,order_status,service_type_code,failure_type_code_list));
+                       //getOrderTemplate();
+                    }
+                    changeServiceTypeFaultType();
+                  }else{
+                      if(start==1){
+                        $('.aui-content').remove();
+                        $(document.body).append();
+                      }else{
+                        $('.aui-content').after(addEmptyInfo());
+                      }
+                  }
               } else {
                   toastFail(ret.message);
                   if(ret.relogin){
@@ -162,8 +201,8 @@
                        '<div class="aui-list-item-title"><i class="fa fa-clock-o"></i>'+order_time+'</div>'+
                        '<div class="aui-list-item-right">'+order_status+'</div>'+
                    '</div>'+
-                   '<p><span class="fa fa-circle fa-service"></span><span>'+service_type+'<span></p>'+
-                   '<p><span class="fa fa-circle fa-failure"></span><span>'+failure_type+'<span></p>'+
+                   '<p><span class="fa fa-circle fa-service"></span><span class="span-service-type">'+service_type+'<span></p>'+
+                   '<p><span class="fa fa-circle fa-failure"></span><span class="span-failure-type">'+failure_type+'<span></p>'+
                '</div>'+
            '</div>'+
        '</li>';
@@ -171,6 +210,64 @@
     }
     //打开订单详情
     function openOrderDetail(order_no){
-      alert(order_no);
+       alert(order_no);
+    }
+    function addEmptyInfo(){
+      var template='<div class="pr-empty">'+
+            '<span class="empty-title"><span class="fa fa-info" style="padding-right:0.3rem;"></span><span class="i18n1" name="nohistoricalorder">暂无历史订单!</span><span>'+
+      '</div>';
+      return template;
+    }
+    //注册加载所有服务类型事件
+    function registerLoadAllServiceTypeEvent(){
+      api.addEventListener({
+          name: 'GetAllServiceTypeEvent'
+      }, function(ret, err) {
+        if(ret.value.g_service_type_dict!=undefined){
+           g_service_type_dict=JSON.parse(ret.value.g_service_type_dict);
+          //  alert(toString.call(g_service_type_dict));
+          //  alert(JSON.stringify(g_service_type_dict));
+        }
+         //g_service_type_dict=ret.value.g_service_type_dict;
+      });
+    }
+      //注册加载所有故障类型事件
+    function registerLoadAllFaultTypeEvent(){
+      api.addEventListener({
+          name: 'GetAllFailureTypeEvent'
+      }, function(ret, err) {
+             if(ret.value.g_failure_type_dict!=undefined){
+
+                g_failure_type_dict=JSON.parse(ret.value.g_failure_type_dict);
+             }
+             //g_failure_type_dict=ret.value.g_failure_type_dict;
+      });
+    }
+    //更换服务和故障类型
+    function changeServiceTypeFaultType(){
+      if(g_service_type_dict!=undefined&&g_failure_type_dict!=undefined){
+         $('.span-service-type').each(function(){
+            var text=$(this).text();
+            for (var key in g_service_type_dict) {
+                if(text==key){
+                    $(this).text(g_service_type_dict[key].service_type_name);
+                }
+            }
+         });
+         $('.span-failure-type').each(function(){
+            var text=$(this).text();
+            var arr=text.split(',');
+            var str="";
+            for (var i = 0; i < arr.length; i++) {
+              for (var key in g_failure_type_dict) {
+                  if(arr[i]==key){
+                      str+=g_failure_type_dict[key].failure_type_name+",";
+
+                  }
+              }
+            }
+            $(this).text(str.substring(0,str.length-1));
+         });
+      }
     }
 </script>

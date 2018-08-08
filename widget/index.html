@@ -107,6 +107,8 @@
     apiready = function() {
         fnSettingHeader();
         map = api.require('bMap');
+        registerLoadAllServiceTypeEvent();
+        registerLoadAllFaultTypeEvent();
         loadAllServiceType();
         loadAllFaultType();
         registLocatingEvent();
@@ -1280,56 +1282,99 @@
             name: 'service_type'
         });
     }
+    //注册加载所有服务类型事件
+    function registerLoadAllServiceTypeEvent(){
+      api.addEventListener({
+          name: 'GetAllServiceTypeEvent'
+      }, function(ret, err) {
+        g_service_type_dict=JSON.parse(ret.value.g_service_type_dict);
+      });
+    }
+      //注册加载所有故障类型事件
+    function registerLoadAllFaultTypeEvent(){
+      api.addEventListener({
+          name: 'GetAllFailureTypeEvent'
+      }, function(ret, err) {
+             g_failure_type_dict=JSON.parse(ret.value.g_failure_type_dict);
+      });
+    }
     //加载服务类型
-    function loadAllServiceType() {
-        var s = 'http://' + serverIP + '/ServiceType/getAllServiceType.action';
-        api.ajax({
-            url: s,
-            method: 'post'
-        }, function(rets, errs) {
-            if (rets) {
-                g_service_type_dict = {};
-                for (var i = 0; i < rets.length; i++) {
-                    var service_type_code = rets[i].service_type_code;
-                    var service_type_name = rets[i].service_type_name;
-                    var service_type_name_en = rets[i].service_type_name_en;
-                    g_service_type_dict[service_type_code] = {
-                        "service_type_name": service_type_name,
-                        "service_type_name_en": service_type_name_en
-                    };
-                }
-            } else {
-                api.alert({
-                    msg: "加载服务类型失败!"
-                });
-            }
-        });
-    }
+    // function loadAllServiceType() {
+    //     //查看本地是否已经存在，不存在请求服务器，存在就直接获取
+    //     var dict = api.getPrefs({
+    //         sync: true,
+    //         key: 'g_service_type_dict'
+    //     });
+    //     if (dict != undefined) {
+    //         g_service_type_dict = dict;
+    //     } else {
+    //         var s = 'http://' + serverIP + '/ServiceType/getAllServiceType.action';
+    //         api.ajax({
+    //             url: s,
+    //             method: 'post'
+    //         }, function(rets, errs) {
+    //             if (rets) {
+    //                 g_service_type_dict = {};
+    //                 for (var i = 0; i < rets.length; i++) {
+    //                     var service_type_code = rets[i].service_type_code;
+    //                     var service_type_name = rets[i].service_type_name;
+    //                     var service_type_name_en = rets[i].service_type_name_en;
+    //                     g_service_type_dict[service_type_code] = {
+    //                         "service_type_name": service_type_name,
+    //                         "service_type_name_en": service_type_name_en
+    //                     };
+    //                 }
+    //                 api.setPrefs({
+    //                     key: 'g_service_type_dict',
+    //                     value: g_service_type_dict
+    //                 });
+    //             } else {
+    //                 // api.alert({
+    //                 //     msg: "加载服务类型失败!"
+    //                 // });
+    //             }
+    //         });
+    //     }
+    // }
+
     //加载故障类型
-    function loadAllFaultType() {
-        var s = 'http://' + serverIP + '/FailureType/getAllFailureType.action';
-        api.ajax({
-            url: s,
-            method: 'post'
-        }, function(rets, errs) {
-            if (rets) {
-                g_failure_type_dict = {};
-                for (var i = 0; i < rets.length; i++) {
-                    var failure_type_code = rets[i].failure_type_code;
-                    var failure_type_name = rets[i].failure_type_name;
-                    var failure_type_name_en = rets[i].failure_type_name_en;
-                    g_failure_type_dict[failure_type_code] = {
-                        "failure_type_name": failure_type_name,
-                        "failure_type_name_en": failure_type_name_en
-                    };
-                }
-            } else {
-                api.alert({
-                    msg: "加载故障类型失败!"
-                });
-            }
-        });
-    }
+    // function loadAllFaultType() {
+    //     //查看本地是否已经存在，不存在请求服务器，存在就直接获取
+    //     var dict = api.getPrefs({
+    //         sync: true,
+    //         key: 'g_failure_type_dict'
+    //     });
+    //     if (dict != undefined) {
+    //         g_failure_type_dict = dict;
+    //     } else {
+    //         var s = 'http://' + serverIP + '/FailureType/getAllFailureType.action';
+    //         api.ajax({
+    //             url: s,
+    //             method: 'post'
+    //         }, function(rets, errs) {
+    //             if (rets) {
+    //                 g_failure_type_dict = {};
+    //                 for (var i = 0; i < rets.length; i++) {
+    //                     var failure_type_code = rets[i].failure_type_code;
+    //                     var failure_type_name = rets[i].failure_type_name;
+    //                     var failure_type_name_en = rets[i].failure_type_name_en;
+    //                     g_failure_type_dict[failure_type_code] = {
+    //                         "failure_type_name": failure_type_name,
+    //                         "failure_type_name_en": failure_type_name_en
+    //                     };
+    //                 }
+    //                 api.setPrefs({
+    //                     key: 'g_failure_type_dict',
+    //                     value: g_failure_type_dict
+    //                 });
+    //             } else {
+    //                 api.alert({
+    //                     msg: "加载故障类型失败!"
+    //                 });
+    //             }
+    //         });
+    //     }
+    // }
 
     function sendPush() {
         alert("调用getCurrentOrder");
@@ -1430,7 +1475,7 @@
         api.openFrame({
             name: 'mask',
             url: './html/frames/mask.html',
-            reload:true,
+            reload: true,
             rect: {
                 x: 0,
                 y: 0,
@@ -1441,7 +1486,7 @@
         api.openFrame({
             name: 'account',
             url: './html/frames/account.html',
-            reload:true,
+            reload: true,
             rect: {
                 x: 0,
                 y: 0,
@@ -1454,7 +1499,9 @@
                 duration: 300
             },
             pageParam: {
-               account_type:g_account_type
+                account_type: g_account_type,
+                g_service_type_dict: g_service_type_dict,
+                g_failure_type_dict: g_failure_type_dict
             }
         });
     }

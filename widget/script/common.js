@@ -1,6 +1,6 @@
 var header, headerHeight = 0,
     g_loadingID;
-var serverIP = '192.168.0.10:8080';
+var serverIP = '192.168.0.12:8080';
 
 function fnSettingHeader() {
     var sType = api.systemType;
@@ -143,16 +143,16 @@ function getPicture(sourceType) {
                     }, function(ret, errs) {
                         closeLoading();
                         if (ret) {
-                            if(ret.imgUrl!=undefined&&ret.imgUrl!=""){
-                              api.sendEvent({
-                                  name: 'UploadPictureEvent',
-                                  extra: {
-                                      imgUrl: ret.imgUrl
-                                  }
-                              });
-                              toastSuccess("上传成功!");
-                            }else{
-                              toastFail("上传失败!");
+                            if (ret.imgUrl != undefined && ret.imgUrl != "") {
+                                api.sendEvent({
+                                    name: 'UploadPictureEvent',
+                                    extra: {
+                                        imgUrl: ret.imgUrl
+                                    }
+                                });
+                                toastSuccess("上传成功!");
+                            } else {
+                                toastFail("上传失败!");
                             }
                         } else {
                             api.alert({
@@ -193,7 +193,7 @@ function getPicture(sourceType) {
                     }, function(ret, errs) {
                         closeLoading();
                         if (ret) {
-                            if (ret.imgUrl != undefined&&ret.imgUrl!="") {
+                            if (ret.imgUrl != undefined && ret.imgUrl != "") {
                                 api.sendEvent({
                                     name: 'UploadPictureEvent',
                                     extra: {
@@ -306,8 +306,8 @@ function toastFail(txt) {
 }
 //数据为空时的模板
 function makeEmptyTemplate(con) {
-    var template = '<div class="pr-empty">' + con + '</div>';
-    return template;
+    // var template = '<div class="pr-empty">' + con + '</div>';
+    // return template;
 }
 
 //绑定Push推送
@@ -378,4 +378,113 @@ function leaveAllPushGroup() {
             toastFail(err.msg);
         }
     });
+}
+
+//加载服务类型
+function loadAllServiceType() {
+    //查看本地是否已经存在，不存在请求服务器，存在就直接获取
+    var g_service_type_dict = {};
+    var dict = api.getPrefs({
+        sync: true,
+        key: 'g_service_type_dict'
+    });
+    var length=0;
+    for (var ever in dict) {
+       length++;
+    }
+    if (dict != undefined&&length>0) {
+        g_service_type_dict = dict;
+        api.sendEvent({
+            name: 'GetAllServiceTypeEvent',
+            extra: {
+                g_service_type_dict:g_service_type_dict
+            }
+        });
+    } else {
+        var s = 'http://' + serverIP + '/ServiceType/getAllServiceType.action';
+        api.ajax({
+            url: s,
+            method: 'post'
+        }, function(rets, errs) {
+            if (rets) {
+                for (var i = 0; i < rets.length; i++) {
+                    var service_type_code = rets[i].service_type_code;
+                    var service_type_name = rets[i].service_type_name;
+                    var service_type_name_en = rets[i].service_type_name_en;
+                    g_service_type_dict[service_type_code] = {
+                        "service_type_name": service_type_name,
+                        "service_type_name_en": service_type_name_en
+                    };
+                }
+                api.setPrefs({
+                    key: 'g_service_type_dict',
+                    value: g_service_type_dict
+                });
+                api.sendEvent({
+                    name: 'GetAllServiceTypeEvent',
+                    extra: {
+                        g_service_type_dict:g_service_type_dict
+                    }
+                });
+            } else {
+                // api.alert({
+                //     msg: "加载服务类型失败!"
+                // });
+            }
+        });
+    }
+}
+//加载故障类型
+function loadAllFaultType() {
+    //查看本地是否已经存在，不存在请求服务器，存在就直接获取
+    var g_failure_type_dict={};
+    var dict = api.getPrefs({
+        sync: true,
+        key: 'g_failure_type_dict'
+    });
+    var length=0;
+    for (var ever in dict) {
+       length++;
+    }
+    if (dict != undefined&&length>0) {
+        g_failure_type_dict = dict;
+        api.sendEvent({
+            name: 'GetAllFailureTypeEvent',
+            extra: {
+                g_failure_type_dict:g_failure_type_dict
+            }
+        });
+    } else {
+        var s = 'http://' + serverIP + '/FailureType/getAllFailureType.action';
+        api.ajax({
+            url: s,
+            method: 'post'
+        }, function(rets, errs) {
+            if (rets) {
+                for (var i = 0; i < rets.length; i++) {
+                    var failure_type_code = rets[i].failure_type_code;
+                    var failure_type_name = rets[i].failure_type_name;
+                    var failure_type_name_en = rets[i].failure_type_name_en;
+                    g_failure_type_dict[failure_type_code] = {
+                        "failure_type_name": failure_type_name,
+                        "failure_type_name_en": failure_type_name_en
+                    };
+                }
+                api.setPrefs({
+                    key: 'g_failure_type_dict',
+                    value: g_failure_type_dict
+                });
+                api.sendEvent({
+                    name: 'GetAllFailureTypeEvent',
+                    extra: {
+                        g_failure_type_dict:g_failure_type_dict
+                    }
+                });
+            } else {
+                api.alert({
+                    msg: "加载故障类型失败!"
+                });
+            }
+        });
+    }
 }

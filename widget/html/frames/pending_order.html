@@ -8,6 +8,7 @@
     <title>待接单</title>
     <link rel="stylesheet" type="text/css" href="../../css/api.css" />
     <link rel="stylesheet" type="text/css" href="../../css/aui.css" />
+      <link rel="stylesheet" type="text/css" href="../../css/font-awesome.min.css" />
     <link rel="stylesheet" type="text/css" href="../../css/style.css" />
     <style type="text/css">
         html,
@@ -24,10 +25,27 @@
         .poilist-container ul li:first-child {
             border-top: none;
         }
+
+        .pr-empty {
+            width: 100%;
+            height: 100%;
+            text-align: center;
+            justify-content: center;
+            align-items: center;
+            display: -webkit-flex;
+        }
+
+        .pr-empty .empty-title {
+            width: 100%;
+            font-size: 1rem;
+        }
     </style>
 </head>
 
 <body class="wrap">
+    <div class="pr-empty">
+        <span class="empty-title"><span class="fa fa-info" style="padding-right:0.3rem;"></span><span>暂无订单!</span><span>
+    </div>
     <div class="container">
         <div class="aui-content aui-margin-b-15">
             <div class="poilist-container">
@@ -48,7 +66,8 @@
     var map;
     var my_lon,my_lat;
     apiready = function() {
-      map = api.require('bMap');
+            $('.pr-empty').hide();
+            map = api.require('bMap');
             var data = api.pageParam;
             pending_order_data = data.pendingorder;
             my_lon = data.g_my_lon;
@@ -98,14 +117,16 @@
             $('#poilist-ul').append(template);
             if (pending_order_data.length <= 0) {
                 $('.container').hide();
-                $(document.body).append(makeEmptyTemplate("暂无数据!"));
+                $('.pr-empty').show();
+                // $(document.body).append(makeEmptyTemplate("暂无数据!"));
             } else {
-                $('.pr-empty').remove();
+                $('.pr-empty').hide();
                 $('.container').show();
             }
         } else {
             $('.container').hide();
-            $(document.body).append(makeEmptyTemplate("暂无数据!"));
+            $('.pr-empty').show();
+            // $(document.body).append(makeEmptyTemplate("暂无数据!"));
         }
     }
 
