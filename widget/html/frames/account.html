@@ -343,6 +343,11 @@
                     g_account_icon=ret.account.icon_url;
               } else {
                   toastFail(ret.message);
+                  if(ret.relogin){
+                    api.sendEvent({
+                        name: 'reloginEvent'
+                    });
+                  }
               }
 
               if(g_account_icon!=undefined&&g_account_icon!=""){
