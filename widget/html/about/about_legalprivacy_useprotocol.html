@@ -65,13 +65,13 @@
                 w: 'auto',
                 h: api.winHeight - headerH
             },
-            bounces: true
+            bounces: false
         });
         hlLanguage("../../i18n/");
     }
 
     function closeMyself() {
-        api.closeFrame({
+        api.closeWin({
             name: 'about_legalprivacy_useprotocol'
         });
     }

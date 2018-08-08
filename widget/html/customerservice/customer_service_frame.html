@@ -11,17 +11,31 @@
     <link rel="stylesheet" type="text/css" href="../../css/font-awesome.min.css" />
     <link rel="stylesheet" type="text/css" href="../../css/style.css" />
     <style>
-
+    .diy-img i {
+        margin: auto;
+        font-size:4rem;
+    }
+    .diy-p {
+        text-align: center;
+    }
+    .diy-font-p{
+      font-size:0.8rem;color:#000;
+    }
     </style>
 </head>
 
 <body>
-  <header id="header" class="aui-bar aui-bar-nav aui-bar-light personal-header pr-bgcolor">
-      <a class="aui-pull-left aui-btn">
-          <span onclick="closeMyself();" class="fa fa-chevron-left"></span>
-      </a>
-      <div class="aui-title pr-fontcolor i18n1" name="customerservicecenter">客服中心</div>
-  </header>
+  <section class="aui-content-padded">
+      <div class="aui-card-list">
+          <div class="aui-card-list-header diy-img">
+               <i class="fa fa-phone-square"></i>
+          </div>
+          <div class="aui-card-list-content-padded">
+              <p class="diy-p diy-font-p i18n1" name="contactnumber">联系电话</p>
+              <p class="diy-p">(021) 6665 0051</p>
+          </div>
+      </div>
+  </section>
 </body>
 
 </html>
@@ -33,26 +47,7 @@
 <script type="text/javascript">
     var language_id = 0;
     apiready = function() {
-        fnSettingHeader();
-        var header = $api.byId('header');
-        var headerH = $api.offset(header).h;
-        api.openFrame({
-            name: 'customer_service_frame',
-            url: './customer_service_frame.html',
-            rect: {
-                x: 0,
-                y: headerH,
-                w: 'auto',
-                h: api.winHeight - headerH
-            },
-            bounces: false
-        });
+
         hlLanguage("../../i18n/");
     }
-    function closeMyself() {
-        api.closeWin({
-            name: 'customer_service'
-        });
-    }
-
 </script>
