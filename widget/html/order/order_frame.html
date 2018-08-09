@@ -33,7 +33,7 @@
 
         .pr-empty {
             width: 100%;
-            height: 100%;
+            height:auto;
             text-align: center;
             justify-content: center;
             align-items: center;
@@ -90,7 +90,7 @@
 <script type="text/javascript">
     var language_id = 0,
         start = 1,
-        g_service_type_dict, g_failure_type_dict, g_order_status_dict;
+        g_service_type_dict, g_failure_type_dict, g_order_status_dict,g_allow_load=true;
     apiready = function() {
             $('.pr-empty').hide();
             registerLoadAllServiceTypeEvent();
@@ -134,8 +134,9 @@
                 threshold: 0 //设置距离底部多少距离时触发,默认值为0,数字类型
             }
         }, function(ret, err) {
-            start = start + 1;
-            loadAccountOrder();
+            if(g_allow_load){
+              loadAccountOrder();
+            }
         });
     }
 
@@ -157,7 +158,6 @@
         }, function(ret, err) {
             if (ret) {
                 if (ret.success) {
-                    //alert(JSON.stringify(ret));
                     if (ret.orderList.length > 0) {
                         var data = ret.orderList;
                         for (var i = 0; i < data.length; i++) {
@@ -172,25 +172,31 @@
                               $('.aui-content .aui-list').append(getOrderTemplate(order_no, order_time, order_status, service_type_code, failure_type_code_list));
                             }
                         }
+                        start = start + 1;
                         changeServiceTypeFaultType();
                     } else {
                         if (start == 1) {
                             $('.aui-content').remove();
-                            $(document.body).append();
+                            $(document.body).append(addEmptyInfo());
                         } else {
                             $('.aui-content').after(addEmptyInfo());
                         }
+                        g_allow_load=false;
                     }
                 } else {
-                    toastFail(ret.message);
+                    toastFail(ret.msg);
+                    $('.aui-content').after(addEmptyInfo());
+                    g_allow_load=false;
                     if (ret.relogin) {
                         api.sendEvent({
                             name: 'reloginEvent'
                         });
                     }
+
                 }
             } else {
-                toastFail('获取个人信息时出错,错误信息:' + err.code);
+                toastFail('获取订单信息时出错,错误信息:' + err.code);
+                g_allow_load=false;
                 if (ret.relogin) {
                     api.sendEvent({
                         name: 'reloginEvent'
@@ -202,7 +208,7 @@
     }
     //订单列表模板
     function getOrderTemplate(order_no, order_time, order_status, service_type, failure_type) {
-        var template = '<li class="aui-list-item aui-list-item-arrow" onclick="openOrderDetail("'+order_no+'"");">' +
+        var template = '<li class="aui-list-item aui-list-item-arrow" data-order-no='+order_no+' onclick="openOrderDetail(this)">' +
             '<div class="aui-media-list-item-inner">' +
             '<div class="aui-list-item-inner">' +
             '<div class="aui-list-item-text">' +
@@ -217,10 +223,11 @@
         return template;
     }
     //打开订单详情
-    function openOrderDetail() {
-        alert(1);
+    function openOrderDetail(obj) {
+        var order_no=$(obj).attr('data-order-no');
+        alert(order_no);
     }
-
+    //添加数据为空时显示的空模板
     function addEmptyInfo() {
         var template = '<div class="pr-empty">' +
             '<span class="empty-title"><span class="fa fa-info" style="padding-right:0.3rem;"></span><span class="i18n1" name="nohistoricalorder">暂无历史订单!</span><span>' +
