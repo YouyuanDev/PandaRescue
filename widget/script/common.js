@@ -388,16 +388,16 @@ function loadAllServiceType() {
         sync: true,
         key: 'g_service_type_dict'
     });
-    var length=0;
+    var length = 0;
     for (var ever in dict) {
-       length++;
+        length++;
     }
-    if (dict != undefined&&length>0) {
+    if (dict != undefined && length > 0) {
         g_service_type_dict = dict;
         api.sendEvent({
             name: 'GetAllServiceTypeEvent',
             extra: {
-                g_service_type_dict:g_service_type_dict
+                g_service_type_dict: g_service_type_dict
             }
         });
     } else {
@@ -423,7 +423,7 @@ function loadAllServiceType() {
                 api.sendEvent({
                     name: 'GetAllServiceTypeEvent',
                     extra: {
-                        g_service_type_dict:g_service_type_dict
+                        g_service_type_dict: g_service_type_dict
                     }
                 });
             } else {
@@ -437,21 +437,21 @@ function loadAllServiceType() {
 //加载故障类型
 function loadAllFaultType() {
     //查看本地是否已经存在，不存在请求服务器，存在就直接获取
-    var g_failure_type_dict={};
+    var g_failure_type_dict = {};
     var dict = api.getPrefs({
         sync: true,
         key: 'g_failure_type_dict'
     });
-    var length=0;
+    var length = 0;
     for (var ever in dict) {
-       length++;
+        length++;
     }
-    if (dict != undefined&&length>0) {
+    if (dict != undefined && length > 0) {
         g_failure_type_dict = dict;
         api.sendEvent({
             name: 'GetAllFailureTypeEvent',
             extra: {
-                g_failure_type_dict:g_failure_type_dict
+                g_failure_type_dict: g_failure_type_dict
             }
         });
     } else {
@@ -477,13 +477,67 @@ function loadAllFaultType() {
                 api.sendEvent({
                     name: 'GetAllFailureTypeEvent',
                     extra: {
-                        g_failure_type_dict:g_failure_type_dict
+                        g_failure_type_dict: g_failure_type_dict
                     }
                 });
             } else {
                 api.alert({
                     msg: "加载故障类型失败!"
                 });
+            }
+        });
+    }
+}
+//加载所有订单状态类型
+function loadAllOrderStatus() {
+    //查看本地是否已经存在，不存在请求服务器，存在就直接获取
+    var g_order_status = {};
+    var dict = api.getPrefs({
+        sync: true,
+        key: 'g_order_status'
+    });
+    var length = 0;
+    for (var ever in dict) {
+        length++;
+    }
+    if (dict != undefined && length > 0) {
+        g_order_status = dict;
+        api.sendEvent({
+            name: 'GetAllOrderStatusEvent',
+            extra: {
+                g_order_status: g_order_status
+            }
+        });
+    } else {
+        var s = 'http://' + serverIP + '/Order/getAllOrderStatusForAPP.action';
+        api.ajax({
+            url: s,
+            method: 'post'
+        }, function(rets, errs) {
+            if (rets) {
+                for (var i = 0; i < rets.length; i++) {
+                    var status_code = rets[i].status_code;
+                    var status_name = rets[i].status_name;
+                    var status_name_en = rets[i].status_name_en;
+                    g_order_status[status_code] = {
+                        "status_name": status_name,
+                        "status_name_en": status_name_en
+                    };
+                }
+                api.setPrefs({
+                    key: 'g_order_status',
+                    value: g_order_status
+                });
+                api.sendEvent({
+                    name: 'GetAllOrderStatusEvent',
+                    extra: {
+                        g_order_status: g_order_status
+                    }
+                });
+            } else {
+                // api.alert({
+                //     msg: "加载订单状态类型失败!"
+                // });
             }
         });
     }
