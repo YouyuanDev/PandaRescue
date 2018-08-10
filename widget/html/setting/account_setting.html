@@ -147,7 +147,10 @@
             //获取缓存大小
             api.getCacheSize(function(ret) {
                 var size = ret.size;
-                $('.app-cache').text(size + "MB");
+                if(size!=undefined&&size!=""){
+                  size=(size/(1024*1024)).toFixed(2);
+                  $('.app-cache').text(size + "MB");
+                }
             });
             hlLanguage("../../i18n/");
         }

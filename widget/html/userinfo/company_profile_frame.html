@@ -1,0 +1,502 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0" />
+    <meta name="format-detection" content="telephone=no,email=no,date=no,address=no">
+    <title>商户信息简介Frame</title>
+    <link rel="stylesheet" type="text/css" href="../../css/api.css" />
+    <link rel="stylesheet" type="text/css" href="../../css/aui.css" />
+    <link rel="stylesheet" type="text/css" href="../../css/font-awesome.min.css" />
+    <link rel="stylesheet" type="text/css" href="../../css/style.css" />
+    <style>
+        .img-son,
+        .img-son {
+            height: 6rem;
+        }
+
+        .img-container {
+            padding: 0.5rem;
+        }
+
+        .company-pic {
+            padding: 0.1rem;
+            width: 100%;
+            height: 6rem;
+        }
+    </style>
+</head>
+
+<body class="pr-body-bgcolor">
+    <div class="aui-content aui-margin-b-15">
+        <ul class="aui-list aui-form-list">
+            <li class="aui-list-item">
+                <div class="aui-list-item-inner">
+                    <div class="aui-list-item-label i18n1" name="merchantname">
+                        商户名称
+                    </div>
+                    <div class="aui-list-item-input">
+                        <input class="company-name-input" type="text" placeholder="商户名称">
+                    </div>
+                </div>
+            </li>
+            <li class="aui-list-item">
+                <div class="aui-list-item-inner">
+                    <div class="aui-list-item-label i18n1" name="merchanttaxnumber">
+                        商户税号
+                    </div>
+                    <div class="aui-list-item-input">
+                        <input class="company-tax-input" type="text" placeholder="商户税号">
+                    </div>
+                </div>
+            </li>
+
+            <li class="aui-list-item">
+                <div class="aui-list-item-inner">
+                    <div class="aui-list-item-label i18n1" name="telephone">
+                        商户座机
+                    </div>
+                    <div class="aui-list-item-input">
+                        <input class="company-phone-input" type="text" placeholder="商户座机">
+                    </div>
+                </div>
+            </li>
+            <li class="aui-list-item">
+                <div class="aui-list-item-inner">
+                    <div class="aui-list-item-label i18n1" name="address">
+                        商户地址
+                    </div>
+                    <div class="aui-list-item-input">
+                        <input class="company-address-input" type="text" placeholder="商户地址">
+                    </div>
+                </div>
+            </li>
+            <li class="aui-list-item">
+                <div class="aui-list-item-inner">
+                    <div class="aui-list-item-label i18n1" name="contactname">
+                        联系人姓名
+                    </div>
+                    <div class="aui-list-item-input">
+                        <input class="company-contact-input" type="text" placeholder="联系人姓名">
+                    </div>
+                </div>
+            </li>
+            <li class="aui-list-item">
+                <div class="aui-list-item-inner">
+                    <div class="aui-list-item-label i18n1" name="cellphoneno">
+                        手机号
+                    </div>
+                    <div class="aui-list-item-input">
+                        <input class="company-cellphone-input" type="tel" placeholder="手机号">
+                    </div>
+                </div>
+            </li>
+            <li class="aui-list-item">
+                <div class="aui-list-item-inner">
+                    <div class="aui-list-item-label i18n1" name="foundingtime">
+                        成立时间
+                    </div>
+                    <div class="aui-list-item-input">
+                        <input class="company-foundtime-input" readonly="readonly" type="text" placeholder="成立时间">
+                    </div>
+                </div>
+            </li>
+        </ul>
+    </div>
+    <div class="aui-content aui-margin-b-15">
+        <ul class="aui-list aui-form-list">
+            <li class="aui-list-item">
+                <div class="aui-list-item-inner">
+                    <div class="aui-list-item-label i18n1" name="longitude">
+                        经度
+                    </div>
+                    <div class="aui-list-item-input">
+                        <input class="company-lon-input" type="text" placeholder="经度">
+                    </div>
+                    <div class="aui-list-item-right" style="padding-right:1rem;">
+                        <i class="fa fa-map-marker fa-2x" onclick="openAutomaticPositioning();"></i>
+                        <!-- <div class="aui-btn  aui-btn-sm pr-fontcolor pr-bgcolor i18n1" name="autopositioning" >自动定位</div> -->
+                    </div>
+                </div>
+            </li>
+            <li class="aui-list-item">
+                <div class="aui-list-item-inner">
+                    <div class="aui-list-item-label i18n1" name="latitude">
+                        纬度
+                    </div>
+                    <div class="aui-list-item-input">
+                        <input class="company-lat-input" type="text" placeholder="纬度">
+                    </div>
+                    <div class="aui-list-item-right" style="padding-right:1rem;">
+                        <i class="fa fa-map-marker fa-2x" onclick="openAutomaticPositioning();"></i>
+                        <!-- <div class="aui-btn  aui-btn-sm pr-fontcolor pr-bgcolor i18n1" name="autopositioning" >自动定位</div> -->
+                    </div>
+                </div>
+            </li>
+            <li class="aui-list-item">
+                <div class="aui-list-item-inner aui-list-item-arrow" onclick="openCompanyAuthentication();">
+                    <div class="aui-list-item-label i18n1" name="realnameauthentication">
+                        实名认证
+                    </div>
+                    <div class="aui-list-item-input">
+                        <span class="fa fa-check-circle-o"></span><span class="i18n1 company-certified" name="uncertified">未认证</span>
+                    </div>
+                </div>
+            </li>
+        </ul>
+    </div>
+    <div class="aui-content aui-margin-b-15">
+        <ul class="aui-list aui-form-list">
+            <li class="aui-list-item">
+                <div class="aui-list-item-inner">
+                    <div class="aui-list-item-label i18n1" name="balance">
+                        余额
+                    </div>
+                    <div class="aui-list-item-input">
+                        <div class="aui-label company-balance"></div>
+                    </div>
+                </div>
+            </li>
+        </ul>
+    </div>
+    <section class="aui-grid img-container">
+        <div class="aui-row">
+            <div class="aui-col-xs-4 img-plus" onclick="addCompanyPicture();">
+                <img src="../../image/add_picture.png" class="company-pic" />
+            </div>
+        </div>
+    </section>
+    <!-- <div class="aui-content aui-margin-b-15 img-container">
+        <ul class="aui-list aui-form-list">
+            <li class="aui-list-item">
+                <div class="aui-list-item-inner">
+                    <div class="aui-row aui-row-padded">
+                        <div class="aui-col-xs-4 img-plus" onclick="addCompanyPicture();">
+                            <img src="../../image/add_picture.png" class="company-pic" />
+                        </div>
+                    </div>
+                </div>
+            </li>
+        </ul>
+    </div> -->
+</body>
+
+</html>
+<script type="text/javascript" src="../../script/api.js"></script>
+<script type="text/javascript" src="../../script/jquery-3.3.1.min.js"></script>
+<script type="text/javascript" src="../../script/common.js"></script>
+<script src="../../script/jquery.i18n.properties-1.0.9.js" type="text/javascript"></script>
+<script src="../../script/language.js" type="text/javascript"></script>
+<script type="text/javascript">
+    var g_id, g_is_verified, g_upload_files = "";
+    var map;
+    apiready = function() {
+            fnSettingHeader();
+            registerUploadPhotosEvent();
+            registerSaveCompanyUserInfoEvent();
+            map = api.require('bMap');
+            var data = api.pageParam;
+            if (data != undefined) {
+                loadCompanyInfo();
+            }
+            hlLanguage("../../i18n/");
+        }
+        //商户信息修改
+    function submitForm() {
+        if (g_id == undefined && g_id == "") {
+            toastFail("系统繁忙,请稍后重试!");
+            return;
+        }
+        if (g_is_verified == undefined && g_is_verified == "") {
+            toastFail("修改失败!");
+            return;
+        } else {
+            if (g_is_verified == 1) {
+                toastFail("审核中,信息不能修改!");
+                return;
+            } else if (g_is_verified == 2) {
+                toastFail("审核成功,信息不能修改!");
+                return;
+            }
+        }
+        var s = 'http://' + serverIP + '/CompanyUser/saveCompanyUserInfo.action';
+        api.ajax({
+            url: s,
+            method: 'post',
+            timeout: 30,
+            dataType: 'json',
+            data: {
+                values: {
+                    id: g_id,
+                    company_name: $('.company-name-input').val(),
+                    company_tax_code: $('.company-tax-input').val(),
+                    company_location_lon: $('.company-lon-input').val(),
+                    company_location_lat: $('.company-lat-input').val(),
+                    contact_person: $('.company-contact-input').val(),
+                    address: $('.company-address-input').val(),
+                    lane_line: $('.company-phone-input').val(),
+                    cell_phone: $('.person-cellphone-input').val()
+                }
+            }
+        }, function(ret, err) {
+            if (ret) {
+                if (ret.success) {
+                    toastSuccess(ret.message);
+                } else {
+                    toastFail(ret.message);
+                }
+            } else {
+                toastFail('保存商户信息时出错,错误信息:' + err.code);
+            }
+        });
+    }
+    //加载商户信息
+    function loadCompanyInfo() {
+        $('.img-son').remove();
+        openLoading();
+        var s = 'http://' + serverIP + '/CompanyUser/getCompanyUserInfo.action';
+        api.ajax({
+            url: s,
+            method: 'post',
+            timeout: 30,
+            dataType: 'json'
+        }, function(ret, err) {
+            if (ret) {
+                var company_name, company_found_date, company_tax_code, company_location_lon,
+                    company_location_lat, contact_person, cell_phone, address, lane_line, is_verified, balance, upload_files;
+                if (ret.success) {
+                    g_id = ret.company.id;
+                    company_name = ret.company.company_name;
+                    company_tax_code = ret.company.company_tax_code;
+                    company_location_lon = ret.company.company_location_lon;
+                    company_location_lat = ret.company.company_location_lon;
+                    contact_person = ret.company.contact_person;
+                    cell_phone = ret.company.cell_phone;
+                    address = ret.company.address;
+                    lane_line = ret.company.lane_line;
+                    is_verified = ret.company.is_verified;
+                    company_found_date = ret.company.company_found_date;
+                    balance = ret.company.pr_account_amount;
+                    upload_files = ret.company.upload_files;
+                } else {
+                    toastFail(ret.message);
+                    if (ret.relogin) {
+                        api.sendEvent({
+                            name: 'reloginEvent'
+                        });
+                    }
+                }
+                if (company_name != undefined && company_name != "") {
+                    $('.company-name-input').val(company_name);
+                }
+                if (company_tax_code != undefined && company_tax_code != "") {
+                    $('.company-tax-input').val(company_tax_code);
+                }
+                if (cell_phone != undefined && cell_phone != "") {
+                    $('.company-cellphone-input').val(cell_phone);
+                }
+                if (contact_person != undefined && contact_person != "") {
+                    $('.company-contact-input').val(contact_person);
+                }
+                if (address != undefined && address != "") {
+                    $('.company-address-input').val(address);
+                }
+                if (lane_line != undefined && lane_line != "") {
+                    $('.company-phone-input').val(lane_line);
+                }
+                if (company_location_lon != undefined && company_location_lon != "") {
+                    $('.company-lon-input').val(company_location_lon);
+                }
+                if (company_location_lat != undefined && company_location_lat != "") {
+                    $('.company-lat-input').val(company_location_lat);
+                }
+                if (company_found_date != undefined && company_found_date != "") {
+                    $('.company-foundtime-input').val(getDate1(company_found_date));
+                }
+                if (balance != undefined && balance != "") {
+                    $('.company-balance').text(balance + "￥");
+                }
+                if (is_verified != undefined && is_verified != "") {
+                    g_is_verified = is_verified;
+                    if (is_verified == 0) {
+                        $('.company-certified').text("未认证");
+                    } else if (is_verified == 1) {
+                        $('.company-certified').text("已认证");
+                    } else if (is_verified == 2) {
+                        $('.company-certified').text("审核中");
+                    } else if (is_verified == 3) {
+                        $('.company-certified').text("认证失败");
+                    }
+                }
+                if (upload_files != undefined && upload_files != "") {
+                    g_upload_files = upload_files;
+                    var imgArr = upload_files.split(';');
+
+                    var imgUrl = 'http://' + serverIP + '/upload/pictures/';
+                    var count = 0;
+                    for (var i = 0; i < imgArr.length; i++) {
+                        if (imgArr[i] != "") {
+                            $('.img-plus').before(makeTemplateOfCompanyUserInfo(imgArr[i], imgUrl + imgArr[i]));
+                            count++;
+                        }
+                    }
+                    if (count > 0) {
+                        $('.img-container').show();
+                    }
+                }
+            } else {
+                toastFail('获取商户信息时出错,错误信息:' + err.code);
+            }
+            closeLoading();
+        });
+    }
+    //开启定位
+    function openAutomaticPositioning() {
+        map.getLocation({
+            accuracy: '10m',
+            autoStop: true,
+            filter: 1
+        }, function(ret, err) {
+            if (ret.status) {
+                toastSuccess("定位成功!");
+                var lon = ret.lon;
+                var lat = ret.lat;
+                $('.company-lon-input').val(lon);
+                $('.company-lat-input').val(lat);
+            } else {
+                toastFail("定位错误,错误代码:" + err.code);
+            }
+        });
+    }
+    //打开商户认证通道
+    function openCompanyAuthentication() {
+        api.openFrame({
+            name: 'company_authentication',
+            url: '../authentication/company_authentication.html',
+            rect: {
+                x: 0,
+                y: 0,
+                w: api.winWidth,
+                h: api.height
+            },
+            reload: true,
+            animation: {
+                type: "push",
+                subType: "from_right",
+                duration: 300
+            }
+        });
+    }
+    //注册修改商户信息事件
+    function registerSaveCompanyUserInfoEvent() {
+        api.addEventListener({
+            name: 'SaveCompanyUserInfoEvent'
+        }, function(ret, err) {
+            submitForm();
+        });
+
+    }
+    //生成商户信息图片展示模板
+    function makeTemplateOfCompanyUserInfo(imgName, url) {
+        var template = '<div class="aui-col-xs-4 img-son" data-name=' + imgName + ' onclick="removeCompanyPictures(this);">' +
+            '<img src="' + url + '" class="company-pic"/>' +
+            '</div>';
+        return template;
+    }
+    //移除照片
+    function removeCompanyPictures(obj) {
+        api.confirm({
+            title: '提示',
+            msg: '确定要删除吗?',
+            buttons: ['确定', '取消']
+        }, function(ret, err) {
+            var index = ret.buttonIndex;
+            if(index==1){
+              var $obj = $(obj);
+              var imgName = $obj.attr('data-name');
+              if (g_id == undefined && g_id == "" && imgName == undefined && imgName == "") {
+                  toastFail("移除图片失败!");
+                  return;
+              }
+              var temp = g_upload_files.replace(imgName + ";", "");
+              alert(temp);
+              var s = 'http://' + serverIP + '/CompanyUser/saveCompanyUserInfo.action';
+              api.ajax({
+                  url: s,
+                  method: 'post',
+                  timeout: 30,
+                  dataType: 'json',
+                  data: {
+                      values: {
+                          id: g_id,
+                          upload_files:temp
+                      }
+                  }
+              }, function(ret, err) {
+                  if (ret) {
+                      if (ret.success) {
+                          toastSuccess(ret.message);
+                          g_upload_files = temp;
+                          $obj.remove();
+                      } else {
+                          toastFail(ret.message);
+                      }
+                  } else {
+                      toastFail('保存商户信息时出错,错误信息:' + err.code);
+                  }
+              });
+            }
+        });
+    }
+    //添加图片
+    function addCompanyPicture() {
+        selectPicture();
+    }
+    //监听图片上传成功事件
+    function registerUploadPhotosEvent() {
+        //如监听网络连接事件
+        api.addEventListener({
+            name: 'UploadPictureEvent'
+        }, function(ret, err) {
+            var imgUrl = ret.value.imgUrl;
+            var base64Data = ret.value.base64Data;
+            updateCompanyPicture(imgUrl);
+        });
+
+    }
+    //上传用户选择的图片
+    function updateCompanyPicture(imgUrl) {
+        if (g_id == undefined && g_id == "" && imgUrl == undefined && imgUrl == "") {
+            toastFail("上传图片失败!");
+            return;
+        }
+        var upload_files = g_upload_files + imgUrl + ";";
+        var s = 'http://' + serverIP + '/CompanyUser/saveCompanyUserInfo.action';
+        api.ajax({
+            url: s,
+            method: 'post',
+            timeout: 30,
+            dataType: 'json',
+            data: {
+                values: {
+                    id: g_id,
+                    upload_files: upload_files
+                }
+            }
+        }, function(ret, err) {
+            if (ret) {
+                if (ret.success) {
+                    toastSuccess(ret.message);
+                    var url = 'http://' + serverIP + '/upload/pictures/' + imgUrl;
+                    g_upload_files = g_upload_files + imgUrl + ";";
+                    $('.img-plus').before(makeTemplateOfCompanyUserInfo(imgUrl, url));
+                } else {
+                    toastFail(ret.message);
+                }
+            } else {
+                toastFail('保存商户信息时出错,错误信息:' + err.code);
+            }
+        });
+    }
+</script>
