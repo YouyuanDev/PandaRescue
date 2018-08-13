@@ -613,27 +613,6 @@
                         contact_person = order.contact_person;
                         cell_phone = order.cell_phone;
                     }
-                    //如果是普通用户,获取商户坐标
-                    // if (g_account_type == "person_user") {
-                    //     if (company_user_location != undefined) {
-                    //         var lon_lat = company_user_location.split(',');
-                    //         if (lon_lat.length > 1) {
-                    //             var lon = lon_lat[0];
-                    //             var lat = lon_lat[1];
-                    //             updateCompanyUserLocation(g_CompanyList.length, lon, lat, contact_person, cell_phone);
-                    //         }
-                    //     }
-                    // } else {
-                    //     //获取用户坐标
-                    //     if (person_user_location != undefined) {
-                    //         var lon_lat = person_user_location.split(',');
-                    //         if (lon_lat.length > 1) {
-                    //             var lon = lon_lat[0];
-                    //             var lat = lon_lat[1];
-                    //             updatePersonUserLocation(g_CompanyList.length, lon, lat);
-                    //         }
-                    //     }
-                    // }
                     if (g_order_status != status_code) {
                         g_order_status = status_code;
                         if (status_code == "confirmed") {
@@ -809,8 +788,6 @@
                         }
                     }, function(ret) {
                         if (ret.status) {
-                            //var distance = ret.distance;
-                            //alert("ret.distance"+ret.distance);
                             SendLocationToServer(now_lon, now_lat, order_no, ret.distance);
                         }
                     });
@@ -844,17 +821,7 @@
                 status_name_en: status_name_en
             }
         });
-        // api.setFrameAttr({
-        //     name: 'order_status',
-        //     hidden: true
-        // });
     }
-    // function openOrderStatusFrame() {
-    //   api.setFrameAttr({
-    //       name: 'order_status',
-    //       hidden: false
-    //   });
-    // }
     //更新商户所派人员坐标
     function updateCompanyUserLocation(id, lon, lat, title, subTitle) {
         map.annotationExist({
@@ -1452,23 +1419,6 @@
     }
     //侧滑打开账户设置
     function openAccount() {
-        // api.openSlidLayout({
-        //     type: 'left',
-        //     slidPaneStyle: {
-        //             leftEdge:api.winWidth/3*2,
-        //     },
-        //     fixedPane: {
-        //         name: 'index',
-        //         url: './index.html'
-        //     },
-        //     slidPane: {
-        //         name: 'account',
-        //         url: './html/frames/account.html'
-        //     }
-        // }, function(ret, err) {
-        //
-        // });
-
         api.openFrame({
             name: 'mask',
             url: './html/frames/mask.html',

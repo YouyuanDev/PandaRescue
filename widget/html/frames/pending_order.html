@@ -178,8 +178,6 @@
         //alert("person_user_location_lon"+person_user_location_lon);
         //计算路程距离
         getRouteDistance(order_no, person_user_location_lon, person_user_location_lat);
-
-
         api.sendEvent({
             name: 'ClickPendingOrderListEventListener',
             extra: {
@@ -188,9 +186,16 @@
         });
     }
     //生成模板
-    function pendingOrderListTemplate(person_user_location_lon,person_user_location_lat,order_no, service_type_name, failure_type_name, distance) {
+    function pendingOrderListTemplate(person_user_location_lon,person_user_location_lat,order_no, service_type_name, failure_type_name, distance,icon_url) {
+      var imgUrl="../../image/default_portrait.png";
+      if(icon_url!=undefined&&icon_url!=""){
+            imgUrl='http://' + serverIP + '/upload/pictures/'+icon_url;
+      }
         var template = '<li class="aui-list-item aui-list-item-middle" person-user-location-lon="'+person_user_location_lon+'" person-user-location-lat="'+person_user_location_lat+'"  data-no="' + order_no + '" onclick="popupBubble(this)">' +
             '<div class="aui-media-list-item-inner">' +
+            '<div class="aui-list-item-media" style="width:3rem;">' +
+            '<img src="'+imgUrl+'" class="aui-img-round aui-list-img-sm" onerror="imgExists(this);" style="width:2rem;height:2rem;">' +
+            '</div>'+
             '<div class="aui-list-item-inner">' +
             '<div class="aui-list-item-text">' +
             '<div class="aui-list-item-title aui-font-size-14">' + service_type_name + '</div>' +
