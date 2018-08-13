@@ -69,7 +69,6 @@
     //var company_data;
     var my_lon;
     var my_lat;
-    var map;
     var g_start=1;
     var allow_scroll=true;
     var g_companyList=[];
@@ -186,11 +185,12 @@
                     //ret.plans[0].duration;
                     //alert(company_no + " distance=" + ret.plans[0].distance);
                     $("#dis_" + company_no).text('驾车：' + getDistance(ret.plans[0].distance) + 'km ' + '耗时：' + convertSecToMin(ret.plans[0].duration) + '分钟');
+
                 } else {
                     toastFail("系统错误!");
                 }
             } else {
-                toastFail("系统错误" + err.msg);
+                toastFail("系统错误" + err.code);
             }
 
         });
@@ -207,8 +207,10 @@
         //计算路程距离
         getRouteDistance(company_no, company_location_lon, company_location_lat);
         api.sendEvent({
-            name: 'ClickCompanyListEventListener',
+            name: 'LocatingCompanyLocationEvent',
             extra: {
+                lon: company_location_lon,
+                lat:company_location_lat,
                 company_no: company_no
             }
         });

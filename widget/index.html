@@ -112,6 +112,8 @@
         loadAllServiceType();
         loadAllFaultType();
         registLocatingEvent();
+        registerLocatingPersonUserLocationEvent();
+        registLocatingCompanyLocationEvent();
         registerLoadNearbyCompanyEvent();
         registerLoadAllPendingOrderEvent();
         registerOrderStatusEvent();
@@ -306,13 +308,13 @@
         });
     }
     //设置未接单订单标注弹出气泡
-    function setPendingOrderBubble(bubble_id, service_type_name, failure_type_name) {
+    function setPendingOrderBubble(bubble_id, service_type_name, failure_type_name, address) {
         map.setBubble({
             id: bubble_id,
             // bgImg: 'widget://image/bubble_bg.png',
             content: {
-                title: service_type_name,
-                subTitle: failure_type_name,
+                title: failure_type_name,
+                subTitle: address,
             },
             styles: {
                 titleColor: '#000',
@@ -430,7 +432,6 @@
                 // company: rets,
                 g_my_lon: g_my_lon,
                 g_my_lat: g_my_lat
-
             }
         });
         openLocatingButton();
@@ -495,6 +496,50 @@
                 trackingMode: 'none'
             });
         });
+    }
+    //
+    function registerLocatingPersonUserLocationEvent() {
+        api.addEventListener({
+            name: 'LocatingPersonUserLocationEvent'
+        }, function(ret, err) {
+            var lon = ret.value.lon;
+            var lat = ret.value.lat;
+            var order_no = ret.value.order_no;
+            map.setCenter({
+                coords: {
+                    lon: lon,
+                    lat: lat
+                }
+            });
+            api.sendEvent({
+                name: 'ClickPendingOrderListEventListener',
+                extra: {
+                    order_no: order_no
+                }
+            });
+        });
+    }
+    //
+    function registLocatingCompanyLocationEvent(){
+      api.addEventListener({
+          name: 'LocatingCompanyLocationEvent'
+      }, function(ret, err) {
+          var lon = ret.value.lon;
+          var lat = ret.value.lat;
+          var company_no = ret.value.company_no;
+          map.setCenter({
+              coords: {
+                  lon: lon,
+                  lat: lat
+              }
+          });
+          api.sendEvent({
+              name: 'ClickCompanyListEventListener',
+              extra: {
+                  company_no: company_no
+              }
+          });
+      });
     }
     //接单点击事件
     function registerReceiptEvent() {
@@ -1029,8 +1074,8 @@
                         toastFail(rets.msg);
                         if (g_account_type == "person_user") {
                             //如果是个人用则显示附近商户
-                             openCompanyFrame();
-                             //loadNearbyCompany();
+                            openCompanyFrame();
+                            //loadNearbyCompany();
                         } else if (g_account_type == "company_user") {
                             //如果是商户用户,则显示所有pending订单
                             openPendingorderFrame();
@@ -1078,13 +1123,13 @@
         api.addEventListener({
             name: 'loadNearbyCompanyEvent'
         }, function(ret, err) {
-            var annotations=ret.value.annotations;
-            var companyList=ret.value.g_companyList;
-            var bubble=ret.value.bubble;
+            var annotations = ret.value.annotations;
+            var companyList = ret.value.g_companyList;
+            var bubble = ret.value.bubble;
             //g_annotations=annotations;
-            g_CompanyList=companyList;
+            g_CompanyList = companyList;
             setCompanyAnnotations(annotations);
-            for (var i = 0; i <bubble.length; i++) {
+            for (var i = 0; i < bubble.length; i++) {
                 setCompanyBubble(bubble[i].id, bubble[i].company_name);
             }
         });
@@ -1147,13 +1192,13 @@
         api.addEventListener({
             name: 'loadAllPendingOrderEvent'
         }, function(ret, err) {
-            var annotations=ret.value.annotations;
-            var companyList=ret.value.g_companyList;
-            var bubble=ret.value.bubble;
-            g_CompanyList=companyList;
+            var annotations = ret.value.annotations;
+            var companyList = ret.value.g_companyList;
+            var bubble = ret.value.bubble;
+            g_CompanyList = companyList;
             setPendingOrderAnnotations(annotations);
-            for (var i = 0; i <bubble.length; i++) {
-                setPendingOrderBubble(bubble[i].id, bubble[i].service_type_name, bubble[i].failure_type_name);
+            for (var i = 0; i < bubble.length; i++) {
+                setPendingOrderBubble(bubble[i].id, bubble[i].service_type_name, bubble[i].failure_type_name, bubble[i].address);
             }
         });
     }

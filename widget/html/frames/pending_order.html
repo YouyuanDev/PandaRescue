@@ -103,6 +103,7 @@
                         toastFail("加载完毕!");
                         allow_scroll=false;
                       }
+                      var count=ret.rows.length;
                         for (var i = 0; i < ret.rows.length; i++) {
                             var id=g_companyList.length+i;
                             var service_type_name_obj = g_service_type_dict[ret.rows[i].service_type_code];
@@ -111,11 +112,21 @@
                             }else{
                                 service_type_name = "";
                             }
-                            var failure_type_name_obj = g_failure_type_dict[ret.rows[i].failure_type_code];
-                            if(failure_type_name_obj!=undefined){
-                              failure_type_name=failure_type_name_obj.failure_type_name;
-                            }else {
-                              failure_type_name="";
+                            var failure_type_code_list=ret.rows[i].failure_type_code_list;
+                            var failure_type_name="";
+                            if(failure_type_code_list!=undefined&&failure_type_code_list!=""){
+                              var list=failure_type_code_list.split(',');
+                              for (var j = 0; j< list.length; j++) {
+                                 if(list[i]!=undefined&&list[i]!=""){
+                                   var failure_type_name_obj = g_failure_type_dict[list[j]];
+                                   if(failure_type_name_obj!=undefined){
+                                     failure_type_name=failure_type_name+failure_type_name_obj.failure_type_name+",";
+                                   }
+                                 }
+                              }
+                            }
+                            if(failure_type_name.length>0){
+                              failure_type_name=failure_type_name.substring(0,failure_type_name.length-1);
                             }
                             g_companyList.push({
                                 id: id,
@@ -125,6 +136,7 @@
                             var order_no=ret.rows[i].order_no;
                             var distance=getDistance(ret.rows[i].distance);
                             var icon_url=ret.rows[i].icon_url;
+                            var index=i;
                             // lonlat------if语句开始
                             if(lonlat!=undefined){
                               var lonlatArr=lonlat.split(',');
@@ -132,6 +144,7 @@
                               if(lonlatArr.length>=2){
                                 lon=lonlatArr[0];
                                 lat=lonlatArr[1];
+                                //注意:getNameFromCoords为异步查询
                                 map.getNameFromCoords({
                                    lon:lon,
                                    lat:lat
@@ -153,14 +166,24 @@
                                       //person_user_location_lon,person_user_location_lat,order_no, service_type_name, failure_type_name, distance,icon_url,address
                                       var template=pendingOrderListTemplate(lon,lat,order_no, service_type_name, failure_type_name,distance ,icon_url,address);
                                       $('#poilist-ul').append(template);
+                                      if(index==(count-1)){
+                                        api.sendEvent({
+                                         name: 'loadAllPendingOrderEvent',
+                                         extra: {
+                                                annotations:annotations,
+                                                g_companyList:g_companyList,
+                                                bubble:bubble
+                                             }
+                                         });
+                                      }
+                                      index++;
                                       if($('#poilist-ul').find('li').length<=0){
                                          $('.pr-empty').show();
-                                      }else{
-                                        $('.pr-empty').hide();
                                       }
-                                  }
-                                  if($('#poilist-ul').find('li').length<=0){
-                                     $('.pr-empty').show();
+                                  }else{
+                                    if($('#poilist-ul').find('li').length<=0){
+                                       $('.pr-empty').show();
+                                    }
                                   }
                                 });
 
@@ -169,14 +192,7 @@
                             // lonlat------if语句结束
                         }
                         //  showPendingOrder(ret.rows);
-                        api.sendEvent({
-                         name: 'loadAllPendingOrderEvent',
-                         extra: {
-                                annotations:annotations,
-                                g_companyList:g_companyList,
-                                bubble:bubble
-                             }
-                         });
+
 
                     } else {
                         api.alert({
@@ -240,8 +256,8 @@
         //计算路线距离
         map.searchRoute({
             id: 1,
-            type: 'drive',
-            policy: 'ecar_time_first/ecar_dis_first',
+            // type: 'drive',
+            // policy: 'ecar_time_first/ecar_dis_first',
             start: {
                 lon: my_lon,
                 lat: my_lat
@@ -275,16 +291,23 @@
 
         var person_user_location_lon = $(obj).attr('person-user-location-lon');
         var person_user_location_lat = $(obj).attr('person-user-location-lat');
+        api.sendEvent({
+            name: 'LocatingPersonUserLocationEvent',
+            extra: {
+                lon: person_user_location_lon,
+                lat:person_user_location_lat,
+                order_no:order_no
+            }
+        });
 
+        // var   bmap = api.require('bMap');
+        // alert(person_user_location_lon+":"+person_user_location_lat);
+
+      //});
         //alert("person_user_location_lon"+person_user_location_lon);
         //计算路程距离
         getRouteDistance(order_no, person_user_location_lon, person_user_location_lat);
-        api.sendEvent({
-            name: 'ClickPendingOrderListEventListener',
-            extra: {
-                order_no: order_no
-            }
-        });
+
     }
     //生成模板
     function pendingOrderListTemplate(person_user_location_lon,person_user_location_lat,order_no, service_type_name, failure_type_name, distance,icon_url,address) {
