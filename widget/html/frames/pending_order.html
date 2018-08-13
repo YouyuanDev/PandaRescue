@@ -253,11 +253,14 @@
     function getRouteDistance(order_no, person_user_location_lon, person_user_location_lat) {
         var p_lon = person_user_location_lon;
         var p_lat = person_user_location_lat;
+        map.removeRoute({
+          ids: [1]
+        });
         //计算路线距离
         map.searchRoute({
             id: 1,
-            // type: 'drive',
-            // policy: 'ecar_time_first/ecar_dis_first',
+            type: 'drive',
+            policy: 'ecar_time_first/ecar_dis_first',
             start: {
                 lon: my_lon,
                 lat: my_lat

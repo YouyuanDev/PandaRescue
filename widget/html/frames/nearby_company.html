@@ -166,6 +166,10 @@
     function getRouteDistance(company_no, company_location_lon, company_location_lat) {
         var c_lon = company_location_lon;
         var c_lat = company_location_lat;
+
+        map.removeRoute({
+                    ids: [1]
+        });
         //计算路线距离
         map.searchRoute({
             id: 1,
