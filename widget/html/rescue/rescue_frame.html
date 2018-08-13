@@ -19,18 +19,16 @@
             line-height: 2.3rem;
             text-align: center;
         }
-
-        .close-btn {
+        /*.close-btn {
             display: block;
             float: right;
             padding: 0px 8px;
             color: #000;
             font-size: 1rem;
-        }
-
-        .aui-bar-nav {
+        }*/
+        /*.aui-bar-nav {
             background-color: #fff;
-        }
+        }*/
 
         .aui-list .aui-list-item {
             padding-top: 0.6rem;
@@ -43,20 +41,6 @@
 
         .select-picture .aui-btn {
             width: 100%;
-        }
-
-        .service-container {
-            overflow-y: scroll;
-            padding-top: 2.25rem;
-            padding-bottom: 2.25rem;
-        }
-
-        .aui-bar {
-            position: fixed;
-        }
-
-        .service-footer {
-            z-index: 101;
         }
 
         .aui-list .aui-list-item-label {
@@ -79,84 +63,93 @@
         .img-container {
             padding: 0.2rem;
         }
+
+        .img-item {
+            position: absolute;
+            right: 0.2rem;
+            top: 0.2rem;
+        }
+        .cost-item{
+          padding:0.2rem;
+        }
     </style>
 </head>
 
 <body>
-    <header class="aui-bar aui-bar-nav">
-        <i class="fa fa-close close-btn"></i>
-    </header>
-    <div class="service-container">
-        <div class="aui-content aui-margin-b-15">
-            <input type="hidden" value="0" class="id" />
-            <ul class="aui-list aui-form-list">
-                <li class="aui-list-item">
-                    <div class="aui-list-item-inner">
-                        <div class="aui-list-item-label i18n1" name="servicetype">
-                            服务类型
-                        </div>
-                        <div class="aui-list-item-input service-type">
-                        </div>
+    <!-- <header id="header" class="aui-bar aui-bar-nav aui-bar-light personal-header pr-bgcolor">
+      <a class="aui-pull-right aui-btn" onclick="closeServiceTypeForm();">
+          <span class="fa fa-close"></span>
+      </a>
+  </header> -->
+    <!-- <div class="service-container"> -->
+    <div class="aui-content aui-margin-b-15">
+        <input type="hidden" value="0" class="id" />
+        <ul class="aui-list aui-form-list">
+            <li class="aui-list-item">
+                <div class="aui-list-item-inner">
+                    <div class="aui-list-item-label i18n1" name="servicetype">
+                        服务类型
                     </div>
-                </li>
-                <li class="aui-list-item">
-                    <div class="aui-list-item-inner">
-                        <div class="aui-list-item-label i18n1" name="failuretype">
-                            故障类型
-                        </div>
-                        <div class="aui-list-item-input failure-type">
-                        </div>
+                    <div class="aui-list-item-input service-type">
                     </div>
-                </li>
-                <li class="aui-list-item">
-                    <div class="aui-list-item-inner">
-                        <div class="aui-list-item-label i18n1" name="uploadpicture">
-                            图片上传
-                        </div>
-                        <div class="aui-list-item-input select-picture">
-                            <p>
-                                <div class="aui-btn pr-bgcolor pr-fontcolor i18n1" name="selectpicture" onclick="selectPicture();">选择图片</div>
-                            </p>
-                        </div>
+                </div>
+            </li>
+            <li class="aui-list-item">
+                <div class="aui-list-item-inner">
+                    <div class="aui-list-item-label i18n1" name="failuretype">
+                        故障类型
                     </div>
-                </li>
-                <li class="aui-list-item">
-                    <div class="aui-list-item-inner">
-                        <div class="aui-list-item-label i18n1" name="adddescription">
-                            添加描述
-                        </div>
-                        <div class="aui-list-item-input">
-                            <textarea placeholder="在这里添加描述...." id="mk">
+                    <div class="aui-list-item-input failure-type">
+                    </div>
+                </div>
+            </li>
+            <li class="aui-list-item">
+                <div class="aui-list-item-inner">
+                    <div class="aui-list-item-label i18n1" name="uploadpicture">
+                        图片上传
+                    </div>
+                    <div class="aui-list-item-input select-picture">
+                        <p>
+                            <div class="aui-btn pr-bgcolor pr-fontcolor i18n1" name="selectpicture" onclick="userSelectPicture();">选择图片</div>
+                        </p>
+                    </div>
+                </div>
+            </li>
+            <li class="aui-list-item">
+                <div class="aui-list-item-inner">
+                    <div class="aui-list-item-label i18n1" name="adddescription">
+                        添加描述
+                    </div>
+                    <div class="aui-list-item-input">
+                        <textarea placeholder="在这里添加描述...." id="mk">
 
                          </textarea>
-                        </div>
                     </div>
-                </li>
-            </ul>
-        </div>
-        <div class="aui-content aui-margin-b-15 img-container">
-            <div class="aui-row aui-row-padded">
-                <div class="aui-col-xs-4">
-                    <img src="../../image/ceshi.jpg" />
                 </div>
-                <div class="aui-col-xs-4">
-                    <img src="../../image/ceshi.jpg" />
-                </div>
-                <div class="aui-col-xs-4">
-                    <img src="../../image/ceshi.jpg" />
-                </div>
-                <div class="aui-col-xs-4">
-                    <img src="../../image/ceshi.jpg" />
-                </div>
-                <div class="aui-col-xs-4">
-                    <img src="../../image/ceshi.jpg" />
-                </div>
-                <div class="aui-col-xs-4">
-                    <img src="../../image/ceshi.jpg" />
-                </div>
-            </div>
+            </li>
+        </ul>
+    </div>
+    <div class="aui-content aui-margin-b-15 img-container">
+        <div class="aui-row aui-row-padded">
+
         </div>
     </div>
+    <section class="aui-content-padded cost-container">
+            <div class="cost-item pr-body-bgcolor">
+              <span class="i18n1" name="servicecost"></span>
+              <div class="aui-label">
+                 <span class="service-cost"></span><span>￥</span>
+              </div>
+            </div>
+            <div class="cost-item pr-body-bgcolor">
+              <span class="i18n1" name="totalamount"></span>
+              <div class="aui-label aui-label-danger">
+                 <span class="total-cost"></span><span>￥</span>
+              </div>
+            </div>
+        <!-- <Br /> -->
+    </section>
+    <!-- </div> -->
     <footer class="aui-bar aui-bar-tab service-footer">
         <button class="submit-btn pr-bgcolor pr-color i18n1" name="submit" onclick="submitForm();">提交</button>
     </footer>
@@ -166,18 +159,19 @@
 <script type="text/javascript" src="../../script/common.js"></script>
 <script src="../../script/jquery.i18n.properties-1.0.9.js" type="text/javascript"></script>
 <script src="../../script/language.js" type="text/javascript"></script>
-<!-- <script type="text/javascript" src="../../script/aui-tab.js"></script> -->
 
 <script type="text/javascript">
     var map, g_language;
     apiready = function() {
+            fnSettingHeader();
+            $('.cost-container').hide();
             map = api.require('bMap');
             if (getCookie() == undefined || getCookie() == "zh-CN") {
                 g_language = true;
             } else {
                 g_language = false;
             }
-            registerUploadPhotosEvent
+            registerUploadPhotosEvent();
             closeServiceTypeForm();
             loadAllServiceType();
             loadAllFaultType();
@@ -194,12 +188,13 @@
                 var template, service_type_name, service_type_name_en;
                 for (var i = 0; i < ret.length; i++) {
                     var service_type_code = ret[i].service_type_code;
+                    var service_rate = ret[i].service_rate;
                     if (g_language) {
                         service_type_name = ret[i].service_type_name;
-                        template = serviceTypeTempalte(service_type_code, service_type_name);
+                        template = serviceTypeTempalte(service_type_code, service_type_name, service_rate);
                     } else {
                         service_type_name_en = ret[i].service_type_name_en;
-                        template = serviceTypeTempalte(service_type_code, service_type_name_en);
+                        template = serviceTypeTempalte(service_type_code, service_type_name_en, service_rate);
                     }
                     $('.service-type').append(template);
                 }
@@ -240,14 +235,14 @@
     //关闭表单
     function closeServiceTypeForm() {
         $('.close-btn').click(function() {
-            api.closeFrame({
+            api.closeWin({
                 name: 'service_type'
             });
         });
     }
     //服务类型模板
-    function serviceTypeTempalte(val, name) {
-        var template = '<label><input class="aui-radio" type="radio" value="' + val + '" name="radio">' + name + '</label>';
+    function serviceTypeTempalte(val, name, service_rate) {
+        var template = '<label><input class="aui-radio" onchange="serviceTypeChoiceOfEvent(this);" data-rate="' + service_rate + '" type="radio" value="' + val + '" name="radio">' + name + '</label>';
         return template;
     }
     //故障类型模板
@@ -354,6 +349,10 @@
             }
         });
     }
+    //选择图片
+    function userSelectPicture() {
+        selectPicture();
+    }
     //监听头像更换成功事件
     function registerUploadPhotosEvent() {
         //如监听网络连接事件
@@ -361,18 +360,57 @@
             name: 'UploadPictureEvent'
         }, function(ret, err) {
             var imgUrl = ret.value.imgUrl;
-            $('.').append(makePictureTemplate(imgUrl));
+            $('.img-container .aui-row-padded').append(makePictureTemplate(imgUrl));
         });
 
+    }
+    //删除图片
+    function deletePicture(obj) {
+        var $obj = $(obj);
+        var imgname = $obj.attr('data-img');
+        if (imgname != undefined && imgname != "") {
+            var s = 'http://' + serverIP + '/UploadFile/delUploadPicture.action';
+            api.ajax({
+                url: s,
+                method: 'post',
+                data: {
+                    values: {
+                        imgList: imgname
+                    }
+                }
+            }, function(ret, errs) {
+                if (ret) {
+                    if (ret.success) {
+                        toastSuccess('移除成功!');
+                        $obj.parent().remove();
+                    } else {
+                        toastFail('移除失败!');
+                    }
+                } else {
+                    toastFail('移除失败!');
+                }
+            });
+        }
     }
     //图片模板
     function makePictureTemplate(imgname) {
         var imgUrl = 'http://' + serverIP + '/upload/pictures/' + imgname;
         var template = '<div class="aui-col-xs-4">' +
-            '<img src="' + imgUrl + '" />' +
+            '<img src="' + imgUrl + '" style="width:100%;height:6rem;"/>' +
+            '<div class="aui-label img-item" data-img="' + imgname + '" onclick="deletePicture(this);"><i class="fa fa-close"></i></div>' +
             '</div>';
         return template;
     }
+    //服务类型选择事件
+    function serviceTypeChoiceOfEvent(obj) {
+        var service_rate = $(obj).attr('data-rate');
+        if (service_rate != undefined && service_rate != "") {
+            $('.cost-container').show();
+            $('.service-cost').text(service_rate);
+            $('.total-cost').text(service_rate);
+        }
+    }
+    //故障类型选择事件
 </script>
 
 </html>
