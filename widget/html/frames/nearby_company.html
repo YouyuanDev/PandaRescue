@@ -88,7 +88,7 @@
             var template = "";
             //alert("company_data.length="+company_data.length);
             for (var i = 0; i < company_data.length; i++) {
-                template += companyListTemplate(company_data[i].company_location_lon, company_data[i].company_location_lat, company_data[i].company_no, company_data[i].company_name, company_data[i].address, getDistance(company_data[i].distance));
+                template += companyListTemplate(company_data[i].company_location_lon, company_data[i].company_location_lat, company_data[i].company_no, company_data[i].company_name, company_data[i].address, getDistance(company_data[i].distance),company_data[i].upload_files);
                 //getRouteDistance(company_data[i]);
             }
             $('#poilist-ul').append(template);
@@ -158,9 +158,21 @@
         });
     }
     //生成模板
-    function companyListTemplate(company_location_lon, company_location_lat, company_no, company_name, company_address, distance) {
+    function companyListTemplate(company_location_lon, company_location_lat, company_no, company_name, company_address, distance,upload_files) {
+        var imgUrl="../../image/default_portrait.png";
+        if(upload_files!=undefined&&upload_files!=""){
+          var imgArr=upload_files.split(';');
+          if(imgArr.length>0){
+            if(imgArr[0]!=undefined&&imgArr[0]!=""){
+              imgUrl='http://' + serverIP + '/upload/pictures/'+imgArr[0];
+            }
+          }
+        }
         var template = '<li class="aui-list-item aui-list-item-middle" company-location-lon="' + company_location_lon + '" company-location-lat="' + company_location_lat + '"  data-no="' + company_no + '" onclick="popupBubble(this)">' +
             '<div class="aui-media-list-item-inner">' +
+            '<div class="aui-list-item-media" style="width:3rem;">' +
+            '<img src="'+imgUrl+'" class="aui-img-round aui-list-img-sm" onerror="imgExists(this);" style="width:2rem;height:2rem;">' +
+            '</div>'+
             '<div class="aui-list-item-inner">' +
             '<div class="aui-list-item-text">' +
             '<div class="aui-list-item-title aui-font-size-14">' + company_name + '</div>' +

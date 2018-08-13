@@ -63,12 +63,12 @@
 
 <body class="wrap">
     <header id="header" class="aui-bar aui-bar-nav pr-bgcolor">
-        <a class="aui-pull-left aui-btn">
-            <i class="fa fa-user-circle-o fa-size" onclick="openAccount();"></i>
+        <a class="aui-pull-left aui-btn" onclick="openAccount();">
+            <i class="fa fa-user-circle-o fa-size"></i>
         </a>
         <div class="aui-title">
             <!-- <i class="fa fa-user fa-size" onclick="requestSwitchAccounType('company_user');"></i> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp; -->
-            <i class="fa fa-map-marker fa-size" onclick="sendPush();"></i>
+            <i class="fa  fa-refresh" onclick="sendPush();"></i>
             <!-- <i class="fa fa-toggle-on fa-size" onclick="openLogin();"></i> -->
             <!-- <i class="fa fa-edit fa-size" onclick="openEdit();"></i> -->
         </div>
@@ -367,6 +367,10 @@
 
             }
         });
+        api.sendFrameToBack({
+            from: 'locating_button',
+            to: 'mask'
+        });
     }
     //打开求救按钮
     function openSosButton() {
@@ -383,6 +387,10 @@
 
             }
         });
+        api.sendFrameToBack({
+            from: 'sos_button',
+            to: 'mask'
+        });
     }
     //打开接单按钮
     function openReceiptButton() {
@@ -398,6 +406,10 @@
             pageParam: {
 
             }
+        });
+        api.sendFrameToBack({
+            from: 'receipt_button',
+            to: 'mask'
         });
     }
     //打开附近商户信息frame
@@ -420,6 +432,10 @@
 
             }
         });
+        api.sendFrameToBack({
+            from: 'nearby_company',
+            to: 'mask'
+        });
     }
     //打开待接单的订单信息frame
     function openPendingorderFrame(g_my_lon, g_my_lat, rets) {
@@ -441,6 +457,11 @@
                 g_service_type_dict: g_service_type_dict,
                 g_failure_type_dict: g_failure_type_dict
             }
+        });
+        //设置Frame层级问题
+        api.sendFrameToBack({
+            from: 'pending_order',
+            to: 'mask'
         });
     }
     //监听商户列表点击事件
@@ -1283,20 +1304,20 @@
         });
     }
     //注册加载所有服务类型事件
-    function registerLoadAllServiceTypeEvent(){
-      api.addEventListener({
-          name: 'GetAllServiceTypeEvent'
-      }, function(ret, err) {
-        g_service_type_dict=JSON.parse(ret.value.g_service_type_dict);
-      });
+    function registerLoadAllServiceTypeEvent() {
+        api.addEventListener({
+            name: 'GetAllServiceTypeEvent'
+        }, function(ret, err) {
+            g_service_type_dict = JSON.parse(ret.value.g_service_type_dict);
+        });
     }
-      //注册加载所有故障类型事件
-    function registerLoadAllFaultTypeEvent(){
-      api.addEventListener({
-          name: 'GetAllFailureTypeEvent'
-      }, function(ret, err) {
-             g_failure_type_dict=JSON.parse(ret.value.g_failure_type_dict);
-      });
+    //注册加载所有故障类型事件
+    function registerLoadAllFaultTypeEvent() {
+        api.addEventListener({
+            name: 'GetAllFailureTypeEvent'
+        }, function(ret, err) {
+            g_failure_type_dict = JSON.parse(ret.value.g_failure_type_dict);
+        });
     }
     //加载服务类型
     // function loadAllServiceType() {
@@ -1377,7 +1398,6 @@
     // }
 
     function sendPush() {
-        alert("调用getCurrentOrder");
         getCurrentOrder();
     }
     //设置推送回调函数
