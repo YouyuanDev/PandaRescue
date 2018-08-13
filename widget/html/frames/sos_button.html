@@ -25,7 +25,7 @@
 </head>
 
 <body class="wrap">
-   <div class="sos-btn" onclick="locating();"></div>
+   <div class="sos-btn" onclick="releaseForHelp();"></div>
 </body>
 <script type="text/javascript" src="../../script/api.js"></script>
 <script type="text/javascript" src="../../script/jquery-3.3.1.min.js"></script>
@@ -34,10 +34,25 @@
     apiready = function() {
 
     }
-    function locating() {
-        api.sendEvent({
-            name: 'sosEvent'
-        });
+    function releaseForHelp() {
+      api.openFrame({
+          name: 'service_type',
+          url: './service_type.html',
+          rect: {
+              x: 10,
+              y: 80,
+              w: api.winWidth - 20,
+              h: api.winHeight - 90
+          },
+          reload: true,
+          vScrollBarEnabled:false,
+          bgColor:'rgba(0,0,0,0)',
+          animation: {
+              type: "push",
+              subType: "from_bottom",
+              duration: 300
+          }
+      });
     }
 </script>
 

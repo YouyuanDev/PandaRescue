@@ -66,91 +66,99 @@
         .aui-list .aui-list-item-input label {
             color: #696969;
         }
-        .aui-list-item-label{
-          font-size:0.7rem;
+
+        .aui-list-item-label {
+            font-size: 0.7rem;
         }
-        .service-type  label,.failure-type label{
-          font-size:0.7rem;
+
+        .service-type label,
+        .failure-type label {
+            font-size: 0.7rem;
+        }
+
+        .img-container {
+            padding: 0.2rem;
         }
     </style>
 </head>
 
-<body class="pr-body-bgcolor">
+<body>
     <header class="aui-bar aui-bar-nav">
         <i class="fa fa-close close-btn"></i>
     </header>
-    <div class="aui-content aui-margin-b-15 service-container">
-        <input type="hidden" value="0" class="id" />
-        <ul class="aui-list aui-form-list">
-            <li class="aui-list-item">
-                <div class="aui-list-item-inner">
-                    <div class="aui-list-item-label i18n1" name="servicetype">
-                        服务类型
+    <div class="service-container">
+        <div class="aui-content aui-margin-b-15">
+            <input type="hidden" value="0" class="id" />
+            <ul class="aui-list aui-form-list">
+                <li class="aui-list-item">
+                    <div class="aui-list-item-inner">
+                        <div class="aui-list-item-label i18n1" name="servicetype">
+                            服务类型
+                        </div>
+                        <div class="aui-list-item-input service-type">
+                        </div>
                     </div>
-                    <div class="aui-list-item-input service-type">
-                        <!-- <label><input class="aui-radio" type="radio" name="demo1" checked>门店服务</label>-->
+                </li>
+                <li class="aui-list-item">
+                    <div class="aui-list-item-inner">
+                        <div class="aui-list-item-label i18n1" name="failuretype">
+                            故障类型
+                        </div>
+                        <div class="aui-list-item-input failure-type">
+                        </div>
                     </div>
-                </div>
-            </li>
-            <li class="aui-list-item">
-                <div class="aui-list-item-inner">
-                    <div class="aui-list-item-label i18n1" name="failuretype">
-                        故障类型
+                </li>
+                <li class="aui-list-item">
+                    <div class="aui-list-item-inner">
+                        <div class="aui-list-item-label i18n1" name="uploadpicture">
+                            图片上传
+                        </div>
+                        <div class="aui-list-item-input select-picture">
+                            <p>
+                                <div class="aui-btn pr-bgcolor pr-fontcolor i18n1" name="selectpicture" onclick="selectPicture();">选择图片</div>
+                            </p>
+                        </div>
                     </div>
-                    <div class="aui-list-item-input failure-type">
-                        <!-- <label><input class="aui-checkbox" type="checkbox" name="checkbox">故障类型1</label>-->
-                    </div>
-                </div>
-            </li>
-            <li class="aui-list-item">
-                <div class="aui-list-item-inner">
-                    <div class="aui-list-item-label i18n1" name="uploadpicture">
-                        图片上传
-                    </div>
-                    <div class="aui-list-item-input select-picture">
-                        <p>
-                            <div class="aui-btn pr-bgcolor pr-fontcolor i18n1" name="selectpicture" onclick="selectPicture();">选择图片</div>
-                        </p>
-                    </div>
-                </div>
-            </li>
-            <li class="aui-list-item">
-                <div class="aui-list-item-inner">
-                    <div class="aui-list-item-label i18n1" name="adddescription">
-                        添加描述
-                    </div>
-                    <div class="aui-list-item-input">
-                        <textarea placeholder="在这里添加描述...." id="mk">
+                </li>
+                <li class="aui-list-item">
+                    <div class="aui-list-item-inner">
+                        <div class="aui-list-item-label i18n1" name="adddescription">
+                            添加描述
+                        </div>
+                        <div class="aui-list-item-input">
+                            <textarea placeholder="在这里添加描述...." id="mk">
 
                          </textarea>
+                        </div>
                     </div>
+                </li>
+            </ul>
+        </div>
+        <div class="aui-content aui-margin-b-15 img-container">
+            <div class="aui-row aui-row-padded">
+                <div class="aui-col-xs-4">
+                    <img src="../../image/ceshi.jpg" />
                 </div>
-            </li>
-            <li class="aui-list-item">
-                <div class="aui-list-item-inner">
-                        <div style="font-size:0.6rem;">换轮胎:<span >100<i class="fa fa-cny"></i></span></div>
+                <div class="aui-col-xs-4">
+                    <img src="../../image/ceshi.jpg" />
                 </div>
-                <div class="aui-list-item-inner">
-                        <div style="font-size:0.6rem;">拖车:<span >500<i class="fa fa-cny"></i></span></div>
+                <div class="aui-col-xs-4">
+                    <img src="../../image/ceshi.jpg" />
                 </div>
-            </li>
-              <li class="aui-list-item">
-                <div class="aui-list-item-inner">
-                  <div class="aui-list-item-title">
-                      <div style="font-size:0.6rem;">总计:<span style="color:red;">600<i class="fa fa-cny"></i></span></div>
-                  </div>
+                <div class="aui-col-xs-4">
+                    <img src="../../image/ceshi.jpg" />
                 </div>
-              </li>
-            <!-- <li>
-                <div class="imgBox">
-
+                <div class="aui-col-xs-4">
+                    <img src="../../image/ceshi.jpg" />
                 </div>
-            </li> -->
-        </ul>
+                <div class="aui-col-xs-4">
+                    <img src="../../image/ceshi.jpg" />
+                </div>
+            </div>
+        </div>
     </div>
     <footer class="aui-bar aui-bar-tab service-footer">
-        <!-- <button class="submit-btn pr-bgcolor pr-color i18n1" name="submit" onclick="submitForm();">提交</button> -->
-          <button class="submit-btn pr-bgcolor pr-color i18n1" name="pay" onclick="submitForm();"></button>
+        <button class="submit-btn pr-bgcolor pr-color i18n1" name="submit" onclick="submitForm();">提交</button>
     </footer>
 </body>
 <script type="text/javascript" src="../../script/api.js"></script>
@@ -161,21 +169,21 @@
 <!-- <script type="text/javascript" src="../../script/aui-tab.js"></script> -->
 
 <script type="text/javascript">
-    var map;
+    var map, g_language;
     apiready = function() {
-        map = api.require('bMap');
-        closeServiceTypeForm();
-        loadAllServiceType();
-        loadAllFaultType();
-        hlLanguage("../../i18n/");
-    }
-
-    function locating() {
-        api.sendEvent({
-            name: 'sosEvent'
-        });
-    }
-    //加载服务类型
+            map = api.require('bMap');
+            if (getCookie() == undefined || getCookie() == "zh-CN") {
+                g_language = true;
+            } else {
+                g_language = false;
+            }
+            registerUploadPhotosEvent
+            closeServiceTypeForm();
+            loadAllServiceType();
+            loadAllFaultType();
+            hlLanguage("../../i18n/");
+        }
+        //加载服务类型
     function loadAllServiceType() {
         var s = 'http://' + serverIP + '/ServiceType/getAllServiceType.action';
         api.ajax({
@@ -183,11 +191,16 @@
             method: 'post'
         }, function(ret, errs) {
             if (ret) {
+                var template, service_type_name, service_type_name_en;
                 for (var i = 0; i < ret.length; i++) {
                     var service_type_code = ret[i].service_type_code;
-                    var service_type_name = ret[i].service_type_name;
-                    var service_type_name_en = ret[i].service_type_name_en;
-                    var template = serviceTypeTempalte(service_type_code, service_type_name);
+                    if (g_language) {
+                        service_type_name = ret[i].service_type_name;
+                        template = serviceTypeTempalte(service_type_code, service_type_name);
+                    } else {
+                        service_type_name_en = ret[i].service_type_name_en;
+                        template = serviceTypeTempalte(service_type_code, service_type_name_en);
+                    }
                     $('.service-type').append(template);
                 }
             } else {
@@ -205,11 +218,16 @@
             method: 'post'
         }, function(ret, errs) {
             if (ret) {
+                var template, failure_type_name, failure_type_name_en;
                 for (var i = 0; i < ret.length; i++) {
                     var failure_type_code = ret[i].failure_type_code;
-                    var failure_type_name = ret[i].failure_type_name;
-                    var failure_type_name_en = ret[i].failure_type_name_en;
-                    var template = failureTypeTemplate(failure_type_code, failure_type_name);
+                    if (g_language) {
+                        failure_type_name = ret[i].failure_type_name;
+                        template = failureTypeTemplate(failure_type_code, failure_type_name);
+                    } else {
+                        failure_type_name_en = ret[i].failure_type_name_en;
+                        template = failureTypeTemplate(failure_type_code, failure_type_name_en);
+                    }
                     $('.failure-type').append(template);
                 }
             } else {
@@ -335,6 +353,25 @@
                 $('.submit-btn').attr('disabled', false);
             }
         });
+    }
+    //监听头像更换成功事件
+    function registerUploadPhotosEvent() {
+        //如监听网络连接事件
+        api.addEventListener({
+            name: 'UploadPictureEvent'
+        }, function(ret, err) {
+            var imgUrl = ret.value.imgUrl;
+            $('.').append(makePictureTemplate(imgUrl));
+        });
+
+    }
+    //图片模板
+    function makePictureTemplate(imgname) {
+        var imgUrl = 'http://' + serverIP + '/upload/pictures/' + imgname;
+        var template = '<div class="aui-col-xs-4">' +
+            '<img src="' + imgUrl + '" />' +
+            '</div>';
+        return template;
     }
 </script>
 

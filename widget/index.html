@@ -112,7 +112,7 @@
         loadAllServiceType();
         loadAllFaultType();
         registLocatingEvent();
-        registerSosEvent();
+        //registerSosEvent();
         registerOrderStatusEvent();
         registerCancelOrderEvent();
         registerReloginEvent();
@@ -492,30 +492,6 @@
             });
         });
     }
-    //求救点击事件
-    function registerSosEvent() {
-        api.addEventListener({
-            name: 'sosEvent'
-        }, function(ret, err) {
-            //打开服务类型
-            api.openFrame({
-                name: 'service_type',
-                url: './html/frames/service_type.html',
-                rect: {
-                    x: 10,
-                    y: 80,
-                    w: api.winWidth - 20,
-                    h: api.winHeight - 90
-                },
-                reload: true,
-                animation: {
-                    type: "push",
-                    subType: "from_bottom",
-                    duration: 200
-                }
-            });
-        });
-    }
     //接单点击事件
     function registerReceiptEvent() {
         api.addEventListener({
@@ -523,7 +499,7 @@
         }, function(ret, err) {
             //判断是否选中了要接的单,如果选中了接单获取接单编号
             if (g_selected_pending_order_no != undefined && g_selected_pending_order_no != "") {
-                alert(g_selected_pending_order_no);
+                //alert(g_selected_pending_order_no);
                 //alert("点击了接单，开始接单后操作");
                 var s = 'http://' + serverIP + '/CompanyUser/CompanyUserAcceptPendingOrder.action';
                 api.ajax({
