@@ -112,7 +112,8 @@
         loadAllServiceType();
         loadAllFaultType();
         registLocatingEvent();
-        //registerSosEvent();
+        registerLoadNearbyCompanyEvent();
+        registerLoadAllPendingOrderEvent();
         registerOrderStatusEvent();
         registerCancelOrderEvent();
         registerReloginEvent();
@@ -413,7 +414,7 @@
         });
     }
     //打开附近商户信息frame
-    function openCompanyFrame(g_my_lon, g_my_lat, rets) {
+    function openCompanyFrame() {
         api.openFrame({
             name: 'nearby_company',
             url: './html/frames/nearby_company.html',
@@ -426,19 +427,21 @@
             reload: true,
             vScrollBarEnabled: false,
             pageParam: {
-                company: rets,
+                // company: rets,
                 g_my_lon: g_my_lon,
                 g_my_lat: g_my_lat
 
             }
         });
+        openLocatingButton();
+        openSosButton();
         api.sendFrameToBack({
             from: 'nearby_company',
             to: 'mask'
         });
     }
     //打开待接单的订单信息frame
-    function openPendingorderFrame(g_my_lon, g_my_lat, rets) {
+    function openPendingorderFrame() {
         api.openFrame({
             name: 'pending_order',
             url: './html/frames/pending_order.html',
@@ -451,13 +454,14 @@
             reload: true,
             vScrollBarEnabled: false,
             pageParam: {
-                pendingorder: rets,
                 g_my_lon: g_my_lon,
                 g_my_lat: g_my_lat,
                 g_service_type_dict: g_service_type_dict,
                 g_failure_type_dict: g_failure_type_dict
             }
         });
+        openLocatingButton();
+        openReceiptButton();
         //设置Frame层级问题
         api.sendFrameToBack({
             from: 'pending_order',
@@ -1025,10 +1029,12 @@
                         toastFail(rets.msg);
                         if (g_account_type == "person_user") {
                             //如果是个人用则显示附近商户
-                            loadNearbyCompany();
+                             openCompanyFrame();
+                             //loadNearbyCompany();
                         } else if (g_account_type == "company_user") {
                             //如果是商户用户,则显示所有pending订单
-                            loadAllPendingOrder();
+                            openPendingorderFrame();
+                            //loadAllPendingOrder();
                         } else {
                             toastFail("g_account_type=" + g_account_type);
                         }
@@ -1067,110 +1073,148 @@
 
         //}
     }
-
+    //注册加载附近商户的信息事件
+    function registerLoadNearbyCompanyEvent() {
+        api.addEventListener({
+            name: 'loadNearbyCompanyEvent'
+        }, function(ret, err) {
+            var annotations=ret.value.annotations;
+            var companyList=ret.value.g_companyList;
+            var bubble=ret.value.bubble;
+            //g_annotations=annotations;
+            g_CompanyList=companyList;
+            setCompanyAnnotations(annotations);
+            for (var i = 0; i <bubble.length; i++) {
+                setCompanyBubble(bubble[i].id, bubble[i].company_name);
+            }
+        });
+    }
     //加载附近商户的信息
-    function loadNearbyCompany() {
-        if (g_my_lon != undefined && g_my_lat != undefined) {
-            var s = 'http://' + serverIP + '/PersonUser/getNearByCompany.action';
-            api.ajax({
-                url: s,
-                method: 'post',
-                data: {
-                    values: {
-                        lon: g_my_lon,
-                        lat: g_my_lat
-                    }
-                }
-            }, function(rets, errs) {
-                if (rets) {
-                    var annotations = [];
-                    g_CompanyList.length = 0;
-                    for (var i = 0; i < rets.length; i++) {
-                        var temp = {
-                            "id": i,
-                            "lon": rets[i].company_location_lon,
-                            "lat": rets[i].company_location_lat
-                        };
-                        annotations.push(temp);
-                        g_CompanyList.push({
-                            id: i,
-                            company_no: rets[i].company_no
-                        });
-
-                    }
-                    setCompanyAnnotations(annotations);
-                    for (var i = 0; i < rets.length; i++) {
-                        setCompanyBubble(i, rets[i].company_name);
-                    }
-
-                    openCompanyFrame(g_my_lon, g_my_lat, rets);
-                    openLocatingButton();
-                    openSosButton();
-                } else {
-                    api.alert({
-                        msg: errs.msg
-                    });
-
-                }
-            });
-        }
+    // function loadNearbyCompany(start) {
+    //     if (g_my_lon != undefined && g_my_lat != undefined) {
+    //         if (start == undefined) {
+    //             start = 1;
+    //         }
+    //         var s = 'http://' + serverIP + '/PersonUser/getNearByCompany.action';
+    //         api.ajax({
+    //             url: s,
+    //             method: 'post',
+    //             data: {
+    //                 values: {
+    //                     lon: g_my_lon,
+    //                     lat: g_my_lat,
+    //                     page: start,
+    //                     rows: 3
+    //                 }
+    //             }
+    //         }, function(ret, errs) {
+    //             if (ret) {
+    //                 //alert(JSON.stringify(rets));
+    //                 var annotations = [];
+    //                 g_CompanyList.length = 0;
+    //                 for (var i = 0; i < ret.rows.length; i++) {
+    //                     var temp = {
+    //                         "id": i,
+    //                         "lon": ret.rows[i].company_location_lon,
+    //                         "lat": ret.rows[i].company_location_lat
+    //                     };
+    //                     annotations.push(temp);
+    //                     g_CompanyList.push({
+    //                         id: i,
+    //                         company_no: ret.rows[i].company_no
+    //                     });
+    //
+    //                 }
+    //                 setCompanyAnnotations(annotations);
+    //                 for (var i = 0; i < ret.rows.length; i++) {
+    //                     setCompanyBubble(i, ret.rows[i].company_name);
+    //                 }
+    //
+    //                 openCompanyFrame(g_my_lon, g_my_lat, ret.rows);
+    //                 openLocatingButton();
+    //                 openSosButton();
+    //             } else {
+    //                 api.alert({
+    //                     msg: errs.msg
+    //                 });
+    //
+    //             }
+    //         });
+    //     }
+    // }
+    //注册加载所有未接单的订单事件
+    function registerLoadAllPendingOrderEvent() {
+        api.addEventListener({
+            name: 'loadAllPendingOrderEvent'
+        }, function(ret, err) {
+            var annotations=ret.value.annotations;
+            var companyList=ret.value.g_companyList;
+            var bubble=ret.value.bubble;
+            g_CompanyList=companyList;
+            setPendingOrderAnnotations(annotations);
+            for (var i = 0; i <bubble.length; i++) {
+                setPendingOrderBubble(bubble[i].id, bubble[i].service_type_name, bubble[i].failure_type_name);
+            }
+        });
     }
     //加载所有未接单的订单
-    function loadAllPendingOrder() {
-        if (g_my_lon != undefined && g_my_lat != undefined) {
-            var s = 'http://' + serverIP + '/CompanyUser/getNearByPendingOrders.action';
-            api.ajax({
-                url: s,
-                method: 'post',
-                data: {
-                    values: {
-                        lon: g_my_lon,
-                        lat: g_my_lat
-                    }
-                }
-            }, function(rets, errs) {
-                if (rets) {
-                    var annotations = [];
-                    g_CompanyList.length = 0;
-                    for (var i = 0; i < rets.length; i++) {
-                        var temp = {
-                            "id": i,
-                            "lon": rets[i].company_location_lon,
-                            "lat": rets[i].company_location_lat
-                        };
-                        annotations.push(temp);
-                        g_CompanyList.push({
-                            id: i,
-                            order_no: rets[i].order_no
-                        });
-                    }
-                    setPendingOrderAnnotations(annotations);
-                    for (var i = 0; i < rets.length; i++) {
-                        var service_type_name = g_service_type_dict[rets[i].service_type_code];
-                        if (service_type_name == undefined)
-                            service_type_name = "";
-                        var failure_type_name = g_failure_type_dict[rets[i].failure_type_code];
-                        if (failure_type_name == undefined)
-                            failure_type_name = "";
-                        setPendingOrderBubble(i, service_type_name, failure_type_name);
-                    }
-
-                    openPendingorderFrame(g_my_lon, g_my_lat, rets);
-                    openLocatingButton();
-                    openReceiptButton();
-                } else {
-                    api.alert({
-                        msg: errs.msg
-                    });
-                    // openPendingorderFrame(rets);
-                    // openLocatingButton();
-                    // openReceiptButton();
-                }
-            });
-        } else {
-            toastFail("无定位信息");
-        }
-    }
+    // function loadAllPendingOrder() {
+    //     if (g_my_lon != undefined && g_my_lat != undefined) {
+    //         var s = 'http://' + serverIP + '/CompanyUser/getNearByPendingOrders.action';
+    //         api.ajax({
+    //             url: s,
+    //             method: 'post',
+    //             data: {
+    //                 values: {
+    //                     lon: g_my_lon,
+    //                     lat: g_my_lat,
+    //                     page: 1,
+    //                     rows: 20
+    //                 }
+    //             }
+    //         }, function(ret, errs) {
+    //             if (ret) {
+    //                 var annotations = [];
+    //                 g_CompanyList.length = 0;
+    //                 for (var i = 0; i < ret.rows.length; i++) {
+    //                     var temp = {
+    //                         "id": i,
+    //                         "lon": ret.rows[i].company_location_lon,
+    //                         "lat": ret.rows[i].company_location_lat
+    //                     };
+    //                     annotations.push(temp);
+    //                     g_CompanyList.push({
+    //                         id: i,
+    //                         order_no: ret.rows[i].order_no
+    //                     });
+    //                 }
+    //                 setPendingOrderAnnotations(annotations);
+    //                 for (var i = 0; i < ret.rows.length; i++) {
+    //                     var service_type_name = g_service_type_dict[ret.rows[i].service_type_code];
+    //                     if (service_type_name == undefined)
+    //                         service_type_name = "";
+    //                     var failure_type_name = g_failure_type_dict[ret.rows[i].failure_type_code];
+    //                     if (failure_type_name == undefined)
+    //                         failure_type_name = "";
+    //                     setPendingOrderBubble(i, service_type_name, failure_type_name);
+    //                 }
+    //
+    //                 openPendingorderFrame(g_my_lon, g_my_lat, ret.rows);
+    //                 openLocatingButton();
+    //                 openReceiptButton();
+    //             } else {
+    //                 api.alert({
+    //                     msg: errs.msg
+    //                 });
+    //                 // openPendingorderFrame(rets);
+    //                 // openLocatingButton();
+    //                 // openReceiptButton();
+    //             }
+    //         });
+    //     } else {
+    //         toastFail("无定位信息");
+    //     }
+    // }
     //切换至普通账户
     function requestSwitchAccounType(account_type) {
         alert('请求切换至' + account_type);

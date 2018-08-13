@@ -32,11 +32,8 @@
 
         .pr-empty {
             width: 100%;
-            height: 100%;
+            height: auto;
             text-align: center;
-            justify-content: center;
-            align-items: center;
-            display: -webkit-flex;
         }
 
         .pr-empty .empty-title {
@@ -47,9 +44,9 @@
 </head>
 
 <body class="wrap pr-body-bgcolor">
-    <div class="pr-empty">
+    <!-- <div class="pr-empty">
         <span class="empty-title"><span class="fa fa-info" style="padding-right:0.3rem;"></span><span class="i18n1" name="nobusiness">附近暂无商家!</span><span>
-  </div>
+    </div> -->
     <div class="container">
         <div class="aui-content aui-margin-b-15">
             <div class="poilist-container">
@@ -60,30 +57,97 @@
                 </div>
             </div>
         </div>
+        <div class="pr-empty">
+            <span class="empty-title"><span class="fa fa-info" style="padding-right:0.3rem;"></span><span class="i18n1" name="nobusiness">附近暂无商家!</span><span>
+        </div>
     </div>
 </body>
 <script type="text/javascript" src="../../script/api.js"></script>
 <script type="text/javascript" src="../../script/jquery-3.3.1.min.js"></script>
 <script type="text/javascript" src="../../script/common.js"></script>
 <script type="text/javascript">
-    var company_data;
+    //var company_data;
     var my_lon;
     var my_lat;
     var map;
+    var g_start=1;
+    var allow_scroll=true;
+    var g_companyList=[];
     apiready = function() {
         $('.pr-empty').hide();
         var data = api.pageParam;
-        company_data = data.company;
+        //company_data = data.company;
         my_lon = data.g_my_lon;
         my_lat = data.g_my_lat;
         map = api.require('bMap');
         registerCompanyInfoScrollEvent();
-        showCompany();
+        loadNearbyCompany();
+        //showCompany();
+        isRollingToEnd();
     }
-
-
+    // //加载附近的商户
+    function loadNearbyCompany() {
+        if (my_lon != undefined &&my_lat != undefined&&allow_scroll) {
+            var s = 'http://' + serverIP + '/PersonUser/getNearByCompany.action';
+            api.ajax({
+                url: s,
+                method: 'post',
+                data: {
+                    values: {
+                        lon: my_lon,
+                        lat:my_lat,
+                        page: g_start,
+                        rows: 3
+                    }
+                }
+            }, function(ret, errs) {
+                if (ret) {
+                  var annotations = [];
+                  var bubble = [];
+                  if(ret.rows.length<=0){
+                    allow_scroll=false;
+                  }
+                  //g_CompanyList.length = 0;
+                  for (var i=0; i <ret.rows.length; i++) {
+                      var id=g_companyList.length+i;
+                      annotations.push( {
+                          "id": id,
+                          "lon": ret.rows[i].company_location_lon,
+                          "lat": ret.rows[i].company_location_lat
+                      });
+                      g_companyList.push({
+                          id: id,
+                          company_no: ret.rows[i].company_no
+                      });
+                      bubble.push({
+                         id:id,
+                         company_name:ret.rows[i].company_name
+                      });
+                  }
+                    showCompany(ret.rows);
+                    api.sendEvent({
+                     name: 'loadNearbyCompanyEvent',
+                     extra: {
+                            annotations:annotations,
+                            g_companyList:g_companyList,
+                            bubble:bubble
+                         }
+                     });
+                     if($('#poilist-ul').find('li').length<=0){
+                        $('.pr-empty').show();
+                     }
+                } else {
+                    api.alert({
+                        msg: errs.msg
+                    });
+                }
+            });
+        }else{
+          showCompany(undefined);
+        }
+    }
     //展示附近商户信息
-    function showCompany() {
+    function showCompany(company_data) {
         if (company_data != undefined) {
             var template = "";
             //alert("company_data.length="+company_data.length);
@@ -93,16 +157,8 @@
             }
             $('#poilist-ul').append(template);
             if (company_data.length <= 0) {
-                $('.container').hide();
-                $('.pr-empty').show();
-                //$(document.body).append(makeEmptyTemplate("暂无数据!"));
-            } else {
-                $('.pr-empty').hide();
-                $('.container').show();
+              toastFail("加载完毕!");
             }
-        } else {
-              $('.container').hide();
-              $('.pr-empty').show();
         }
     }
 
@@ -144,8 +200,8 @@
     //发送弹出标注信息事件
     function popupBubble(obj) {
         var company_no = $(obj).attr('data-no');
-        $(obj).addClass('pr-color');
-        $(obj).siblings('li').removeClass('pr-color');
+        $(obj).addClass('pr-bgcolor');
+        $(obj).siblings('li').removeClass('pr-bgcolor');
         var company_location_lon = $(obj).attr('company-location-lon');
         var company_location_lat = $(obj).attr('company-location-lat');
         //计算路程距离
@@ -194,17 +250,33 @@
                 var $obj = $("li[data-no='" + company_no + "']");
                 if ($obj != undefined) {
                     try {
-                        $obj.addClass('pr-color');
-                        $obj.siblings('li').removeClass('pr-color');
+                        $obj.addClass('pr-bgcolor');
+                        $obj.siblings('li').removeClass('pr-bgcolor');
                         var top = $obj.offset().top;
-                        $("html,body").animate({
+                        $('.container').animate({
                             scrollTop: top + "px"
                         }, 300);
                     } catch (e) {
-
+                        alert(234);
                     }
                 }
             }
+        });
+    }
+    //是否滚动到底部
+    function isRollingToEnd() {
+        api.addEventListener({
+            name: 'scrolltobottom',
+            extra: {
+                threshold: 0 //设置距离底部多少距离时触发,默认值为0,数字类型
+            }
+        }, function(ret, err) {
+            // if(g_allow_load){
+            //   loadAccountOrder();
+            // }
+            g_start=g_start+1;
+            loadNearbyCompany();
+
         });
     }
 </script>
