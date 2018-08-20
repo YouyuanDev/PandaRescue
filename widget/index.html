@@ -362,7 +362,7 @@
             url: './html/frames/locating_button.html',
             rect: {
                 x: 10,
-                y: api.winHeight - 250,
+                y: api.winHeight - 300,
                 w: 30,
                 h: 30
             },
@@ -443,29 +443,33 @@
     }
     //打开待接单的订单信息frame
     function openPendingorderFrame() {
+        var headerH=$('#header').get(0).offsetHeight;
+        if(headerH==undefined)
+          headerH=80;
         api.openFrame({
-            name: 'pending_order',
-            url: './html/frames/pending_order.html',
+            name: 'pending_order_list',
+            url: './html/frames/pending_order_list.html',
             rect: {
                 x: 10,
-                y: api.winHeight - 190,
+                y: headerH+5,
                 w: api.winWidth - 20,
-                h: 180
+                h: api.winHeight-(headerH+15)
             },
             reload: true,
             vScrollBarEnabled: false,
             pageParam: {
+                headerH:headerH,
                 g_my_lon: g_my_lon,
                 g_my_lat: g_my_lat,
                 g_service_type_dict: g_service_type_dict,
                 g_failure_type_dict: g_failure_type_dict
             }
         });
-        openLocatingButton();
-        openReceiptButton();
+        //openLocatingButton();
+        //openReceiptButton();
         //设置Frame层级问题
         api.sendFrameToBack({
-            from: 'pending_order',
+            from: 'pending_order_list',
             to: 'mask'
         });
     }
@@ -483,6 +487,9 @@
             name: 'ClickPendingOrderListEventListener'
         }, function(ret, err) {
             g_selected_pending_order_no = ret.value.order_no;
+            api.sendEvent({
+                name: 'receiptEvent'
+            });
             popupPendingOrderBubble(ret.value.order_no);
         });
     }
@@ -520,26 +527,26 @@
         });
     }
     //
-    function registLocatingCompanyLocationEvent(){
-      api.addEventListener({
-          name: 'LocatingCompanyLocationEvent'
-      }, function(ret, err) {
-          var lon = ret.value.lon;
-          var lat = ret.value.lat;
-          var company_no = ret.value.company_no;
-          map.setCenter({
-              coords: {
-                  lon: lon,
-                  lat: lat
-              }
-          });
-          api.sendEvent({
-              name: 'ClickCompanyListEventListener',
-              extra: {
-                  company_no: company_no
-              }
-          });
-      });
+    function registLocatingCompanyLocationEvent() {
+        api.addEventListener({
+            name: 'LocatingCompanyLocationEvent'
+        }, function(ret, err) {
+            var lon = ret.value.lon;
+            var lat = ret.value.lat;
+            var company_no = ret.value.company_no;
+            map.setCenter({
+                coords: {
+                    lon: lon,
+                    lat: lat
+                }
+            });
+            api.sendEvent({
+                name: 'ClickCompanyListEventListener',
+                extra: {
+                    company_no: company_no
+                }
+            });
+        });
     }
     //接单点击事件
     function registerReceiptEvent() {
@@ -707,7 +714,9 @@
                     }
                     if (status_name != undefined && status_name != "") {
                         openLocatingButton();
-                        openOrderStatusFrame(g_account_type, status_code, status_name, status_name_en);
+                        //alert(JSON.stringify(order));
+                        //openOrderStatusFrame(g_account_type, status_code, status_name, status_name_en);
+                        openOrderStatusFrame(order);
                     }
                 }
 
@@ -850,25 +859,34 @@
             }
         });
     }
-    //打开订单状态Frame
-    function openOrderStatusFrame(account_type, status_code, status_name, status_name_en) {
+    //打开订单状态Frame  account_type, status_code, status_name, status_name_en
+    function openOrderStatusFrame(order) {
         api.openFrame({
             name: 'order_status',
             url: './html/frames/order_status.html',
             rect: {
-                x: 10,
-                y: api.winHeight - 100,
+                x:0,
+                y: api.winHeight -210,
                 w: api.winWidth - 20,
-                h: 90
+                h:'auto',
+                marginLeft:10,    //相对父 window 左外边距的距离
+                marginBottom:10,    //相对父 window 下外边距的距离
+                marginRight:10
             },
             reload: true,
             vScrollBarEnabled: false,
             pageParam: {
-                account_type: account_type,
-                status_code: status_code,
-                status_name: status_name,
-                status_name_en: status_name_en
+                account_type:g_account_type,
+                order:order
+                // account_type: account_type,
+                // status_code: status_code,
+                // status_name: status_name,
+                // status_name_en: status_name_en
             }
+        });
+        api.sendFrameToBack({
+            from: 'order_status',
+            to: 'mask'
         });
     }
     //更新商户所派人员坐标
@@ -1098,13 +1116,11 @@
         // clearInterval(g_orderStatusInterval);
         // clearInterval(g_userLocationInterval);
         clearInterval(g_PersonUserAndCompanyUserLocationInterval);
-        //openOrderStatusFrame();
         getOrderStatusInfo(order_no);
         updateOrderUserLocation(order_no);
 
         //if (order_no != undefined && order_no != "") {
 
-        //openOrderStatusFrame();
         //开始定时器，定时更新订单状态和用户坐标
         // g_orderStatusInterval = setInterval(function() {
         //     getOrderStatusInfo(order_no);
@@ -1262,7 +1278,7 @@
     // }
     //切换至普通账户
     function requestSwitchAccounType(account_type) {
-        alert('请求切换至' + account_type);
+        toastSuccess('请求切换至' + account_type);
         //向后台发出请求判断是否能够切换
         var s = 'http://' + serverIP + '/Login/APPSwitchAccoutType.action';
         api.ajax({
@@ -1323,10 +1339,10 @@
             name: 'sos_button'
         });
         api.closeFrame({
-            name: 'pending_order'
+            name: 'pending_order_list'
         });
         api.closeFrame({
-            name: 'receipt_button'
+            name: 'pending_order'
         });
         api.closeFrame({
             name: 'order_status'

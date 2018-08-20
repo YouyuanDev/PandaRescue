@@ -1,6 +1,6 @@
 var header, headerHeight = 0,
     g_loadingID;
-var serverIP = '192.168.0.12:8080';
+var serverIP = '192.168.0.10:8080';
 
 function fnSettingHeader() {
     var sType = api.systemType;
@@ -43,7 +43,6 @@ function JudgeLogin() {
 }
 
 function formatterdate(value, row, index) {
-    //alert(toString.call(value));
     if (value != undefined && value != null)
         return getDateOnly(value);
     else
@@ -155,14 +154,12 @@ function getPicture(sourceType) {
                                 toastFail("上传失败!");
                             }
                         } else {
-                            api.alert({
-                                msg: JSON.stringify(errs)
-                            });
+                          toastFail(errs.msg);
                         }
                     });
                 }
             } else {
-                alert(JSON.stringify(err));
+                toastFail(err.msg);
             }
         });
     } else if (sourceType == 2) { // 从相机中选择
@@ -205,14 +202,12 @@ function getPicture(sourceType) {
                                 toastFail("上传失败!");
                             }
                         } else {
-                            api.alert({
-                                msg: JSON.stringify(errs)
-                            });
+                          alert(errs.msg);
                         }
                     });
                 }
             } else {
-                alert(JSON.stringify(err));
+                toastFail(err.msg);
             }
         });
     }
@@ -320,10 +315,10 @@ function bindPush(username) {
             // userId: api.deviceId
     }, function(ret, err) {
         if (ret.status == true) {
-            alert(username + "bind成功");
+            toastSuccess(username + "bind成功");
             toastSuccess(username + "bind成功");
         } else {
-            alert(username + "bind" + err.msg);
+            toastFail(username + "bind" + err.msg);
             toastFail(err.msg);
         }
     });
@@ -337,7 +332,6 @@ function unbindPush(username) {
         userId: username
     }, function(ret, err) {
         if (ret.status) {
-            alert('解除绑定成功');
             toastSuccess('解除绑定成功');
         } else {
             toastFail(err.msg);
@@ -354,11 +348,9 @@ function joinPushGroup(groupName) {
     }, function(ret, err) {
         if (ret.status) {
             var s = '加入组' + groupName + '成功';
-            alert(s);
             toastSuccess(s);
         } else {
-            alert('加入组' + err.msg);
-            toastFail(err.msg);
+            toastFail('加入组' + err.msg);
         }
     });
     push.setPreference({
@@ -372,7 +364,6 @@ function leaveAllPushGroup() {
     push.leaveAllGroup(function(ret, err) {
         if (ret) {
             var s = '退出所有组成功';
-            alert(s);
             toastSuccess(s);
         } else {
             toastFail(err.msg);
@@ -427,9 +418,7 @@ function loadAllServiceType() {
                     }
                 });
             } else {
-                // api.alert({
-                //     msg: "加载服务类型失败!"
-                // });
+              toastFail(rets.msg);
             }
         });
     }
@@ -481,9 +470,7 @@ function loadAllFaultType() {
                     }
                 });
             } else {
-                api.alert({
-                    msg: "加载故障类型失败!"
-                });
+                toastFail(rets.msg);
             }
         });
     }
@@ -535,9 +522,7 @@ function loadAllOrderStatus() {
                     }
                 });
             } else {
-                // api.alert({
-                //     msg: "加载订单状态类型失败!"
-                // });
+                toastFail(rets.msg);
             }
         });
     }

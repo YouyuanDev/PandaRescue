@@ -314,8 +314,8 @@
                                         //         order_no:order_no
                                         //     }
                                         // });
-                                        api.closeFrame({
-                                            name: 'service_type'
+                                        api.closeWin({
+                                            name: 'rescueWin'
                                         });
                                     } else {
                                         toastFail(ret.message);
@@ -340,7 +340,6 @@
                             $('.submit-btn').attr('disabled', false);
                         }
                     } else {
-                        alert(err.code);
                         $('.submit-btn').attr('disabled', false);
                     }
                 });

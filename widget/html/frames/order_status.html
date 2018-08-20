@@ -20,12 +20,41 @@
         .cancel-order {
             border-radius: 0px 0px 3px 3px;
         }
+        .item-container{
+          padding:5px;
+          height:90px;
+          border-bottom:1px solid #F4F4F4;
+        }
+        .item-icon{
+          width:3rem;
+          height:3rem;
+          border-radius:50%;
+        }
+        .item-right{
+          padding-left:8px;
+        }
+        .item-fee{
+          font-size:1rem;
+        }
     </style>
 </head>
 
 <body>
     <div class="container">
         <div class="aui-content aui-margin-b-15">
+            <div class="aui-list-item item-container">
+                <div class="aui-media-list-item-inner">
+                    <div class="aui-list-item-media">
+                        <img src="../../image/default_portrait.png" class="item-icon">
+                    </div>
+                    <div class="aui-list-item-inner item-right">
+                        <div class="aui-list-item-text">
+                            <div class="aui-list-item-title item-name"></div>
+                            <div class="aui-list-item-right item-fee"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
             <div class="aui-bar aui-bar-nav order-status"><i class="fa fa-spinner fa-spin"></i></div>
             <div class="aui-bar aui-bar-nav cancel-order buttons pr-bgcolor">
                 <!-- <div class="aui-btn aui-btn-block cancel-order" onclick="cacelOrder();">取消订单</div> -->
@@ -42,9 +71,24 @@
             //registerUpdateOrderStatusEvent();
             var data = api.pageParam;
             var account_type = data.account_type;
-            var status_code = data.status_code;
-            var status_name = data.status_name;
-            var status_name_en = data.status_name_en;
+            var order = data.order;
+            var status_code = order.status_code;
+            var status_name = order.status_name;
+            var status_name_en = order.status_name_en;
+            $('.item-name').text(order.company_name);
+            $('.item-fee').text(order.service_fee+"元");
+            var upload_files=order.upload_files;
+            var icon_url="../../image/default_portrait.png";
+            if(upload_files!=undefined){
+               var iconArr=upload_files.split(';');
+               if(iconArr.length>0){
+                 if(iconArr[0]!=undefined&&iconArr[0]!=""){
+                   icon_url=iconArr[0];
+                   icon_url='http://' + serverIP + '/upload/pictures/'+icon_url;
+                 }
+               }
+            }
+            $('.item-icon').attr('src',icon_url);
             if (account_type != undefined && status_code != undefined) {
                 drawStatusPanel(account_type, status_code, status_name, status_name_en);
             }
@@ -93,13 +137,6 @@
             }
         }
     }
-    //取消订单事件
-    function cacelOrder() {
-        api.sendEvent({
-            name: 'CancelOrderEvent',
-            extra: {}
-        });
-    }
 
     function makeButtonTemplate(buttonFunctionName, buttonName) {
         var template = '<div class="aui-btn aui-btn-block cancel-order" onclick="' + buttonFunctionName + '">' + buttonName + '</div>';
@@ -133,16 +170,16 @@
                     toastFail("支付服务正在进行升级操作");
                 } else if (ret.code == "6001") {
                     toastFail("用户中途取消支付操作");
-                } else{
-                  toastFail("返回码:"+ret.code);
+                } else {
+                    toastFail("返回码:" + ret.code);
                 }
 
-            }else{
-              api.alert({
-                  title: '系统错误，支付失败',
-                  msg: ret.code,
-                  buttons: ['确定']
-              });
+            } else {
+                api.alert({
+                    title: '系统错误，支付失败',
+                    msg: ret.code,
+                    buttons: ['确定']
+                });
             }
 
         });
@@ -181,34 +218,44 @@
     }
     //取消支付
     function cancelOrder(account_type) {
-        var s = "";
-        if (account_type == "person_user") {
-            s = 'http://' + serverIP + '/PersonUser/PersonUserCancelOrder.action';
-        } else if (account_type == "company_user") {
-            s = 'http://' + serverIP + '/CompanyUser/CompanyUserCancelOrder.action';
-        }
-        api.ajax({
-            url: s,
-            method: 'post',
-            data: {
-                values: {}
-            }
-        }, function(ret, errs) {
-            if (ret) {
-                if (ret.success) {
-                    toastSuccess(ret.message);
-                } else {
-                    toastFail(ret.message);
-                    if (ret.relogin) {
-                        api.sendEvent({
-                            name: 'reloginEvent'
-                        });
-                    }
+        api.confirm({
+            title: '提示',
+            msg: '确定取消订单吗?',
+            buttons: ['确定', '取消']
+        }, function(ret, err) {
+            var index = ret.buttonIndex;
+            if (index == 1) {
+                var s = "";
+                if (account_type == "person_user") {
+                    s = 'http://' + serverIP + '/PersonUser/PersonUserCancelOrder.action';
+                } else if (account_type == "company_user") {
+                    s = 'http://' + serverIP + '/CompanyUser/CompanyUserCancelOrder.action';
                 }
-            } else {
-                toastFail("系统错误,取消订单失败!");
+                api.ajax({
+                    url: s,
+                    method: 'post',
+                    data: {
+                        values: {}
+                    }
+                }, function(ret, errs) {
+                    if (ret) {
+                        if (ret.success) {
+                            toastSuccess(ret.message);
+                        } else {
+                            toastFail(ret.message);
+                            if (ret.relogin) {
+                                api.sendEvent({
+                                    name: 'reloginEvent'
+                                });
+                            }
+                        }
+                    } else {
+                        toastFail("系统错误,取消订单失败!");
+                    }
+                });
             }
         });
+
     }
     //确认完成
     function confirmFinishedOrder() {

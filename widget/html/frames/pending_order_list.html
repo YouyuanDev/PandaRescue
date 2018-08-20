@@ -1,0 +1,454 @@
+<!doctype html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,initial-scale=1.0,width=device-width" />
+    <meta name="format-detection" content="telephone=no,email=no,date=no,address=no">
+    <title>待接单</title>
+    <link rel="stylesheet" type="text/css" href="../../css/api.css" />
+    <link rel="stylesheet" type="text/css" href="../../css/aui.css" />
+    <link rel="stylesheet" type="text/css" href="../../css/font-awesome.min.css" />
+    <link rel="stylesheet" type="text/css" href="../../css/style.css" />
+    <style type="text/css">
+        html,
+        body {
+            height: 100%;
+        }
+
+        .container {
+            width: 100%;
+
+            /*border:1px solid #8B8989;*/
+        }
+
+        .poilist-container ul li:first-child {
+            border-top: none;
+        }
+
+        .pr-empty {
+            width: 100%;
+            height: auto;
+            text-align: center;
+        }
+
+        .pr-empty .empty-title {
+            width: 100%;
+            font-size: 1rem;
+        }
+        .item-line{
+          border-top:1px solid #F4F4F4;
+        }
+        .aui-list .item-address{
+          font-size: 0.7rem;
+          color: #757575;
+        }
+        .aui-list .item-fee{
+          font-size: 1.2rem;
+          color:#000;
+        }
+        .aui-media-list .item-split{
+          background-color:#fff;
+          margin-bottom:0.5rem;
+          border-radius:0.2rem;
+        }
+    </style>
+</head>
+
+<body class="wrap pr-body-bgcolor">
+    <!-- <div class="pr-empty">
+        <span class="empty-title"><span class="fa fa-info" style="padding-right:0.3rem;"></span><span>暂无订单!</span><span>
+    </div> -->
+    <div class="container">
+        <div class="aui-content aui-margin-b-15">
+            <div class="poilist-container">
+                <div class="aui-content aui-margin-b-15">
+                    <ul id="poilist-ul" class="aui-list aui-media-list pr-body-bgcolor">
+
+                    </ul>
+                </div>
+            </div>
+        </div>
+        <div class="pr-empty">
+            <span class="empty-title"><span class="fa fa-info" style="padding-right:0.3rem;"></span><span>暂无订单!</span><span>
+        </div>
+    </div>
+</body>
+<script type="text/javascript" src="../../script/api.js"></script>
+<script type="text/javascript" src="../../script/jquery-3.3.1.min.js"></script>
+<script type="text/javascript" src="../../script/common.js"></script>
+<script type="text/javascript">
+    var g_service_type_dict, g_failure_type_dict;
+    var map;
+    var my_lon,my_lat;
+    var g_start=1;
+    var allow_scroll=true;
+    var g_companyList=[];
+    var g_headerH;
+    apiready = function() {
+            $('.pr-empty').hide();
+            map = api.require('bMap');
+            var data = api.pageParam;
+            my_lon = data.g_my_lon;
+            my_lat = data.g_my_lat;
+            g_service_type_dict = data.g_service_type_dict;
+            g_failure_type_dict = data.g_failure_type_dict;
+            g_headerH=data.headerH;
+            registerPendingOrderScrollEvent();
+            loadAllPendingOrder();
+            isRollingToEnd();
+        }
+        //加载所有未接单的订单
+        function loadAllPendingOrder() {
+            if (my_lon != undefined && my_lat != undefined) {
+                var s = 'http://' + serverIP + '/CompanyUser/getNearByPendingOrders.action';
+                api.ajax({
+                    url: s,
+                    method: 'post',
+                    data: {
+                        values: {
+                            lon: my_lon,
+                            lat:my_lat,
+                            page: g_start,
+                            rows: 20
+                        }
+                    }
+                }, function(ret, errs) {
+                    if (ret) {
+                      var annotations = [];
+                      var bubble = [];
+                      if(ret.rows.length<=0){
+                        toastFail("加载完毕!");
+                        allow_scroll=false;
+                      }
+                      var count=ret.rows.length;
+                        for (var i = 0; i < ret.rows.length; i++) {
+                            var id=g_companyList.length+i;
+                            var service_type_name_obj = g_service_type_dict[ret.rows[i].service_type_code];
+                            if (service_type_name_obj!= undefined){
+                               service_type_name=service_type_name_obj.service_type_name;
+                            }else{
+                                service_type_name = "";
+                            }
+                            var failure_type_code_list=ret.rows[i].failure_type_code_list;
+                            var failure_type_name="";
+                            if(failure_type_code_list!=undefined&&failure_type_code_list!=""){
+                              var list=failure_type_code_list.split(',');
+                              for (var j = 0; j< list.length; j++) {
+                                 if(list[i]!=undefined&&list[i]!=""){
+                                   var failure_type_name_obj = g_failure_type_dict[list[j]];
+                                   if(failure_type_name_obj!=undefined){
+                                     failure_type_name=failure_type_name+failure_type_name_obj.failure_type_name+",";
+                                   }
+                                 }
+                              }
+                            }
+                            if(failure_type_name.length>0){
+                              failure_type_name=failure_type_name.substring(0,failure_type_name.length-1);
+                            }
+                            g_companyList.push({
+                                id: id,
+                                order_no: ret.rows[i].order_no
+                            });
+                            var rowData=ret.rows[i];
+                            var lonlat=ret.rows[i].person_user_location;
+                            // var order_no=ret.rows[i].order_no;
+                            var distance=getDistance(ret.rows[i].distance);
+                            rowData["distance"]=distance;
+                            rowData["service_type_name"]=service_type_name;
+                            rowData["failure_type_name"]=failure_type_name;
+                            // var icon_url=ret.rows[i].icon_url;
+                            // var service_fee=ret.rows[i].service_fee;
+                            var index=i;
+                            // lonlat------if语句开始
+                            if(lonlat!=undefined){
+                              var lonlatArr=lonlat.split(',');
+                              var lon="",lat="";
+                              if(lonlatArr.length>=2){
+                                lon=lonlatArr[0];
+                                lat=lonlatArr[1];
+                                rowData["lon"]=lon;
+                                rowData["lat"]=lat;
+                                //注意:getNameFromCoords为异步查询
+                                map.getNameFromCoords({
+                                   lon:lon,
+                                   lat:lat
+                                  }, function(ret, err) {
+                                 if (ret.status) {
+                                      // alert(ret.address);
+                                      var address=ret.address;
+                                      annotations.push({
+                                          id: id,
+                                          lon: lon,
+                                          lat:lat
+                                      });
+                                      bubble.push({
+                                         id:id,
+                                         service_type_name:service_type_name,
+                                         failure_type_name:failure_type_name,
+                                         address:address
+                                      });
+                                      rowData["address"]=address;
+                                      //alert(JSON.stringify(rowData));
+                                      //person_user_location_lon,person_user_location_lat,order_no, service_type_name, failure_type_name, distance,icon_url,address
+                                      var template=pendingOrderListTemplate(rowData);
+                                      $('#poilist-ul').append(template);
+
+                                      if(index==(count-1)){
+                                        api.sendEvent({
+                                         name: 'loadAllPendingOrderEvent',
+                                         extra: {
+                                                annotations:annotations,
+                                                g_companyList:g_companyList,
+                                                bubble:bubble
+                                             }
+                                         });
+                                      }
+                                      index++;
+                                      if($('#poilist-ul').find('li').length<=0){
+                                         $('.pr-empty').show();
+                                      }
+                                  }else{
+                                    if($('#poilist-ul').find('li').length<=0){
+                                       $('.pr-empty').show();
+                                    }
+                                  }
+                                });
+
+                              }
+                            }
+                            // lonlat------if语句结束
+                        }
+                        //  showPendingOrder(ret.rows);
+
+
+                    } else {
+                        api.alert({
+                            msg: errs.msg
+                        });
+                    }
+                });
+            } else {
+                toastFail("无定位信息");
+            }
+        }
+        //展示待接单状态的订单信息
+    // function showPendingOrder(pending_order_data) {
+    //     if (pending_order_data != undefined) {
+    //         var template = "";
+    //         for (var i = 0; i < pending_order_data.length; i++) {
+    //             try {
+    //                 var service_type_name = g_service_type_dict[pending_order_data[i].service_type_code].service_type_name;
+    //                 if (service_type_name == undefined)
+    //                     service_type_name = "";
+    //                 var str = pending_order_data[i].failure_type_code_list;
+    //                 var code_list = str.split(',');
+    //                 var failure_type_name = "";
+    //                 for (var j = 0; j < code_list.length; j++) {
+    //                     if (code_list[j] != undefined && code_list[j] != "") {
+    //                         failure_type_name = failure_type_name + g_failure_type_dict[code_list[j]].failure_type_name + ",";
+    //                     }
+    //                 }
+    //                 if (failure_type_name.length > 0 && (failure_type_name.lastIndexOf(',') == failure_type_name.length - 1)) {
+    //                     failure_type_name = failure_type_name.substring(0, failure_type_name.length - 1);
+    //                 }
+    //                 if (code_list.length <= 0)
+    //                     failure_type_name = "";
+    //                 // var failure_type_name=g_failure_type_dict[pending_order_data[i].failure_type_code].failure_type_name;
+    //                 // if(failure_type_name==undefined)
+    //                 var person_user_location_str=pending_order_data[i].person_user_location;
+    //                 var lon_lat = person_user_location_str.split(',');
+    //                 var person_user_location_lon,person_user_location_lat;
+    //                 if(lon_lat.length==2){
+    //                   person_user_location_lon=lon_lat[0];
+    //                   person_user_location_lat=lon_lat[1];
+    //                 }
+    //                 template += pendingOrderListTemplate(person_user_location_lon,person_user_location_lat,pending_order_data[i].order_no, service_type_name, failure_type_name, getDistance(pending_order_data[i].distance));
+    //             } catch (e) {
+    //                 alert(e);
+    //             }
+    //         }
+    //         $('#poilist-ul').append(template);
+    //         if (pending_order_data.length <= 0) {
+    //             toastFail("加载完毕!");
+    //         }
+    //     }
+    // }
+
+
+
+    //获取两点间的路线距离
+    function getRouteDistance(order_no, person_user_location_lon, person_user_location_lat) {
+        var p_lon = person_user_location_lon;
+        var p_lat = person_user_location_lat;
+        map.removeRoute({
+          ids: [1]
+        });
+        //计算路线距离
+        map.searchRoute({
+            id: 1,
+            type: 'drive',
+            policy: 'ecar_time_first/ecar_dis_first',
+            start: {
+                lon: my_lon,
+                lat: my_lat
+            },
+            end: {
+                lon: p_lon,
+                lat: p_lat
+            }
+        }, function(ret, err) {
+            if (ret) {
+                if (ret.status) {
+                    //ret.plans[0].duration;
+                    //alert(order_no + " distance=" + ret.plans[0].distance);
+                    $("#dis_" + order_no).text('驾车：'+getDistance(ret.plans[0].distance)+'km '+'耗时：'+convertSecToMin(ret.plans[0].duration)+'分钟');
+                } else {
+                    toastFail("系统错误!");
+                }
+            } else {
+                //alert(err.msg);
+                toastFail("系统错误" + err.msg);
+            }
+
+        });
+    }
+
+    //发送弹出标注信息事件
+    function popupBubble(obj) {
+        var order_no = $(obj).attr('data-no');
+        var person_user_location_lon = $(obj).attr('person-user-location-lon');
+        var person_user_location_lat = $(obj).attr('person-user-location-lat');
+        api.sendEvent({
+            name: 'LocatingPersonUserLocationEvent',
+            extra: {
+                lon: person_user_location_lon,
+                lat:person_user_location_lat,
+                order_no:order_no
+            }
+        });
+        api.sendEvent({
+            name: 'receiptEvent'
+        });
+        //计算路程距离
+        //getRouteDistance(order_no, person_user_location_lon, person_user_location_lat);
+
+    }
+    //生成模板 pendingOrderListTemplate(lon,lat,service_type_name, failure_type_name,distance,address,rows[i])
+    function pendingOrderListTemplate(rowData) {
+      var person_user_location_lon=rowData.lon;
+      var person_user_location_lat=rowData.lat;
+      var service_type_name=rowData.service_type_name;
+      var failure_type_name=rowData.failure_type_name;
+      var distance=rowData.distance;
+      var address=rowData.address;
+      var icon_url=rowData.icon_url;
+      var order_no=rowData.order_no;
+      var service_fee=rowData.service_fee;
+      var imgUrl="../../image/default_portrait.png";
+      if(icon_url!=undefined&&icon_url!=""){
+            imgUrl='http://' + serverIP + '/upload/pictures/'+icon_url;
+      }
+      var rowDataStr=JSON.stringify(rowData);
+        var template = '<li class="aui-list-item aui-list-item-middle item-split"  data-row='+rowDataStr+'  onclick="showPendingOrderDetail(this)">' +
+            '<div class="aui-media-list-item-inner">' +
+                '<div class="aui-list-item-media" style="width:3rem;">' +
+                  '<img src="'+imgUrl+'" class="aui-img-round aui-list-img-sm" onerror="imgExists(this);" style="width:2rem;height:2rem;">' +
+                '</div>'+
+                '<div class="aui-list-item-inner">' +
+                   '<div class="aui-list-item-text">' +
+                     '<div class="aui-list-item-title aui-font-size-14">' + service_type_name + '</div>' +
+                     '<div id="dis_'+order_no+'" class="aui-list-item-right">' + distance + 'km</div>' +
+                   '</div>' +
+                   '<div class="aui-list-item-text">' + failure_type_name + '</div>' +
+                '</div>' +
+            '</div>' +
+            '<div class="aui-media-list-item-inner item-line">' +
+                  '<div class="aui-list-item-inner">' +
+                     '<div class="aui-list-item-text">' +
+                         '<div class="aui-list-item-title item-address" >' + address + '</div>' +
+                         '<div class="aui-list-item-right item-fee">' + service_fee + '元</div>' +
+                     '</div>' +
+                  '</div>' +
+            '</div>' +
+            // '<div class="aui-media-list-item-inner item-line">' +
+            //       '<div class="aui-list-item-inner">' +
+            //           '<div class="aui-list-item-text">' +
+            //               '<div class="aui-list-item-title"></div>' +
+            //               '<div id="dis_'+order_no+'" class="aui-list-item-right"><div class="aui-btn pr-bgcolor" data-no="'+order_no+'" person-user-location-lon="'+person_user_location_lon+'" person-user-location-lat="'+person_user_location_lat+'" onclick="popupBubble(this)">接单</div></div>' +
+            //           '</div>' +
+            //       '</div>' +
+            // '</div>' +
+            '</li>';
+        return template;
+    }
+    //监听地图标注点击事件，订单滚动
+    function registerPendingOrderScrollEvent() {
+        api.addEventListener({
+            name: 'PendingOrderScrollEvent'
+        }, function(ret, err) {
+            var order_no = ret.value.order_no;
+            if (order_no != undefined) {
+                var $obj = $("li[data-no='" + order_no + "']");
+                if ($obj != undefined) {
+                    try {
+                        $obj.addClass('pr-color');
+                        $obj.siblings('li').removeClass('pr-color');
+                        var top = $obj.offset().top;
+                        $("html,body").animate({
+                            scrollTop: top + "px"
+                        }, 300);
+                    } catch (e) {
+
+                    }
+                }
+            }
+        });
+    }
+    //是否滚动到底部
+    function isRollingToEnd() {
+        api.addEventListener({
+            name: 'scrolltobottom',
+            extra: {
+                threshold: 0 //设置距离底部多少距离时触发,默认值为0,数字类型
+            }
+        }, function(ret, err) {
+            g_start=g_start+1;
+            loadAllPendingOrder();
+        });
+    }
+    //显示详细订单信息
+    function showPendingOrderDetail(obj){
+         var rowData=$(obj).attr('data-row');
+         if(rowData!=undefined){
+           api.openFrame({
+               name: 'pending_order',
+               url: './pending_order.html',
+               rect: {
+                   x: 10,
+                   y: api.winHeight - 260,
+                   w: api.winWidth - 20,
+                   h:250
+               },
+               reload: true,
+               vScrollBarEnabled: false,
+               pageParam: {
+                   rowData:rowData,
+                   my_lon:my_lon,
+                   my_lat:my_lat,
+                   g_service_type_dict:g_service_type_dict,
+                   g_failure_type_dict:g_failure_type_dict,
+                   g_headerH:g_headerH
+               }
+           });
+           api.sendFrameToBack({
+               from: 'pending_order',
+               to: 'mask'
+           });
+           api.closeFrame({
+               name: 'pending_order_list'});
+         }
+    }
+</script>
+
+</html>

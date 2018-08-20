@@ -18,7 +18,6 @@
 
         .container {
             width: 100%;
-            
             /*border:1px solid #8B8989;*/
         }
 
@@ -36,6 +35,25 @@
             width: 100%;
             font-size: 1rem;
         }
+        .item-p span {
+            padding:0.2rem;
+            margin-left:0.5rem;
+        }
+        .aui-list .item-concat{
+          width:10rem;
+        }
+        .aui-list .item-concat .item-concat-info .item-p{
+           width:100%;
+           font-size: 1rem;
+           text-align: center;
+        }
+        .item-inner{
+           padding-top:0.5rem;
+           padding-bottom:0.3rem;
+        }
+        .item-inner span{
+          font-size:1rem;
+        }
     </style>
 </head>
 
@@ -48,7 +66,55 @@
             <div class="poilist-container">
                 <div class="aui-content aui-margin-b-15">
                     <ul id="poilist-ul" class="aui-list aui-media-list">
+                        <li class="aui-list-item aui-list-item-middle item-split">
+                          <div class="aui-media-list-item-inner item-inner">
+                            <sapn class="fa fa-chevron-left" onclick="back();"></sapn>
+                          </div>
+                            <div class="aui-media-list-item-inner">
+                                <div class="aui-list-item-media" style="width:3rem;">
+                                    <img src="../../image/default_portrait.png" class="aui-img-round aui-list-img-sm item-icon" style="width:2rem;height:2rem;">
+                                </div>
+                                <div class="aui-list-item-inner">
+                                    <div class="aui-list-item-text item-nickname">
 
+                                    </div>
+                                    <div class="aui-list-item-text item-time">
+
+                                    </div>
+                                </div>
+                                <div class="aui-list-item-inner item-concat">
+                                    <div class="aui-list-item-text item-concat-info">
+                                        <p class="item-p"><span onclick="sendMessage();" class="fa fa-commenting"></span><span onclick="callUser(this);" data-phone="" class="fa fa-phone item-phone"></span></p>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="aui-media-list-item-inner item-line">
+                                <div class="aui-list-item-inner">
+                                    <div class="aui-list-item-text">
+                                        <div class="aui-list-item-title item-address"></div>
+                                        <div class="aui-list-item-right item-fee"></div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="aui-media-list-item-inner item-line">
+                                <div class="aui-list-item-inner">
+                                    <div class="aui-list-item-text">
+                                        <div class="aui-list-item-title item-service-type"></div>
+                                        <div class="aui-list-item-right item-failure-type"></div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="aui-media-list-item-inner item-line">
+                                <div class="aui-list-item-inner">
+                                    <div class="aui-list-item-text">
+                                        <div class="aui-list-item-title"></div>
+                                        <div class="aui-list-item-right">
+                                            <div class="aui-btn pr-bgcolor" onclick="popupBubble()">接单</div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </li>
                     </ul>
                 </div>
             </div>
@@ -64,191 +130,73 @@
 <script type="text/javascript">
     var g_service_type_dict, g_failure_type_dict;
     var map;
-    var my_lon,my_lat;
-    var g_start=1;
-    var allow_scroll=true;
+    var g_my_lon,g_my_lat;
     var g_companyList=[];
+    var g_rowData;
+    var g_headerH;
+    var g_order_no;
+    var person_user_location_lon;
+    var person_user_location_lat;
     apiready = function() {
             $('.pr-empty').hide();
             map = api.require('bMap');
             var data = api.pageParam;
-            my_lon = data.g_my_lon;
-            my_lat = data.g_my_lat;
-            g_service_type_dict = data.g_service_type_dict;
-            g_failure_type_dict = data.g_failure_type_dict;
-            registerPendingOrderScrollEvent();
-            loadAllPendingOrder();
-            isRollingToEnd();
-        }
-        //加载所有未接单的订单
-        function loadAllPendingOrder() {
-            if (my_lon != undefined && my_lat != undefined) {
-                var s = 'http://' + serverIP + '/CompanyUser/getNearByPendingOrders.action';
-                api.ajax({
-                    url: s,
-                    method: 'post',
-                    data: {
-                        values: {
-                            lon: my_lon,
-                            lat:my_lat,
-                            page: g_start,
-                            rows: 20
-                        }
-                    }
-                }, function(ret, errs) {
-                    if (ret) {
-                      var annotations = [];
-                      var bubble = [];
-                      if(ret.rows.length<=0){
-                        toastFail("加载完毕!");
-                        allow_scroll=false;
-                      }
-                      var count=ret.rows.length;
-                        for (var i = 0; i < ret.rows.length; i++) {
-                            var id=g_companyList.length+i;
-                            var service_type_name_obj = g_service_type_dict[ret.rows[i].service_type_code];
-                            if (service_type_name_obj!= undefined){
-                               service_type_name=service_type_name_obj.service_type_name;
-                            }else{
-                                service_type_name = "";
-                            }
-                            var failure_type_code_list=ret.rows[i].failure_type_code_list;
-                            var failure_type_name="";
-                            if(failure_type_code_list!=undefined&&failure_type_code_list!=""){
-                              var list=failure_type_code_list.split(',');
-                              for (var j = 0; j< list.length; j++) {
-                                 if(list[i]!=undefined&&list[i]!=""){
-                                   var failure_type_name_obj = g_failure_type_dict[list[j]];
-                                   if(failure_type_name_obj!=undefined){
-                                     failure_type_name=failure_type_name+failure_type_name_obj.failure_type_name+",";
-                                   }
-                                 }
-                              }
-                            }
-                            if(failure_type_name.length>0){
-                              failure_type_name=failure_type_name.substring(0,failure_type_name.length-1);
-                            }
-                            g_companyList.push({
-                                id: id,
-                                order_no: ret.rows[i].order_no
-                            });
-                            var lonlat=ret.rows[i].person_user_location;
-                            var order_no=ret.rows[i].order_no;
-                            var distance=getDistance(ret.rows[i].distance);
-                            var icon_url=ret.rows[i].icon_url;
-                            var index=i;
-                            // lonlat------if语句开始
-                            if(lonlat!=undefined){
-                              var lonlatArr=lonlat.split(',');
-                              var lon="",lat="";
-                              if(lonlatArr.length>=2){
-                                lon=lonlatArr[0];
-                                lat=lonlatArr[1];
-                                //注意:getNameFromCoords为异步查询
-                                map.getNameFromCoords({
-                                   lon:lon,
-                                   lat:lat
-                                  }, function(ret, err) {
-                                 if (ret.status) {
-                                      // alert(ret.address);
-                                      var address=ret.address;
-                                      annotations.push({
-                                          id: id,
-                                          lon: lon,
-                                          lat:lat
-                                      });
-                                      bubble.push({
-                                         id:id,
-                                         service_type_name:service_type_name,
-                                         failure_type_name:failure_type_name,
-                                         address:address
-                                      });
-                                      //person_user_location_lon,person_user_location_lat,order_no, service_type_name, failure_type_name, distance,icon_url,address
-                                      var template=pendingOrderListTemplate(lon,lat,order_no, service_type_name, failure_type_name,distance ,icon_url,address);
-                                      $('#poilist-ul').append(template);
-                                      if(index==(count-1)){
-                                        api.sendEvent({
-                                         name: 'loadAllPendingOrderEvent',
-                                         extra: {
-                                                annotations:annotations,
-                                                g_companyList:g_companyList,
-                                                bubble:bubble
-                                             }
-                                         });
-                                      }
-                                      index++;
-                                      if($('#poilist-ul').find('li').length<=0){
-                                         $('.pr-empty').show();
-                                      }
-                                  }else{
-                                    if($('#poilist-ul').find('li').length<=0){
-                                       $('.pr-empty').show();
-                                    }
-                                  }
-                                });
+            var g_rowData_str=data.rowData;
+            g_service_type_dict=data.g_service_type_dict;
+            g_failure_type_dict=data.g_failure_type_dict;
+            g_my_lon=data.my_lon;
+            g_my_lat=data.my_lat;
+            g_headerH=data.g_headerH;
 
-                              }
-                            }
-                            // lonlat------if语句结束
-                        }
-                        //  showPendingOrder(ret.rows);
-
-
-                    } else {
-                        api.alert({
-                            msg: errs.msg
-                        });
-                    }
-                });
-            } else {
-                toastFail("无定位信息");
+            if(g_rowData_str!=undefined){
+              try{
+                g_rowData=JSON.parse(g_rowData_str);
+                   var order_no=g_rowData.order_no;
+                   g_order_no=order_no;
+                   var phone_no=g_rowData.cell_phone;
+                   var icon_url=g_rowData.icon_url;
+                   var nickname=g_rowData.nickname;
+                   var address=g_rowData.address;
+                   var service_type_name=g_rowData.service_type_name;
+                   var failure_type_name=g_rowData.failure_type_name;
+                   var lon=g_rowData.lon;
+                   var lat=g_rowData.lat;
+                   person_user_location_lon=lon;
+                   person_user_location_lat=lat;
+                   var fee=g_rowData.service_fee;
+                   var order_time=getDate1(g_rowData.order_time);
+                   $('.item-phone').attr('data-phone',phone_no);
+                   if(icon_url!=undefined){
+                     var url='http://' + serverIP + '/upload/pictures/'+icon_url;
+                     $('.item-icon').attr('src',url);
+                   }
+                   if(nickname!=undefined&&nickname!=""){
+                      $('.item-nickname').text(nickname);
+                   }else{
+                     $('.item-nickname').text('尚未有签名!');
+                   }
+                   if(order_time!=undefined&&order_time!=""){
+                     $('.item-time').text(order_time);
+                   }
+                   if(address!=undefined&&address!=""){
+                     $('.item-address').text(address);
+                   }
+                   if(fee!=undefined&&fee!=""){
+                      $('.item-fee').text(fee+"元");
+                   }
+                   if(service_type_name!=undefined&&service_type_name!=""){
+                     $('.item-service-type').text(service_type_name);
+                   }
+                   if(failure_type_name!=undefined&&failure_type_name!=""){
+                     $('.item-failure-type').text(failure_type_name);
+                   }
+              }catch(e){
+                toastFail("获取订单详情失败!");
+              }
+            }else{
+              toastFail("获取订单详情失败!");
             }
         }
-        //展示待接单状态的订单信息
-    // function showPendingOrder(pending_order_data) {
-    //     if (pending_order_data != undefined) {
-    //         var template = "";
-    //         for (var i = 0; i < pending_order_data.length; i++) {
-    //             try {
-    //                 var service_type_name = g_service_type_dict[pending_order_data[i].service_type_code].service_type_name;
-    //                 if (service_type_name == undefined)
-    //                     service_type_name = "";
-    //                 var str = pending_order_data[i].failure_type_code_list;
-    //                 var code_list = str.split(',');
-    //                 var failure_type_name = "";
-    //                 for (var j = 0; j < code_list.length; j++) {
-    //                     if (code_list[j] != undefined && code_list[j] != "") {
-    //                         failure_type_name = failure_type_name + g_failure_type_dict[code_list[j]].failure_type_name + ",";
-    //                     }
-    //                 }
-    //                 if (failure_type_name.length > 0 && (failure_type_name.lastIndexOf(',') == failure_type_name.length - 1)) {
-    //                     failure_type_name = failure_type_name.substring(0, failure_type_name.length - 1);
-    //                 }
-    //                 if (code_list.length <= 0)
-    //                     failure_type_name = "";
-    //                 // var failure_type_name=g_failure_type_dict[pending_order_data[i].failure_type_code].failure_type_name;
-    //                 // if(failure_type_name==undefined)
-    //                 var person_user_location_str=pending_order_data[i].person_user_location;
-    //                 var lon_lat = person_user_location_str.split(',');
-    //                 var person_user_location_lon,person_user_location_lat;
-    //                 if(lon_lat.length==2){
-    //                   person_user_location_lon=lon_lat[0];
-    //                   person_user_location_lat=lon_lat[1];
-    //                 }
-    //                 template += pendingOrderListTemplate(person_user_location_lon,person_user_location_lat,pending_order_data[i].order_no, service_type_name, failure_type_name, getDistance(pending_order_data[i].distance));
-    //             } catch (e) {
-    //                 alert(e);
-    //             }
-    //         }
-    //         $('#poilist-ul').append(template);
-    //         if (pending_order_data.length <= 0) {
-    //             toastFail("加载完毕!");
-    //         }
-    //     }
-    // }
-
-
-
     //获取两点间的路线距离
     function getRouteDistance(order_no, person_user_location_lon, person_user_location_lat) {
         var p_lon = person_user_location_lon;
@@ -287,53 +235,22 @@
     }
 
     //发送弹出标注信息事件
-    function popupBubble(obj) {
-        var order_no = $(obj).attr('data-no');
-        $(obj).addClass('pr-color');
-        $(obj).siblings('li').removeClass('pr-color');
+    function popupBubble() {
+        if(g_order_no!=undefined){
+          api.sendEvent({
+              name: 'LocatingPersonUserLocationEvent',
+              extra: {
+                  lon: person_user_location_lon,
+                  lat:person_user_location_lat,
+                  order_no:g_order_no
+              }
+          });
 
-        var person_user_location_lon = $(obj).attr('person-user-location-lon');
-        var person_user_location_lat = $(obj).attr('person-user-location-lat');
-        api.sendEvent({
-            name: 'LocatingPersonUserLocationEvent',
-            extra: {
-                lon: person_user_location_lon,
-                lat:person_user_location_lat,
-                order_no:order_no
-            }
-        });
-
-        // var   bmap = api.require('bMap');
-        // alert(person_user_location_lon+":"+person_user_location_lat);
-
-      //});
-        //alert("person_user_location_lon"+person_user_location_lon);
+        }else{
+          toastFail('未查到订单编号!');
+        }
         //计算路程距离
-        getRouteDistance(order_no, person_user_location_lon, person_user_location_lat);
-
-    }
-    //生成模板
-    function pendingOrderListTemplate(person_user_location_lon,person_user_location_lat,order_no, service_type_name, failure_type_name, distance,icon_url,address) {
-      var imgUrl="../../image/default_portrait.png";
-      if(icon_url!=undefined&&icon_url!=""){
-            imgUrl='http://' + serverIP + '/upload/pictures/'+icon_url;
-      }
-        var template = '<li class="aui-list-item aui-list-item-middle" person-user-location-lon="'+person_user_location_lon+'" person-user-location-lat="'+person_user_location_lat+'"  data-no="' + order_no + '" onclick="popupBubble(this)">' +
-            '<div class="aui-media-list-item-inner">' +
-            '<div class="aui-list-item-media" style="width:3rem;">' +
-            '<img src="'+imgUrl+'" class="aui-img-round aui-list-img-sm" onerror="imgExists(this);" style="width:2rem;height:2rem;">' +
-            '</div>'+
-            '<div class="aui-list-item-inner">' +
-            '<div class="aui-list-item-text">' +
-            '<div class="aui-list-item-title aui-font-size-14">' + service_type_name + '</div>' +
-            '<div id="dis_'+order_no+'" class="aui-list-item-right">' + distance + 'km</div>' +
-            '</div>' +
-            '<div class="aui-list-item-text">' + failure_type_name + '</div>' +
-            '<div class="aui-list-item-text">' + address + '</div>' +
-            '</div>' +
-            '</div>' +
-            '</li>';
-        return template;
+        //getRouteDistance(order_no, person_user_location_lon, person_user_location_lat);
     }
     //监听地图标注点击事件，订单滚动
     function registerPendingOrderScrollEvent() {
@@ -369,6 +286,54 @@
             g_start=g_start+1;
             loadAllPendingOrder();
         });
+    }
+    //拨打电话
+    function callUser(obj){
+      var phone_no=$(obj).attr('data-phone');
+      if(phone_no!=undefined){
+        api.call({
+          type: 'tel_prompt',
+          number: phone_no
+        });
+      }else{
+         toastFail('手机号码不可用!');
+      }
+    }
+    //发送消息
+    function sendMessage(){
+      toastSuccess("暂未开通此功能!敬请等待!");
+    }
+    //返回事件
+    function back(){
+      if(g_headerH==undefined||g_headerH==""){
+        g_headerH=80;
+      }
+      api.openFrame({
+          name: 'pending_order_list',
+          url: './pending_order_list.html',
+          rect: {
+              x: 10,
+              y: g_headerH+5,
+              w: api.winWidth - 20,
+              h: api.winHeight-(g_headerH+15)
+          },
+          reload: true,
+          vScrollBarEnabled: false,
+          pageParam: {
+              g_my_lon: g_my_lon,
+              g_my_lat: g_my_lat,
+              g_service_type_dict: g_service_type_dict,
+              g_failure_type_dict: g_failure_type_dict,
+              headerH:g_headerH
+          }
+      });
+      api.sendFrameToBack({
+          from: 'pending_order_list',
+          to: 'mask'
+      });
+       api.closeFrame({
+         name: 'pending_order'
+       });
     }
 </script>
 
