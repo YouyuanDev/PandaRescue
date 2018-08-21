@@ -583,11 +583,11 @@
                             }
                         }
                     } else {
-                        toastFail("系统错误,接单失败!");
+                        toastFail("系统错误,接单失败!错误码:"+err.code);
                     }
                 });
             } else {
-                toastFail("请选择后接单!");
+                toastFail("请选择要接的单!");
             }
         });
     }
@@ -714,16 +714,12 @@
                     }
                     if (status_name != undefined && status_name != "") {
                         openLocatingButton();
-                        //alert(JSON.stringify(order));
-                        //openOrderStatusFrame(g_account_type, status_code, status_name, status_name_en);
                         openOrderStatusFrame(order);
                     }
                 }
 
             } else {
-                api.alert({
-                    msg: JSON.stringify(err)
-                });
+                toastFail("系统错误,获取订单状态!错误码:"+err.code);
                 //clearInterval(g_orderStatusInterval);
             }
         });
@@ -752,7 +748,7 @@
                     }
                 }
             } else {
-                toastFail('获取用户信息时出错,错误信息:' + err.code);
+                toastFail('系统错误,同步信息失败!错误码:' + err.code);
             }
         });
     }
@@ -973,7 +969,7 @@
         api.ajax({
             url: s,
             method: 'post'
-        }, function(rets, errs) {
+        }, function(rets, err) {
             if (rets) {
                 if (rets.success) {
                     api.sendEvent({
@@ -1006,7 +1002,7 @@
                 });
 
             } else {
-                toastFail("登录异常,请稍后重试!");
+                toastFail("系统错误,检测用户是否登录失败!错误码:"+err.code);
             }
         });
     }
@@ -1022,7 +1018,7 @@
                     password: password
                 }
             }
-        }, function(rets, errs) {
+        }, function(rets, err) {
             if (rets) {
                 if (rets.success) {
                     //绑定推送
@@ -1053,7 +1049,7 @@
                     });
                 }
             } else {
-                toastFail("登录异常,请稍后重试!");
+                toastFail("系统错误,自动登录登录失败!错误码:"+err.code);
             }
         });
     }
@@ -1067,7 +1063,7 @@
             data: {
                 values: {}
             }
-        }, function(rets, errs) {
+        }, function(rets, err) {
             //清屏操作
             clearPanel();
             if (rets) {
@@ -1075,8 +1071,6 @@
                 if (rets.success) {
                     //存在进行中订单
                     updateOrderStatus(rets.order_no);
-                    toastSuccess("发现未完成订单");
-
                 } else {
                     //为了关闭定时器
                     updateOrderStatus(undefined);
@@ -1106,7 +1100,7 @@
 
                 }
             } else {
-                toastFail("getCurrentOrder异常,请稍后重试!");
+                toastFail("系统错误,获取最新订单失败!错误码"+err.code);
             }
         });
     }
@@ -1150,59 +1144,7 @@
             }
         });
     }
-    //加载附近商户的信息
-    // function loadNearbyCompany(start) {
-    //     if (g_my_lon != undefined && g_my_lat != undefined) {
-    //         if (start == undefined) {
-    //             start = 1;
-    //         }
-    //         var s = 'http://' + serverIP + '/PersonUser/getNearByCompany.action';
-    //         api.ajax({
-    //             url: s,
-    //             method: 'post',
-    //             data: {
-    //                 values: {
-    //                     lon: g_my_lon,
-    //                     lat: g_my_lat,
-    //                     page: start,
-    //                     rows: 3
-    //                 }
-    //             }
-    //         }, function(ret, errs) {
-    //             if (ret) {
-    //                 //alert(JSON.stringify(rets));
-    //                 var annotations = [];
-    //                 g_CompanyList.length = 0;
-    //                 for (var i = 0; i < ret.rows.length; i++) {
-    //                     var temp = {
-    //                         "id": i,
-    //                         "lon": ret.rows[i].company_location_lon,
-    //                         "lat": ret.rows[i].company_location_lat
-    //                     };
-    //                     annotations.push(temp);
-    //                     g_CompanyList.push({
-    //                         id: i,
-    //                         company_no: ret.rows[i].company_no
-    //                     });
-    //
-    //                 }
-    //                 setCompanyAnnotations(annotations);
-    //                 for (var i = 0; i < ret.rows.length; i++) {
-    //                     setCompanyBubble(i, ret.rows[i].company_name);
-    //                 }
-    //
-    //                 openCompanyFrame(g_my_lon, g_my_lat, ret.rows);
-    //                 openLocatingButton();
-    //                 openSosButton();
-    //             } else {
-    //                 api.alert({
-    //                     msg: errs.msg
-    //                 });
-    //
-    //             }
-    //         });
-    //     }
-    // }
+
     //注册加载所有未接单的订单事件
     function registerLoadAllPendingOrderEvent() {
         api.addEventListener({
@@ -1218,64 +1160,7 @@
             }
         });
     }
-    //加载所有未接单的订单
-    // function loadAllPendingOrder() {
-    //     if (g_my_lon != undefined && g_my_lat != undefined) {
-    //         var s = 'http://' + serverIP + '/CompanyUser/getNearByPendingOrders.action';
-    //         api.ajax({
-    //             url: s,
-    //             method: 'post',
-    //             data: {
-    //                 values: {
-    //                     lon: g_my_lon,
-    //                     lat: g_my_lat,
-    //                     page: 1,
-    //                     rows: 20
-    //                 }
-    //             }
-    //         }, function(ret, errs) {
-    //             if (ret) {
-    //                 var annotations = [];
-    //                 g_CompanyList.length = 0;
-    //                 for (var i = 0; i < ret.rows.length; i++) {
-    //                     var temp = {
-    //                         "id": i,
-    //                         "lon": ret.rows[i].company_location_lon,
-    //                         "lat": ret.rows[i].company_location_lat
-    //                     };
-    //                     annotations.push(temp);
-    //                     g_CompanyList.push({
-    //                         id: i,
-    //                         order_no: ret.rows[i].order_no
-    //                     });
-    //                 }
-    //                 setPendingOrderAnnotations(annotations);
-    //                 for (var i = 0; i < ret.rows.length; i++) {
-    //                     var service_type_name = g_service_type_dict[ret.rows[i].service_type_code];
-    //                     if (service_type_name == undefined)
-    //                         service_type_name = "";
-    //                     var failure_type_name = g_failure_type_dict[ret.rows[i].failure_type_code];
-    //                     if (failure_type_name == undefined)
-    //                         failure_type_name = "";
-    //                     setPendingOrderBubble(i, service_type_name, failure_type_name);
-    //                 }
-    //
-    //                 openPendingorderFrame(g_my_lon, g_my_lat, ret.rows);
-    //                 openLocatingButton();
-    //                 openReceiptButton();
-    //             } else {
-    //                 api.alert({
-    //                     msg: errs.msg
-    //                 });
-    //                 // openPendingorderFrame(rets);
-    //                 // openLocatingButton();
-    //                 // openReceiptButton();
-    //             }
-    //         });
-    //     } else {
-    //         toastFail("无定位信息");
-    //     }
-    // }
+
     //切换至普通账户
     function requestSwitchAccounType(account_type) {
         toastSuccess('请求切换至' + account_type);
@@ -1289,7 +1174,7 @@
                     ToAccountType: account_type
                 }
             }
-        }, function(rets, errs) {
+        }, function(rets, err) {
             if (rets) {
                 if (rets.success) {
                     toastSuccess(rets.msg);
@@ -1309,7 +1194,7 @@
                     }
                 }
             } else {
-                toastFail("异常,请稍后重试!");
+                toastFail("系统错误,切换账户失败!错误码:"+err.code);
             }
         });
     }
@@ -1367,84 +1252,8 @@
             g_failure_type_dict = JSON.parse(ret.value.g_failure_type_dict);
         });
     }
-    //加载服务类型
-    // function loadAllServiceType() {
-    //     //查看本地是否已经存在，不存在请求服务器，存在就直接获取
-    //     var dict = api.getPrefs({
-    //         sync: true,
-    //         key: 'g_service_type_dict'
-    //     });
-    //     if (dict != undefined) {
-    //         g_service_type_dict = dict;
-    //     } else {
-    //         var s = 'http://' + serverIP + '/ServiceType/getAllServiceType.action';
-    //         api.ajax({
-    //             url: s,
-    //             method: 'post'
-    //         }, function(rets, errs) {
-    //             if (rets) {
-    //                 g_service_type_dict = {};
-    //                 for (var i = 0; i < rets.length; i++) {
-    //                     var service_type_code = rets[i].service_type_code;
-    //                     var service_type_name = rets[i].service_type_name;
-    //                     var service_type_name_en = rets[i].service_type_name_en;
-    //                     g_service_type_dict[service_type_code] = {
-    //                         "service_type_name": service_type_name,
-    //                         "service_type_name_en": service_type_name_en
-    //                     };
-    //                 }
-    //                 api.setPrefs({
-    //                     key: 'g_service_type_dict',
-    //                     value: g_service_type_dict
-    //                 });
-    //             } else {
-    //                 // api.alert({
-    //                 //     msg: "加载服务类型失败!"
-    //                 // });
-    //             }
-    //         });
-    //     }
-    // }
 
-    //加载故障类型
-    // function loadAllFaultType() {
-    //     //查看本地是否已经存在，不存在请求服务器，存在就直接获取
-    //     var dict = api.getPrefs({
-    //         sync: true,
-    //         key: 'g_failure_type_dict'
-    //     });
-    //     if (dict != undefined) {
-    //         g_failure_type_dict = dict;
-    //     } else {
-    //         var s = 'http://' + serverIP + '/FailureType/getAllFailureType.action';
-    //         api.ajax({
-    //             url: s,
-    //             method: 'post'
-    //         }, function(rets, errs) {
-    //             if (rets) {
-    //                 g_failure_type_dict = {};
-    //                 for (var i = 0; i < rets.length; i++) {
-    //                     var failure_type_code = rets[i].failure_type_code;
-    //                     var failure_type_name = rets[i].failure_type_name;
-    //                     var failure_type_name_en = rets[i].failure_type_name_en;
-    //                     g_failure_type_dict[failure_type_code] = {
-    //                         "failure_type_name": failure_type_name,
-    //                         "failure_type_name_en": failure_type_name_en
-    //                     };
-    //                 }
-    //                 api.setPrefs({
-    //                     key: 'g_failure_type_dict',
-    //                     value: g_failure_type_dict
-    //                 });
-    //             } else {
-    //                 api.alert({
-    //                     msg: "加载故障类型失败!"
-    //                 });
-    //             }
-    //         });
-    //     }
-    // }
-
+    //发送推送
     function sendPush() {
         getCurrentOrder();
 

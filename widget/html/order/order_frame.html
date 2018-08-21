@@ -184,7 +184,7 @@
                         g_allow_load=false;
                     }
                 } else {
-                    toastFail("系统错误!错误码:" + err.code);
+                    toastFail(ret.msg);
                     $('.aui-content').after(addEmptyInfo());
                     g_allow_load=false;
                     if (ret.relogin) {
