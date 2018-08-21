@@ -33,7 +33,7 @@
 
         .pr-empty {
             width: 100%;
-            height:auto;
+            height: auto;
             text-align: center;
             justify-content: center;
             align-items: center;
@@ -90,7 +90,7 @@
 <script type="text/javascript">
     var language_id = 0,
         start = 1,
-        g_service_type_dict, g_failure_type_dict, g_order_status_dict,g_allow_load=true;
+        g_service_type_dict, g_failure_type_dict, g_order_status_dict, g_allow_load = true;
     apiready = function() {
             $('.pr-empty').hide();
             registerLoadAllServiceTypeEvent();
@@ -134,8 +134,8 @@
                 threshold: 0 //设置距离底部多少距离时触发,默认值为0,数字类型
             }
         }, function(ret, err) {
-            if(g_allow_load){
-              loadAccountOrder();
+            if (g_allow_load) {
+                loadAccountOrder();
             }
         });
     }
@@ -166,10 +166,10 @@
                             var order_status = data[i].order_status;
                             var service_type_code = data[i].service_type_code;
                             var failure_type_code_list = data[i].failure_type_code_list;
-                            if($('.aui-content .aui-list li').length>0){
-                              $('.aui-content .aui-list li:last-child').after(getOrderTemplate(order_no, order_time, order_status, service_type_code, failure_type_code_list));
-                            }else{
-                              $('.aui-content .aui-list').append(getOrderTemplate(order_no, order_time, order_status, service_type_code, failure_type_code_list));
+                            if ($('.aui-content .aui-list li').length > 0) {
+                                $('.aui-content .aui-list li:last-child').after(getOrderTemplate(order_no, order_time, order_status, service_type_code, failure_type_code_list));
+                            } else {
+                                $('.aui-content .aui-list').append(getOrderTemplate(order_no, order_time, order_status, service_type_code, failure_type_code_list));
                             }
                         }
                         start = start + 1;
@@ -181,12 +181,12 @@
                         } else {
                             $('.aui-content').after(addEmptyInfo());
                         }
-                        g_allow_load=false;
+                        g_allow_load = false;
                     }
                 } else {
                     toastFail(ret.msg);
                     $('.aui-content').after(addEmptyInfo());
-                    g_allow_load=false;
+                    g_allow_load = false;
                     if (ret.relogin) {
                         api.sendEvent({
                             name: 'reloginEvent'
@@ -196,7 +196,7 @@
                 }
             } else {
                 toastFail('获取订单信息时出错,错误信息:' + err.code);
-                g_allow_load=false;
+                g_allow_load = false;
                 if (ret.relogin) {
                     api.sendEvent({
                         name: 'reloginEvent'
@@ -208,7 +208,7 @@
     }
     //订单列表模板
     function getOrderTemplate(order_no, order_time, order_status, service_type, failure_type) {
-        var template = '<li class="aui-list-item aui-list-item-arrow" data-order-no='+order_no+' onclick="openOrderDetail(this)">' +
+        var template = '<li class="aui-list-item aui-list-item-arrow" data-order-no=' + order_no + ' onclick="openOrderDetail(this)">' +
             '<div class="aui-media-list-item-inner">' +
             '<div class="aui-list-item-inner">' +
             '<div class="aui-list-item-text">' +
@@ -224,8 +224,70 @@
     }
     //打开订单详情
     function openOrderDetail(obj) {
-        var order_no=$(obj).attr('data-order-no');
-        alert(order_no);
+        var order_no = $(obj).attr('data-order-no');
+        var service_type=$(obj).find('.span-service-type').text();
+        var failure_type=$(obj).find('.span-failure-type').text();
+        if (order_no != undefined && order_no != "") {
+            var s = 'http://' + serverIP + '/Order/getOrderMapByOrderNo.action';
+            api.ajax({
+                url: s,
+                method: 'post',
+                timeout: 30,
+                dataType: 'json',
+                data: {
+                    values: {
+                        order_no: order_no
+                    }
+                }
+            }, function(ret, err) {
+                if (ret) {
+                    if ($.isArray(ret)) {
+                        var status_code = "";
+                        var order;
+                        for (var i = 0; i < ret.length; i++) {
+                            order = ret[0];
+                        }
+                        if (order != undefined) {
+                            status_code = order.status_code;
+                        }
+                        //如果已经确认完成，则可以查看订单详情，否则自动返回主页面
+                        if (status_code == "finishedconfirmed") {
+                            order["service_type"]=service_type;
+                            order["failure_type"]=failure_type;
+                            api.openWin({
+                                name: 'order_detail',
+                                url: './order_detail.html',
+                                pageParam: {
+                                    order: order
+                                }
+                            });
+                        } else if(status_code=="cancelled"){
+                          toastSuccess("订单已取消,无法查看!");
+                        }else{
+                          api.confirm({
+                              title: '提示',
+                              msg: '订单尚在进行中,您要返回到主页面吗?',
+                              buttons: ['确定', '取消']
+                          }, function(ret, err) {
+                              var index = ret.buttonIndex;
+                              if(index==1){
+                                api.closeWin({
+                                    name: 'order'
+                                });
+                              }
+                          });
+                        }
+                    }else{
+                      toastFail("未能获取到订单详情,请刷新重试!");
+                    }
+                } else {
+                    toastFail("暂时无法查看,请刷新重试!");
+                }
+            });
+
+        } else {
+            toastFail("暂时无法查看,请刷新重试!");
+        }
     }
     //添加数据为空时显示的空模板
     function addEmptyInfo() {
@@ -266,27 +328,26 @@
     }
     //更换服务和故障类型
     function changeServiceTypeFaultType() {
-        var language="zh-CN";
-        var nowLanguage=getCookie();
-        if(nowLanguage!=undefined&&nowLanguage!=""){
-          language=nowLanguage;
+        var language = "zh-CN";
+        var nowLanguage = getCookie();
+        if (nowLanguage != undefined && nowLanguage != "") {
+            language = nowLanguage;
         }
         if (g_service_type_dict != undefined) {
             $('.span-service-type').each(function() {
                 var text = $(this).text();
-                if(text=="undefined"||text==""){
-                  $(this).text('');
-                }else{
-                  for (var key in g_service_type_dict) {
-                      if (text == key) {
-                          if(language=="zh-CN"){
-                            $(this).text(g_service_type_dict[key].service_type_name);
-                          }
-                          else {
-                            $(this).text(g_service_type_dict[key].service_type_name_en);
-                          }
-                      }
-                  }
+                if (text == "undefined" || text == "") {
+                    $(this).text('');
+                } else {
+                    for (var key in g_service_type_dict) {
+                        if (text == key) {
+                            if (language == "zh-CN") {
+                                $(this).text(g_service_type_dict[key].service_type_name);
+                            } else {
+                                $(this).text(g_service_type_dict[key].service_type_name_en);
+                            }
+                        }
+                    }
                 }
             });
 
@@ -294,26 +355,25 @@
         if (g_failure_type_dict != undefined) {
             $('.span-failure-type').each(function() {
                 var text = $(this).text();
-                if(text=="undefined"||text==""){
-                  $(this).text('');
-                }else{
-                  var arr = text.split(',');
-                  var str = "";
-                  for (var i = 0; i < arr.length; i++) {
-                      for (var key in g_failure_type_dict) {
-                          if (arr[i] == key) {
-                              if(language=="zh-CN"){
-                                str += g_failure_type_dict[key].failure_type_name + ",";
-                              }
-                              else {
-                                str += g_failure_type_dict[key].failure_type_name_en + ",";
-                              }
-                          }
-                      }
-                  }
-                  if(str!=""){
-                    $(this).text(str.substring(0, str.length - 1));
-                  }
+                if (text == "undefined" || text == "") {
+                    $(this).text('');
+                } else {
+                    var arr = text.split(',');
+                    var str = "";
+                    for (var i = 0; i < arr.length; i++) {
+                        for (var key in g_failure_type_dict) {
+                            if (arr[i] == key) {
+                                if (language == "zh-CN") {
+                                    str += g_failure_type_dict[key].failure_type_name + ",";
+                                } else {
+                                    str += g_failure_type_dict[key].failure_type_name_en + ",";
+                                }
+                            }
+                        }
+                    }
+                    if (str != "") {
+                        $(this).text(str.substring(0, str.length - 1));
+                    }
                 }
             });
         }
@@ -322,19 +382,18 @@
             //alert(JSON.stringify(g_order_status_dict));
             $('.span-status-type').each(function() {
                 var text = $(this).text();
-                if(text=="undefined"||text==""){
-                  $(this).text('');
-                }else{
-                  for (var key in g_order_status_dict) {
-                      if (text == key) {
-                        if(language=="zh-CN"){
-                          $(this).text(g_order_status_dict[key].status_name);
+                if (text == "undefined" || text == "") {
+                    $(this).text('');
+                } else {
+                    for (var key in g_order_status_dict) {
+                        if (text == key) {
+                            if (language == "zh-CN") {
+                                $(this).text(g_order_status_dict[key].status_name);
+                            } else {
+                                $(this).text(g_order_status_dict[key].status_name_en);
+                            }
                         }
-                        else {
-                          $(this).text(g_order_status_dict[key].status_name_en);
-                        }
-                      }
-                  }
+                    }
                 }
             });
         }

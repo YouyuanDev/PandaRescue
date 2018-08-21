@@ -1,0 +1,168 @@
+<!doctype html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,initial-scale=1.0,width=device-width" />
+    <meta name="format-detection" content="telephone=no,email=no,date=no,address=no">
+    <title>Order Status</title>
+    <link rel="stylesheet" type="text/css" href="../../css/api.css" />
+    <link rel="stylesheet" type="text/css" href="../../css/aui.css" />
+    <link rel="stylesheet" type="text/css" href="../../css/style.css" />
+    <link rel="stylesheet" type="text/css" href="../../css/font-awesome.min.css" />
+    <style type="text/css">
+        html,
+        body {
+            height: 100%;
+        }
+
+        .container {
+            height: 100%;
+            width: 100%;
+            padding: 5px;
+        }
+
+        .order-status {
+            background-color: #fff;
+            color: #595959;
+            border-radius: 3px 3px 0px 0px;
+        }
+
+        .cancel-order {
+            border-radius: 0px 0px 3px 3px;
+        }
+
+        .item-container {
+            height: auto;
+        }
+
+        .item-icon {
+            border-radius: 50%;
+        }
+
+        .item-right {
+            padding-left: 8px;
+        }
+
+        .item-color {
+            color: #CCCCCC;
+        }
+
+        .item-fee {
+            font-size: 2rem;
+        }
+
+        .item-fee-container {
+            background-color: #fff;
+        }
+
+        .item-fee-container span {
+            color: #000;
+        }
+    </style>
+</head>
+
+<body class="pr-body-bgcolor">
+    <div class="aui-content container">
+        <div class="aui-list aui-media-list aui-list-noborder">
+            <div class="aui-list-item item-container">
+                <div class="aui-media-list-item-inner">
+                    <div class="aui-list-item-media item-icon-container">
+                        <img src="../../image/default_portrait.png" class="item-icon" onerror="imgExists(this)">
+                    </div>
+                    <div class="aui-list-item-inner">
+                        <div class="aui-list-item-text">
+                            <div class="aui-list-item-title item-name"></div>
+                        </div>
+                        <div class="aui-list-item-text item-address">
+
+                        </div>
+                        <div class="aui-list-item-text item-service-type">
+
+                        </div>
+                        <div class="aui-list-item-text item-failure-type">
+
+                        </div>
+                        <!-- <div class="aui-list-item-text">
+                            <p><span onclick="sendMessage();" class="fa fa-commenting item-message"></span><span onclick="callUser(this);" data-phone="" class="fa fa-phone item-phone"></span></p>
+                        </div> -->
+                    </div>
+                </div>
+                <div class="aui-info" style="padding-top:0">
+                    <div class="aui-info-item item-time">
+                    </div>
+                </div>
+            </div>
+            <div class="aui-bar aui-bar-nav item-fee-container">
+                <span><span class="item-fee"></span><span>元</span></span>
+            </div>
+            <div class="aui-bar aui-bar-nav cancel-order buttons pr-bgcolor">
+                <div class="aui-btn aui-btn-block cancel-order i18n1" name="evaluate" onclick="cacelOrder();">立即评价</div>
+            </div>
+        </div>
+    </div>
+    <!-- </div> -->
+</body>
+<script type="text/javascript" src="../../script/api.js"></script>
+<script type="text/javascript" src="../../script/jquery-3.3.1.min.js"></script>
+<script type="text/javascript" src="../../script/common.js"></script>
+<script type="text/javascript" src="../../script/language.js"></script>
+<script type="text/javascript">
+    apiready = function() {
+        var data = api.pageParam;
+        var order = data.order;
+        if (order != undefined) {
+          //  alert(JSON.stringify(order));
+            var upload_files = order.upload_files;
+            var icon_url;
+            if (upload_files != undefined && upload_files != "") {
+                var arr = upload_files.split(';');
+                if (arr.length > 0 && arr[0] != undefined) {
+                    icon_url = arr[0];
+                }
+            }
+            var company_name = order.company_name;
+            var company_address = order.address;
+            var fee = order.service_fee;
+            var time = getDate1(order.order_time);
+            var service_type = order.service_type;
+            var failure_type = order.failure_type;
+            $('.item-icon').attr('src', icon_url);
+            if (company_name != undefined)
+                $('.item-name').text(company_name);
+            if (company_address != undefined)
+                $('.item-address').text(company_address);
+            if (service_type != undefined) {
+                $('.item-service-type').text(service_type);
+            }
+            if (failure_type != undefined) {
+                $('.item-failure-type').text(failure_type);
+            }
+            if (time != undefined) {
+                $('.item-time').text(time);
+            }
+            if (fee != undefined) {
+                $('.item-fee').text(fee);
+            }
+            var h = $(document.body)[0].scrollHeight+10;
+            api.setFrameAttr({
+                name: 'order_detail_frame',
+                rect: {
+                    x: 0,
+                    y: api.winHeight - h,
+                    w: api.winWidth - 20,
+                    h: 'auto',
+                    marginLeft: 10,
+                    marginBottom: 10,
+                    marginRight: 10
+                },
+            });
+        } else {
+            api.closeFrame({
+                name: 'order_detail_frame'
+            });
+        }
+    }
+</script>
+
+</html>
