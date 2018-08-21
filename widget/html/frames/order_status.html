@@ -55,6 +55,9 @@
         .item-phone{
           padding-left:0.5rem;
         }
+        .item-color{
+          color:#CCCCCC;
+        }
     </style>
 </head>
 
@@ -137,12 +140,14 @@
                 }
                 $('.item-icon').attr('src', icon_url);
                 $('.item-phone').attr("disabled",false);
+                $('.item-phone').removeClass('item-color');
                 $('.item-phone').attr('data-phone',order.cell_phone);
             } else if (account_type == "company_user") {
                 $('.item-icon-container').hide();
                 $('.item-name').text(getDate1(order_time));
                 $('.item-fee').text(order.service_fee + "元");
                 $('.item-phone').attr("disabled",true);
+                $('.item-phone').addClass('item-color');
             }
             if (account_type != undefined && status_code != undefined) {
                 drawStatusPanel(account_type, status_code, status_name, status_name_en);

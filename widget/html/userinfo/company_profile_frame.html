@@ -25,6 +25,15 @@
             width: 100%;
             height: 6rem;
         }
+
+        .item-cash {
+            padding: 0.5rem;
+        }
+
+        .item-cash .aui-btn-block {
+            height: 2rem;
+            line-height: 2.05rem;
+        }
     </style>
 </head>
 
@@ -160,6 +169,23 @@
             </li>
         </ul>
     </div>
+    <div class="aui-content aui-margin-b-15">
+        <ul class="aui-list aui-form-list">
+            <li class="aui-list-item">
+                <div class="aui-list-item-inner">
+                    <!-- <div class="aui-list-item-label i18n1" name="putforwardcash">
+                        提现
+                    </div> -->
+                    <div class="aui-list-item-input">
+                        <!-- <div class="aui-label company-balance"></div> -->
+                        <div class="item-cash">
+                            <div class="aui-btn aui-btn-block pr-fontcolor pr-bgcolor i18n1" name="withdraw" onclick="putForwardCash();">提现</div>
+                        </div>
+                    </div>
+                </div>
+            </li>
+        </ul>
+    </div>
     <section class="aui-grid img-container">
         <div class="aui-row">
             <div class="aui-col-xs-4 img-plus" onclick="addCompanyPicture();">
@@ -189,7 +215,7 @@
 <script src="../../script/jquery.i18n.properties-1.0.9.js" type="text/javascript"></script>
 <script src="../../script/language.js" type="text/javascript"></script>
 <script type="text/javascript">
-    var g_id, g_is_verified, g_upload_files = "";
+    var g_id, g_is_verified, g_upload_files = "",g_balance="";
     var map;
     apiready = function() {
             fnSettingHeader();
@@ -278,6 +304,7 @@
                     is_verified = ret.company.is_verified;
                     company_found_date = ret.company.company_found_date;
                     balance = ret.company.pr_account_amount;
+                    g_balance=balance;
                     upload_files = ret.company.upload_files;
                 } else {
                     toastFail(ret.message);
@@ -314,8 +341,10 @@
                 if (company_found_date != undefined && company_found_date != "") {
                     $('.company-foundtime-input').val(getDate1(company_found_date));
                 }
-                if (balance != undefined && balance != "") {
+                if (balance != undefined) {
                     $('.company-balance').text(balance + "￥");
+                } else {
+                    $('.company-balance').text("未查到,请刷新尝试!");
                 }
                 if (is_verified != undefined && is_verified != "") {
                     g_is_verified = is_verified;
@@ -412,40 +441,39 @@
             buttons: ['确定', '取消']
         }, function(ret, err) {
             var index = ret.buttonIndex;
-            if(index==1){
-              var $obj = $(obj);
-              var imgName = $obj.attr('data-name');
-              if (g_id == undefined && g_id == "" && imgName == undefined && imgName == "") {
-                  toastFail("移除图片失败!");
-                  return;
-              }
-              var temp = g_upload_files.replace(imgName + ";", "");
-              alert(temp);
-              var s = 'http://' + serverIP + '/CompanyUser/saveCompanyUserInfo.action';
-              api.ajax({
-                  url: s,
-                  method: 'post',
-                  timeout: 30,
-                  dataType: 'json',
-                  data: {
-                      values: {
-                          id: g_id,
-                          upload_files:temp
-                      }
-                  }
-              }, function(ret, err) {
-                  if (ret) {
-                      if (ret.success) {
-                          toastSuccess(ret.message);
-                          g_upload_files = temp;
-                          $obj.remove();
-                      } else {
-                          toastFail(ret.message);
-                      }
-                  } else {
-                      toastFail('保存商户信息时出错,错误信息:' + err.code);
-                  }
-              });
+            if (index == 1) {
+                var $obj = $(obj);
+                var imgName = $obj.attr('data-name');
+                if (g_id == undefined && g_id == "" && imgName == undefined && imgName == "") {
+                    toastFail("移除图片失败!");
+                    return;
+                }
+                var temp = g_upload_files.replace(imgName + ";", "");
+                var s = 'http://' + serverIP + '/CompanyUser/saveCompanyUserInfo.action';
+                api.ajax({
+                    url: s,
+                    method: 'post',
+                    timeout: 30,
+                    dataType: 'json',
+                    data: {
+                        values: {
+                            id: g_id,
+                            upload_files: temp
+                        }
+                    }
+                }, function(ret, err) {
+                    if (ret) {
+                        if (ret.success) {
+                            toastSuccess(ret.message);
+                            g_upload_files = temp;
+                            $obj.remove();
+                        } else {
+                            toastFail(ret.message);
+                        }
+                    } else {
+                        toastFail('保存商户信息时出错,错误信息:' + err.code);
+                    }
+                });
             }
         });
     }
@@ -496,6 +524,22 @@
                 }
             } else {
                 toastFail('保存商户信息时出错,错误信息:' + err.code);
+            }
+        });
+    }
+    //提现
+    function putForwardCash() {
+        api.openFrame({
+            name: 'putforward_cash',
+            url: '../frames/putforward_cash.html',
+            rect: {
+                x: 0,
+                y: 0,
+                w: 'auto',
+                h: 'auto'
+            },
+            pageParam: {
+                g_balance:g_balance
             }
         });
     }

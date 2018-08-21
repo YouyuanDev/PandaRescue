@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0" />
+    <meta name="format-detection" content="telephone=no,email=no,date=no,address=no">
+    <title>提现</title>
+    <link rel="stylesheet" type="text/css" href="../../css/api.css" />
+    <link rel="stylesheet" type="text/css" href="../../css/aui.css" />
+    <link rel="stylesheet" type="text/css" href="../../css/font-awesome.min.css" />
+    <link rel="stylesheet" type="text/css" href="../../css/style.css" />
+    <style>
+        .container {
+            padding: 5px;
+        }
+
+        .aui-list .aui-list-header {
+            background-color: #fff;
+            color: #212121;
+            position: relative;
+            font-size: 1rem;
+            padding: 0.7rem 0.75rem;
+        }
+        .item-btn{
+           float: right;
+           background: #fff;
+           color:#73C0B6;
+        }
+        .aui-list .item-label{
+           width:auto;
+        }
+    </style>
+</head>
+
+<body class="pr-body-bgcolor">
+    <header id="header" class="aui-bar aui-bar-nav aui-bar-light personal-header pr-bgcolor">
+        <a class="aui-pull-left aui-btn">
+            <span onclick="closeMyself();" class="fa fa-chevron-left"></span>
+        </a>
+        <div class="aui-title pr-fontcolor i18n1" name="withdraw">提现</div>
+    </header>
+    <div class="aui-content aui-margin-b-15 container">
+        <div class="aui-list aui-form-list aui-list-noborder">
+            <div class="aui-list-header i18n1" name="withdrawalamount">提现金额</div>
+            <div class="aui-list-item">
+                <div class="aui-list-item-inner">
+                    <div class="aui-list-item-label item-label">
+                        ￥
+                    </div>
+                    <div class="aui-list-item-input">
+                        <input type="number" id="cash">
+                    </div>
+                </div>
+            </div>
+            <div class="aui-list-item aui-list-noborder">
+                <div class="aui-list-item-inner">
+                    <div class="aui-list-item-label">
+                        <span class="pr-fontcolor1"><span class="i18n1" name="availablebalance"></span><span class="item-balance"></span><span>￥</span></span>
+                    </div>
+                    <div class="aui-list-item-input">
+                        <div class="aui-btn i18n1 item-btn" name="allcash" onclick="putForwardAllCash();">全部提现</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="aui-content aui-margin-b-15">
+        <div class="aui-list aui-list-in">
+            <div class="aui-list-header">
+              <p>
+                  <div class="aui-btn aui-btn-block pr-fontcolor pr-bgcolor i18n1" name="withdraw" onclick="beginWithdraw();">提现</div>
+              </p>
+            </div>
+        </div>
+    </div>
+</body>
+
+</html>
+<script type="text/javascript" src="../../script/api.js"></script>
+<script type="text/javascript" src="../../script/jquery-3.3.1.min.js"></script>
+<script src="../../script/jquery.i18n.properties-1.0.9.js" type="text/javascript"></script>
+<script src="../../script/language.js" type="text/javascript"></script>
+<script type="text/javascript" src="../../script/common.js"></script>
+<script type="text/javascript">
+    var language_id = 0,
+        g_balance;
+    apiready = function() {
+        fnSettingHeader();
+        var data = api.pageParam;
+        g_balance = data.g_balance;
+        if (g_balance != undefined) {
+            $('.item-balance').text(g_balance);
+        }
+        hlLanguage("../../i18n/");
+    }
+    //提取全部
+    function putForwardAllCash(){
+      var cash=$('.item-balance').text();
+      if(cash!=undefined&&cash>0)
+        $('#cash').val(cash);
+    }
+    function closeMyself() {
+        api.closeFrame({
+            name: 'putforward_cash'
+        });
+    }
+    //提现
+    function beginWithdraw(){
+      var amount=$('#cash').val();
+      if(amount!=undefined&&amount!=""&&!isNaN(amount)){
+        if(amount<=0){
+          toastFail('提现金额不能少于0元');
+          return;
+        }
+        var s = 'http://' + serverIP + '/CompanyUser/WithdrawCompanyAccount.action';
+        api.ajax({
+            url: s,
+            method: 'post',
+            timeout: 30,
+            dataType: 'json',
+            data: {
+                values: {
+                    amount: amount
+                }
+            }
+        }, function(ret, err) {
+            if (ret) {
+                toastSuccess(ret.msg);
+                if(ret.success){
+                  var cash=$('.item-balance').text();
+                  cash=cash-amount;
+                  $('.item-balance').text(cash);
+                }
+            } else {
+                toastFail('提现失败!');
+            }
+        });
+      }else{
+        toastFail("请输入提现金额!");
+      }
+    }
+</script>
