@@ -136,7 +136,7 @@
                 if (ret.status) {
                     openbMap();
                 } else {
-                    alert('地图初始化失败，无法使用定位！');
+                    toastFail('地图打开失败，无法使用定位！');
                 }
             });
         } else {
@@ -167,7 +167,7 @@
                     getLocationServices();
                 }, 200);
             } else {
-                alert('地图打开失败，无法使用定位！');
+                toastFail('地图打开失败，无法使用定位！');
             }
         });
 
@@ -184,7 +184,6 @@
         map.getLocationServices(function(ret, err) {
             if (ret.enable) {
                 getUserLocation();
-
             } else {
                 alert("未开启定位功能！");
             }
@@ -195,7 +194,6 @@
         map.getCurrentLocation(
             function(ret, err) {
                 if (ret.status) {
-                    //alert(ret.status);
                     g_my_lon = ret.lon;
                     g_my_lat = ret.lat;
                     initMapSDKOK();
@@ -204,8 +202,6 @@
                     toastFail('getUserLocation 失败');
                 }
             });
-
-
     }
     //初始化地图成功,获取最新订单信息
     function initMapSDKOK() {
@@ -429,7 +425,6 @@
             reload: true,
             vScrollBarEnabled: false,
             pageParam: {
-                // company: rets,
                 g_my_lon: g_my_lon,
                 g_my_lat: g_my_lat
             }
@@ -555,8 +550,6 @@
         }, function(ret, err) {
             //判断是否选中了要接的单,如果选中了接单获取接单编号
             if (g_selected_pending_order_no != undefined && g_selected_pending_order_no != "") {
-                //alert(g_selected_pending_order_no);
-                //alert("点击了接单，开始接单后操作");
                 var s = 'http://' + serverIP + '/CompanyUser/CompanyUserAcceptPendingOrder.action';
                 api.ajax({
                     url: s,
@@ -573,7 +566,6 @@
                         if (ret.success) {
                             toastSuccess(ret.message);
                             //接单成功
-
                         } else {
                             toastFail(ret.message);
                             if (ret.relogin) {
@@ -780,8 +772,6 @@
             }
         }
     }
-
-
     //上传坐标
     function SendLocationToServer(now_lon, now_lat, order_no, distanceToLastLocation) {
         var my_location = now_lon + "," + now_lat;
@@ -800,18 +790,14 @@
         }, function(ret, err) {
             if (ret) {
                 if (ret.success) {
-
                     if (distanceToLastLocation > 10) {
                         map.showUserLocation({
                             isShow: true,
                             trackingMode: 'none'
                         });
                     }
-
                     g_my_lon = now_lon;
                     g_my_lat = now_lat;
-
-
                 }
             }
         });
@@ -825,10 +811,8 @@
             filter: 1
         }, function(ret, err) {
             if (ret.status) {
-                //alert("updateOrderUserLocation");
                 var now_lon = ret.lon;
                 var now_lat = ret.lat;
-
                 //获取上次和当前距离差，大于1m则更新位置
                 if (g_my_lon != undefined && g_my_lat != undefined && now_lon != undefined && now_lat != undefined) {
                     map.getDistance({
@@ -849,13 +833,12 @@
                     SendLocationToServer(now_lon, now_lat, order_no, 100);
                 }
             } else {
-                //alert('获取用户信息时出错,错误信息:' + err.code);
                 //map.stopLocation();
                 toastFail('获取用户信息时出错,错误信息:' + err.code);
             }
         });
     }
-    //打开订单状态Frame  account_type, status_code, status_name, status_name_en
+    //打开订单状态Frame
     function openOrderStatusFrame(order) {
         api.openFrame({
             name: 'order_status',
@@ -874,10 +857,6 @@
             pageParam: {
                 account_type:g_account_type,
                 order:order
-                // account_type: account_type,
-                // status_code: status_code,
-                // status_name: status_name,
-                // status_name_en: status_name_en
             }
         });
         api.sendFrameToBack({
@@ -1074,7 +1053,6 @@
                 } else {
                     //为了关闭定时器
                     updateOrderStatus(undefined);
-                    // map.stopLocation();
                     if (rets.relogin) {
                         //session过期，重新登录 000
                         toastFail(rets.msg);
@@ -1083,21 +1061,16 @@
                         });
                     } else {
                         //不存在进行中订单
-                        toastFail(rets.msg);
                         if (g_account_type == "person_user") {
                             //如果是个人用则显示附近商户
                             openCompanyFrame();
-                            //loadNearbyCompany();
                         } else if (g_account_type == "company_user") {
                             //如果是商户用户,则显示所有pending订单
                             openPendingorderFrame();
-                            //loadAllPendingOrder();
                         } else {
-                            toastFail("g_account_type=" + g_account_type);
+                            toastFail("系统错误,未找到相应账户类型!");
                         }
                     }
-
-
                 }
             } else {
                 toastFail("系统错误,获取最新订单失败!错误码"+err.code);
@@ -1163,7 +1136,6 @@
 
     //切换至普通账户
     function requestSwitchAccounType(account_type) {
-        toastSuccess('请求切换至' + account_type);
         //向后台发出请求判断是否能够切换
         var s = 'http://' + serverIP + '/Login/APPSwitchAccoutType.action';
         api.ajax({
