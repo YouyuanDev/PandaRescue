@@ -712,7 +712,6 @@
 
             } else {
                 toastFail("系统错误,获取订单状态!错误码:"+err.code);
-                //clearInterval(g_orderStatusInterval);
             }
         });
     }
@@ -1080,26 +1079,14 @@
     //更新当前订单的状态
     function updateOrderStatus(order_no) {
         //关闭附近商户列表和求救Frame
-        // clearInterval(g_orderStatusInterval);
-        // clearInterval(g_userLocationInterval);
         clearInterval(g_PersonUserAndCompanyUserLocationInterval);
         getOrderStatusInfo(order_no);
         updateOrderUserLocation(order_no);
-
-        //if (order_no != undefined && order_no != "") {
-
-        //开始定时器，定时更新订单状态和用户坐标
-        // g_orderStatusInterval = setInterval(function() {
-        //     getOrderStatusInfo(order_no);
-        // }, 3000);
         if (order_no != undefined) {
             g_PersonUserAndCompanyUserLocationInterval = setInterval(function() {
                 getPersonUserAndCompanyUserCurrentLocation();
             }, 5000);
         }
-
-
-        //}
     }
     //注册加载附近商户的信息事件
     function registerLoadNearbyCompanyEvent() {
@@ -1225,7 +1212,7 @@
         });
     }
 
-    //发送推送
+    //刷新
     function sendPush() {
         getCurrentOrder();
 
