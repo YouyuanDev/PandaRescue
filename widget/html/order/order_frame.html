@@ -266,6 +266,11 @@
     }
     //更换服务和故障类型
     function changeServiceTypeFaultType() {
+        var language="zh-CN";
+        var nowLanguage=getCookie();
+        if(nowLanguage!=undefined&&nowLanguage!=""){
+          language=nowLanguage;
+        }
         if (g_service_type_dict != undefined) {
             $('.span-service-type').each(function() {
                 var text = $(this).text();
@@ -274,7 +279,12 @@
                 }else{
                   for (var key in g_service_type_dict) {
                       if (text == key) {
-                          $(this).text(g_service_type_dict[key].service_type_name);
+                          if(language=="zh-CN"){
+                            $(this).text(g_service_type_dict[key].service_type_name);
+                          }
+                          else {
+                            $(this).text(g_service_type_dict[key].service_type_name_en);
+                          }
                       }
                   }
                 }
@@ -292,8 +302,12 @@
                   for (var i = 0; i < arr.length; i++) {
                       for (var key in g_failure_type_dict) {
                           if (arr[i] == key) {
-                              str += g_failure_type_dict[key].failure_type_name + ",";
-
+                              if(language=="zh-CN"){
+                                str += g_failure_type_dict[key].failure_type_name + ",";
+                              }
+                              else {
+                                str += g_failure_type_dict[key].failure_type_name_en + ",";
+                              }
                           }
                       }
                   }
@@ -313,7 +327,12 @@
                 }else{
                   for (var key in g_order_status_dict) {
                       if (text == key) {
+                        if(language=="zh-CN"){
                           $(this).text(g_order_status_dict[key].status_name);
+                        }
+                        else {
+                          $(this).text(g_order_status_dict[key].status_name_en);
+                        }
                       }
                   }
                 }

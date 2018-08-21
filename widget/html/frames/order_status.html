@@ -98,6 +98,7 @@
 <script type="text/javascript" src="../../script/api.js"></script>
 <script type="text/javascript" src="../../script/jquery-3.3.1.min.js"></script>
 <script type="text/javascript" src="../../script/common.js"></script>
+<script type="text/javascript" src="../../script/language.js"></script>
 <script type="text/javascript">
     var map;
     apiready = function() {
@@ -156,16 +157,24 @@
     function drawStatusPanel(account_type, status_code, status_name, status_name_en) {
         $('.buttons').empty();
         $('.order-status').empty();
-        $('.order-status').text(status_name);
-        $('.buttons').append(makeButtonTemplate("cancelOrder('" + account_type + "');", "取消订单"));
+        var language=getCookie();
+        var template="";
+        if(language==undefined||language=="zh-CN"||language==""){
+          $('.order-status').text(status_name);
+        }else{
+          $('.order-status').text(status_name_en);
+        }
+
+        //makeButtonTemplate(函数名，中文按钮名，英文按钮名)
+        $('.buttons').append(makeButtonTemplate("cancelOrder('" + account_type + "');", "取消订单","Cancel the order"));
         if (account_type == "person_user") {
             //pending,confirmed,confirmedpaid,inservice,finished,cancelled,finishedconfirmed
             if (status_code == "confirmed") { //支付
                 $('.order-status').empty();
-                $('.order-status').append(makeButtonTemplate("payOrder();", status_name + "=>去支付"));
+                $('.order-status').append(makeButtonTemplate("payOrder();", status_name + "=>去支付",status_name_en+"=>Pay"));
             } else if (status_code == "finished") {
                 $('.order-status').empty();
-                $('.order-status').append(makeButtonTemplate("confirmFinishedOrder();", status_name + "=>确认完成"));
+                $('.order-status').append(makeButtonTemplate("confirmFinishedOrder();", status_name + "=>确认完成",status_name_en+"Confirm completion"));
             } else if (status_code == "cancelled") {
                 $('.buttons').empty();
             } else if (status_code == "finishedconfirmed") {
@@ -178,10 +187,10 @@
 
             } else if (status_code == "confirmedpaid") {
                 $('.order-status').empty();
-                $('.order-status').append(makeButtonTemplate("startService();", status_name + "=>开始服务"));
+                $('.order-status').append(makeButtonTemplate("startService();", status_name + "=>开始服务",status_name_en+"=>Start service"));
             } else if (status_code == "inservice") {
                 $('.order-status').empty();
-                $('.order-status').append(makeButtonTemplate("finishOrder();", status_name + "=>服务完成"));
+                $('.order-status').append(makeButtonTemplate("finishOrder();", status_name + "=>服务完成",status_name_en+"=>Service completion"));
             } else if (status_code == "finished") {
                 $('.buttons').empty();
             } else if (status_code == "cancelled") {
@@ -192,8 +201,14 @@
         }
     }
 
-    function makeButtonTemplate(buttonFunctionName, buttonName) {
-        var template = '<div class="aui-btn aui-btn-block cancel-order" onclick="' + buttonFunctionName + '">' + buttonName + '</div>';
+    function makeButtonTemplate(buttonFunctionName, buttonName,buttonEnName) {
+       var language=getCookie();
+       var template="";
+       if(language==undefined||language=="zh-CN"||language==""){
+         template = '<div class="aui-btn aui-btn-block cancel-order" onclick="' + buttonFunctionName + '">' + buttonName + '</div>';
+       }else{
+         template = '<div class="aui-btn aui-btn-block cancel-order" onclick="' + buttonFunctionName + '">' + buttonEnName + '</div>';
+       }
         return template;
     }
 
