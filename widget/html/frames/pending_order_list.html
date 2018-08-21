@@ -223,9 +223,7 @@
 
 
                     } else {
-                        api.alert({
-                            msg: errs.msg
-                        });
+                        toastFail("系统错误!错误码:" + errs.code);
                     }
                 });
             } else {

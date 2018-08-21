@@ -17,7 +17,7 @@
 
         .container {
             width: 100%;
-            
+
             /*border:1px solid #8B8989;*/
         }
 
@@ -99,7 +99,7 @@
                         rows: 3
                     }
                 }
-            }, function(ret, errs) {
+            }, function(ret, err) {
                 if (ret) {
                   var annotations = [];
                   var bubble = [];
@@ -136,9 +136,7 @@
                         $('.pr-empty').show();
                      }
                 } else {
-                    api.alert({
-                        msg: errs.msg
-                    });
+                    toastFail('系统出错,错误码:' + err.code);
                 }
             });
         }else{

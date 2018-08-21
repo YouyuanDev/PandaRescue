@@ -268,7 +268,7 @@
                     }
                 }
             } else {
-                toastFail("系统错误,支付失败!");
+                toastFail('系统错误,支付失败!错误码:' + err.code);
             }
         });
     }
@@ -306,7 +306,7 @@
                             }
                         }
                     } else {
-                        toastFail("系统错误,取消订单失败!");
+                        toastFail("系统错误,取消订单失败!错误码:"+ err.code);
                     }
                 });
             }
@@ -335,7 +335,7 @@
                     }
                 }
             } else {
-                toastFail("系统错误,确认完成失败!");
+                toastFail("系统错误,确认完成失败!错误码:" + err.code);
             }
         });
     }
@@ -361,7 +361,7 @@
                     }
                 }
             } else {
-                toastFail("系统错误,开始服务失败!");
+                toastFail("系统错误,开始服务失败!错误码:"+ err.code);
             }
         });
     }
@@ -387,7 +387,7 @@
                     }
                 }
             } else {
-                toastFail("系统错误,服务完成失败!");
+                toastFail("系统错误,服务完成失败!错误码:" + err.code);
             }
         });
     }

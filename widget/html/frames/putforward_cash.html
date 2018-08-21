@@ -133,7 +133,7 @@
                   $('.item-balance').text(cash);
                 }
             } else {
-                toastFail('提现失败!');
+                toastFail("系统错误,提现失败!错误码:" + err.code);
             }
         });
       }else{

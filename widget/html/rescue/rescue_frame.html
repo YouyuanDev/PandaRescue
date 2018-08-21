@@ -183,7 +183,7 @@
         api.ajax({
             url: s,
             method: 'post'
-        }, function(ret, errs) {
+        }, function(ret, err) {
             if (ret) {
                 var template, service_type_name, service_type_name_en;
                 for (var i = 0; i < ret.length; i++) {
@@ -199,9 +199,7 @@
                     $('.service-type').append(template);
                 }
             } else {
-                api.alert({
-                    msg: "加载服务类型失败!"
-                });
+                toastFail("系统错误,加载服务类型失败!错误码:" + err.code);
             }
         });
     }
@@ -211,7 +209,7 @@
         api.ajax({
             url: s,
             method: 'post'
-        }, function(ret, errs) {
+        }, function(ret, err) {
             if (ret) {
                 var template, failure_type_name, failure_type_name_en;
                 for (var i = 0; i < ret.length; i++) {
@@ -226,9 +224,7 @@
                     $('.failure-type').append(template);
                 }
             } else {
-                api.alert({
-                    msg: "加载故障类型失败!"
-                });
+                toastFail("系统错误,加载故障类型失败!错误码:" + err.code);
             }
         });
     }
@@ -326,9 +322,7 @@
                                         }
                                     }
                                 } else {
-                                    api.alert({
-                                        msg: JSON.stringify(err)
-                                    });
+                                    toastFail("系统错误!错误码:" + err.code);
                                     $('.submit-btn').attr('disabled', false);
                                 }
                                 $('.submit-btn').attr('disabled', false);
@@ -377,7 +371,7 @@
                         imgList: imgname
                     }
                 }
-            }, function(ret, errs) {
+            }, function(ret, err) {
                 if (ret) {
                     if (ret.success) {
                         toastSuccess('移除成功!');
@@ -386,7 +380,7 @@
                         toastFail('移除失败!');
                     }
                 } else {
-                    toastFail('移除失败!');
+                    toastFail("系统错误,移除失败!错误码:" + err.code);
                 }
             });
         }

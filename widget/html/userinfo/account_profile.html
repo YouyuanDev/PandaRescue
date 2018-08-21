@@ -187,7 +187,7 @@
                     toastFail(ret.message);
                 }
             } else {
-                toastFail('修改账户信息时出错,错误信息:' + err.code);
+                toastFail("系统错误,修改账户信息失败!错误码:" + err.code);
             }
         });
     }
@@ -210,7 +210,7 @@
                     icon_url: imgUrl
                 }
             }
-        }, function(ret, errs) {
+        }, function(ret, err) {
             if (ret) {
                 if (ret.success) {
                     toastSuccess(ret.message);
@@ -225,9 +225,7 @@
                     }
                 }
             } else {
-                api.alert({
-                    msg: JSON.stringify(errs)
-                });
+                toastFail("系统错误,更换头像失败!错误码:" + err.code);
             }
         });
     }

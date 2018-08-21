@@ -247,7 +247,7 @@
                   verifycode:verificationCode
               }
           }
-      }, function(ret, errs) {
+      }, function(ret, err) {
           if (ret) {
              if(ret.success){
                  toastSuccess(ret.msg);
@@ -268,7 +268,7 @@
                  toastFail(ret.msg);
              }
           } else {
-            toastFail("发送异常,请稍后重试!");
+            toastFail("系统错误!错误码:" + err.code);
           }
       });
     }
@@ -305,7 +305,7 @@
                       cellphoneno: phone
                   }
               }
-          }, function(ret, errs) {
+          }, function(ret, err) {
               if (ret) {
                  if(ret.success){
                    toastSuccess(ret.msg);
@@ -317,7 +317,7 @@
                      toastFail(ret.msg);
                  }
               } else {
-                toastFail("发送异常,请稍后重试!");
+                  toastFail("系统错误!错误码:" + err.code);
               }
           });
         }else{
@@ -358,7 +358,7 @@
                   cellphoneno: phone
               }
           }
-      }, function(ret, errs) {
+      }, function(ret, err) {
           if (ret) {
              if(ret.success){
                 sendVerificationCode(phone);
@@ -366,7 +366,7 @@
                  toastFail(ret.msg);
              }
           } else {
-            toastFail("出现异常,请稍后重试!");
+              toastFail("系统错误!错误码:" + err.code);
           }
       });
     }

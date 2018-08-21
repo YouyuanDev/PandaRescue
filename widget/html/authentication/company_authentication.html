@@ -283,7 +283,7 @@
                     }
                 }
             } else {
-                toastFail('获取商户信息时出错,错误信息:' + err.code);
+                toastFail('系统出错,错误码:' + err.code);
             }
             closeLoading();
         });
@@ -385,7 +385,7 @@
                     }
                 }
             } else {
-                toastFail('系统出错,错误信息:' + err.code);
+                toastFail('系统出错,错误码:' + err.code);
                 if (ret.relogin) {
                     api.sendEvent({
                         name: 'reloginEvent'
@@ -418,7 +418,7 @@
                     }
                 }
             } else {
-                toastFail('系统出错,错误信息:' + err.code);
+                toastFail('系统出错,错误码:' + err.code);
                 if (ret.relogin) {
                     api.sendEvent({
                         name: 'reloginEvent'

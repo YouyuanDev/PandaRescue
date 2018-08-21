@@ -179,7 +179,7 @@
                         cellphoneno: phone
                     }
                 }
-            }, function(ret, errs) {
+            }, function(ret, err) {
                 if (ret) {
                     if (ret.success) {
                         toastSuccess(ret.msg);
@@ -190,7 +190,7 @@
                         toastFail(ret.msg);
                     }
                 } else {
-                    toastFail("发送异常,请稍后重试!");
+                    toastFail("系统错误!错误码:" + err.code);
                 }
             });
         } else {
@@ -212,7 +212,7 @@
                         password: password
                     }
                 }
-            }, function(ret, errs) {
+            }, function(ret, err) {
                 if (ret) {
                     if (ret.success) {
                         var account_type = ret.accountType;
@@ -252,7 +252,7 @@
                         toastFail(ret.msg);
                     }
                 } else {
-                    toastFail("登录异常,请稍后重试!");
+                      toastFail("系统错误,登录异常!错误码:" + err.code);
                 }
             });
         } else {

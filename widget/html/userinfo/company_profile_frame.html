@@ -273,7 +273,7 @@
                     toastFail(ret.message);
                 }
             } else {
-                toastFail('保存商户信息时出错,错误信息:' + err.code);
+                toastFail("系统错误,保存商户信息失败!错误码:" + err.code);
             }
         });
     }
@@ -375,7 +375,7 @@
                     }
                 }
             } else {
-                toastFail('获取商户信息时出错,错误信息:' + err.code);
+                toastFail("系统错误,获取商户信息失败!错误码:" + err.code);
             }
             closeLoading();
         });
@@ -471,7 +471,7 @@
                             toastFail(ret.message);
                         }
                     } else {
-                        toastFail('保存商户信息时出错,错误信息:' + err.code);
+                        toastFail("系统错误,移除照片失败!错误码:" + err.code);
                     }
                 });
             }
@@ -523,7 +523,7 @@
                     toastFail(ret.message);
                 }
             } else {
-                toastFail('保存商户信息时出错,错误信息:' + err.code);
+                toastFail("系统错误,上传照片失败!错误码:" + err.code);
             }
         });
     }

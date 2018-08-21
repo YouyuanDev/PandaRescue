@@ -136,7 +136,7 @@
               toastFail(ret.message);
             }
           } else {
-              toastFail('保存个人信息时出错,错误信息:' + err.code);
+              toastFail("系统错误,保存个人信息失败!错误码:" + err.code);
           }
       });
     }
@@ -191,7 +191,7 @@
                    }
                 }
             } else {
-                toastFail('获取个人信息时出错,错误信息:' + err.code);
+                toastFail("系统错误,加载个人信息失败!错误码:" + err.code);
                 if(ret.relogin){
                   api.sendEvent({
                       name: 'reloginEvent'

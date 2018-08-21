@@ -175,7 +175,7 @@
                     toastFail(ret.message);
                 }
             } else {
-                toastFail("系统错误,登出失败!");
+                toastFail("系统错误,登出失败!错误码:" + err.code);
             }
         });
     }
