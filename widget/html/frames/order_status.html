@@ -11,6 +11,15 @@
     <link rel="stylesheet" type="text/css" href="../../css/style.css" />
     <link rel="stylesheet" type="text/css" href="../../css/font-awesome.min.css" />
     <style type="text/css">
+        html,
+        body {
+            height: 100%;
+        }
+        .container {
+            height: 100%;
+            width: 100%;
+            padding: 5px;
+        }
         .order-status {
             background-color: #fff;
             color: #595959;
@@ -20,39 +29,59 @@
         .cancel-order {
             border-radius: 0px 0px 3px 3px;
         }
-        .item-container{
-          padding:5px;
-          height:90px;
-          border-bottom:1px solid #F4F4F4;
+
+        .item-container {
+            height: 90px;
+            /*border-bottom: 1px solid #F4F4F4;*/
         }
-        .item-icon{
-          width:3rem;
-          height:3rem;
-          border-radius:50%;
+
+        .item-icon {
+            /*width: 3rem;
+            height: 3rem;*/
+            border-radius: 50%;
         }
-        .item-right{
-          padding-left:8px;
+
+        .item-right {
+            padding-left: 8px;
         }
-        .item-fee{
+
+        .aui-list .item-fee {
+            font-size: 1rem;
+        }
+        .item-message,.item-phone{
           font-size:1rem;
+          padding-right:0.5rem;
+        }
+        .item-phone{
+          padding-left:0.5rem;
         }
     </style>
 </head>
 
 <body>
-    <div class="container">
-        <div class="aui-content aui-margin-b-15">
+    <!-- <div class="container"> -->
+    <div class="aui-content container">
+        <div class="aui-list aui-media-list aui-list-noborder">
             <div class="aui-list-item item-container">
                 <div class="aui-media-list-item-inner">
-                    <div class="aui-list-item-media">
+
+                    <div class="aui-list-item-media item-icon-container">
                         <img src="../../image/default_portrait.png" class="item-icon">
                     </div>
-                    <div class="aui-list-item-inner item-right">
+                    <div class="aui-list-item-inner">
                         <div class="aui-list-item-text">
                             <div class="aui-list-item-title item-name"></div>
                             <div class="aui-list-item-right item-fee"></div>
                         </div>
+                        <div class="aui-list-item-text item-distance-container">
+                            <!-- <span class="item-time"></span> -->
+                            <span class="item-distance"></span>
+                        </div>
+                        <div class="aui-list-item-text">
+                            <p><span onclick="sendMessage();" class="fa fa-commenting item-message"></span><span onclick="callUser(this);" data-phone="" class="fa fa-phone item-phone"></span></p>
+                        </div>
                     </div>
+
                 </div>
             </div>
             <div class="aui-bar aui-bar-nav order-status"><i class="fa fa-spinner fa-spin"></i></div>
@@ -61,44 +90,66 @@
             </div>
         </div>
     </div>
+    <!-- </div> -->
 </body>
 <script type="text/javascript" src="../../script/api.js"></script>
 <script type="text/javascript" src="../../script/jquery-3.3.1.min.js"></script>
 <script type="text/javascript" src="../../script/common.js"></script>
 <script type="text/javascript">
-    //var company_data;
+    var map;
     apiready = function() {
             //registerUpdateOrderStatusEvent();
+            map = api.require('bMap');
             var data = api.pageParam;
             var account_type = data.account_type;
             var order = data.order;
+            //alert(JSON.stringify(order));
             var status_code = order.status_code;
             var status_name = order.status_name;
             var status_name_en = order.status_name_en;
-            $('.item-name').text(order.company_name);
-            $('.item-fee').text(order.service_fee+"元");
-            var upload_files=order.upload_files;
-            var icon_url="../../image/default_portrait.png";
-            if(upload_files!=undefined){
-               var iconArr=upload_files.split(';');
-               if(iconArr.length>0){
-                 if(iconArr[0]!=undefined&&iconArr[0]!=""){
-                   icon_url=iconArr[0];
-                   icon_url='http://' + serverIP + '/upload/pictures/'+icon_url;
-                 }
-               }
+            var order_time = order.order_time;
+            if (order_time != undefined) {
+                $('.item-time').text(getDate1(order_time));
             }
-            $('.item-icon').attr('src',icon_url);
+            var person_lon_lat = order.person_user_location;
+            var person_lon, person_lat;
+            if (person_lon_lat != undefined && person_lon_lat != "") {
+                var arr = person_lon_lat.split(',');
+                if (arr.length > 1) {
+                    person_lon = arr[0];
+                    person_lat = arr[1];
+                }
+            }
+            getRouteDistance(person_lon, person_lat, order.company_location_lon, order.company_location_lat);
+            if (account_type == "person_user") {
+                $('.item-name').text(order.company_name);
+                $('.item-fee').text(order.service_fee + "元");
+                var upload_files = order.upload_files;
+                var icon_url = "../../image/default_portrait.png";
+                if (upload_files != undefined) {
+                    var iconArr = upload_files.split(';');
+                    if (iconArr.length > 0) {
+                        if (iconArr[0] != undefined && iconArr[0] != "") {
+                            icon_url = iconArr[0];
+                            icon_url = 'http://' + serverIP + '/upload/pictures/' + icon_url;
+                        }
+                    }
+                }
+                $('.item-icon').attr('src', icon_url);
+                $('.item-phone').attr("disabled",false);
+                $('.item-phone').attr('data-phone',order.cell_phone);
+            } else if (account_type == "company_user") {
+                $('.item-icon-container').hide();
+                $('.item-name').text(getDate1(order_time));
+                $('.item-fee').text(order.service_fee + "元");
+                $('.item-phone').attr("disabled",true);
+            }
             if (account_type != undefined && status_code != undefined) {
                 drawStatusPanel(account_type, status_code, status_name, status_name_en);
             }
-            // if (status_name != undefined) {
-            //     $('.order-status').text(status_name);
-            // }
         }
-        //
     function drawStatusPanel(account_type, status_code, status_name, status_name_en) {
-        toastSuccess("drawStatusPanel");
+        toastSuccess(account_type);
         //$('.order-status').append('<i class="fa fa-spinner fa-spin"></i>');
         $('.buttons').empty();
         $('.order-status').empty();
@@ -334,6 +385,58 @@
                 toastFail("系统错误,服务完成失败!");
             }
         });
+    }
+    //获取两点间的路线距离
+    function getRouteDistance(person_lon, person_lat, company_lon, company_lat) {
+        if (person_lon != undefined && person_lat != undefined && company_lon != undefined && company_lat != undefined) {
+            map.removeRoute({
+                ids: [1]
+            });
+            //计算路线距离
+            map.searchRoute({
+                id: 1,
+                type: 'drive',
+                policy: 'ecar_time_first',
+                start: {
+                    lon: company_lon,
+                    lat: company_lat
+                },
+                end: {
+                    lon: person_lon,
+                    lat: person_lat
+                }
+            }, function(ret, err) {
+                if (ret) {
+                    if (ret.status) {
+                        $('.item-distance').text('驾车：' + getDistance(ret.plans[0].distance) + 'km ' + '耗时：' + convertSecToMin(ret.plans[0].duration) + '分钟');
+                        $('.item-time').hide();
+                    }else{
+                        $('.item-distance').text('暂时未能获取到驾车距离和耗时信息!');
+                    }
+                } else {
+                    $('.item-distance').text('暂时未能获取到驾车距离和耗时信息!');
+                    //toastFail(''+err.code);
+                }
+            });
+        }else{
+            $('.item-distance').text('暂时未能获取到驾车距离和耗时信息!');
+        }
+    }
+    //拨打电话
+    function callUser(obj){
+      var phone_no=$(obj).attr('data-phone');
+      if(phone_no!=undefined){
+        api.call({
+          type: 'tel_prompt',
+          number: phone_no
+        });
+      }else{
+         toastFail('手机号码不可用!');
+      }
+    }
+    //发送消息
+    function sendMessage(){
+      toastSuccess("暂未开通此功能!敬请等待!");
     }
     //监听订单状态改变事件
     // function registerUpdateOrderStatusEvent(){
