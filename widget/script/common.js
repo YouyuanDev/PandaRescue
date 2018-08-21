@@ -1,6 +1,6 @@
 var header, headerHeight = 0,
     g_loadingID;
-var serverIP = '192.168.0.10:8080';
+var serverIP = '192.168.0.12:8080';
 
 function fnSettingHeader() {
     var sType = api.systemType;
@@ -139,7 +139,7 @@ function getPicture(sourceType) {
                                 file: ret.data
                             }
                         }
-                    }, function(ret, errs) {
+                    }, function(ret, err) {
                         closeLoading();
                         if (ret) {
                             if (ret.imgUrl != undefined && ret.imgUrl != "") {
@@ -154,7 +154,7 @@ function getPicture(sourceType) {
                                 toastFail("上传失败!");
                             }
                         } else {
-                          toastFail(errs.msg);
+                          toastFail("系统错误,上传照片失败!错误码:" + err.code);
                         }
                     });
                 }
@@ -202,7 +202,7 @@ function getPicture(sourceType) {
                                 toastFail("上传失败!");
                             }
                         } else {
-                          alert(errs.msg);
+                          toastFail("系统错误,上传照片失败!错误码:" + err.code);
                         }
                     });
                 }
@@ -396,7 +396,7 @@ function loadAllServiceType() {
         api.ajax({
             url: s,
             method: 'post'
-        }, function(rets, errs) {
+        }, function(rets, err) {
             if (rets) {
                 for (var i = 0; i < rets.length; i++) {
                     var service_type_code = rets[i].service_type_code;
@@ -418,7 +418,7 @@ function loadAllServiceType() {
                     }
                 });
             } else {
-              toastFail(rets.msg);
+               toastFail("系统错误,加载服务类型失败!错误码:" + err.code);
             }
         });
     }
@@ -470,7 +470,7 @@ function loadAllFaultType() {
                     }
                 });
             } else {
-                toastFail(rets.msg);
+                 toastFail("系统错误,加载故障类型失败!错误码:" + err.code);
             }
         });
     }
@@ -522,7 +522,7 @@ function loadAllOrderStatus() {
                     }
                 });
             } else {
-                toastFail(rets.msg);
+                toastFail("系统错误,加载所有订单状态类型失败!错误码:" + err.code);
             }
         });
     }
