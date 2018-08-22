@@ -97,7 +97,7 @@
                 <span><span class="item-fee"></span><span>元</span></span>
             </div>
             <div class="aui-bar aui-bar-nav cancel-order buttons pr-bgcolor">
-                <div class="aui-btn aui-btn-block cancel-order i18n1" name="evaluate" onclick="cacelOrder();">立即评价</div>
+                <div class="aui-btn aui-btn-block cancel-order i18n1" name="evaluate" onclick="evaluateCompany();">立即评价</div>
             </div>
         </div>
     </div>
@@ -108,11 +108,12 @@
 <script type="text/javascript" src="../../script/common.js"></script>
 <script type="text/javascript" src="../../script/language.js"></script>
 <script type="text/javascript">
+    var g_order_no;
     apiready = function() {
         var data = api.pageParam;
         var order = data.order;
         if (order != undefined) {
-          //  alert(JSON.stringify(order));
+            g_order_no=order.order_no;
             var upload_files = order.upload_files;
             var icon_url;
             if (upload_files != undefined && upload_files != "") {
@@ -144,24 +145,51 @@
             if (fee != undefined) {
                 $('.item-fee').text(fee);
             }
-            var h = $(document.body)[0].scrollHeight+10;
-            api.setFrameAttr({
-                name: 'order_detail_frame',
-                rect: {
-                    x: 0,
-                    y: api.winHeight - h,
-                    w: api.winWidth - 20,
-                    h: 'auto',
-                    marginLeft: 10,
-                    marginBottom: 10,
-                    marginRight: 10
-                },
-            });
+            setFrameHeight();
         } else {
             api.closeFrame({
                 name: 'order_detail_frame'
             });
         }
+    }
+    //设置Frame高度自适应
+    function setFrameHeight(){
+      var h = $(document.body)[0].scrollHeight+10;
+      api.setFrameAttr({
+          name: 'order_detail_frame',
+          rect: {
+              x: 0,
+              y: api.winHeight - h,
+              w: api.winWidth - 20,
+              h: 'auto',
+              marginLeft: 10,
+              marginBottom: 10,
+              marginRight: 10
+          },
+      });
+    }
+    //评价商户
+    function evaluateCompany(){
+       if(g_order_no!=undefined){
+         //先查看订单是否已经评价，如果已经评价则打出评价信息
+         api.openFrame({
+             name: 'order_evaluate_frame',
+             url: './order_evaluate_frame.html',
+             reload: true,
+             pageParam: {
+                 order_no: g_order_no
+             },
+             rect: {
+                 x: 0,
+                 y: api.winHeight -280,
+                 w: api.winWidth,
+                 h: 'auto',
+             },
+             bounces: false
+         });
+       }else{
+         toastFail("系统繁忙,请稍后评价!");
+       }
     }
 </script>
 

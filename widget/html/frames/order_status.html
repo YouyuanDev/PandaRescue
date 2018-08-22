@@ -16,13 +16,17 @@
             height: 100%;
         }
         .container {
-            height: 100%;
+            height: auto;
             width: 100%;
             padding: 5px;
         }
+        .order-status-desc{
+          background-color: #fff;
+          color: #A7A9A9;
+        }
         .order-status {
-            background-color: #fff;
-            color: #595959;
+            background-color: #73C0B6;
+            color: #fff;
             border-radius: 3px 3px 0px 0px;
         }
 
@@ -58,6 +62,9 @@
         .item-color{
           color:#CCCCCC;
         }
+        .buttons{
+          background-color:red;
+        }
     </style>
 </head>
 
@@ -87,8 +94,9 @@
 
                 </div>
             </div>
-            <div class="aui-bar aui-bar-nav order-status"><i class="fa fa-spinner fa-spin"></i></div>
-            <div class="aui-bar aui-bar-nav cancel-order buttons pr-bgcolor">
+            <div class="aui-bar aui-bar-nav order-status-desc"><i class="fa fa-spinner fa-spin"></i></div>
+            <div class="aui-bar aui-bar-nav order-status"></div>
+            <div class="aui-bar aui-bar-nav cancel-order buttons">
                 <!-- <div class="aui-btn aui-btn-block cancel-order" onclick="cacelOrder();">取消订单</div> -->
             </div>
         </div>
@@ -104,6 +112,7 @@
     apiready = function() {
             //registerUpdateOrderStatusEvent();
             map = api.require('bMap');
+            $('.order-status').hide();
             var data = api.pageParam;
             var account_type = data.account_type;
             var order = data.order;
@@ -153,6 +162,7 @@
             if (account_type != undefined && status_code != undefined) {
                 drawStatusPanel(account_type, status_code, status_name, status_name_en);
             }
+            setFrameHeight();
         }
     function drawStatusPanel(account_type, status_code, status_name, status_name_en) {
         $('.buttons').empty();
@@ -160,21 +170,20 @@
         var language=getCookie();
         var template="";
         if(language==undefined||language=="zh-CN"||language==""){
-          $('.order-status').text(status_name);
+          $('.order-status-desc').text(status_name);
         }else{
-          $('.order-status').text(status_name_en);
+          $('.order-status-desc').text(status_name_en);
         }
-
         //makeButtonTemplate(函数名，中文按钮名，英文按钮名)
         $('.buttons').append(makeButtonTemplate("cancelOrder('" + account_type + "');", "取消订单","Cancel the order"));
         if (account_type == "person_user") {
             //pending,confirmed,confirmedpaid,inservice,finished,cancelled,finishedconfirmed
             if (status_code == "confirmed") { //支付
-                $('.order-status').empty();
-                $('.order-status').append(makeButtonTemplate("payOrder();", status_name + "=>去支付",status_name_en+"=>Pay"));
+                $('.order-status').show();
+                $('.order-status').append(makeButtonTemplate("payOrder();", "去支付","Pay"));
             } else if (status_code == "finished") {
-                $('.order-status').empty();
-                $('.order-status').append(makeButtonTemplate("confirmFinishedOrder();", status_name + "=>确认完成",status_name_en+"Confirm completion"));
+                $('.order-status').show();
+                $('.order-status').append(makeButtonTemplate("confirmFinishedOrder();", "确认完成","Confirm completion"));
             } else if (status_code == "cancelled") {
                 $('.buttons').empty();
             } else if (status_code == "finishedconfirmed") {
@@ -186,11 +195,11 @@
             } else if (status_code == "confirmed") {
 
             } else if (status_code == "confirmedpaid") {
-                $('.order-status').empty();
-                $('.order-status').append(makeButtonTemplate("startService();", status_name + "=>开始服务",status_name_en+"=>Start service"));
+                $('.order-status').show();
+                $('.order-status').append(makeButtonTemplate("startService();","开始服务","Start service"));
             } else if (status_code == "inservice") {
-                $('.order-status').empty();
-                $('.order-status').append(makeButtonTemplate("finishOrder();", status_name + "=>服务完成",status_name_en+"=>Service completion"));
+                $('.order-status').show();
+                $('.order-status').append(makeButtonTemplate("finishOrder();", "服务完成","Service completion"));
             } else if (status_code == "finished") {
                 $('.buttons').empty();
             } else if (status_code == "cancelled") {
@@ -205,9 +214,9 @@
        var language=getCookie();
        var template="";
        if(language==undefined||language=="zh-CN"||language==""){
-         template = '<div class="aui-btn aui-btn-block cancel-order" onclick="' + buttonFunctionName + '">' + buttonName + '</div>';
+         template = '<div class="aui-btn aui-btn-block pr-bgcolor"  onclick="' + buttonFunctionName + '">' + buttonName + '</div>';
        }else{
-         template = '<div class="aui-btn aui-btn-block cancel-order" onclick="' + buttonFunctionName + '">' + buttonEnName + '</div>';
+         template = '<div class="aui-btn aui-btn-block pr-bgcolor"  onclick="' + buttonFunctionName + '">' + buttonEnName + '</div>';
        }
         return template;
     }
@@ -456,18 +465,21 @@
     function sendMessage(){
       toastSuccess("暂未开通此功能!敬请等待!");
     }
-    //监听订单状态改变事件
-    // function registerUpdateOrderStatusEvent(){
-    //   api.addEventListener({
-    //       name: 'UpdateOrderStatusEvent'
-    //   }, function(ret, err) {
-    //       var status_name=ret.value.status_name;
-    //       alert(status_name+"oooooo");
-    //       if(status_name!=undefined){
-    //           $('.order-status').text(status_name);
-    //       }
-    //   });
-    // }
+    function setFrameHeight() {
+        var h = $('.container')[0].scrollHeight;
+        api.setFrameAttr({
+            name: 'order_status',
+            rect: {
+                x: 0,
+                y: api.winHeight-h-10,
+                w: api.winWidth,
+                h: 'auto',
+                marginLeft:10,
+                marginBottom:10,
+                marginRight:10
+            },
+        });
+    }
 </script>
 
 </html>

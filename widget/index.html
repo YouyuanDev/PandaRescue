@@ -91,7 +91,7 @@
     //刷新订单状态和自己的坐标的定时器
     //var g_orderStatusInterval, g_userLocationInterval;
     //刷新坐标的定时器
-    var g_PersonUserAndCompanyUserLocationInterval;
+    var g_PersonUserAndCompanyUserLocationInterval=-1;
     //商户列表
     var g_CompanyList = [];
     //订单状态
@@ -104,6 +104,7 @@
     var g_service_type_dict = {};
     //故障类型集合
     var g_failure_type_dict = {};
+    var timer_arr=new Array();
     apiready = function() {
         fnSettingHeader();
         map = api.require('bMap');
@@ -804,6 +805,10 @@
 
     //更新订单用户坐标
     function updateOrderUserLocation(order_no) {
+        if(order_no==undefined){
+          map.stopLocation();
+          return;
+        }
         map.getLocation({
             accuracy: '10m',
             autoStop: false,
@@ -844,8 +849,8 @@
             url: './html/frames/order_status.html',
             rect: {
                 x:0,
-                y: api.winHeight -200,
-                w: api.winWidth - 20,
+                y: api.winHeight -255,
+                w: api.winWidth,
                 h:'auto',
                 marginLeft:10,
                 marginBottom:10,
@@ -1079,15 +1084,22 @@
     //更新当前订单的状态
     function updateOrderStatus(order_no) {
         //关闭附近商户列表和求救Frame
-        clearInterval(g_PersonUserAndCompanyUserLocationInterval);
+        if(order_no==undefined&&g_PersonUserAndCompanyUserLocationInterval!=-1){
+          window.clearInterval(g_PersonUserAndCompanyUserLocationInterval);
+          g_PersonUserAndCompanyUserLocationInterval=-1;
+        }
         getOrderStatusInfo(order_no);
         updateOrderUserLocation(order_no);
         if (order_no != undefined) {
-            g_PersonUserAndCompanyUserLocationInterval = setInterval(function() {
-                getPersonUserAndCompanyUserCurrentLocation();
-            }, 5000);
+            if(g_PersonUserAndCompanyUserLocationInterval==-1){
+              g_PersonUserAndCompanyUserLocationInterval = window.setInterval(function() {
+                  getPersonUserAndCompanyUserCurrentLocation();
+              }, 5000);
+            }
         }
     }
+
+
     //注册加载附近商户的信息事件
     function registerLoadNearbyCompanyEvent() {
         api.addEventListener({

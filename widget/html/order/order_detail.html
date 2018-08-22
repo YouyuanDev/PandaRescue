@@ -89,11 +89,15 @@
                     isShow: false,
                     trackingMode: 'none'
                 });
+
+                //设置订单终点标注和气泡信息
                 var company_lon = g_order.company_location_lon;
                 var company_lat = g_order.company_location_lat;
                 setMapCenter(company_lon, company_lat);
                 addAnnotation(1, company_lon, company_lat, "service_end.png");
                 addBubble(1, company_lon, company_lat);
+
+                //打开订单详情Frame
                 openDetailFrame();
             } else {
                 toastFail('地图打开失败，无法使用定位！');
@@ -157,15 +161,16 @@
                 map.setBubble({
                     id: id,
                     content: {
-                        title: '',
-                        subTitle: title
+                        title:'',
+                        subTitle:title,
+                        illus:''
                     },
                     styles: {
                         titleColor: '#fff',
                         titleSize: 16,
                         subTitleColor: '#999',
                         subTitleSize: 12,
-                        illusAlign: 'left'
+                        illusAlign: ''
                     }
                 }, function(ret) {
 

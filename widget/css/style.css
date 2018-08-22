@@ -65,6 +65,15 @@ input{
 .pr-fontcolor1{
   color:#A7A9A9;
 }
+.pr-fontcolor2{
+  color:#000;
+}
+.pr-fontcolor3{
+  color:#FFD700;/*黄色*/
+}
+.pr-fontcolor4{
+  color:#FF8C69;/*淡红色*/
+}
 .aui-list .aui-list-item-title.pr-fontcolor-one{
     color:#A7A9A9;
 }
