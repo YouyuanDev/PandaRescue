@@ -15,15 +15,18 @@
         body {
             height: 100%;
         }
+
         .container {
             height: auto;
             width: 100%;
             padding: 5px;
         }
-        .order-status-desc{
-          background-color: #fff;
-          color: #A7A9A9;
+
+        .order-status-desc {
+            background-color: #fff;
+            color: #A7A9A9;
         }
+
         .order-status {
             background-color: #73C0B6;
             color: #fff;
@@ -52,18 +55,29 @@
         .aui-list .item-fee {
             font-size: 1rem;
         }
-        .item-message,.item-phone{
-          font-size:1rem;
-          padding-right:0.5rem;
+
+        .item-message,
+        .item-phone {
+            font-size: 1rem;
+            padding-right: 0.5rem;
         }
-        .item-phone{
-          padding-left:0.5rem;
+
+        .item-phone {
+            padding-left: 0.5rem;
         }
-        .item-color{
-          color:#CCCCCC;
+
+        .item-color {
+            color: #CCCCCC;
         }
-        .buttons{
-          background-color:red;
+
+        .buttons {
+            background-color: red;
+        }
+
+        .item-distance-container {
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
         }
     </style>
 </head>
@@ -110,80 +124,81 @@
 <script type="text/javascript">
     var map;
     apiready = function() {
-            //registerUpdateOrderStatusEvent();
-            map = api.require('bMap');
-            $('.order-status').hide();
-            var data = api.pageParam;
-            var account_type = data.account_type;
-            var order = data.order;
-            //alert(JSON.stringify(order));
-            var status_code = order.status_code;
-            var status_name = order.status_name;
-            var status_name_en = order.status_name_en;
-            var order_time = order.order_time;
-            if (order_time != undefined) {
-                $('.item-time').text(getDate1(order_time));
+        //registerUpdateOrderStatusEvent();
+        map = api.require('bMap');
+        $('.order-status').hide();
+        var data = api.pageParam;
+        var account_type = data.account_type;
+        var order = data.order;
+        //alert(JSON.stringify(order));
+        var status_code = order.status_code;
+        var status_name = order.status_name;
+        var status_name_en = order.status_name_en;
+        var order_time = order.order_time;
+        if (order_time != undefined) {
+            $('.item-time').text(getDate1(order_time));
+        }
+        var person_lon_lat = order.person_user_location;
+        var person_lon, person_lat;
+        if (person_lon_lat != undefined && person_lon_lat != "") {
+            var arr = person_lon_lat.split(',');
+            if (arr.length > 1) {
+                person_lon = arr[0];
+                person_lat = arr[1];
             }
-            var person_lon_lat = order.person_user_location;
-            var person_lon, person_lat;
-            if (person_lon_lat != undefined && person_lon_lat != "") {
-                var arr = person_lon_lat.split(',');
-                if (arr.length > 1) {
-                    person_lon = arr[0];
-                    person_lat = arr[1];
-                }
-            }
-            getRouteDistance(person_lon, person_lat, order.company_location_lon, order.company_location_lat);
-            if (account_type == "person_user") {
-                $('.item-name').text(order.company_name);
-                $('.item-fee').text(order.service_fee + "元");
-                var upload_files = order.upload_files;
-                var icon_url = "../../image/default_portrait.png";
-                if (upload_files != undefined) {
-                    var iconArr = upload_files.split(';');
-                    if (iconArr.length > 0) {
-                        if (iconArr[0] != undefined && iconArr[0] != "") {
-                            icon_url = iconArr[0];
-                            icon_url = 'http://' + serverIP + '/upload/pictures/' + icon_url;
-                        }
+        }
+        getRouteDistance(person_lon, person_lat, order.company_location_lon, order.company_location_lat);
+        if (account_type == "person_user") {
+            $('.item-name').text(order.company_name);
+            $('.item-fee').text(order.service_fee + "元");
+            var upload_files = order.upload_files;
+            var icon_url = "../../image/default_portrait.png";
+            if (upload_files != undefined) {
+                var iconArr = upload_files.split(';');
+                if (iconArr.length > 0) {
+                    if (iconArr[0] != undefined && iconArr[0] != "") {
+                        icon_url = iconArr[0];
+                        icon_url = 'http://' + serverIP + '/upload/pictures/' + icon_url;
                     }
                 }
-                $('.item-icon').attr('src', icon_url);
-                $('.item-phone').attr("disabled",false);
-                $('.item-phone').removeClass('item-color');
-                $('.item-phone').attr('data-phone',order.cell_phone);
-            } else if (account_type == "company_user") {
-                $('.item-icon-container').hide();
-                $('.item-name').text(getDate1(order_time));
-                $('.item-fee').text(order.service_fee + "元");
-                $('.item-phone').attr("disabled",true);
-                $('.item-phone').addClass('item-color');
             }
-            if (account_type != undefined && status_code != undefined) {
-                drawStatusPanel(account_type, status_code, status_name, status_name_en);
-            }
-            setFrameHeight();
+            $('.item-icon').attr('src', icon_url);
+            $('.item-phone').attr("disabled", false);
+            $('.item-phone').removeClass('item-color');
+            $('.item-phone').attr('data-phone', order.cell_phone);
+        } else if (account_type == "company_user") {
+            $('.item-icon-container').hide();
+            $('.item-name').text(getDate1(order_time));
+            $('.item-fee').text(order.service_fee + "元");
+            $('.item-phone').attr("disabled", true);
+            $('.item-phone').addClass('item-color');
         }
+        if (account_type != undefined && status_code != undefined) {
+            drawStatusPanel(account_type, status_code, status_name, status_name_en);
+        }
+        setFrameHeight();
+    }
+
     function drawStatusPanel(account_type, status_code, status_name, status_name_en) {
         $('.buttons').empty();
         $('.order-status').empty();
-        var language=getCookie();
-        var template="";
-        if(language==undefined||language=="zh-CN"||language==""){
-          $('.order-status-desc').text(status_name);
-        }else{
-          $('.order-status-desc').text(status_name_en);
+        var language = getCookie();
+        var template = "";
+        if (language == undefined || language == "zh-CN" || language == "") {
+            $('.order-status-desc').text(status_name);
+        } else {
+            $('.order-status-desc').text(status_name_en);
         }
         //makeButtonTemplate(函数名，中文按钮名，英文按钮名)
-        $('.buttons').append(makeButtonTemplate("cancelOrder('" + account_type + "');", "取消订单","Cancel the order"));
+        $('.buttons').append(makeButtonTemplate("cancelOrder('" + account_type + "');", "取消订单", "Cancel the order"));
         if (account_type == "person_user") {
             //pending,confirmed,confirmedpaid,inservice,finished,cancelled,finishedconfirmed
             if (status_code == "confirmed") { //支付
                 $('.order-status').show();
-                $('.order-status').append(makeButtonTemplate("payOrder();", "去支付","Pay"));
+                $('.order-status').append(makeButtonTemplate("payOrder();", "去支付", "Pay"));
             } else if (status_code == "finished") {
                 $('.order-status').show();
-                $('.order-status').append(makeButtonTemplate("confirmFinishedOrder();", "确认完成","Confirm completion"));
+                $('.order-status').append(makeButtonTemplate("confirmFinishedOrder();", "确认完成", "Confirm completion"));
             } else if (status_code == "cancelled") {
                 $('.buttons').empty();
             } else if (status_code == "finishedconfirmed") {
@@ -196,10 +211,10 @@
 
             } else if (status_code == "confirmedpaid") {
                 $('.order-status').show();
-                $('.order-status').append(makeButtonTemplate("startService();","开始服务","Start service"));
+                $('.order-status').append(makeButtonTemplate("startService();", "开始服务", "Start service"));
             } else if (status_code == "inservice") {
                 $('.order-status').show();
-                $('.order-status').append(makeButtonTemplate("finishOrder();", "服务完成","Service completion"));
+                $('.order-status').append(makeButtonTemplate("finishOrder();", "服务完成", "Service completion"));
             } else if (status_code == "finished") {
                 $('.buttons').empty();
             } else if (status_code == "cancelled") {
@@ -210,14 +225,14 @@
         }
     }
 
-    function makeButtonTemplate(buttonFunctionName, buttonName,buttonEnName) {
-       var language=getCookie();
-       var template="";
-       if(language==undefined||language=="zh-CN"||language==""){
-         template = '<div class="aui-btn aui-btn-block pr-bgcolor"  onclick="' + buttonFunctionName + '">' + buttonName + '</div>';
-       }else{
-         template = '<div class="aui-btn aui-btn-block pr-bgcolor"  onclick="' + buttonFunctionName + '">' + buttonEnName + '</div>';
-       }
+    function makeButtonTemplate(buttonFunctionName, buttonName, buttonEnName) {
+        var language = getCookie();
+        var template = "";
+        if (language == undefined || language == "zh-CN" || language == "") {
+            template = '<div class="aui-btn aui-btn-block pr-bgcolor"  onclick="' + buttonFunctionName + '">' + buttonName + '</div>';
+        } else {
+            template = '<div class="aui-btn aui-btn-block pr-bgcolor"  onclick="' + buttonFunctionName + '">' + buttonEnName + '</div>';
+        }
         return template;
     }
 
@@ -328,7 +343,7 @@
                             }
                         }
                     } else {
-                        toastFail("系统错误,取消订单失败!错误码:"+ err.code);
+                        toastFail("系统错误,取消订单失败!错误码:" + err.code);
                     }
                 });
             }
@@ -383,7 +398,7 @@
                     }
                 }
             } else {
-                toastFail("系统错误,开始服务失败!错误码:"+ err.code);
+                toastFail("系统错误,开始服务失败!错误码:" + err.code);
             }
         });
     }
@@ -437,7 +452,7 @@
                     if (ret.status) {
                         $('.item-distance').text('驾车：' + getDistance(ret.plans[0].distance) + 'km ' + '耗时：' + convertSecToMin(ret.plans[0].duration) + '分钟');
                         $('.item-time').hide();
-                    }else{
+                    } else {
                         $('.item-distance').text('暂时未能获取到驾车距离和耗时信息!');
                     }
                 } else {
@@ -445,38 +460,39 @@
                     //toastFail(''+err.code);
                 }
             });
-        }else{
+        } else {
             $('.item-distance').text('暂时未能获取到驾车距离和耗时信息!');
         }
     }
     //拨打电话
-    function callUser(obj){
-      var phone_no=$(obj).attr('data-phone');
-      if(phone_no!=undefined){
-        api.call({
-          type: 'tel_prompt',
-          number: phone_no
-        });
-      }else{
-         toastFail('手机号码不可用!');
-      }
+    function callUser(obj) {
+        var phone_no = $(obj).attr('data-phone');
+        if (phone_no != undefined) {
+            api.call({
+                type: 'tel_prompt',
+                number: phone_no
+            });
+        } else {
+            toastFail('手机号码不可用!');
+        }
     }
     //发送消息
-    function sendMessage(){
-      toastSuccess("暂未开通此功能!敬请等待!");
+    function sendMessage() {
+        toastSuccess("暂未开通此功能!敬请等待!");
     }
+
     function setFrameHeight() {
         var h = $('.container')[0].scrollHeight;
         api.setFrameAttr({
             name: 'order_status',
             rect: {
                 x: 0,
-                y: api.winHeight-h-10,
+                y: api.winHeight - h - 10,
                 w: api.winWidth,
                 h: 'auto',
-                marginLeft:10,
-                marginBottom:10,
-                marginRight:10
+                marginLeft: 10,
+                marginBottom: 10,
+                marginRight: 10
             },
         });
     }

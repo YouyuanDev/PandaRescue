@@ -536,6 +536,6 @@ function imgExists(e) {
     if (ImgObj.fileSize > 0 || (ImgObj.width > 0 && ImgObj.height > 0)) {
         e.src=imgurl;
     } else {
-
+        e.onerror=null;
     }
 }
