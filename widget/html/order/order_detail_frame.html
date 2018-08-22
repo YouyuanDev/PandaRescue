@@ -108,13 +108,17 @@
 <script type="text/javascript" src="../../script/common.js"></script>
 <script type="text/javascript" src="../../script/language.js"></script>
 <script type="text/javascript">
-    var g_order_no, g_account_type;
+    var g_order_no, g_account_type,g_account_type,g_person_user_no,g_comany_no;
     apiready = function() {
             var data = api.pageParam;
             var order = data.order;
             if (order != undefined) {
                 g_order_no = order.order_no;
                 g_account_type = data.account_type;
+                g_account_type = data.account_type;
+                g_person_user_no=data.person_user_no;
+                g_comany_no=data.company_no;
+                //如果传过来的账户类型不存在，或者账户类型为person，则不显示评价按钮
                 if (g_account_type == undefined || g_account_type == "company_user") {
                     $('.buttons').hide();
                 }
@@ -176,13 +180,14 @@
     function evaluateCompany() {
         if (g_order_no != undefined) {
             //先查看订单是否已经评价，如果已经评价则打出评价信息
-
             api.openFrame({
                 name: 'order_evaluate_frame',
                 url: './order_evaluate_frame.html',
                 reload: true,
                 pageParam: {
-                    order_no: g_order_no
+                    order_no: g_order_no,
+                    person_user_no:g_person_user_no,
+                    company_no:g_comany_no
                 },
                 rect: {
                     x: 0,
@@ -200,6 +205,7 @@
             toastFail("系统繁忙,请稍后评价!");
         }
     }
+
 </script>
 
 </html>

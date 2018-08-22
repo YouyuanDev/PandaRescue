@@ -169,10 +169,12 @@
                             var order_status = data[i].order_status;
                             var service_type_code = data[i].service_type_code;
                             var failure_type_code_list = data[i].failure_type_code_list;
+                            var person_user_no=data[i].person_user_no;
+                            var company_no=data[i].company_no;
                             if ($('.aui-content .aui-list li').length > 0) {
-                                $('.aui-content .aui-list li:last-child').after(getOrderTemplate(order_no, order_time, order_status, service_type_code, failure_type_code_list));
+                                $('.aui-content .aui-list li:last-child').after(getOrderTemplate(order_no,person_user_no,company_no, order_time, order_status, service_type_code, failure_type_code_list));
                             } else {
-                                $('.aui-content .aui-list').append(getOrderTemplate(order_no, order_time, order_status, service_type_code, failure_type_code_list));
+                                $('.aui-content .aui-list').append(getOrderTemplate(order_no,person_user_no,company_no,  order_time, order_status, service_type_code, failure_type_code_list));
                             }
                         }
                         start = start + 1;
@@ -210,8 +212,8 @@
         });
     }
     //订单列表模板
-    function getOrderTemplate(order_no, order_time, order_status, service_type, failure_type) {
-        var template = '<li class="aui-list-item aui-list-item-arrow" data-order-no=' + order_no + ' onclick="openOrderDetail(this)">' +
+    function getOrderTemplate(order_no,person_user_no,company_no,order_time, order_status, service_type, failure_type) {
+        var template = '<li class="aui-list-item aui-list-item-arrow" data-person-user-no="'+person_user_no+'" data-company-no="'+company_no+'" data-order-no=' + order_no + ' onclick="openOrderDetail(this)">' +
             '<div class="aui-media-list-item-inner">' +
             '<div class="aui-list-item-inner">' +
             '<div class="aui-list-item-text">' +
@@ -228,6 +230,8 @@
     //打开订单详情
     function openOrderDetail(obj) {
         var order_no = $(obj).attr('data-order-no');
+        var person_user_no=$(obj).attr('data-person-user-no');
+        var company_no=$(obj).attr('data-company-no');
         var service_type = $(obj).find('.span-service-type').text();
         var failure_type = $(obj).find('.span-failure-type').text();
         if (order_no != undefined && order_no != "") {
@@ -262,7 +266,9 @@
                                 url: './order_detail.html',
                                 pageParam: {
                                     order: order,
-                                    account_type:g_account_type
+                                    account_type:g_account_type,
+                                    person_user_no:person_user_no,
+                                    company_no:company_no
                                 }
                             });
                         } else if (status_code == "cancelled") {

@@ -36,7 +36,7 @@
 <script type="text/javascript">
     var language_id = 0;
     var map;
-    var g_order,g_account_type;
+    var g_order,g_account_type,g_person_user_no,g_comany_no;
     apiready = function() {
         fnSettingHeader();
         map = api.require('bMap');
@@ -44,6 +44,8 @@
         g_order = data.order;
         var data = api.pageParam;
         g_account_type = data.account_type;
+        g_person_user_no=data.person_user_no;
+        g_comany_no=data.company_no;
         if (g_order == undefined) {
             toastFail("暂时无法查看,请刷新重试!");
         }
@@ -121,7 +123,9 @@
             reload: true,
             pageParam: {
                 order: g_order,
-                account_type:g_account_type
+                account_type:g_account_type,
+                person_user_no:g_person_user_no,
+                company_no:g_comany_no
             },
             rect: {
                 x: 0,

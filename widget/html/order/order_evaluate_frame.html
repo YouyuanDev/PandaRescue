@@ -85,6 +85,10 @@
             max-height: 80px;
             overflow-x: scroll;
         }
+        .aui-switch:checked {
+            border-color: #73C0B6;
+            background-color: #73C0B6;
+        }
     </style>
 </head>
 
@@ -95,6 +99,9 @@
                 <span class="fa fa-chevron-left pr-fontcolor2"></span>
             </a>
             <div class="aui-title pr-fontcolor2 i18n1" name="evaluate">评价</div>
+            <a class="aui-pull-right aui-btn">
+                <span class="i18n1 pr-fontcolor1" name="anonymous">匿名评价</span><input type="checkbox" class="aui-switch item-anonymous">
+            </a>
         </header>
         <div class="aui-content">
             <div class="aui-list aui-list-in aui-list-noborder">
@@ -140,10 +147,10 @@
                         </div>
                     </div>
                 </div>
-                <div class="aui-list-item">
+                <div class="aui-list-item item-submit-container">
                     <div class="aui-list-item-inner">
                         <div class="aui-list-item-title item-title">
-                            <div class="aui-btn aui-btn-block i18n1" name="anonymoussubmit">匿名提交</div>
+                            <div class="aui-btn aui-btn-block i18n1 item-submit" name="submit" onclick="submitForm();">提交</div>
                         </div>
                     </div>
                 </div>
@@ -156,16 +163,23 @@
 <script type="text/javascript" src="../../script/common.js"></script>
 <script type="text/javascript" src="../../script/language.js"></script>
 <script type="text/javascript">
-    var g_order_no;
+    var g_order_no,g_person_user_no,g_comany_no;
     var g_winHeight;
+    var g_goodArr, g_badArr;
+    var g_rating, g_options, g_remark, g_person_user_no, g_anonymous, g_comany_no;
     apiready = function() {
             var data = api.pageParam;
             var order = data.order;
+            g_account_type = data.account_type;
+            g_person_user_no=data.person_user_no;
+            g_comany_no=data.company_no;
+            if(g_person_user_no==undefined&&g_person_user_no==""||g_comany_no==undefined||g_comany_no==""){
+              $('.item-submit-container').hide();
+            }
             $('.item-content-container').hide();
-            //makeContentTemplate(1);
-            g_winHeight=api.winHeight;
+            g_winHeight = api.winHeight;
             registerTextareaChange();
-            //setFrameHeight();
+            loadEvaluationType();
         }
         //设置Frame高度自适应
     function setFrameHeight() {
@@ -174,7 +188,7 @@
             name: 'order_evaluate_frame',
             rect: {
                 x: 0,
-                y: g_winHeight- h,
+                y: g_winHeight - h,
                 w: api.winWidth,
                 h: 'auto',
             },
@@ -197,6 +211,7 @@
         var data_grade_str = $(obj).attr('data-grade');
         if (data_grade_str != undefined) {
             var data_grade = parseInt(data_grade_str);
+            g_anonymous = data_grade;
             $('.item-desc').text(getGradeDesc(data_grade));
             $('.star').removeClass('pr-fontcolor3');
             $('.star').addClass('pr-fontcolor1');
@@ -209,9 +224,9 @@
     //评价等级描述
     function getGradeDesc(index) {
         if (index < 5) {
-            makeContentTemplate(1);
+            makeContentTemplate(g_goodArr, g_badArr, 1);
         } else {
-            makeContentTemplate(0);
+            makeContentTemplate(g_goodArr, g_badArr, 0);
         }
         var desc = "";
         switch (index) {
@@ -248,45 +263,56 @@
         }
     }
     //添加5星以下内容
-    function makeContentTemplate(flag) {
-        var goodArr = ["及时到达", "态度友善", "价格公道"];
-        var badArr = ["服务晚点", "态度恶劣", "价格偏高", "欺瞒用户", "索要好评"];
-        var template = "";
-        $('.content-container').empty();
-        if (flag == 0) {
-            for (var i = 0; i < goodArr.length; i++) {
-                template = '  <div class="aui-col-xs-6">' +
-                    '  <div class="item-content pr-fontcolor1" data-select="0" onclick="selectEvaluateContent(this)">' + goodArr[i] + '</div>' +
-                    '  </div>';
-                $('.content-container').append(template);
+    function makeContentTemplate(goodArr, badArr, flag) {
+        if (goodArr != undefined && badArr != undefined) {
+            var template = "";
+            $('.content-container').empty();
+            var language = getCookie();
+            if (language == undefined) {
+                language = "zh-CN";
             }
-        } else if (flag == 1) {
-            for (var i = 0; i < badArr.length; i++) {
-                template = '<div class="aui-col-xs-6">' +
-                    '  <div class="item-content pr-fontcolor1" data-select="0" onclick="selectEvaluateContent(this)">' + badArr[i] + '</div>' +
-                    '  </div>';
-                $('.content-container').append(template);
+            if (flag == 0) {
+                for (var i = 0; i < goodArr.length; i++) {
+                    var name = goodArr[i].name;
+                    if (language == "en") {
+                        name = goodArr[i].name_en;
+                    }
+                    template = '  <div class="aui-col-xs-6">' +
+                        '  <div class="item-content pr-fontcolor1" data-select="0" onclick="selectEvaluateContent(this)">' + name + '</div>' +
+                        '  </div>';
+                    $('.content-container').append(template);
+                }
+            } else if (flag == 1) {
+                for (var i = 0; i < badArr.length; i++) {
+                    var name = badArr[i].name;
+                    if (language == "en") {
+                        name = badArr[i].name_en;
+                    }
+                    template = '<div class="aui-col-xs-6">' +
+                        '  <div class="item-content pr-fontcolor1" data-select="0" onclick="selectEvaluateContent(this)">' + name + '</div>' +
+                        '  </div>';
+                    $('.content-container').append(template);
+                }
             }
         }
-        //setFrameHeight();
+        //var goodArr = ["及时到达", "态度友善", "价格公道"];
+        //var badArr = ["服务晚点", "态度恶劣", "价格偏高", "欺瞒用户", "索要好评"];
     }
     //设置实时监听textarea输入字数
     function registerTextareaChange() {
         $('.item-textarea').mouseover(function() {
-          var h=api.safeArea.top;
-          console.log(h);
-          api.setFrameAttr({
-              name: 'order_evaluate_frame',
-              rect: {
-                  x: 0,
-                  y: h,
-                  w: api.winWidth,
-                  h: 'auto',
-              },
-          });
-        }).mouseout(function(){
-          console.log('........................');
-          setFrameHeight();
+            var h = api.safeArea.top;
+            api.setFrameAttr({
+                name: 'order_evaluate_frame',
+                rect: {
+                    x: 0,
+                    y: h,
+                    w: api.winWidth,
+                    h: 'auto',
+                },
+            });
+        }).mouseout(function() {
+            setFrameHeight();
         });
         $('.item-textarea').bind('propertychange input', function() {
             var content = $('.item-textarea').val();
@@ -295,6 +321,83 @@
                 content = content.substring(0, 50);
             }
             $('.item-textarea').val(content);
+        });
+    }
+    //加载评价类型
+    function loadEvaluationType() {
+        var s = 'http://' + serverIP + '/data/evaluationType.json';
+        api.ajax({
+            url: s,
+            method: 'post',
+            timeout: 30,
+            dataType: 'json'
+        }, function(ret, err) {
+            if (ret) {
+                g_goodArr = ret.good_type;
+                g_badArr = ret.bad_type;
+            } else {
+                toastFail('系统出错,加载评价类型失败!错误码:' + err.code);
+            }
+        });
+    }
+    //提交评价
+    function submitForm() {
+        var anonymous= $('.item-anonymous').is(':checked');
+        if(anonymous){
+          g_anonymous=1;
+        }else{
+          g_anonymous=0;
+        }
+        var g_options_arr = [];
+        $('.item-content').each(function() {
+            var select=$(this).attr('data-select');
+            if(select=="1"){
+              g_options_arr.push($(this).text());
+            }
+        });
+        g_options = g_options_arr.join(',');
+        g_remark = $('.item-textarea').val();
+
+        var values={
+            id: 0,
+            rating:g_rating,
+            options: g_options,
+            remark: g_remark,
+            comment_from_person_user_no:g_person_user_no,
+            anonymous:g_anonymous,
+            comment_to_comany_no:g_comany_no
+        }
+        if(g_person_user_no==undefined&&g_person_user_no==""||g_comany_no==undefined||g_comany_no==""){
+          toastFail("评价失败!");
+          return;
+        }
+        var s = 'http://' + serverIP + '/Comment/saveComment.action';
+        api.ajax({
+            url: s,
+            method: 'post',
+            timeout: 30,
+            dataType: 'json',
+            data: {
+                values: {
+                    id: 0,
+                    rating: g_anonymous,
+                    options: g_options,
+                    remark: g_remark,
+                    comment_from_person_user_no:g_person_user_no,
+                    anonymous:g_anonymous,
+                    comment_to_comany_no:g_comany_no
+                }
+            }
+        }, function(ret, err) {
+            if (ret) {
+                if (ret.success) {
+                    toastSuccess(ret.message);
+                } else {
+                    toastFail(ret.message);
+                }
+            } else {
+                toastFail("系统错误,评价失败!错误码:" + err.code);
+            }
         });
     }
 </script>
