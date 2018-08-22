@@ -15,13 +15,16 @@
             margin-top: 1rem;
             background-color: #F2F5F6;
         }
+
         .aui-list .aui-list-item {
             margin-bottom: 1rem;
             background: #fff;
         }
+
         .fa-service {
             color: #73C0B6;
         }
+
         .fa-service,
         .fa-failure {
             font-size: 0.5rem;
@@ -48,25 +51,31 @@
 <script type="text/javascript">
     var language_id = 0,
         start = 1;
+    var g_account_type;
     apiready = function() {
         fnSettingHeader();
         var header = $api.byId('header');
         var headerH = $api.offset(header).h;
-        // 打开关于我们Frame
+        var data = api.pageParam;
+        g_account_type = data.account_type;
         api.openFrame({
             name: 'order_frame',
             url: './order_frame.html',
-            reload:true,
+            reload: true,
             rect: {
                 x: 0,
                 y: headerH,
                 w: 'auto',
                 h: api.winHeight - headerH
             },
-            bounces: false
+            bounces: false,
+            pageParam: {
+                account_type:g_account_type
+            }
         });
         hlLanguage("../../i18n/");
     }
+
     function closeMyself() {
         api.closeWin({
             name: 'order'

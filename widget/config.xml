@@ -23,6 +23,7 @@
     <feature name="aliPay">
         <param name="urlScheme" value="AliPayA6087851424740"/>
     </feature>
+     <preference name="softInputMode" value="resize"/>
 
     <preference name="backgroundMode" value="location | fetch"/>
 

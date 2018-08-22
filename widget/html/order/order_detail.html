@@ -36,12 +36,14 @@
 <script type="text/javascript">
     var language_id = 0;
     var map;
-    var g_order;
+    var g_order,g_account_type;
     apiready = function() {
         fnSettingHeader();
         map = api.require('bMap');
         var data = api.pageParam;
         g_order = data.order;
+        var data = api.pageParam;
+        g_account_type = data.account_type;
         if (g_order == undefined) {
             toastFail("暂时无法查看,请刷新重试!");
         }
@@ -90,13 +92,19 @@
                     trackingMode: 'none'
                 });
 
-                //设置订单终点标注和气泡信息
-                var company_lon = g_order.company_location_lon;
-                var company_lat = g_order.company_location_lat;
-                setMapCenter(company_lon, company_lat);
-                addAnnotation(1, company_lon, company_lat, "service_end.png");
-                addBubble(1, company_lon, company_lat);
-
+                //设置订单起始点标注和气泡信息
+                var person_lon_lat=g_order.person_user_location;
+                var lon,lat;
+                var arr=person_lon_lat.split(',');
+                if(arr.length>1){
+                  lon=arr[0];
+                  lat=arr[1];
+                  setMapCenter(lon, lat);
+                  addAnnotation(1, lon, lat, "service_start.png");
+                  //addBubble(1,lon, lat);
+                }
+                //var company_lon = g_order.company_location_lon;
+                //var company_lat = g_order.company_location_lat;
                 //打开订单详情Frame
                 openDetailFrame();
             } else {
@@ -112,11 +120,12 @@
             url: './order_detail_frame.html',
             reload: true,
             pageParam: {
-                order: g_order
+                order: g_order,
+                account_type:g_account_type
             },
             rect: {
                 x: 0,
-                y: api.winHeight - 260,
+                y: api.winHeight - 210,
                 w: api.winWidth - 20,
                 h: 'auto',
                 marginLeft: 10,

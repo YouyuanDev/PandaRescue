@@ -17,7 +17,7 @@
         }
 
         .container {
-            height: ;
+            height: auto;
             width: 100%;
         }
 
@@ -70,52 +70,56 @@
             border: 1px solid #A7A9A9;
             color: #A7A9A9;
         }
-        .item-title-textarea{
-          padding-left:15px;
-          padding-right:15px;
+
+        .item-title-textarea {
+            padding-left: 15px;
+            padding-right: 15px;
         }
-        .item-textarea{
-          border: 1px solid #A7A9A9;
-          border-radius:0.1rem;
+
+        .item-textarea {
+            border: 1px solid #A7A9A9;
+            border-radius: 0.1rem;
         }
-        .content-container{
-          max-height:80px;
-          overflow-x: scroll;
+
+        .content-container {
+            max-height: 80px;
+            overflow-x: scroll;
         }
     </style>
 </head>
 
 <body class="pr-body-bgcolor">
-    <header id="header" class="aui-bar aui-bar-nav aui-bar-light personal-header">
-        <a class="aui-pull-left aui-btn" onclick="closeMyself();">
-            <span class="fa fa-chevron-left pr-fontcolor2"></span>
-        </a>
-        <div class="aui-title pr-fontcolor2 i18n1" name="evaluate">评价</div>
-    </header>
-    <div class="aui-content">
-        <div class="aui-list aui-list-in aui-list-noborder">
-            <div class="aui-list-item">
-                <div class="aui-list-item-inner">
-                    <div class="aui-list-item-title item-title">
-                        <p>
-                            <span class="fa fa-star fa-2x pr-fontcolor1 star" data-grade="1" onclick="evaluateGrade(this);"></span>
-                            <span class="fa fa-star fa-2x pr-fontcolor1 star" data-grade="2" onclick="evaluateGrade(this);"></span>
-                            <span class="fa fa-star fa-2x pr-fontcolor1 star" data-grade="3" onclick="evaluateGrade(this);"></span>
-                            <span class="fa fa-star fa-2x pr-fontcolor1 star" data-grade="4" onclick="evaluateGrade(this);"></span>
-                            <span class="fa fa-star fa-2x pr-fontcolor1 star" data-grade="5" onclick="evaluateGrade(this);"></span>
-                        </p>
-                        <p class="item-desc pr-fontcolor4">
-                        </p>
+    <div class="container">
+        <header id="header" class="aui-bar aui-bar-nav aui-bar-light personal-header">
+            <a class="aui-pull-left aui-btn" onclick="closeMyself();">
+                <span class="fa fa-chevron-left pr-fontcolor2"></span>
+            </a>
+            <div class="aui-title pr-fontcolor2 i18n1" name="evaluate">评价</div>
+        </header>
+        <div class="aui-content">
+            <div class="aui-list aui-list-in aui-list-noborder">
+                <div class="aui-list-item">
+                    <div class="aui-list-item-inner">
+                        <div class="aui-list-item-title item-title">
+                            <p>
+                                <span class="fa fa-star fa-2x pr-fontcolor1 star" data-grade="1" onclick="evaluateGrade(this);"></span>
+                                <span class="fa fa-star fa-2x pr-fontcolor1 star" data-grade="2" onclick="evaluateGrade(this);"></span>
+                                <span class="fa fa-star fa-2x pr-fontcolor1 star" data-grade="3" onclick="evaluateGrade(this);"></span>
+                                <span class="fa fa-star fa-2x pr-fontcolor1 star" data-grade="4" onclick="evaluateGrade(this);"></span>
+                                <span class="fa fa-star fa-2x pr-fontcolor1 star" data-grade="5" onclick="evaluateGrade(this);"></span>
+                            </p>
+                            <p class="item-desc pr-fontcolor4">
+                            </p>
+                        </div>
                     </div>
                 </div>
-            </div>
 
-            <div class="aui-list-item item-content-container">
-                <div class="aui-list-item-inner">
-                    <div class="aui-list-item-title item-title">
-                        <div class="aui-row">
-                            <div class="aui-row-padded content-container">
-                                <!-- <div class="aui-col-xs-6">
+                <div class="aui-list-item item-content-container">
+                    <div class="aui-list-item-inner">
+                        <div class="aui-list-item-title item-title">
+                            <div class="aui-row">
+                                <div class="aui-row-padded content-container">
+                                    <!-- <div class="aui-col-xs-6">
                                     <div class="item-content pr-fontcolor1" data-select="0" onclick="selectEvaluateContent(this)">及时到达</div>
                                 </div>
                                 <div class="aui-col-xs-6">
@@ -124,22 +128,23 @@
                                 <div class="aui-col-xs-6">
                                     <div class="item-content pr-fontcolor1" data-select="0" onclick="selectEvaluateContent(this)">价格公道</div>
                                 </div> -->
+                                </div>
                             </div>
                         </div>
                     </div>
                 </div>
-            </div>
-            <div class="aui-list-item">
-                <div class="aui-list-item-inner">
-                    <div class="aui-list-item-title item-title item-title-textarea">
-                          <textarea placeholder="其他想说的(最多输入50个字)" class="item-textarea pr-body-bgcolor"></textarea>
+                <div class="aui-list-item">
+                    <div class="aui-list-item-inner">
+                        <div class="aui-list-item-title item-title item-title-textarea">
+                            <textarea placeholder="其他想说的(最多输入50个字)" class="item-textarea pr-body-bgcolor"></textarea>
+                        </div>
                     </div>
                 </div>
-            </div>
-            <div class="aui-list-item">
-                <div class="aui-list-item-inner">
-                    <div class="aui-list-item-title item-title">
-                        <div class="aui-btn aui-btn-block i18n1" name="anonymoussubmit">匿名提交</div>
+                <div class="aui-list-item">
+                    <div class="aui-list-item-inner">
+                        <div class="aui-list-item-title item-title">
+                            <div class="aui-btn aui-btn-block i18n1" name="anonymoussubmit">匿名提交</div>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -152,21 +157,24 @@
 <script type="text/javascript" src="../../script/language.js"></script>
 <script type="text/javascript">
     var g_order_no;
+    var g_winHeight;
     apiready = function() {
             var data = api.pageParam;
             var order = data.order;
             $('.item-content-container').hide();
             //makeContentTemplate(1);
-            setFrameHeight();
+            g_winHeight=api.winHeight;
+            registerTextareaChange();
+            //setFrameHeight();
         }
         //设置Frame高度自适应
     function setFrameHeight() {
-        var h = $(document.body)[0].scrollHeight;
+        var h = $('.container')[0].scrollHeight;
         api.setFrameAttr({
             name: 'order_evaluate_frame',
             rect: {
                 x: 0,
-                y: api.winHeight+10-h,
+                y: g_winHeight- h,
                 w: api.winWidth,
                 h: 'auto',
             },
@@ -174,9 +182,14 @@
     }
     //关闭当前Frame
     function closeMyself() {
+        api.setFrameAttr({
+            name: 'order_detail_frame',
+            hidden: false
+        });
         api.closeFrame({
             name: 'order_evaluate_frame'
         });
+
     }
     //评价等级
     function evaluateGrade(obj) {
@@ -195,10 +208,10 @@
     }
     //评价等级描述
     function getGradeDesc(index) {
-        if(index<5){
-          makeContentTemplate(1);
-        }else{
-          makeContentTemplate(0);
+        if (index < 5) {
+            makeContentTemplate(1);
+        } else {
+            makeContentTemplate(0);
         }
         var desc = "";
         switch (index) {
@@ -235,30 +248,55 @@
         }
     }
     //添加5星以下内容
-    function makeContentTemplate(flag){
-      var goodArr=["及时到达","态度友善","价格公道"];
-      var badArr=["服务晚点","态度恶劣","价格偏高","欺瞒用户","索要好评"];
-      var template="";
-      $('.content-container').empty();
-      if(flag==0){
-        for (var i = 0; i < goodArr.length; i++) {
-            template='  <div class="aui-col-xs-6">'+
-                 '  <div class="item-content pr-fontcolor1" data-select="0" onclick="selectEvaluateContent(this)">'+goodArr[i]+'</div>'+
-             '  </div>';
-             $('.content-container').append(template);
+    function makeContentTemplate(flag) {
+        var goodArr = ["及时到达", "态度友善", "价格公道"];
+        var badArr = ["服务晚点", "态度恶劣", "价格偏高", "欺瞒用户", "索要好评"];
+        var template = "";
+        $('.content-container').empty();
+        if (flag == 0) {
+            for (var i = 0; i < goodArr.length; i++) {
+                template = '  <div class="aui-col-xs-6">' +
+                    '  <div class="item-content pr-fontcolor1" data-select="0" onclick="selectEvaluateContent(this)">' + goodArr[i] + '</div>' +
+                    '  </div>';
+                $('.content-container').append(template);
+            }
+        } else if (flag == 1) {
+            for (var i = 0; i < badArr.length; i++) {
+                template = '<div class="aui-col-xs-6">' +
+                    '  <div class="item-content pr-fontcolor1" data-select="0" onclick="selectEvaluateContent(this)">' + badArr[i] + '</div>' +
+                    '  </div>';
+                $('.content-container').append(template);
+            }
         }
-      }else if(flag==1){
-        for (var i = 0; i < badArr.length; i++) {
-           template='<div class="aui-col-xs-6">'+
-                 '  <div class="item-content pr-fontcolor1" data-select="0" onclick="selectEvaluateContent(this)">'+badArr[i]+'</div>'+
-             '  </div>';
-           $('.content-container').append(template);
-        }
-      }
-      //setFrameHeight();
+        //setFrameHeight();
     }
-    //添加4星以下内容
-
+    //设置实时监听textarea输入字数
+    function registerTextareaChange() {
+        $('.item-textarea').mouseover(function() {
+          var h=api.safeArea.top;
+          console.log(h);
+          api.setFrameAttr({
+              name: 'order_evaluate_frame',
+              rect: {
+                  x: 0,
+                  y: h,
+                  w: api.winWidth,
+                  h: 'auto',
+              },
+          });
+        }).mouseout(function(){
+          console.log('........................');
+          setFrameHeight();
+        });
+        $('.item-textarea').bind('propertychange input', function() {
+            var content = $('.item-textarea').val();
+            var counter = $('.item-textarea').val().length;
+            if (counter > 50) {
+                content = content.substring(0, 50);
+            }
+            $('.item-textarea').val(content);
+        });
+    }
 </script>
 
 </html>

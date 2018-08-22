@@ -197,7 +197,9 @@
             name: 'order',
             url: '../order/order.html',
             reload: true,
-            pageParam: {}
+            pageParam: {
+              account_type:g_account_type
+            }
         });
         api.sendEvent({
             name: 'MaskClickEvent'
@@ -210,7 +212,7 @@
             url: '../setting/account_setting.html',
             reload: true,
             pageParam: {
-              g_account:g_account
+              account_type:g_account_type
             }
         });
         api.sendEvent({

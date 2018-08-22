@@ -91,7 +91,10 @@
     var language_id = 0,
         start = 1,
         g_service_type_dict, g_failure_type_dict, g_order_status_dict, g_allow_load = true;
-    apiready = function() {
+    var g_account_type;
+        apiready = function() {
+            var data = api.pageParam;
+            g_account_type = data.account_type;
             $('.pr-empty').hide();
             registerLoadAllServiceTypeEvent();
             registerLoadAllFaultTypeEvent();
@@ -225,8 +228,8 @@
     //打开订单详情
     function openOrderDetail(obj) {
         var order_no = $(obj).attr('data-order-no');
-        var service_type=$(obj).find('.span-service-type').text();
-        var failure_type=$(obj).find('.span-failure-type').text();
+        var service_type = $(obj).find('.span-service-type').text();
+        var failure_type = $(obj).find('.span-failure-type').text();
         if (order_no != undefined && order_no != "") {
             var s = 'http://' + serverIP + '/Order/getOrderMapByOrderNo.action';
             api.ajax({
@@ -252,33 +255,34 @@
                         }
                         //如果已经确认完成，则可以查看订单详情，否则自动返回主页面
                         if (status_code == "finishedconfirmed") {
-                            order["service_type"]=service_type;
-                            order["failure_type"]=failure_type;
+                            order["service_type"] = service_type;
+                            order["failure_type"] = failure_type;
                             api.openWin({
                                 name: 'order_detail',
                                 url: './order_detail.html',
                                 pageParam: {
-                                    order: order
+                                    order: order,
+                                    account_type:g_account_type
                                 }
                             });
-                        } else if(status_code=="cancelled"){
-                          toastSuccess("订单已取消,无法查看!");
-                        }else{
-                          api.confirm({
-                              title: '提示',
-                              msg: '订单尚在进行中,您要返回到主页面吗?',
-                              buttons: ['确定', '取消']
-                          }, function(ret, err) {
-                              var index = ret.buttonIndex;
-                              if(index==1){
-                                api.closeWin({
-                                    name: 'order'
-                                });
-                              }
-                          });
+                        } else if (status_code == "cancelled") {
+                            toastSuccess("订单已取消,无法查看!");
+                        } else {
+                            api.confirm({
+                                title: '提示',
+                                msg: '订单尚在进行中,您要返回到主页面吗?',
+                                buttons: ['确定', '取消']
+                            }, function(ret, err) {
+                                var index = ret.buttonIndex;
+                                if (index == 1) {
+                                    api.closeWin({
+                                        name: 'order'
+                                    });
+                                }
+                            });
                         }
-                    }else{
-                      toastFail("未能获取到订单详情,请刷新重试!");
+                    } else {
+                        toastFail("未能获取到订单详情,请刷新重试!");
                     }
                 } else {
                     toastFail("暂时无法查看,请刷新重试!");
