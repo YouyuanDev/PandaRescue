@@ -22,13 +22,15 @@
             font-size: 1rem;
             padding: 0.7rem 0.75rem;
         }
-        .item-btn{
-           float: right;
-           background: #fff;
-           color:#73C0B6;
+
+        .item-btn {
+            float: right;
+            background: #fff;
+            color: #73C0B6;
         }
-        .aui-list .item-label{
-           width:auto;
+
+        .aui-list .item-label {
+            width: auto;
         }
     </style>
 </head>
@@ -68,9 +70,9 @@
     <div class="aui-content aui-margin-b-15">
         <div class="aui-list aui-list-in">
             <div class="aui-list-header">
-              <p>
-                  <div class="aui-btn aui-btn-block pr-fontcolor pr-bgcolor i18n1" name="withdraw" onclick="beginWithdraw();">提现</div>
-              </p>
+                <p>
+                    <div class="aui-btn aui-btn-block pr-fontcolor pr-bgcolor i18n1" name="withdraw" onclick="beginWithdraw();">提现</div>
+                </p>
             </div>
         </div>
     </div>
@@ -86,58 +88,66 @@
     var language_id = 0,
         g_balance;
     apiready = function() {
-        fnSettingHeader();
-        var data = api.pageParam;
-        g_balance = data.g_balance;
-        if (g_balance != undefined) {
-            $('.item-balance').text(g_balance);
+            fnSettingHeader();
+            var data = api.pageParam;
+            g_balance = data.g_balance;
+            if (g_balance != undefined) {
+                $('.item-balance').text(g_balance);
+            }
+            hlLanguage("../../i18n/");
         }
-        hlLanguage("../../i18n/");
+        //提取全部
+    function putForwardAllCash() {
+        var cash = $('.item-balance').text();
+        if (cash != undefined && cash > 0)
+            $('#cash').val(cash);
     }
-    //提取全部
-    function putForwardAllCash(){
-      var cash=$('.item-balance').text();
-      if(cash!=undefined&&cash>0)
-        $('#cash').val(cash);
-    }
+
     function closeMyself() {
+        //刷新父页面
+        api.sendEvent({
+            name: 'updateCompanyProfileEvent',
+            extra: {
+            }
+        });
         api.closeFrame({
             name: 'putforward_cash'
         });
     }
     //提现
-    function beginWithdraw(){
-      var amount=$('#cash').val();
-      if(amount!=undefined&&amount!=""&&!isNaN(amount)){
-        if(amount<=0){
-          toastFail('提现金额不能少于0元');
-          return;
+    function beginWithdraw() {
+        var amount = $('#cash').val();
+        if (amount != undefined && amount != "" && !isNaN(amount)) {
+            if (amount <= 0) {
+                toastFail('提现金额不能少于0元');
+                return;
+            }
+            var s = 'http://' + serverIP + '/CompanyUser/WithdrawCompanyAccount.action';
+            api.ajax({
+                url: s,
+                method: 'post',
+                timeout: 30,
+                dataType: 'json',
+                data: {
+                    values: {
+                        amount: amount
+                    }
+                }
+            }, function(ret, err) {
+                if (ret) {
+                    toastSuccess(ret.msg);
+                    if (ret.success) {
+                        var cash = $('.item-balance').text();
+                        cash = cash - amount;
+                        $('.item-balance').text(cash);
+                        $('#cash').val('');
+                    }
+                } else {
+                    toastFail("系统错误,提现失败!错误码:" + err.code);
+                }
+            });
+        } else {
+            toastFail("请输入提现金额!");
         }
-        var s = 'http://' + serverIP + '/CompanyUser/WithdrawCompanyAccount.action';
-        api.ajax({
-            url: s,
-            method: 'post',
-            timeout: 30,
-            dataType: 'json',
-            data: {
-                values: {
-                    amount: amount
-                }
-            }
-        }, function(ret, err) {
-            if (ret) {
-                toastSuccess(ret.msg);
-                if(ret.success){
-                  var cash=$('.item-balance').text();
-                  cash=cash-amount;
-                  $('.item-balance').text(cash);
-                }
-            } else {
-                toastFail("系统错误,提现失败!错误码:" + err.code);
-            }
-        });
-      }else{
-        toastFail("请输入提现金额!");
-      }
     }
 </script>

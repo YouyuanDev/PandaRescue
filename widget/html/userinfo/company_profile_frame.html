@@ -34,8 +34,9 @@
             height: 2rem;
             line-height: 2.05rem;
         }
-        .aui-list .aui-list-item-label{
-          width:55%;
+
+        .aui-list .aui-list-item-label {
+            width: 55%;
         }
     </style>
 </head>
@@ -218,12 +219,14 @@
 <script src="../../script/jquery.i18n.properties-1.0.9.js" type="text/javascript"></script>
 <script src="../../script/language.js" type="text/javascript"></script>
 <script type="text/javascript">
-    var g_id, g_is_verified, g_upload_files = "",g_balance="";
+    var g_id, g_is_verified, g_upload_files = "",
+        g_balance = "";
     var map;
     apiready = function() {
             fnSettingHeader();
             registerUploadPhotosEvent();
             registerSaveCompanyUserInfoEvent();
+            registerUpdateCompanyProfileEvent();
             map = api.require('bMap');
             var data = api.pageParam;
             if (data != undefined) {
@@ -307,7 +310,7 @@
                     is_verified = ret.company.is_verified;
                     company_found_date = ret.company.company_found_date;
                     balance = ret.company.pr_account_amount;
-                    g_balance=balance;
+                    g_balance = balance;
                     upload_files = ret.company.upload_files;
                 } else {
                     toastFail(ret.message);
@@ -542,8 +545,16 @@
                 h: 'auto'
             },
             pageParam: {
-                g_balance:g_balance
+                g_balance: g_balance
             }
+        });
+    }
+    //监听关闭提现页面刷新当前页面
+    function registerUpdateCompanyProfileEvent() {
+        api.addEventListener({
+            name: 'updateCompanyProfileEvent'
+        }, function(ret, err) {
+            loadCompanyInfo();
         });
     }
 </script>
