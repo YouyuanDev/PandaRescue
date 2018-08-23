@@ -67,13 +67,10 @@
             <i class="fa fa-user-circle-o fa-size"></i>
         </a>
         <div class="aui-title">
-            <!-- <i class="fa fa-user fa-size" onclick="requestSwitchAccounType('company_user');"></i> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp; -->
-            <i class="item-account-type">普通用户</i>
-            <!-- <i class="fa fa-toggle-on fa-size" onclick="openLogin();"></i> -->
-            <!-- <i class="fa fa-edit fa-size" onclick="openEdit();"></i> -->
+            <span class="item-account-type">普通用户</span>
         </div>
         <a class="aui-pull-right aui-btn">
-            <i class="fa fa-commenting fa-2x fa-size" onclick="accountMessage();"></i>
+            <i class="fa fa-commenting fa-2x fa-size" onclick="openMessage();"></i>
         </a>
     </header>
     <section class="flex-1">
@@ -1218,8 +1215,14 @@
         });
     }
     //账户消息
-    function accountMessage() {
-        alert("你点击了消息事件!");
+    function openMessage() {
+      api.openWin({
+          name: 'message',
+          url: './html/message/message.html',
+          reload: true,
+          pageParam: {
+          }
+      });
     }
     //清屏
     function clearPanel() {
@@ -1270,12 +1273,6 @@
         }, function(ret, err) {
             g_failure_type_dict = JSON.parse(ret.value.g_failure_type_dict);
         });
-    }
-
-    //刷新
-    function sendPush() {
-        getCurrentOrder();
-
     }
     //设置推送回调函数
     function setPushListener() {

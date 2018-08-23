@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0" />
+    <meta name="format-detection" content="telephone=no,email=no,date=no,address=no">
+    <title>聊天Frame</title>
+    <link rel="stylesheet" type="text/css" href="../../css/api.css" />
+    <link rel="stylesheet" type="text/css" href="../../css/aui.css" />
+    <link rel="stylesheet" type="text/css" href="../../css/font-awesome.min.css" />
+    <link rel="stylesheet" type="text/css" href="../../css/style.css" />
+    <style>
+
+    </style>
+</head>
+
+<body>
+
+</body>
+
+</html>
+<script type="text/javascript" src="../../script/api.js"></script>
+<script type="text/javascript" src="../../script/jquery-3.3.1.min.js"></script>
+<script src="../../script/jquery.i18n.properties-1.0.9.js" type="text/javascript"></script>
+<script src="../../script/language.js" type="text/javascript"></script>
+<script type="text/javascript" src="../../script/common.js"></script>
+<script type="text/javascript">
+    var language_id = 0;
+    apiready = function() {
+        
+        var arr=[
+           {"icon_url":"../../image/default_portrait.png","name":"列表二列表二列表二列表二列表二","time":"2018-02-09 08:00:34","title":"信息条1",},
+           {"icon_url":"../../image/default_portrait.png","name":"列表三","time":"2018-02-09 09:00:34","title":"信息条2",},
+           {"icon_url":"../../image/default_portrait.png","name":"列表四","time":"2018-02-09 10:00:34","title":"信息条3",},
+           {"icon_url":"../../image/default_portrait.png","name":"列表五","time":"2018-02-09 11:00:34","title":"信息条4",}
+        ];
+        for (var i = 0; i < arr.length; i++) {
+           //$('.item-list').append(makeMessageTemplate(arr[i].icon_url,arr[i].name,arr[i].time,arr[i].title));
+        }
+        hlLanguage("../../i18n/");
+    }
+    //制作消息模板
+    function makeMessageTemplate(icon_url,name,time,title){
+      var template='';
+      return template;
+    }
+</script>

@@ -18,7 +18,6 @@
 
         .container {
             width: 100%;
-
             /*border:1px solid #8B8989;*/
         }
 
@@ -36,21 +35,25 @@
             width: 100%;
             font-size: 1rem;
         }
-        .item-line{
-          border-top:1px solid #F4F4F4;
+
+        .item-line {
+            border-top: 1px solid #F4F4F4;
         }
-        .aui-list .item-address{
-          font-size: 0.7rem;
-          color: #757575;
+
+        .aui-list .item-address {
+            font-size: 0.7rem;
+            color: #757575;
         }
-        .aui-list .item-fee{
-          font-size: 1.2rem;
-          color:#000;
+
+        .aui-list .item-fee {
+            font-size: 1.2rem;
+            color: #000;
         }
-        .aui-media-list .item-split{
-          background-color:#fff;
-          margin-bottom:0.5rem;
-          border-radius:0.2rem;
+
+        .aui-media-list .item-split {
+            background-color: #fff;
+            margin-bottom: 0.5rem;
+            border-radius: 0.2rem;
         }
     </style>
 </head>
@@ -114,12 +117,18 @@
                         }
                     }
                 }, function(ret, errs) {
+                    try{
+
+
                     if (ret) {
                       var annotations = [];
                       var bubble = [];
                       if(ret.rows.length<=0){
                         toastFail("加载完毕!");
+                        $('.pr-empty').show();
                         allow_scroll=false;
+                      }else{
+                        $('.pr-empty').hide();
                       }
                       var count=ret.rows.length;
                         for (var i = 0; i < ret.rows.length; i++) {
@@ -152,13 +161,10 @@
                             });
                             var rowData=ret.rows[i];
                             var lonlat=ret.rows[i].person_user_location;
-                            // var order_no=ret.rows[i].order_no;
                             var distance=getDistance(ret.rows[i].distance);
                             rowData["distance"]=distance;
                             rowData["service_type_name"]=service_type_name;
                             rowData["failure_type_name"]=failure_type_name;
-                            // var icon_url=ret.rows[i].icon_url;
-                            // var service_fee=ret.rows[i].service_fee;
                             var index=i;
                             // lonlat------if语句开始
                             if(lonlat!=undefined){
@@ -175,7 +181,6 @@
                                    lat:lat
                                   }, function(ret, err) {
                                  if (ret.status) {
-                                      // alert(ret.address);
                                       var address=ret.address;
                                       annotations.push({
                                           id: id,
@@ -189,11 +194,8 @@
                                          address:address
                                       });
                                       rowData["address"]=address;
-                                      //alert(JSON.stringify(rowData));
-                                      //person_user_location_lon,person_user_location_lat,order_no, service_type_name, failure_type_name, distance,icon_url,address
                                       var template=pendingOrderListTemplate(rowData);
                                       $('#poilist-ul').append(template);
-
                                       if(index==(count-1)){
                                         api.sendEvent({
                                          name: 'loadAllPendingOrderEvent',
@@ -214,17 +216,17 @@
                                     }
                                   }
                                 });
-
+                                //map.getNameFromCoords语句结束
                               }
                             }
                             // lonlat------if语句结束
                         }
-                        //  showPendingOrder(ret.rows);
-
-
                     } else {
                         toastFail("系统错误!错误码:" + errs.code);
                     }
+                  }catch(e){
+                    toastFail("获取附近订单时异常!");
+                  }
                 });
             } else {
                 toastFail("无定位信息");
