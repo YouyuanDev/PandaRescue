@@ -594,3 +594,18 @@ function getToken() {
     });
     return token;
 }
+//获取本地账户信息
+function getAccount(){
+  var account;
+  try{
+    var accountStr = api.getPrefs({
+        sync: true,
+        key: 'g_account'
+    });
+    if(accountStr!=undefined){
+      account=JSON.parse(accountStr);
+    }
+  }catch(e){
+  }
+  return account;
+}

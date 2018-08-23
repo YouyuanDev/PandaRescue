@@ -12,44 +12,51 @@
     <link rel="stylesheet" type="text/css" href="../../css/style.css" />
     <style>
         .item-voice {
-            width: 1rem;
-            height: 1rem;
+            width: 1.5rem;
+            height: 1.5rem;
             background: url('../../image/voice_48.png');
             background-position: center;
             background-repeat: no-repeat;
             background-size: contain;
         }
-
+        .item-file{
+          width: 1.5rem;
+          height: 1.5rem;
+          background: url('../../image/add_48.png');
+          background-position: center;
+          background-repeat: no-repeat;
+          background-size: contain;
+        }
+        .item-text-container{
+        }
+        .item-text-container .item-text{
+          width:100%;
+          height:auto;
+        }
         #footer {
             /*background-color:#73C0B6;*/
         }
     </style>
 </head>
 
-<body>
+<body class="pr-body-bgcolor">
     <header id="header" class="aui-bar aui-bar-nav aui-bar-light personal-header pr-bgcolor">
         <a class="aui-pull-left aui-btn" onclick="closeMyself();">
             <span class="fa fa-chevron-left"></span>
         </a>
         <div class="aui-title pr-fontcolor item-title-name"></div>
     </header>
-
-    <!-- <footer class="aui-bar aui-bar-tab" id="footer">
-        <a class="aui-pull-left aui-btn">
-            <span class="item-voice"></span>
-        </a>
-        <div class="aui-title">Title</div>
-        <a class="aui-pull-right aui-btn">
-            <span class="fa fa-paper-plane"></span>
-        </a>
-    </footer> -->
     <footer class="aui-bar aui-bar-nav aui-bar-tab" id="footer">
         <a class="aui-pull-left aui-btn">
             <span class="item-voice"></span>
         </a>
-        <div class="aui-title">Title</div>
+        <div class="aui-title">
+            <div class="item-text-container">
+               <textarea type="text" class="item-text"/></textarea>
+            </div>
+        </div>
         <a class="aui-pull-right aui-btn">
-            <span class="fa fa-paper-plane"></span>
+            <span class="item-file"></span>
         </a>
     </footer>
 </body>

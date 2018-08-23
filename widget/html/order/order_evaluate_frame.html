@@ -127,15 +127,7 @@
                         <div class="aui-list-item-title item-title">
                             <div class="aui-row">
                                 <div class="aui-row-padded content-container">
-                                    <!-- <div class="aui-col-xs-6">
-                                    <div class="item-content pr-fontcolor1" data-select="0" onclick="selectEvaluateContent(this)">及时到达</div>
-                                </div>
-                                <div class="aui-col-xs-6">
-                                    <div class="item-content pr-fontcolor1" data-select="0" onclick="selectEvaluateContent(this)">态度友善</div>
-                                </div>
-                                <div class="aui-col-xs-6">
-                                    <div class="item-content pr-fontcolor1" data-select="0" onclick="selectEvaluateContent(this)">价格公道</div>
-                                </div> -->
+
                                 </div>
                             </div>
                         </div>
@@ -358,19 +350,13 @@
         });
         g_options = g_options_arr.join(',');
         g_remark = $('.item-textarea').val();
-
-        var values = {
-            id: 0,
-            rating: g_rating,
-            options: g_options,
-            remark: g_remark,
-            comment_from_person_user_no: g_person_user_no,
-            anonymous: g_anonymous,
-            comment_to_comany_no: g_comany_no
-        }
         if (g_person_user_no == undefined && g_person_user_no == "" || g_comany_no == undefined || g_comany_no == "") {
             toastFail("评价失败!");
             return;
+        }
+        if((g_rating==undefined||g_rating=="")&&(g_options==undefined||g_options=="")&&(g_remark==undefined||g_remark=="")){
+          toastSuccess("评价信息不能为空!");
+          return;
         }
         var s = 'http://' + serverIP + '/Comment/saveComment.action';
         api.ajax({
@@ -381,7 +367,7 @@
             data: {
                 values: {
                     id: 0,
-                    rating: g_anonymous,
+                    rating: g_rating,
                     options: g_options,
                     remark: g_remark,
                     comment_from_person_user_no: g_person_user_no,

@@ -168,6 +168,7 @@
                 setTimeout(function() {
                     getLocationServices();
                 }, 200);
+                openRefreshButton();
             } else {
                 toastFail('地图打开失败，无法使用定位！');
             }
@@ -388,10 +389,10 @@
 
             }
         });
-        api.sendFrameToBack({
-            from: 'locating_button',
-            to: 'mask'
-        });
+        // api.sendFrameToBack({
+        //     from: 'refresh_button',
+        //     to: 'mask'
+        // });
     }
     //打开求救按钮
     function openSosButton() {
@@ -452,7 +453,6 @@
             }
         });
         openLocatingButton();
-        openRefreshButton();
         openSosButton();
         api.sendFrameToBack({
             from: 'nearby_company',
@@ -736,7 +736,6 @@
                     }
                     if (status_name != undefined && status_name != "") {
                         openLocatingButton();
-                        openRefreshButton();
                         openOrderStatusFrame(order);
                     }
                 }
@@ -995,10 +994,7 @@
                     $('.aui-title').append("<i>" + rets.accountType + "<i>");
                     return;
                 } else {
-                    var data = api.getPrefs({
-                        sync: true,
-                        key: 'g_account'
-                    });
+                    var data=getAccount();
                     if (data != undefined && data != "") {
                         var account = JSON.parse(data);
                         var phone = account.username;

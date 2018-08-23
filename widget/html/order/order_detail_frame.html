@@ -59,11 +59,37 @@
         .item-fee-container span {
             color: #000;
         }
+        .aui-list .item-title {
+            width: 100%;
+            padding-top: 5px;
+            padding-bottom: 5px;
+            text-align: center;
+        }
+        .star {
+            padding-left: 0.2rem;
+            padding-right: 0.2rem;
+        }
+        .item-content-select {
+            border: 1px solid #FF8C69;
+            color: #FF8C69;
+        }
+        .buttons {
+            display: none;
+        }
+        .aui-list .item-title-textarea{
+          color:#A7A9A9;
+        }
+        .item-content {
+            padding-top: 3px;
+            padding-bottom: 3px;
+            border-radius: 0.1rem;
+        }
     </style>
 </head>
 
 <body class="pr-body-bgcolor">
     <div class="aui-content container">
+        <!--订单信息-->
         <div class="aui-list aui-media-list aui-list-noborder">
             <div class="aui-list-item item-container">
                 <div class="aui-media-list-item-inner">
@@ -100,6 +126,45 @@
                 <div class="aui-btn aui-btn-block cancel-order i18n1" name="evaluate" onclick="evaluateCompany();">立即评价</div>
             </div>
         </div>
+        <!--订单信息结束-->
+        <!--评价信息-->
+        <div class="aui-list aui-list-in aui-list-noborder comment-container">
+            <div class="aui-list-item item-grade-container">
+                <div class="aui-list-item-inner">
+                    <div class="aui-list-item-title item-title">
+                        <p>
+                            <span class="fa fa-star fa-2x pr-fontcolor1 star" data-grade="1"></span>
+                            <span class="fa fa-star fa-2x pr-fontcolor1 star" data-grade="2"></span>
+                            <span class="fa fa-star fa-2x pr-fontcolor1 star" data-grade="3"></span>
+                            <span class="fa fa-star fa-2x pr-fontcolor1 star" data-grade="4"></span>
+                            <span class="fa fa-star fa-2x pr-fontcolor1 star" data-grade="5"></span>
+                        </p>
+                        <p class="item-desc pr-fontcolor4">
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="aui-list-item item-content-container">
+                <div class="aui-list-item-inner">
+                    <div class="aui-list-item-title item-title">
+                        <div class="aui-row">
+                            <div class="aui-row-padded content-container">
+
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="aui-list-item item-textarea-container">
+                <div class="aui-list-item-inner">
+                    <div class="aui-list-item-title item-title  item-title-textarea">
+
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!--评价信息结束-->
     </div>
     <!-- </div> -->
 </body>
@@ -108,7 +173,7 @@
 <script type="text/javascript" src="../../script/common.js"></script>
 <script type="text/javascript" src="../../script/language.js"></script>
 <script type="text/javascript">
-    var g_order_no, g_account_type,g_account_type,g_person_user_no,g_comany_no;
+    var g_order_no, g_account_type, g_account_type, g_person_user_no, g_comany_no;
     apiready = function() {
             var data = api.pageParam;
             var order = data.order;
@@ -116,8 +181,8 @@
                 g_order_no = order.order_no;
                 g_account_type = data.account_type;
                 g_account_type = data.account_type;
-                g_person_user_no=data.person_user_no;
-                g_comany_no=data.company_no;
+                g_person_user_no = data.person_user_no;
+                g_comany_no = data.company_no;
                 //如果传过来的账户类型不存在，或者账户类型为person，则不显示评价按钮
                 if (g_account_type == undefined || g_account_type == "company_user") {
                     $('.buttons').hide();
@@ -153,7 +218,9 @@
                 if (fee != undefined) {
                     $('.item-fee').text(fee);
                 }
-                setFrameHeight();
+                openLoading();
+                loadCommentInfo(g_order_no);
+                //setFrameHeight();
             } else {
                 api.closeFrame({
                     name: 'order_detail_frame'
@@ -163,18 +230,21 @@
         //设置Frame高度自适应
     function setFrameHeight() {
         var h = $('.container')[0].scrollHeight;
-        api.setFrameAttr({
-            name: 'order_detail_frame',
-            rect: {
-                x: 0,
-                y: api.winHeight - h - 10,
-                w: api.winWidth - 20,
-                h: 'auto',
-                marginLeft: 10,
-                marginBottom: 10,
-                marginRight: 10
-            },
-        });
+        setTimeout(function(){
+          api.setFrameAttr({
+              name: 'order_detail_frame',
+              rect: {
+                  x: 0,
+                  y: api.winHeight - h - 10,
+                  w: api.winWidth - 20,
+                  h: 'auto',
+                  marginLeft: 10,
+                  marginBottom: 10,
+                  marginRight: 10
+              },
+          });
+          closeLoading();
+        },500);
     }
     //评价商户
     function evaluateCompany() {
@@ -186,8 +256,8 @@
                 reload: true,
                 pageParam: {
                     order_no: g_order_no,
-                    person_user_no:g_person_user_no,
-                    company_no:g_comany_no
+                    person_user_no: g_person_user_no,
+                    company_no: g_comany_no
                 },
                 rect: {
                     x: 0,
@@ -205,7 +275,131 @@
             toastFail("系统繁忙,请稍后评价!");
         }
     }
+    //加载评价信息
+    function loadCommentInfo(order_no) {
+        try {
+            var s = 'http://' + serverIP + '/Comment/getCommentByOrderNo.action';
+            api.ajax({
+                url: s,
+                method: 'post',
+                data: {
+                    values: {
+                        order_no: order_no
+                    }
+                }
+            }, function(ret, err) {
+                //alert(JSON.stringify(ret));
+                if (ret) {
+                    if (ret.success) {
+                        var dataArr = ret.data;
+                        if (dataArr.length > 0) {
+                            var data = dataArr[0]
+                            var grade = data.rating;
+                            var options = data.options;
+                            var remark = data.remark;
+                            setCommentGrade(grade);
+                            setCommentOptions(options);
+                            setCommentDesc(remark);
+                        } else {
+                            $('.buttons').show();
+                            $('.comment-container').hide();
+                        }
+                    } else {
+                        $('.buttons').show();
+                        $('.comment-container').hide();
+                    }
+                    setFrameHeight();
+                } else {
+                    toastFail("系统错误,获取评价信息异常!错误码:" + err.code);
+                    $('.comment-container').hide();
+                    setFrameHeight();
+                }
 
+            });
+        } catch (e) {
+            setFrameHeight();
+        }
+    }
+    //设置评价级别
+    function setCommentGrade(grade) {
+        try {
+            if (grade != undefined) {
+                var data_grade = parseInt(grade);
+                g_rating = data_grade;
+                $('.item-desc').text(getCommentDesc(data_grade));
+                $('.star').removeClass('pr-fontcolor3');
+                $('.star').addClass('pr-fontcolor1');
+                for (var i = 0; i < data_grade; i++) {
+                    $('.star').eq(i).addClass('pr-fontcolor3');
+                }
+            } else {
+                $('.item-grade-container').hide();
+            }
+        } catch (e) {
+            $('.item-grade-container').hide();
+        }
+
+    }
+    //评价等级描述
+    function getCommentDesc(index) {
+        var desc = "";
+        switch (index) {
+            case 1:
+                desc = "非常不满意,各方面很差!";
+                break;
+            case 2:
+                desc = "不满意,比较差!";
+                break;
+            case 3:
+                desc = "一般,还需改善!";
+                break;
+            case 4:
+                desc = "比较满意,仍可改善!";
+                break;
+            case 5:
+                desc = "非常满意,无可挑剔!";
+                break;
+        }
+        return desc;
+    }
+    //设置评论选项
+    function setCommentOptions(options) {
+        try {
+            if (options != undefined && options != "") {
+                var optArr = options.split(',');
+                if (optArr.length > 0) {
+                    for (var i = 0; i < optArr.length; i++) {
+                        setCommentOptionTemplate(optArr[i]);
+                    }
+                } else {
+                    $('.item-content-container').hide();
+                }
+            } else {
+                $('.item-content-container').hide();
+            }
+        } catch (e) {
+            $('.item-content-container').hide();
+        }
+    }
+    //设置评论描述
+    function setCommentDesc(remark) {
+        try {
+            if (remark != undefined && remark != "") {
+                $('.item-title-textarea').text(remark);
+            } else {
+                $('.item-textarea-container').hide();
+            }
+        } catch (e) {
+            $('.item-textarea-container').hide();
+        }
+    }
+    //设置评论选项模板
+    function setCommentOptionTemplate(str) {
+        var template = '<div class="aui-col-xs-6">' +
+            '  <div class="item-content item-content-select pr-fontcolor1" data-select="0">' + str + '</div>' +
+            '  </div>';
+        $('.content-container').append(template);
+    }
 </script>
 
 </html>

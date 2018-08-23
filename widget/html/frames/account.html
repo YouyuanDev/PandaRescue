@@ -28,9 +28,11 @@
             margin: auto;
             font-size: 1.2rem;
         }
+
         .account-name .account-name-samll-span {
-            font-size:0.6rem;
+            font-size: 0.6rem;
         }
+
         .account-type p {
             margin: auto;
         }
@@ -95,7 +97,7 @@
         <ul class="aui-list aui-list-in">
             <li class="aui-list-item" onclick="openUserInfo();">
                 <div class="aui-list-item-inner">
-                    <div class="account-header"><img class="account-header" src="../../image/default_portrait.png" onerror="imgExists(this)"/>
+                    <div class="account-header"><img class="account-header" src="../../image/default_portrait.png" onerror="imgExists(this)" />
                         <div/>
                     </div>
             </li>
@@ -161,7 +163,7 @@
 <script src="../../script/jquery.i18n.properties-1.0.9.js" type="text/javascript"></script>
 <script src="../../script/language.js" type="text/javascript"></script>
 <script type="text/javascript">
-    var g_account,g_account_type,g_account_nickname,g_account_icon;
+    var g_account, g_account_type, g_account_nickname, g_account_icon;
     apiready = function() {
             fnSettingHeader();
             loadAccountInfo();
@@ -184,7 +186,7 @@
             url: '../userinfo/account_profile.html',
             reload: true,
             pageParam: {
-              g_account:g_account
+                g_account: g_account
             }
         });
         api.sendEvent({
@@ -198,7 +200,7 @@
             url: '../order/order.html',
             reload: true,
             pageParam: {
-              account_type:g_account_type
+                account_type: g_account_type
             }
         });
         api.sendEvent({
@@ -212,7 +214,7 @@
             url: '../setting/account_setting.html',
             reload: true,
             pageParam: {
-              account_type:g_account_type
+                account_type: g_account_type
             }
         });
         api.sendEvent({
@@ -225,8 +227,7 @@
             name: 'person_profile',
             url: '../userinfo/person_profile.html',
             reload: true,
-            pageParam: {
-            }
+            pageParam: {}
         });
         api.sendEvent({
             name: 'MaskClickEvent'
@@ -238,8 +239,7 @@
             name: 'company_profile',
             url: '../userinfo/company_profile.html',
             reload: true,
-            pageParam: {
-            }
+            pageParam: {}
         });
         api.sendEvent({
             name: 'MaskClickEvent'
@@ -329,44 +329,60 @@
         });
     }
     //加载账户信息
-    function loadAccountInfo(){
-      var s = 'http://' + serverIP + '/AccountOperation/getAccountInfo.action';
-      api.ajax({
-          url: s,
-          method: 'post',
-          timeout: 30,
-          dataType: 'json',
-          data: {}
-      }, function(ret, err) {
-          if (ret) {
-              if (ret.success) {
-                    g_account=ret.account;
-                    g_account_nickname=ret.account.nickname;
-                    g_account_icon=ret.account.icon_url;
-              } else {
-                  toastFail(ret.message);
-                  if(ret.relogin){
-                    api.sendEvent({
-                        name: 'reloginEvent'
-                    });
-                  }
-              }
-
-              if(g_account_icon!=undefined&&g_account_icon!=""){
-                  var url='http://' + serverIP +'/upload/pictures/'+g_account_icon;
-                  $('.account-header').attr('src',url);
-              }
-              if(g_account_nickname!=undefined&&g_account_nickname!=""){
-                $('.account-name-span').removeClass('account-name-samll-span');
-                $('.account-name-span').text(g_account_nickname);
-              }else{
-                 $('.account-name-span').text('点击修改昵称吧!');
-                 $('.account-name-span').addClass('account-name-samll-span');
-              }
-          } else {
-              toastFail('系统出错,错误码:' + err.code);
-          }
-      });
+    function loadAccountInfo() {
+        //先判断本地是否是否存在
+        try {
+            var account = getAccount();
+            if (account != undefined) {
+                g_account = account;
+                g_account_nickname =account.nickname;
+                g_account_icon =account.icon_url;
+                setAccountInfo(g_account_icon,g_account_nickname);
+            } else {
+                var s = 'http://' + serverIP + '/AccountOperation/getAccountInfo.action';
+                api.ajax({
+                    url: s,
+                    method: 'post',
+                    timeout: 30,
+                    dataType: 'json',
+                    data: {}
+                }, function(ret, err) {
+                    if (ret) {
+                        if (ret.success) {
+                            g_account = ret.account;
+                            g_account_nickname = ret.account.nickname;
+                            g_account_icon = ret.account.icon_url;
+                        } else {
+                            toastFail(ret.message);
+                            if (ret.relogin) {
+                                api.sendEvent({
+                                    name: 'reloginEvent'
+                                });
+                            }
+                        }
+                        setAccountInfo(g_account_icon,g_account_nickname);
+                    } else {
+                        toastFail('系统出错,错误码:' + err.code);
+                    }
+                });
+            }
+        } catch (e) {
+            toastFail('获取账户信息异常,请刷新重试!');
+        }
+    }
+    //设置账户界面信息
+    function setAccountInfo(g_account_icon,g_account_nickname){
+      if (g_account_icon != undefined && g_account_icon != "") {
+          var url = 'http://' + serverIP + '/upload/pictures/' + g_account_icon;
+          $('.account-header').attr('src', url);
+      }
+      if (g_account_nickname != undefined && g_account_nickname != "") {
+          $('.account-name-span').removeClass('account-name-samll-span');
+          $('.account-name-span').text(g_account_nickname);
+      } else {
+          $('.account-name-span').text('点击修改昵称吧!');
+          $('.account-name-span').addClass('account-name-samll-span');
+      }
     }
 </script>
 
