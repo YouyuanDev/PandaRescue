@@ -68,7 +68,7 @@
         </a>
         <div class="aui-title">
             <!-- <i class="fa fa-user fa-size" onclick="requestSwitchAccounType('company_user');"></i> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp; -->
-            <i class="fa  fa-refresh" onclick="sendPush();"></i>
+            <i class="item-account-type">普通用户</i>
             <!-- <i class="fa fa-toggle-on fa-size" onclick="openLogin();"></i> -->
             <!-- <i class="fa fa-edit fa-size" onclick="openEdit();"></i> -->
         </div>
@@ -83,6 +83,8 @@
 <script type="text/javascript" src="./script/api.js"></script>
 <script type="text/javascript" src="./script/jquery-3.3.1.min.js"></script>
 <script type="text/javascript" src="./script/common.js"></script>
+<script type="text/javascript" src="./script/jquery.i18n1.properties-1.0.9.js"></script>
+<script type="text/javascript" src="./script/language.js"></script>
 <script type="text/javascript">
     //我的坐标
     var g_my_lon, g_my_lat;
@@ -113,6 +115,7 @@
         loadAllServiceType();
         loadAllFaultType();
         registLocatingEvent();
+        registRefreshEvent();
         registerLocatingPersonUserLocationEvent();
         registLocatingCompanyLocationEvent();
         registerLoadNearbyCompanyEvent();
@@ -372,6 +375,26 @@
             to: 'mask'
         });
     }
+    //打开刷新按钮
+    function openRefreshButton() {
+        api.openFrame({
+            name: 'refresh_button',
+            url: './html/frames/refresh_button.html',
+            rect: {
+                x: 10,
+                y: api.winHeight -250,
+                w: 30,
+                h: 30
+            },
+            pageParam: {
+
+            }
+        });
+        api.sendFrameToBack({
+            from: 'locating_button',
+            to: 'mask'
+        });
+    }
     //打开求救按钮
     function openSosButton() {
         api.openFrame({
@@ -431,6 +454,7 @@
             }
         });
         openLocatingButton();
+        openRefreshButton();
         openSosButton();
         api.sendFrameToBack({
             from: 'nearby_company',
@@ -500,7 +524,14 @@
             });
         });
     }
-    //
+    //刷新当前页面
+    function registRefreshEvent(){
+      api.addEventListener({
+          name: 'refreshEvent'
+      }, function(ret, err) {
+           getCurrentOrder();
+      });
+    }
     function registerLocatingPersonUserLocationEvent() {
         api.addEventListener({
             name: 'LocatingPersonUserLocationEvent'
@@ -707,6 +738,7 @@
                     }
                     if (status_name != undefined && status_name != "") {
                         openLocatingButton();
+                        openRefreshButton();
                         openOrderStatusFrame(order);
                     }
                 }
@@ -1051,6 +1083,22 @@
             clearPanel();
             if (rets) {
                 g_account_type = rets.accountType;
+                var language=getLanguage();
+                var desc="";
+                if(language=="zh-CN"){
+                  if(g_account_type=="person_user"){
+                    desc="普通用户";
+                  }else if(g_account_type=="company_user"){
+                    desc="商户";
+                  }
+                }else{
+                  if(g_account_type=="person_user"){
+                    desc="Person";
+                  }else if(g_account_type=="company_user"){
+                    desc="Company";
+                  }
+                }
+                $('.item-account-type').text(desc);
                 if (rets.success) {
                     //存在进行中订单
                     updateOrderStatus(rets.order_no);

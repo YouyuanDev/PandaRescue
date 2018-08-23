@@ -48,35 +48,9 @@
 </head>
 
 <body class="pr-body-bgcolor">
-    <!-- <div class="pr-empty">
-      <span class="empty-title"><span class="fa fa-info" style="padding-right:0.3rem;"></span><span class="i18n1" name="nohistoricalorder">暂无历史订单!</span><span>
-</div> -->
-    <div class="aui-content aui-margin-b-15">
+    <div class="aui-content aui-margin-b-15 pr-body-bgcolor">
         <ul class="aui-list aui-media-list">
-            <!-- <li class="aui-list-item aui-list-item-arrow">
-                <div class="aui-media-list-item-inner">
-                    <div class="aui-list-item-inner">
-                        <div class="aui-list-item-text">
-                            <div class="aui-list-item-title"><i class="fa fa-clock-o"></i>2018年08月13日 20:21:12</div>
-                            <div class="aui-list-item-right">进行中</div>
-                        </div>
-                        <p><span class="fa fa-circle fa-service"></span><span>门店服务<span></p>
-                        <p><span class="fa fa-circle fa-failure"></span><span>轮胎故障,机械故障<span></p>
-                    </div>
-                </div>
-            </li>
-            <li class="aui-list-item aui-list-item-arrow">
-                <div class="aui-media-list-item-inner">
-                    <div class="aui-list-item-inner">
-                        <div class="aui-list-item-text">
-                            <div class="aui-list-item-title"><i class="fa fa-clock-o"></i>2018年08月13日 20:21:12</div>
-                            <div class="aui-list-item-right">已完成</div>
-                        </div>
-                        <p><span class="fa fa-circle fa-service"></span><span>门店服务<span></p>
-                        <p><span class="fa fa-circle fa-failure"></span><span>轮胎故障,机械故障<span></p>
-                    </div>
-                </div>
-            </li> -->
+
         </ul>
     </div>
 </body>
@@ -92,7 +66,7 @@
         start = 1,
         g_service_type_dict, g_failure_type_dict, g_order_status_dict, g_allow_load = true;
     var g_account_type;
-        apiready = function() {
+    apiready = function() {
             var data = api.pageParam;
             g_account_type = data.account_type;
             $('.pr-empty').hide();
@@ -169,12 +143,12 @@
                             var order_status = data[i].order_status;
                             var service_type_code = data[i].service_type_code;
                             var failure_type_code_list = data[i].failure_type_code_list;
-                            var person_user_no=data[i].person_user_no;
-                            var company_no=data[i].company_no;
+                            var person_user_no = data[i].person_user_no;
+                            var company_no = data[i].company_no;
                             if ($('.aui-content .aui-list li').length > 0) {
-                                $('.aui-content .aui-list li:last-child').after(getOrderTemplate(order_no,person_user_no,company_no, order_time, order_status, service_type_code, failure_type_code_list));
+                                $('.aui-content .aui-list li:last-child').after(getOrderTemplate(order_no, person_user_no, company_no, order_time, order_status, service_type_code, failure_type_code_list));
                             } else {
-                                $('.aui-content .aui-list').append(getOrderTemplate(order_no,person_user_no,company_no,  order_time, order_status, service_type_code, failure_type_code_list));
+                                $('.aui-content .aui-list').append(getOrderTemplate(order_no, person_user_no, company_no, order_time, order_status, service_type_code, failure_type_code_list));
                             }
                         }
                         start = start + 1;
@@ -212,8 +186,8 @@
         });
     }
     //订单列表模板
-    function getOrderTemplate(order_no,person_user_no,company_no,order_time, order_status, service_type, failure_type) {
-        var template = '<li class="aui-list-item aui-list-item-arrow" data-person-user-no="'+person_user_no+'" data-company-no="'+company_no+'" data-order-no=' + order_no + ' onclick="openOrderDetail(this)">' +
+    function getOrderTemplate(order_no, person_user_no, company_no, order_time, order_status, service_type, failure_type) {
+        var template = '<li class="aui-list-item aui-list-item-arrow" data-person-user-no="' + person_user_no + '" data-company-no="' + company_no + '" data-order-no=' + order_no + ' onclick="openOrderDetail(this)">' +
             '<div class="aui-media-list-item-inner">' +
             '<div class="aui-list-item-inner">' +
             '<div class="aui-list-item-text">' +
@@ -230,8 +204,8 @@
     //打开订单详情
     function openOrderDetail(obj) {
         var order_no = $(obj).attr('data-order-no');
-        var person_user_no=$(obj).attr('data-person-user-no');
-        var company_no=$(obj).attr('data-company-no');
+        var person_user_no = $(obj).attr('data-person-user-no');
+        var company_no = $(obj).attr('data-company-no');
         var service_type = $(obj).find('.span-service-type').text();
         var failure_type = $(obj).find('.span-failure-type').text();
         if (order_no != undefined && order_no != "") {
@@ -266,9 +240,9 @@
                                 url: './order_detail.html',
                                 pageParam: {
                                     order: order,
-                                    account_type:g_account_type,
-                                    person_user_no:person_user_no,
-                                    company_no:company_no
+                                    account_type: g_account_type,
+                                    person_user_no: person_user_no,
+                                    company_no: company_no
                                 }
                             });
                         } else if (status_code == "cancelled") {
@@ -311,8 +285,11 @@
         api.addEventListener({
             name: 'GetAllServiceTypeEvent'
         }, function(ret, err) {
-            if (ret.value.g_service_type_dict != undefined) {
-                g_service_type_dict = JSON.parse(ret.value.g_service_type_dict);
+            try {
+                if (ret.value.g_service_type_dict != undefined)
+                    g_service_type_dict = JSON.parse(ret.value.g_service_type_dict);
+            } catch (e) {
+                toastFail('加载服务类型异常!');
             }
         });
     }
@@ -321,8 +298,11 @@
         api.addEventListener({
             name: 'GetAllFailureTypeEvent'
         }, function(ret, err) {
-            if (ret.value.g_failure_type_dict != undefined) {
-                g_failure_type_dict = JSON.parse(ret.value.g_failure_type_dict);
+            try {
+                if (ret.value.g_failure_type_dict != undefined)
+                    g_failure_type_dict = JSON.parse(ret.value.g_failure_type_dict);
+            } catch (e) {
+                toastFail('加载故障类型异常!');
             }
         });
     }
@@ -331,8 +311,11 @@
         api.addEventListener({
             name: 'GetAllOrderStatusEvent'
         }, function(ret, err) {
-            if (ret.value.g_order_status != undefined) {
-                g_order_status_dict = JSON.parse(ret.value.g_order_status);
+            try {
+                if (ret.value.g_order_status != undefined)
+                    g_order_status_dict = JSON.parse(ret.value.g_order_status);
+            } catch (e) {
+                toastFail('获取订单状态类型异常!');
             }
         });
     }

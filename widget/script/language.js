@@ -52,7 +52,8 @@ function getLanguage() {
         language=getCookie();
     }else{
         //获取浏览器语言
-        var navLanguage=$.i18n.browserLang();
+        //var navLanguage=$.i18n.browserLang();
+        var navLanguage=navigator.language;
         //判断是否支持语言数组
         if($.inArray(navLanguage,webLanguage)>-1){
             language=navLanguage;
