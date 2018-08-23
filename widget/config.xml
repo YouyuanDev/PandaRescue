@@ -19,7 +19,10 @@
         <param name="android_api_key" value="olAkqioBRzzey2P9zzLo1ZoesXoi4nLj"/>
         <param name="ios_api_key" value="uhMNF5USSpeqFmlekx1w3VbPtcFgbDzw"/>
     </feature>
-
+    <!--融云-->
+    <feature name="rongCloud">
+        <param name="appKey" value="4z3hlwrv4omet" />
+    </feature>
     <feature name="aliPay">
         <param name="urlScheme" value="AliPayA6087851424740"/>
     </feature>
@@ -66,5 +69,19 @@
     <permission name="bootCompleted"/>
 
     <permission name="hardware"/>
-
+    <intent-filter>
+        <action name="android.intent.action.VIEW"/>
+        <category name="android.intent.category.DEFAULT"/>
+        <data scheme="rong" host="io.rong.fast" pathPrefix="/conversation/"/>
+    </intent-filter>
+    <intent-filter>
+       <action name="android.intent.action.VIEW" />
+       <category name="android.intent.category.DEFAULT" />
+       <data host="com.ketewang.ocr" path="/conversationlist" scheme="rong" />
+    </intent-filter>
+    <intent-filter>
+        <action name="android.intent.action.VIEW" />
+        <category name="android.intent.category.DEFAULT" />
+        <data host="com.ketewang.ocr" pathPrefix="/push_message" scheme="rong" />
+    </intent-filter>
 </widget>

@@ -85,6 +85,7 @@
             max-height: 80px;
             overflow-x: scroll;
         }
+
         .aui-switch:checked {
             border-color: #73C0B6;
             background-color: #73C0B6;
@@ -163,7 +164,7 @@
 <script type="text/javascript" src="../../script/common.js"></script>
 <script type="text/javascript" src="../../script/language.js"></script>
 <script type="text/javascript">
-    var g_order_no,g_person_user_no,g_comany_no;
+    var g_order_no, g_person_user_no, g_comany_no;
     var g_winHeight;
     var g_goodArr, g_badArr;
     var g_rating, g_options, g_remark, g_person_user_no, g_anonymous, g_comany_no;
@@ -171,10 +172,10 @@
             var data = api.pageParam;
             var order = data.order;
             g_account_type = data.account_type;
-            g_person_user_no=data.person_user_no;
-            g_comany_no=data.company_no;
-            if(g_person_user_no==undefined&&g_person_user_no==""||g_comany_no==undefined||g_comany_no==""){
-              $('.item-submit-container').hide();
+            g_person_user_no = data.person_user_no;
+            g_comany_no = data.company_no;
+            if (g_person_user_no == undefined && g_person_user_no == "" || g_comany_no == undefined || g_comany_no == "") {
+                $('.item-submit-container').hide();
             }
             $('.item-content-container').hide();
             g_winHeight = api.winHeight;
@@ -211,7 +212,7 @@
         var data_grade_str = $(obj).attr('data-grade');
         if (data_grade_str != undefined) {
             var data_grade = parseInt(data_grade_str);
-            g_anonymous = data_grade;
+            g_rating = data_grade;
             $('.item-desc').text(getGradeDesc(data_grade));
             $('.star').removeClass('pr-fontcolor3');
             $('.star').addClass('pr-fontcolor1');
@@ -342,34 +343,34 @@
     }
     //提交评价
     function submitForm() {
-        var anonymous= $('.item-anonymous').is(':checked');
-        if(anonymous){
-          g_anonymous=1;
-        }else{
-          g_anonymous=0;
+        var anonymous = $('.item-anonymous').is(':checked');
+        if (anonymous) {
+            g_anonymous = 1;
+        } else {
+            g_anonymous = 0;
         }
         var g_options_arr = [];
         $('.item-content').each(function() {
-            var select=$(this).attr('data-select');
-            if(select=="1"){
-              g_options_arr.push($(this).text());
+            var select = $(this).attr('data-select');
+            if (select == "1") {
+                g_options_arr.push($(this).text());
             }
         });
         g_options = g_options_arr.join(',');
         g_remark = $('.item-textarea').val();
 
-        var values={
+        var values = {
             id: 0,
-            rating:g_rating,
+            rating: g_rating,
             options: g_options,
             remark: g_remark,
-            comment_from_person_user_no:g_person_user_no,
-            anonymous:g_anonymous,
-            comment_to_comany_no:g_comany_no
+            comment_from_person_user_no: g_person_user_no,
+            anonymous: g_anonymous,
+            comment_to_comany_no: g_comany_no
         }
-        if(g_person_user_no==undefined&&g_person_user_no==""||g_comany_no==undefined||g_comany_no==""){
-          toastFail("评价失败!");
-          return;
+        if (g_person_user_no == undefined && g_person_user_no == "" || g_comany_no == undefined || g_comany_no == "") {
+            toastFail("评价失败!");
+            return;
         }
         var s = 'http://' + serverIP + '/Comment/saveComment.action';
         api.ajax({
@@ -383,15 +384,19 @@
                     rating: g_anonymous,
                     options: g_options,
                     remark: g_remark,
-                    comment_from_person_user_no:g_person_user_no,
-                    anonymous:g_anonymous,
-                    comment_to_comany_no:g_comany_no
+                    comment_from_person_user_no: g_person_user_no,
+                    anonymous: g_anonymous,
+                    comment_to_comany_no: g_comany_no
                 }
             }
         }, function(ret, err) {
             if (ret) {
                 if (ret.success) {
                     toastSuccess(ret.message);
+                    //评价成功，关闭页面
+                    api.closeToWin({
+                        name: 'root'
+                    });
                 } else {
                     toastFail(ret.message);
                 }

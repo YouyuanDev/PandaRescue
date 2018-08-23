@@ -16,7 +16,75 @@
 </head>
 
 <body>
-
+    <section class="aui-chat">
+        <div class="aui-chat-header">2016年7月13日</div>
+        <div class="aui-chat-item aui-chat-left">
+            <div class="aui-chat-media">
+                <img src="../../image/default_portrait.png" />
+            </div>
+            <div class="aui-chat-inner">
+                <div class="aui-chat-name">AUI <span class="aui-label aui-label-warning">2.0</span></div>
+                <div class="aui-chat-content">
+                    <div class="aui-chat-arrow"></div>
+                    Hello AUI 2.0!
+                </div>
+                <div class="aui-chat-status aui-chat-status-refresh">
+                    <i class="aui-iconfont aui-icon-correct aui-text-success"></i>
+                </div>
+            </div>
+        </div>
+        <div class="aui-chat-item aui-chat-right">
+            <div class="aui-chat-media">
+                <img src="../../image/default_portrait.png" />
+            </div>
+            <div class="aui-chat-inner">
+                <div class="aui-chat-name">流浪男</div>
+                <div class="aui-chat-content">
+                    <div class="aui-chat-arrow"></div>
+                    你好！
+                </div>
+                <div class="aui-chat-status">
+                    <i class="aui-iconfont aui-icon-info aui-text-danger"></i>
+                </div>
+            </div>
+        </div>
+        <div class="aui-chat-item aui-chat-left">
+            <div class="aui-chat-media">
+                <img src="../../image/default_portrait.png" />
+            </div>
+            <div class="aui-chat-inner">
+                <div class="aui-chat-name">AUI <span class="aui-label aui-label-warning">2.0</span></div>
+                <div class="aui-chat-content">
+                    <div class="aui-chat-arrow"></div>
+                    <img src="../../image/default_portrait.png" />
+                </div>
+            </div>
+        </div>
+        <div class="aui-chat-item aui-chat-right">
+            <div class="aui-chat-media">
+                <img src="../../image/default_portrait.png" />
+            </div>
+            <div class="aui-chat-inner">
+                <div class="aui-chat-name">流浪男</div>
+                <div class="aui-chat-content">
+                    <div class="aui-chat-arrow"></div>
+                    以前拍摄的牛背山星空
+                </div>
+            </div>
+        </div>
+        <div class="aui-chat-item aui-chat-left">
+            <div class="aui-chat-media">
+                <img src="../../image/default_portrait.png" />
+            </div>
+            <div class="aui-chat-inner">
+                <div class="aui-chat-name">AUI <span class="aui-label aui-label-warning">2.0</span></div>
+                <div class="aui-chat-content">
+                    <div class="aui-chat-arrow"></div>
+                    <img src="../../image/default_portrait.png" />
+                </div>
+            </div>
+        </div>
+    </section>
 </body>
 
 </html>
@@ -28,21 +96,36 @@
 <script type="text/javascript">
     var language_id = 0;
     apiready = function() {
-        
-        var arr=[
-           {"icon_url":"../../image/default_portrait.png","name":"列表二列表二列表二列表二列表二","time":"2018-02-09 08:00:34","title":"信息条1",},
-           {"icon_url":"../../image/default_portrait.png","name":"列表三","time":"2018-02-09 09:00:34","title":"信息条2",},
-           {"icon_url":"../../image/default_portrait.png","name":"列表四","time":"2018-02-09 10:00:34","title":"信息条3",},
-           {"icon_url":"../../image/default_portrait.png","name":"列表五","time":"2018-02-09 11:00:34","title":"信息条4",}
-        ];
-        for (var i = 0; i < arr.length; i++) {
-           //$('.item-list').append(makeMessageTemplate(arr[i].icon_url,arr[i].name,arr[i].time,arr[i].title));
+
+            var arr = [{
+                "icon_url": "../../image/default_portrait.png",
+                "name": "列表二列表二列表二列表二列表二",
+                "time": "2018-02-09 08:00:34",
+                "title": "信息条1",
+            }, {
+                "icon_url": "../../image/default_portrait.png",
+                "name": "列表三",
+                "time": "2018-02-09 09:00:34",
+                "title": "信息条2",
+            }, {
+                "icon_url": "../../image/default_portrait.png",
+                "name": "列表四",
+                "time": "2018-02-09 10:00:34",
+                "title": "信息条3",
+            }, {
+                "icon_url": "../../image/default_portrait.png",
+                "name": "列表五",
+                "time": "2018-02-09 11:00:34",
+                "title": "信息条4",
+            }];
+            for (var i = 0; i < arr.length; i++) {
+                //$('.item-list').append(makeMessageTemplate(arr[i].icon_url,arr[i].name,arr[i].time,arr[i].title));
+            }
+            hlLanguage("../../i18n/");
         }
-        hlLanguage("../../i18n/");
-    }
-    //制作消息模板
-    function makeMessageTemplate(icon_url,name,time,title){
-      var template='';
-      return template;
+        //制作消息模板
+    function makeMessageTemplate(icon_url, name, time, title) {
+        var template = '';
+        return template;
     }
 </script>

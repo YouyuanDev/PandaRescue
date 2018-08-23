@@ -11,7 +11,18 @@
     <link rel="stylesheet" type="text/css" href="../../css/font-awesome.min.css" />
     <link rel="stylesheet" type="text/css" href="../../css/style.css" />
     <style>
+        .item-voice {
+            width: 1rem;
+            height: 1rem;
+            background: url('../../image/voice_48.png');
+            background-position: center;
+            background-repeat: no-repeat;
+            background-size: contain;
+        }
 
+        #footer {
+            /*background-color:#73C0B6;*/
+        }
     </style>
 </head>
 
@@ -22,6 +33,25 @@
         </a>
         <div class="aui-title pr-fontcolor item-title-name"></div>
     </header>
+
+    <!-- <footer class="aui-bar aui-bar-tab" id="footer">
+        <a class="aui-pull-left aui-btn">
+            <span class="item-voice"></span>
+        </a>
+        <div class="aui-title">Title</div>
+        <a class="aui-pull-right aui-btn">
+            <span class="fa fa-paper-plane"></span>
+        </a>
+    </footer> -->
+    <footer class="aui-bar aui-bar-nav aui-bar-tab" id="footer">
+        <a class="aui-pull-left aui-btn">
+            <span class="item-voice"></span>
+        </a>
+        <div class="aui-title">Title</div>
+        <a class="aui-pull-right aui-btn">
+            <span class="fa fa-paper-plane"></span>
+        </a>
+    </footer>
 </body>
 
 </html>
@@ -32,32 +62,48 @@
 <script type="text/javascript" src="../../script/common.js"></script>
 <script type="text/javascript">
     var language_id = 0;
+    var rong;
     apiready = function() {
-        var data = api.pageParam;
-        var name = data.name;
-        if (name != undefined) {
-           $('.item-title-name').text(name);
+            var data = api.pageParam;
+            var name = data.name;
+            if (name != undefined) {
+                $('.item-title-name').text(name);
+            }
+            fnSettingHeader();
+            var header = $api.byId('header');
+            var headerH = $api.offset(header).h;
+            var footer = $api.byId('footer');
+            var footerH = $api.offset(footer).h;
+            api.openFrame({
+                name: 'chat_frame',
+                url: './chat_frame.html',
+                rect: {
+                    x: 0,
+                    y: headerH,
+                    w: 'auto',
+                    h: api.winHeight - headerH - footerH
+                },
+                bounces: false
+            });
+            rong =api.require('rongCloud2');
+            initRongClound();
+            hlLanguage("../../i18n/");
         }
-        fnSettingHeader();
-        var header = $api.byId('header');
-        var headerH = $api.offset(header).h;
-        api.openFrame({
-            name: 'chat_frame',
-            url: './chat_frame.html',
-            rect: {
-                x: 0,
-                y: headerH,
-                w: 'auto',
-                h: api.winHeight - headerH
-            },
-            bounces: false
-        });
-        hlLanguage("../../i18n/");
-    }
-
+        //关闭当前窗口
     function closeMyself() {
         api.closeWin({
             name: 'chat'
+        });
+    }
+    //---------------以下为融云聊天接口接入
+    //----1.0 初始化init
+    function initRongClound() {
+        rong.init(function(ret, err) {
+            if (ret.status == 'success'){
+
+            }else{
+              toastFail("系统异常,初始化聊天失败!错误码:"+err.code);
+            }
         });
     }
 </script>
