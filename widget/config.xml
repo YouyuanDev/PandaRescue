@@ -20,7 +20,7 @@
         <param name="ios_api_key" value="uhMNF5USSpeqFmlekx1w3VbPtcFgbDzw"/>
     </feature>
     <!--融云-->
-    <feature name="rongCloud">
+    <feature name="rongCloud2">
         <param name="appKey" value="4z3hlwrv4omet" />
     </feature>
     <feature name="aliPay">
