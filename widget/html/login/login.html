@@ -69,6 +69,7 @@
         }
     </style>
 </head>
+
 <body class="body-bg">
     <header id="header" class="aui-bar aui-bar-nav prscue-bg pr-bgcolor">
         <a class="aui-pull-left aui-btn" onclick="closeWindow();">
@@ -134,6 +135,7 @@
 <script type="text/javascript" src="../../script/common.js"></script>
 <script src="../../script/jquery.i18n.properties-1.0.9.js" type="text/javascript"></script>
 <script src="../../script/language.js" type="text/javascript"></script>
+<script src="../../script/sha1.js" type="text/javascript"></script>
 <script type="text/javascript">
     var forgetPasswordInterval;
     var count = 60;
@@ -215,11 +217,9 @@
             }, function(ret, err) {
                 if (ret) {
                     if (ret.success) {
+                        var account = ret.account;
                         var account_type = ret.accountType;
                         toastSuccess(ret.msg);
-                        var userInfo = {};
-                        userInfo["phone"] = phone;
-                        userInfo["password"] = password;
                         api.sendEvent({
                             name: 'ChangeAccountTypeEvent',
                             extra: {
@@ -237,13 +237,14 @@
                             }
                         }
                         api.setPrefs({
-                            key: 'userInfo',
-                            value: userInfo
+                            key: 'g_account',
+                            value: account
                         });
+                        setToken();
                         api.openWin({
                             name: 'inde',
                             url: '../../index.html',
-                            reload:true
+                            reload: true
                         });
                         // api.closeToWin({
                         //     name: 'root'
@@ -252,7 +253,7 @@
                         toastFail(ret.msg);
                     }
                 } else {
-                      toastFail("系统错误,登录异常!错误码:" + err.code);
+                    toastFail("系统错误,登录异常!错误码:" + err.code);
                 }
             });
         } else {

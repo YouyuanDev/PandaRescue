@@ -154,7 +154,7 @@ function getPicture(sourceType) {
                                 toastFail("上传失败!");
                             }
                         } else {
-                          toastFail("系统错误,上传照片失败!错误码:" + err.code);
+                            toastFail("系统错误,上传照片失败!错误码:" + err.code);
                         }
                     });
                 }
@@ -202,7 +202,7 @@ function getPicture(sourceType) {
                                 toastFail("上传失败!");
                             }
                         } else {
-                          toastFail("系统错误,上传照片失败!错误码:" + err.code);
+                            toastFail("系统错误,上传照片失败!错误码:" + err.code);
                         }
                     });
                 }
@@ -418,7 +418,7 @@ function loadAllServiceType() {
                     }
                 });
             } else {
-               toastFail("系统错误,加载服务类型失败!错误码:" + err.code);
+                toastFail("系统错误,加载服务类型失败!错误码:" + err.code);
             }
         });
     }
@@ -470,7 +470,7 @@ function loadAllFaultType() {
                     }
                 });
             } else {
-                 toastFail("系统错误,加载故障类型失败!错误码:" + err.code);
+                toastFail("系统错误,加载故障类型失败!错误码:" + err.code);
             }
         });
     }
@@ -529,13 +529,68 @@ function loadAllOrderStatus() {
 }
 //判断图片是否有效
 function imgExists(e) {
-    var imgurl='../../image/default_portrait.png';
+    var imgurl = '../../image/default_portrait.png';
     var ImgObj = new Image(); //判断默认图片是否存在
     ImgObj.src = imgurl;
     //没有图片，则返回-1
     if (ImgObj.fileSize > 0 || (ImgObj.width > 0 && ImgObj.height > 0)) {
-        e.src=imgurl;
+        e.src = imgurl;
     } else {
-        e.onerror=null;
+        e.onerror = null;
     }
+}
+//获取当前用户token
+function setToken() {
+    try {
+        var accountStr = api.getPrefs({
+            sync: true,
+            key: 'g_account'
+        });
+        if (accountStr!= undefined) {
+            var account = JSON.parse(accountStr);
+            var userId = account.username; //会员id
+            var name = account.nickname; //会员昵称
+            var portraitUri = 'http://' + serverIP + '/upload/pictures/' + account.icon_url; //会员头像
+            var appKey = "4z3hlwrv4omet";
+            var appSecret = "IejI9Cs6qfTCU";
+            var nonce = Math.floor(Math.random() * 1000000); //随机数
+            var timestamp = Date.now(); //时间戳
+            var signature = sha1("" + appSecret + nonce + timestamp); //数据签名(通过哈希加密计算)
+            api.ajax({
+                url: "http://api.cn.ronghub.com/user/getToken.json",
+                method: "post",
+                headers: {
+                    "RC-App-Key": appKey,
+                    "RC-Nonce": "" + nonce,
+                    "RC-Timestamp": "" + timestamp,
+                    "RC-Signature": "" + signature,
+                    "Content-Type": "application/x-www-form-urlencoded"
+                },
+                data: {
+                    values: {
+                        userId: userId,
+                        name: name,
+                        portraitUri: portraitUri
+                    }
+                }
+            }, function(ret, err) {
+                if (ret) {
+                    api.setPrefs({
+                        key: 'token',
+                        value:ret.token
+                    });
+                } else {
+                    toastFail("获取token失败");
+                }
+            });
+        }
+    } catch (e) {}
+}
+//获取本地存储的token
+function getToken() {
+    var token = api.getPrefs({
+        sync: true,
+        key: 'token'
+    });
+    return token;
 }

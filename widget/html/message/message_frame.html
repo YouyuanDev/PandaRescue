@@ -99,7 +99,7 @@
     }
     //制作消息模板
     function makeMessageTemplate(icon_url,name,time,title){
-      var template='<li class="aui-list-item">'+
+      var template='<li class="aui-list-item" onclick="openChat(this);">'+
           '<div class="aui-media-list-item-inner">'+
               '<div class="aui-list-item-media">'+
                   '<img src="'+icon_url+'" onerror="imgExists(this);">'+
@@ -127,6 +127,18 @@
           url: './historical_message.html',
           reload: true,
           pageParam: {
+          }
+      });
+    }
+    //打开聊天界面
+    function openChat(obj){
+      var name=$(obj).find('.item-name').text();
+      api.openWin({
+          name: 'chat',
+          url: './chat.html',
+          reload: true,
+          pageParam: {
+            name:name
           }
       });
     }

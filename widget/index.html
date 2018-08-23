@@ -82,6 +82,7 @@
 <script type="text/javascript" src="./script/common.js"></script>
 <script type="text/javascript" src="./script/jquery.i18n1.properties-1.0.9.js"></script>
 <script type="text/javascript" src="./script/language.js"></script>
+<script src="../../script/sha1.js" type="text/javascript"></script>
 <script type="text/javascript">
     //我的坐标
     var g_my_lon, g_my_lat;
@@ -996,14 +997,21 @@
                 } else {
                     var data = api.getPrefs({
                         sync: true,
-                        key: 'userInfo'
+                        key: 'g_account'
                     });
                     if (data != undefined && data != "") {
-                        var userInfo = JSON.parse(data);
-                        var phone = userInfo.phone;
-                        var password = userInfo.password;
+                        var account = JSON.parse(data);
+                        var phone = account.username;
+                        var password = account.password;
                         autoLoginWithCellPhoneNo(phone, password);
                         return;
+                    }else{
+                      api.openWin({
+                          name: 'login',
+                          url: './html/login/login.html',
+                          reload: true,
+                          pageParam: {}
+                      });
                     }
                 }
                 api.openWin({
@@ -1030,12 +1038,12 @@
                     password: password
                 }
             }
-        }, function(rets, err) {
-            if (rets) {
-                if (rets.success) {
+        }, function(ret, err) {
+            if (ret) {
+                if (ret.success) {
                     //绑定推送
                     bindPush(phone);
-                    var roles = rets.roles;
+                    var roles = ret.roles;
                     //加入现在的组
                     if (roles != undefined) {
                         var rolelist = roles.split(";");
@@ -1043,16 +1051,22 @@
                             joinPushGroup(rolelist[i]);
                         }
                     }
+                    var account = ret.account;
+                    api.setPrefs({
+                        key: 'g_account',
+                        value: account
+                    });
+                    setToken();
                     toastSuccess("自动登录成功!");
                     api.sendEvent({
                         name: 'ChangeAccountTypeEvent',
                         extra: {
-                            account_type: rets.accountType
+                            account_type: ret.accountType
                         }
                     });
 
                 } else {
-                    toastFail(rets.msg);
+                    toastFail(ret.msg);
                     api.openWin({
                         name: 'login',
                         url: './html/login/login.html',

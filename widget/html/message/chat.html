@@ -60,6 +60,7 @@
 <script src="../../script/jquery.i18n.properties-1.0.9.js" type="text/javascript"></script>
 <script src="../../script/language.js" type="text/javascript"></script>
 <script type="text/javascript" src="../../script/common.js"></script>
+<script type="text/javascript" src="../../script/common.js"></script>
 <script type="text/javascript">
     var language_id = 0;
     var rong;
@@ -85,7 +86,7 @@
                 },
                 bounces: false
             });
-            rong =api.require('rongCloud2');
+            rong = api.require('rongCloud2');
             initRongClound();
             hlLanguage("../../i18n/");
         }
@@ -99,11 +100,28 @@
     //----1.0 初始化init
     function initRongClound() {
         rong.init(function(ret, err) {
-            if (ret.status == 'success'){
-
-            }else{
-              toastFail("系统异常,初始化聊天失败!错误码:"+err.code);
+            if (ret.status == 'success') {
+                toastSuccess("初始化成功!");
+                connectRongClound();
+            } else {
+                toastFail("系统异常,初始化聊天失败!错误码:" + err.code);
             }
         });
     }
+    //----2.0 连接聊天服务器
+    function connectRongClound() {
+        var token = getToken();
+        if (token != undefined) {
+            rong.connect({
+               token:token
+            }, function(ret, err) {
+                if (ret.status == 'success') {
+                    toastSuccess("连接成功,当前用户id=" + ret.result.userId);
+                } else {
+                    toastFail("系统异常,连接聊天服务器失败!错误码:" + err.code);
+                }
+            });
+        }
+    }
+    //
 </script>
