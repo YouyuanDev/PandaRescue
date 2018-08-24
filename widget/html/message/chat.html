@@ -19,22 +19,25 @@
             background-repeat: no-repeat;
             background-size: contain;
         }
-        .item-file{
-          width: 1.5rem;
-          height: 1.5rem;
-          background: url('../../image/add_48.png');
-          background-position: center;
-          background-repeat: no-repeat;
-          background-size: contain;
+
+        .item-file {
+            width: 1.5rem;
+            height: 1.5rem;
+            background: url('../../image/add_48.png');
+            background-position: center;
+            background-repeat: no-repeat;
+            background-size: contain;
         }
-        .item-text-container{
+
+        .item-text-container {}
+
+        .item-text-container .item-text {
+            width: 100%;
+            height: auto;
         }
-        .item-text-container .item-text{
-          width:100%;
-          height:auto;
-        }
+
         #footer {
-            /*background-color:#73C0B6;*/
+            background-color: #73C0B6;
         }
     </style>
 </head>
@@ -46,19 +49,25 @@
         </a>
         <div class="aui-title pr-fontcolor item-title-name"></div>
     </header>
-    <footer class="aui-bar aui-bar-nav aui-bar-tab" id="footer">
+    <!-- <section>
+      <input type="text" class="item-text" style="border:1px solid black;"/>
+        <input type="text" class="item-text" style="border:1px solid black;"/>
+          <input type="text" class="item-text" style="border:1px solid black;"/>
+          <textarea class="item-text" style="border:1px solid black;margin-top:500px;"></textarea>
+    </section> -->
+    <!-- <footer class="aui-bar aui-bar-nav aui-bar-tab" id="footer">
         <a class="aui-pull-left aui-btn">
             <span class="item-voice"></span>
         </a>
         <div class="aui-title">
             <div class="item-text-container">
-               <textarea type="text" class="item-text"/></textarea>
+                <input type="text" class="item-text" />
             </div>
         </div>
         <a class="aui-pull-right aui-btn">
             <span class="item-file"></span>
         </a>
-    </footer>
+    </footer> -->
 </body>
 
 </html>
@@ -71,38 +80,37 @@
 <script type="text/javascript">
     var language_id = 0;
     var rong;
+    var UIChatTools;
     apiready = function() {
-            var data = api.pageParam;
-            var name = data.name;
-            if (name != undefined) {
-                $('.item-title-name').text(name);
-            }
-            fnSettingHeader();
-            var header = $api.byId('header');
-            var headerH = $api.offset(header).h;
-            var footer = $api.byId('footer');
-            var footerH = $api.offset(footer).h;
-            api.openFrame({
-                name: 'chat_frame',
-                url: './chat_frame.html',
-                rect: {
-                    x: 0,
-                    y: headerH,
-                    w: 'auto',
-                    h: api.winHeight - headerH - footerH
-                },
-                bounces: false
-            });
-            rong = api.require('rongCloud2');
-            initRongClound();
-            hlLanguage("../../i18n/");
+        rong = api.require('rongCloud2');
+        UIChatTools = api.require('UIChatTools');
+        //openUIChatTools();
+        var data = api.pageParam;
+        var name = data.name;
+        if (name != undefined) {
+            $('.item-title-name').text(name);
         }
-        //关闭当前窗口
-    function closeMyself() {
-        api.closeWin({
-            name: 'chat'
+        fnSettingHeader();
+        var header = $api.byId('header');
+        var headerH = $api.offset(header).h;
+        // var footer = $api.byId('footer');
+        // var footerH = $api.offset(footer).h;
+        api.openFrame({
+            name: 'chat_footer_frame',
+            url: './chat_footer_frame.html',
+            rect: {
+                x: 0,
+                y: api.winHeight -50,
+                w: 'auto',
+                h:'auto'
+            },
+            bounces:true
         });
+        //初始化融云聊天模块
+        initRongClound();
+        hlLanguage("../../i18n/");
     }
+
     //---------------以下为融云聊天接口接入
     //----1.0 初始化init
     function initRongClound() {
@@ -120,7 +128,7 @@
         var token = getToken();
         if (token != undefined) {
             rong.connect({
-               token:token
+                token: token
             }, function(ret, err) {
                 if (ret.status == 'success') {
                     toastSuccess("连接成功,当前用户id=" + ret.result.userId);
@@ -130,5 +138,54 @@
             });
         }
     }
-    //
+    //打开聊天对话框
+    function openUIChatTools() {
+        UIChatTools.open({
+            chatBox: {
+                placeholder: '聊天内容',
+                autoFocuse: false,
+                maxRows: 6
+            },
+            styles: {
+                bgColor: '#D1D1D1',
+                margin: 10,
+                mask: {
+                    bgColor: 'rgba(0,0,0,0.5)'
+                }
+            },
+            tools: {
+                h: 44,
+                iconSize: 30,
+                recorder: {
+                    normal: 'widget://image/recorder_normal_48.png',
+                    selected: 'widget://image/recorder_selected_48.png'
+                },
+                image: {
+                    normal: 'widget://image/image_normal_48.png',
+                    selected: 'widget://image/image_selected_48.png'
+                },
+                face: {
+                    normal: 'widget://image/face_normal_48.png',
+                    selected: 'widget://image/face_selected_48.png'
+                },
+                append: {
+                    normal: 'widget://image/append_normal_48.png',
+                    selected: 'widget://image/append_selected_48.png'
+                }
+            },
+            emotions: ['widget://res/emotions/basic', 'widget://res/emotions/append1', 'widget://res/emotions/append2']
+        }, function(ret) {
+            if (ret) {
+                api.alert({
+                    msg: JSON.stringify(ret)
+                });
+            }
+        });
+    }
+    //关闭当前窗口
+    function closeMyself() {
+        api.closeWin({
+            name: 'chat'
+        });
+    }
 </script>

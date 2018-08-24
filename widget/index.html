@@ -1274,27 +1274,31 @@
     }
     //注册加载所有服务类型事件
     function registerLoadAllServiceTypeEvent() {
-        try {
-            api.addEventListener({
-                name: 'GetAllServiceTypeEvent'
-            }, function(ret, err) {
-                g_service_type_dict = JSON.parse(ret.value.g_service_type_dict);
-            });
-        } catch (e) {
-            toastFail("系统错误,解析服务类型异常!");
-        }
+        api.addEventListener({
+            name: 'GetAllServiceTypeEvent'
+        }, function(ret, err) {
+            try {
+                if (ret) {
+                    g_service_type_dict = JSON.parse(ret.value.g_service_type_dict);
+                }
+            } catch (e) {
+                toastFail("系统错误,解析服务类型异常!");
+            }
+        });
     }
     //注册加载所有故障类型事件
     function registerLoadAllFaultTypeEvent() {
-        try {
-            api.addEventListener({
-                name: 'GetAllFailureTypeEvent'
-            }, function(ret, err) {
-                g_failure_type_dict = JSON.parse(ret.value.g_failure_type_dict);
-            });
-        } catch (e) {
-            toastFail("系统错误,解析故障类型异常!");
-        }
+        api.addEventListener({
+            name: 'GetAllFailureTypeEvent'
+        }, function(ret, err) {
+            try {
+                if (ret) {
+                    g_failure_type_dict = JSON.parse(ret.value.g_failure_type_dict);
+                }
+            } catch (e) {
+                toastFail("系统错误,解析故障类型异常!");
+            }
+        });
     }
     //设置推送回调函数
     function setPushListener() {
