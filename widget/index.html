@@ -88,7 +88,6 @@
     var g_my_lon, g_my_lat;
     //百度地图
     var map;
-    var reportLocation;
     //刷新订单状态和自己的坐标的定时器
     //var g_orderStatusInterval, g_userLocationInterval;
     //刷新坐标的定时器
@@ -109,8 +108,6 @@
     apiready = function() {
         fnSettingHeader();
         map = api.require('bMap');
-        reportLocation = api.require('reportLocation');
-        updateLocation();
         registerLoadAllServiceTypeEvent();
         registerLoadAllFaultTypeEvent();
         loadAllServiceType();
@@ -1431,24 +1428,6 @@
                     name: 'account'
                 });
                 requestSwitchAccounType(ret.value.account_type);
-            }
-        });
-    }
-    //上报位置
-    function updateLocation() {
-        console.log(123);
-        reportLocation.startLocation({
-            accuracy: 'hight_accuracy',
-            filter: 0,
-            autoStop: false
-        }, function(ret) {
-            if (ret.status) {
-                console.log(JSON.stringify(ret));
-                console.log(ret.loc.lon + ":::" + ret.loc.lat);
-            } else {
-                api.alert({
-                    msg: '定位失败'
-                });
             }
         });
     }
