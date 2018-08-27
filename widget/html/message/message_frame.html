@@ -11,66 +11,62 @@
     <link rel="stylesheet" type="text/css" href="../../css/font-awesome.min.css" />
     <link rel="stylesheet" type="text/css" href="../../css/style.css" />
     <style>
-         .item-historical-container{
-           width:100%;
-           text-align: center;
-           height:40px;
-           line-height:40px;
-         }
-         .aui-list .aui-list-item-media{
-           width:3rem;
-           padding-right:0.5rem;
-         }
-         .aui-list .aui-list-item-text{
-           width:100%;
-         }
-         .aui-list .aui-list-item-title .item-name{
-           width:7.5rem;
-           overflow: hidden;
-           white-space: nowrap;
-           text-overflow: ellipsis;
-         }
-         .aui-list .aui-list-item-text .item-title{
-           width:13rem;
-           padding-top:0.2rem;
-           overflow: hidden;
-           white-space: nowrap;
-           text-overflow: ellipsis;
-         }
-         .pr-empty{
-           padding:5px 10px;
-           text-align: center;
-           display: none;
-         }
+        .item-historical-container {
+            width: 100%;
+            text-align: center;
+            height: 40px;
+            line-height: 40px;
+        }
+
+        .aui-list .aui-list-item-media {
+            width: 3rem;
+            padding-right: 0.5rem;
+        }
+
+        .aui-list .aui-list-item-text {
+            width: 100%;
+        }
+
+        .aui-list .aui-list-item-title .item-name {
+            width: 7.5rem;
+            overflow: hidden;
+            white-space: nowrap;
+            text-overflow: ellipsis;
+        }
+
+        .aui-list .aui-list-item-text .item-title {
+            width: 13rem;
+            padding-top: 0.2rem;
+            overflow: hidden;
+            white-space: nowrap;
+            text-overflow: ellipsis;
+        }
+
+        .pr-empty {
+            padding: 5px 10px;
+            text-align: center;
+            display: none;
+        }
+
+        .connection-failed-tip {
+            display: none;
+        }
     </style>
 </head>
 
 <body>
+    <div class="aui-tips connection-failed-tip" id="tips-1">
+        <i class="aui-iconfont aui-icon-info"></i>
+        <div class="aui-tips-title">连接服务器失败!</div>
+        <i class="aui-iconfont aui-icon-close" onclick="closeAuiTip();"></i>
+    </div>
     <div class="aui-content aui-margin-b-15 pr-body-bgcolor">
         <ul class="aui-list aui-media-list item-list">
-            <li class="aui-list-item">
-                <div class="aui-media-list-item-inner">
-                    <div class="aui-list-item-media">
-                        <img src="../../image/default_portrait.png" onerror="imgExists(this);">
-                    </div>
-                    <div class="aui-list-item-inner">
-                        <div class="aui-list-item-text">
-                            <div class="aui-list-item-title">
-                              <div class="item-name">带有媒体的列表二带有媒体的列表二</div>
-                            </div>
-                            <div class="aui-list-item-right">2018-09-02 09:00:00</div>
-                        </div>
-                        <div class="aui-list-item-text">
-                            <div class="item-title">在下方我们加入了aui-info信息条在下方我们加入了aui-info信息条</div>
-                           <!-- <p>在下方我们加入了aui-info信息条在下方我们加入了aui-info信息条</p> -->
-                        </div>
-                    </div>
-                </div>
-            </li>
+
         </ul>
     </div>
     <div class="pr-empty">
-      <span class="empty-title"><span class="fa fa-info" style="padding-right:0.3rem;"></span><span class="i18n1" name="nohistoricalmessage">暂无消息!</span><span>
+        <span class="empty-title"><span class="fa fa-info" style="padding-right:0.3rem;"></span><span class="i18n1" name="nohistoricalmessage">暂无消息!</span><span>
     </div>
     <div class="item-historical-container" onclick="openHistoricalMessage();">
         <span><span class="aui-margin-l-5 pr-fontcolor1">历史消息</span><span class="fa fa-chevron-right pr-fontcolor1"></span></span>
@@ -85,61 +81,142 @@
 <script type="text/javascript" src="../../script/common.js"></script>
 <script type="text/javascript">
     var language_id = 0;
+    var rong;
     apiready = function() {
-        var arr=[
-           {"icon_url":"../../image/default_portrait.png","name":"列表二列表二列表二列表二列表二","time":"2018-02-09 08:00:34","title":"信息条1",},
-           {"icon_url":"../../image/default_portrait.png","name":"列表三","time":"2018-02-09 09:00:34","title":"信息条2",},
-           {"icon_url":"../../image/default_portrait.png","name":"列表四","time":"2018-02-09 10:00:34","title":"信息条3",},
-           {"icon_url":"../../image/default_portrait.png","name":"列表五","time":"2018-02-09 11:00:34","title":"信息条4",}
-        ];
-        for (var i = 0; i < arr.length; i++) {
-           $('.item-list').append(makeMessageTemplate(arr[i].icon_url,arr[i].name,arr[i].time,arr[i].title));
+            rong = api.require('rongCloud2');
+            getConversationList();
+            registerReceiveMessageListener();
+            registerUpdateConversationListListener();
+            api.setRefreshHeaderInfo({
+                loadingImg: 'widget://image/loading.png',
+                bgColor: '#ccc',
+                textColor: '#fff',
+                textDown: '下拉刷新...',
+                textUp: '松开刷新...'
+            }, function(ret, err) {
+                getConversationList();
+                setTimeout(function() {
+                    api.refreshHeaderLoadDone();
+                }, 6000)
+            });
+
+            hlLanguage("../../i18n/");
         }
-        hlLanguage("../../i18n/");
+        //获取最近回话列表
+    function getConversationList() {
+        rong.getConversationList(function(ret, err) {
+            if (ret.status == 'success') {
+                var html = '';
+                for (var i in ret.result) {
+                    var rs = ret.result;
+                    var nType = rs.type;
+                    var senderUserId = rs.senderUserId;
+                    var extra = transExtra(rs.latestMessage.extra);
+                    if (extra.xm1 == $api.getStorage('zh')) {
+                        var xm = extra.xm2;
+                        var tx = extra.tx2;
+                    } else {
+                        var xm = extra.xm1;
+                        var tx = extra.tx1;
+                    }
+                    if (rs.unreadMessageCount > 0 && extra.xm2 == $api.getStorage('zh')) {
+                        var shu = '<div class="aui-badge">' + rs.unreadMessageCount + '</div>';
+                    } else {
+                        var shu = '';
+                    }
+                    if (rs.objectName == 'RC:TxtMsg') {
+                        xx = expressionConversion(rs.latestMessage.text);
+                        var types = '<div class="aui-list-item-text aui-font-size-12">' + xx + '</div>'
+                    } else if (rs.objectName == 'RC:ImgMsg') {
+                        var types = '<div class="aui-list-item-text aui-font-size-12 aui-text-success">[图像消息]</div>'
+                    } else if (rs.objectName == 'RC:VcMsg') {
+                        var types = '<div class="aui-list-item-text aui-font-size-12 aui-text-primary">[语音消息]</div>'
+                    }
+                    html += '<li class="aui-list-item aui-list-item-middle" onclick="openChat(' + "'" + senderUserId + "'" + ',' + "'" + xm + "'" + ',' + "'" + tx + "'" + ')">';
+                    html += '     <div class="aui-media-list-item-inner">';
+                    html += '               <div class="aui-list-item-media wechat-avatar">';
+                    html += shu;
+                    html += '                        <img src="' + tx + '" /></div>';
+                    html += '                        <div class="aui-list-item-inner">';
+                    html += '                <div class="aui-list-item-text">';
+                    html += '                     <div class="aui-list-item-title">' + xm + '</div><div class="aui-list-item-right">' + TimeDifference(rs.sentTime) + '</div></div>';
+                    html += types;
+                    html += '           </div>';
+                    html += '     </div>';
+                    html += '</li>';
+                }
+                $api.html($api.dom('#hh_list'), html);
+                api.refreshHeaderLoadDone();
+            }
+        })
     }
-    //制作消息模板
-    function makeMessageTemplate(icon_url,name,time,title){
-      var template='<li class="aui-list-item" onclick="openChat(this);">'+
-          '<div class="aui-media-list-item-inner">'+
-              '<div class="aui-list-item-media">'+
-                  '<img src="'+icon_url+'" onerror="imgExists(this);">'+
-                  '<div class="aui-dot"></div>'+
-              '</div>'+
-              '<div class="aui-list-item-inner">'+
-                  '<div class="aui-list-item-text">'+
-                      '<div class="aui-list-item-title">'+
-                          '<div class="item-name">'+name+'</div>'+
-                      '</div>'+
-                      '<div class="aui-list-item-right">'+time+'</div>'+
-                  '</div>'+
-                  '<div class="aui-list-item-text">'+
-                     '<div class="item-title">'+title+'</div>'+
-                  '</div>'+
-              '</div>'+
-          '</div>'+
-      '</li>';
-      return template;
-    }
-    //打开历史消息页面
-    function openHistoricalMessage(){
-      api.openWin({
-          name: 'historical_message',
-          url: './historical_message.html',
-          reload: true,
-          pageParam: {
-          }
-      });
+    //json格式转换
+    function transExtra(arg) {
+        var result = '';
+        try {
+            result = eval('(' + arg + ')');
+        } catch (e) {
+            result = arg.slice(1, -1);
+        } finally {}
+        return result;
     }
     //打开聊天界面
-    function openChat(obj){
-      var name=$(obj).find('.item-name').text();
-      api.openWin({
-          name: 'chat',
-          url: './chat.html',
-          reload: true,
-          pageParam: {
-            name:name
-          }
-      });
+    function openChat(id, xm, tx) {
+        api.openWin({
+            reload: true,
+            name: 'chat',
+            url: './chat.html',
+            pageParam: {
+                id: id,
+                zh: xm,
+                tx: tx
+            },
+            vScrollBarEnabled: false,
+        });
+        if ($api.getStorage('id') == id) {} else {
+            rong.clearMessagesUnreadStatus({
+                conversationType: 'PRIVATE',
+                targetId: id
+            }, function(ret, err) {})
+        }
+        api.sendEvent({
+            name: 'UpdateConversationListEvent'
+        });
+    }
+    //打开历史消息页面
+    function openHistoricalMessage() {
+        api.openWin({
+            name: 'historical_message',
+            url: './historical_message.html',
+            reload: true,
+            pageParam: {}
+        });
+    }
+    //融云消息监听器
+    function registerReceiveMessageListener() {
+        rong.setOnReceiveMessageListener(function(ret, err) {
+            if (ret) {
+                //发送更新会话列表命令
+                api.sendEvent({
+                    name: 'UpdateConversationListEvent'
+                });
+                // 发送最新消息命令
+                api.sendEvent({
+                    name: 'new_msg',
+                    extra: {
+                        msg: ret.result.message
+                    }
+                })
+            }
+        })
+    }
+    //更新回话列表监听器
+    function registerUpdateConversationListListener() {
+        //发送更新会话列表命令
+        api.addEventListener({
+            name: 'UpdateConversationListEvent'
+        }, function(ret, err) {
+            getConversationList();
+        });
     }
 </script>

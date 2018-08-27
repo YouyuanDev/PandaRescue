@@ -152,16 +152,16 @@
                 $("#password").val(password);
             }
         }
-        var account=getAccount();
-        if(account!=undefined){
-          var username=account.username;
-          var password=account.password;
-          if (username != undefined) {
-              $("#phone").val(username);
-          }
-          if (password != undefined) {
-              $("#password").val(password);
-          }
+        var account = getAccount();
+        if (account != undefined) {
+            var username = account.username;
+            var password = account.password;
+            if (username != undefined) {
+                $("#phone").val(username);
+            }
+            if (password != undefined) {
+                $("#password").val(password);
+            }
         }
         hlLanguage("../../i18n/");
     }
@@ -247,10 +247,8 @@
                                 joinPushGroup(rolelist[i]);
                             }
                         }
-                        api.setPrefs({
-                            key: 'g_account',
-                            value: account
-                        });
+                        $api.setStorage('g_account',account);
+                      
                         setToken();
                         api.openWin({
                             name: 'inde',

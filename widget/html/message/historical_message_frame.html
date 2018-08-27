@@ -11,37 +11,42 @@
     <link rel="stylesheet" type="text/css" href="../../css/font-awesome.min.css" />
     <link rel="stylesheet" type="text/css" href="../../css/style.css" />
     <style>
-         .item-historical-container{
-           width:100%;
-           text-align: center;
-           height:40px;
-           line-height:40px;
-         }
-         .aui-list .aui-list-item-media{
-           width:3rem;
-           padding-right:0.5rem;
-         }
-         .aui-list .aui-list-item-text{
-           width:100%;
-         }
-         .aui-list .aui-list-item-title .item-name{
-           width:7.5rem;
-           overflow: hidden;
-           white-space: nowrap;
-           text-overflow: ellipsis;
-         }
-         .aui-list .aui-list-item-text .item-title{
-           width:13rem;
-           padding-top:0.2rem;
-           overflow: hidden;
-           white-space: nowrap;
-           text-overflow: ellipsis;
-         }
-         .pr-empty{
-           padding:5px 10px;
-           text-align: center;
-           display: none;
-         }
+        .item-historical-container {
+            width: 100%;
+            text-align: center;
+            height: 40px;
+            line-height: 40px;
+        }
+
+        .aui-list .aui-list-item-media {
+            width: 3rem;
+            padding-right: 0.5rem;
+        }
+
+        .aui-list .aui-list-item-text {
+            width: 100%;
+        }
+
+        .aui-list .aui-list-item-title .item-name {
+            width: 7.5rem;
+            overflow: hidden;
+            white-space: nowrap;
+            text-overflow: ellipsis;
+        }
+
+        .aui-list .aui-list-item-text .item-title {
+            width: 13rem;
+            padding-top: 0.2rem;
+            overflow: hidden;
+            white-space: nowrap;
+            text-overflow: ellipsis;
+        }
+
+        .pr-empty {
+            padding: 5px 10px;
+            text-align: center;
+            display: none;
+        }
     </style>
 </head>
 
@@ -56,7 +61,7 @@
                     <div class="aui-list-item-inner">
                         <div class="aui-list-item-text">
                             <div class="aui-list-item-title">
-                              <div class="item-name">带有媒体的列表二带有媒体的列表二</div>
+                                <div class="item-name">带有媒体的列表二带有媒体的列表二</div>
                             </div>
                             <div class="aui-list-item-right">2018-09-02 09:00:00</div>
                         </div>
@@ -69,7 +74,7 @@
         </ul>
     </div>
     <div class="pr-empty">
-      <span class="empty-title"><span class="fa fa-info" style="padding-right:0.3rem;"></span><span class="i18n1" name="nohistoricalmessage">暂无消息!</span><span>
+        <span class="empty-title"><span class="fa fa-info" style="padding-right:0.3rem;"></span><span class="i18n1" name="nohistoricalmessage">暂无消息!</span><span>
     </div>
     <div class="item-historical-container" onclick="openHistoricalMessage();">
         <span><span class="aui-margin-l-5 pr-fontcolor1">历史消息</span><span class="fa fa-chevron-right pr-fontcolor1"></span></span>
@@ -85,50 +90,75 @@
 <script type="text/javascript">
     var language_id = 0;
     apiready = function() {
-        var arr=[
-           {"icon_url":"../../image/default_portrait.png","name":"列表二列表二列表二列表二列表二","time":"2018-02-09 08:00:34","title":"信息条1",},
-           {"icon_url":"../../image/default_portrait.png","name":"列表三","time":"2018-02-09 09:00:34","title":"信息条2",},
-           {"icon_url":"../../image/default_portrait.png","name":"列表四","time":"2018-02-09 10:00:34","title":"信息条3",},
-           {"icon_url":"../../image/default_portrait.png","name":"列表五","time":"2018-02-09 11:00:34","title":"信息条4",}
-        ];
-        for (var i = 0; i < arr.length; i++) {
-           $('.item-list').append(makeMessageTemplate(arr[i].icon_url,arr[i].name,arr[i].time,arr[i].title));
+            var arr = [{
+                "target_id": "18703611327",
+                "icon_url": "../../image/default_portrait.png",
+                "name": "列表二列表二列表二列表二列表二",
+                "time": "2018-02-09 08:00:34",
+                "title": "信息条1",
+            }, {
+                "target_id": "18703611328",
+                "icon_url": "../../image/default_portrait.png",
+                "name": "列表三",
+                "time": "2018-02-09 09:00:34",
+                "title": "信息条2",
+            }, {
+                "target_id": "18703611328",
+                "icon_url": "../../image/default_portrait.png",
+                "name": "列表四",
+                "time": "2018-02-09 10:00:34",
+                "title": "信息条3",
+            }, {
+                "target_id": "18703611330",
+                "icon_url": "../../image/default_portrait.png",
+                "name": "列表五",
+                "time": "2018-02-09 11:00:34",
+                "title": "信息条4",
+            }];
+            for (var i = 0; i < arr.length; i++) {
+                $('.item-list').append(makeMessageTemplate(arr[i].target_id, arr[i].icon_url, arr[i].name, arr[i].time, arr[i].title));
+            }
+            hlLanguage("../../i18n/");
         }
-        hlLanguage("../../i18n/");
-    }
-    //制作消息模板
-    function makeMessageTemplate(icon_url,name,time,title){
-      var template='<li class="aui-list-item" onclick="openChat(this);">'+
-          '<div class="aui-media-list-item-inner">'+
-              '<div class="aui-list-item-media">'+
-                  '<img src="'+icon_url+'" onerror="imgExists(this);">'+
-                  '<div class="aui-dot"></div>'+
-              '</div>'+
-              '<div class="aui-list-item-inner">'+
-                  '<div class="aui-list-item-text">'+
-                      '<div class="aui-list-item-title">'+
-                          '<div class="item-name">'+name+'</div>'+
-                      '</div>'+
-                      '<div class="aui-list-item-right">'+time+'</div>'+
-                  '</div>'+
-                  '<div class="aui-list-item-text">'+
-                     '<div class="item-title">'+title+'</div>'+
-                  '</div>'+
-              '</div>'+
-          '</div>'+
-      '</li>';
-      return template;
+        //制作消息模板
+    function makeMessageTemplate(target_id, icon_url, name, time, title) {
+        var template = '<li class="aui-list-item" data-id="' + target_id + '" onclick="openChat(this);">' +
+            '<div class="aui-media-list-item-inner">' +
+            '<div class="aui-list-item-media">' +
+            '<img src="' + icon_url + '" onerror="imgExists(this);">' +
+            '<div class="aui-dot"></div>' +
+            '</div>' +
+            '<div class="aui-list-item-inner">' +
+            '<div class="aui-list-item-text">' +
+            '<div class="aui-list-item-title">' +
+            '<div class="item-name">' + name + '</div>' +
+            '</div>' +
+            '<div class="aui-list-item-right">' + time + '</div>' +
+            '</div>' +
+            '<div class="aui-list-item-text">' +
+            '<div class="item-title">' + title + '</div>' +
+            '</div>' +
+            '</div>' +
+            '</div>' +
+            '</li>';
+        return template;
     }
     //打开聊天界面
-    function openChat(obj){
-      var name=$(obj).find('.item-name').text();
-      api.openWin({
-          name: 'chat',
-          url: './chat.html',
-          reload: true,
-          pageParam: {
-            name:name
-          }
-      });
+    function openChat(obj) {
+        var name = $(obj).find('.item-name').text();
+        var targetId = $(obj).attr('data-id');
+        if (targetId != undefined) {
+            api.openWin({
+                name: 'chat',
+                url: './chat.html',
+                reload: true,
+                pageParam: {
+                    name: name,
+                    targetId:targetId
+                }
+            });
+        } else {
+            toastFail('系统异常,请刷新重试!');
+        }
     }
 </script>

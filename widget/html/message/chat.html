@@ -55,6 +55,7 @@
         </a>
         <div class="aui-title pr-fontcolor item-title-name"></div>
     </header>
+
     <!-- <footer class="aui-bar aui-bar-nav aui-bar-tab" id="footer">
         <a class="aui-pull-left aui-btn">
             <span class="item-voice"></span>
@@ -79,199 +80,42 @@
 <script type="text/javascript" src="../../script/common.js"></script>
 <script type="text/javascript">
     var language_id = 0;
-    var rong;
-    var UIChatTools;
-    var fs;
     apiready = function() {
-        rong = api.require('rongCloud2');
-        UIChatTools = api.require('UIChatTools');
-        fs = api.require('fs');
-        openUIChatTools();
-        registerRecorderListener();
+        fnSettingHeader();
         var data = api.pageParam;
+        //设置聊天界面头部信息
         var name = data.name;
+        var targetId=data.id;
+        //打开聊天Frame
+        var header = $api.byId('header');
+        var headerH = $api.offset(header).h;
         if (name != undefined) {
             $('.item-title-name').text(name);
         }
-        fnSettingHeader();
-        var header = $api.byId('header');
-        var headerH = $api.offset(header).h;
-        // var footer = $api.byId('footer');
-        // var footerH = $api.offset(footer).h;
-        // api.openFrame({
-        //     name: 'chat_footer_frame',
-        //     url: './chat_footer_frame.html',
-        //     rect: {
-        //         x: 0,
-        //         y: api.winHeight -50,
-        //         w: 'auto',
-        //         h:'auto'
-        //     },
-        //     bounces:true
-        // });
-        //初始化融云聊天模块
-        initRongClound();
+        if(targetId!=undefined){
+          api.openFrame({
+              name: 'chat_frame',
+              url: './chat_frame.html',
+              rect: {
+                  x: 0,
+                  y:headerH,
+                  w: 'auto',
+                  h:'auto',
+                  marginBottom:90
+              },
+              pageParam: {
+                  targetId:targetId
+              }
+          });
+        }else{
+          toastFail('系统异常,请刷新重试!');
+        }
         hlLanguage("../../i18n/");
     }
-
-    //---------------以下为融云聊天接口接入
-    //----1.0 初始化init
-    function initRongClound() {
-        rong.init(function(ret, err) {
-            if (ret.status == 'success') {
-                toastSuccess("初始化成功!");
-                connectRongClound();
-            } else {
-                toastFail("系统异常,初始化聊天失败!错误码:" + err.code);
-            }
-        });
-    }
-    //----2.0 连接聊天服务器
-    function connectRongClound() {
-        var token = getToken();
-        if (token != undefined) {
-            rong.connect({
-                token: token
-            }, function(ret, err) {
-                if (ret.status == 'success') {
-                    toastSuccess("连接成功,当前用户id=" + ret.result.userId);
-                } else {
-                    toastFail("系统异常,连接聊天服务器失败!错误码:" + err.code);
-                }
-            });
-        }
-    }
-    //打开聊天对话框
-    function openUIChatTools() {
-        UIChatTools.open({
-            chatBox: {
-                placeholder: '聊天内容',
-                autoFocuse: false,
-                maxRows: 6
-            },
-            styles: {
-                bgColor: '#D1D1D1',
-                margin: 10
-            },
-            isShowAddImg: false,
-            tools: {
-                h: 44,
-                iconSize: 30,
-                recorder: {
-                    normal: 'widget://image/recorder_normal_48.png',
-                    selected: 'widget://image/recorder_selected_48.png'
-                },
-                image: {
-                    normal: 'widget://image/image_normal_48.png',
-                    selected: 'widget://image/image_selected_48.png'
-                },
-                face: {
-                    normal: 'widget://image/face_normal_48.png',
-                    selected: 'widget://image/face_selected_48.png'
-                },
-                append: {
-                    normal: 'widget://image/append_normal_48.png',
-                    selected: 'widget://image/append_selected_48.png'
-                }
-            },
-            emotions: ['widget://emotions/basic']
-        }, function(ret) {
-            if (ret) {
-                //发送消息
-                if (ret.eventType == "send") {
-                    //获取输入框内容
-                    UIChatTools.value(function(ret, err) {
-                        if (ret) {
-                            alert(JSON.stringify(ret));
-                        } else {
-                            alert(JSON.stringify(err));
-                        }
-                    });
-                    toastSuccess("发送了消息");
-                }
-            }
-        });
-    }
-    //注册监听录音按钮
-    function registerRecorderListener() {
-        var recorderPath, duration;
-        UIChatTools.recorderListener(function(ret) {
-            if (ret.eventType == 'press' && ret.target == 'talkback') {
-                console.log("录音按钮摁下!");
-                createFile(recorderPath);
-                api.startRecord({
-                });
-                UIChatTools.startTimer();
-            }
-            if (ret.eventType == 'auditionTouchOn' && ret.target == 'talkback') {
-                console.log("试听录音!"); //此处结束录音
-                api.stopRecord(function(ret, err) {
-                    if (ret) {
-                        recorderPath = ret.path;
-                        duration = ret.duration;
-                        console.log("试听录音，路径="+ret.path);
-                        //console.log("recorderName="+recorderName);
-                        console.log("试听录音，时长="+ret.duration);
-                    }
-                });
-            }
-            if (ret.eventType == "shortTime" && ret.target == 'talkback') {
-                toastFail('录音时间太短!');
-                console.log("录音时间太短!"); //此处删除录音
-                //removeFile(recorderPath);
-            }
-            if (ret.eventType == 'audition') {
-                console.log("开始试听录音!"); //此处播放录音
-                //var path="widget://recorder/"+recorderName;
-                console.log("开始试听录音!路径="+recorderPath); //此处播放录音
-                api.startPlay({
-                    path: recorderPath
-                }, function(ret, err) {
-                    if (ret) {
-                        console.log('播放完成');
-                    } else {
-                        console.log(JSON.stringify(err));
-                    }
-                });
-            }
-            if (ret.eventType == "cancel") {
-                console.log("取消录音!"); //此处删除录音
-                //removeFile(recorderPath);
-            }
-            if (ret.eventType == 'send' && ret.target == 'record') {
-                console.log('发送录音');
-            }
-        });
-    }
-
     //关闭当前窗口
     function closeMyself() {
         api.closeWin({
             name: 'chat'
-        });
-    }
-    //fs创建文件
-    function createFile(path) {
-        fs.createFile({
-            path: path
-        }, function(ret, err) {
-            if (ret.status) {
-                console.log("创建文件成功!");
-            } else {
-                console.log("创建文件失败!");
-            }
-        });
-    }
-    //fs删除文件
-    function removeFile(path) {
-        fs.remove({
-            path:path
-        }, function(ret, err) {
-            if (ret.status) {
-                console.log(JSON.stringify(ret));
-            } else {
-                console.log(JSON.stringify(err));
-            }
         });
     }
 </script>

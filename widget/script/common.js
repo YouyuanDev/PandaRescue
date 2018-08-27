@@ -75,9 +75,63 @@ function getDate1(str) {
         return "";
     }
 }
-
-
-
+//聊天记录显示的时间格式(参数为：列入 2018-08-08 09:09:09)
+//时间差计算
+function timeDifference(sj) {
+    var nowt = new Date().getTime();
+    var a = new Date(parseInt(sj));
+    var b = new Date(parseInt(nowt));
+    var date1 = Date.parse(formatTime(a, 4));
+    var date2 = Date.parse(formatTime(b, 4));
+    var xxsj = Math.ceil((date2 - date1) / (60 * 1000))
+    if (xxsj <= 1 && xxsj >= 0) {
+        return "刚刚";
+    } else if (xxsj <= 10 && xxsj > 1) {
+        return xxsj + "分钟前";
+    } else if (xxsj <= 60 && xxsj > 10) {
+        return formatTime(a, 1);
+    } else if (xxsj <= 1440 && xxsj > 60) {
+        return formatTime(a, 1);
+    } else if (xxsj <= 10080 && xxsj > 1440) {
+        return formatTime(a, 2);
+    } else if (xxsj > 10080) {
+        return formatTime(a, 3);
+    } else {
+        return formatTime(a, 3);
+    }
+}
+//格式化时间
+function formatTime(now, type) {
+    var show_day = new Array('星期日', '星期一', '星期二', '星期三', '星期四', '星期五', '星期六');
+    var year = now.getFullYear().toString();
+    var month = (now.getMonth() + 1).toString();
+    var day = (now.getDate()).toString();
+    var tian = now.getDay().toString();
+    var hour = (now.getHours()).toString();
+    var minute = (now.getMinutes()).toString();
+    var second = (now.getSeconds()).toString();
+    if (hour.length == 1) {
+        hour = "0" + hour;
+    }
+    if (minute.length == 1) {
+        minute = "0" + minute;
+    }
+    if (second.length == 1) {
+        second = "0" + second;
+    }
+    if (type == 1) {
+        var dateTime = hour + ":" + minute;
+    } else if (type == 2) {
+        var dateTime = show_day[tian] + " " + hour + ":" + minute
+    } else if (type == 3) {
+        var dateTime = year + "-" + month + "-" + day
+    } else if (type == 4) {
+        var dateTime = year + "/" + month + "/" + day + " " + hour + ":" + minute + ":" + second;
+    } else if (type == 5) {
+        var dateTime = show_day[tian];
+    }
+    return dateTime;
+}
 //字符串转date
 function parseMobiDate(str) {
     if (str != undefined)
@@ -86,6 +140,124 @@ function parseMobiDate(str) {
         return new Date();
 
 }
+//表情转换
+function expressionConversion(text) {
+    var msg="";
+    var reg = /\[.+?\]/g;
+    var face = {
+        '[微笑]': '<span><img src="widget://emotion/Expression_1.png"  width="28"/></span>',
+        '[撇嘴]': '<span><img src="widget://emotion/Expression_2.png"  width="28" /></span>',
+        '[色]': '<span><img src="widget://emotion/Expression_3.png"  width="28" /></span>',
+        '[发呆]': '<span><img src="widget://emotion/Expression_4.png"  width="28" /></span>',
+        '[得意]': '<span><img src="widget://emotion/Expression_5.png"  width="28" /></span>',
+        '[流泪]': '<span><img src="widget://emotion/Expression_6.png"  width="28" /></span>',
+        '[害羞]': '<span><img src="widget://emotion/Expression_7.png"  width="28" /></span>',
+        '[闭嘴]': '<span><img src="widget://emotion/Expression_8.png"  width="28" /></span>',
+        '[睡]': '<span><img src="widget://emotion/Expression_9.png"  width="28" /></span>',
+        '[大哭]': '<span><img src="widget://emotion/Expression_10.png"  width="28"/></span>',
+        '[尴尬]': '<span><img src="widget://emotion/Expression_11.png"  width="28"/></span>',
+        '[发怒]': '<span><img src="widget://emotion/Expression_12.png"  width="28"/></span>',
+        '[调皮]': '<span><img src="widget://emotion/Expression_13.png"  width="28" /></span>',
+        '[呲牙]': '<span><img src="widget://emotion/Expression_14.png"  width="28" /></span>',
+        '[惊讶]': '<span><img src="widget://emotion/Expression_15.png"  width="28" /></span>',
+        '[难过]': '<span><img src="widget://emotion/Expression_16.png"  width="28" /></span>',
+        '[酷]': '<span><img src="widget://emotion/Expression_17.png"  width="28" /></span>',
+        '[冷汗]': '<span><img src="widget://emotion/Expression_18.png"  width="28" /></span>',
+        '[抓狂]': '<span><img src="widget://emotion/Expression_19.png"  width="28" /></span>',
+        '[吐]': '<span><img src="widget://emotion/Expression_20.png"  width="28" /></span>',
+        '[偷笑]': '<span><img src="widget://emotion/Expression_21.png"  width="28" /></span>',
+        '[愉快]': '<span><img src="widget://emotion/Expression_22.png"  width="28" /></span>',
+        '[白眼]': '<span><img src="widget://emotion/Expression_23.png"  width="28" /></span>',
+        '[傲慢]': '<span><img src="widget://emotion/Expression_24.png"  width="28" /></span>',
+        '[饥饿]': '<span><img src="widget://emotion/Expression_25.png"  width="28" /></span>',
+        '[困]': '<span><img src="widget://emotion/Expression_26.png"  width="28" /></span>',
+        '[恐惧]': '<span><img src="widget://emotion/Expression_27.png"  width="28" /></span>',
+        '[流汗]': '<span><img src="widget://emotion/Expression_28.png"  width="28" /></span>',
+        '[憨笑]': '<span><img src="widget://emotion/Expression_29.png"  width="28" /></span>',
+        /*从这*/
+        '[悠闲]': '<span><img src="widget://emotion/Expression_30.png"  width="28" /></span>',
+        '[奋斗]': '<span><img src="widget://emotion/Expression_31.png"  width="28" /></span>',
+        '[咒骂]': '<span><img src="widget://emotion/Expression_32.png"  width="28" /></span>',
+        '[疑问]': '<span><img src="widget://emotion/Expression_33.png"  width="28" /></span>',
+        '[嘘]': '<span><img src="widget://emotion/Expression_34.png"  width="28" /></span>',
+        '[晕]': '<span><img src="widget://emotion/Expression_35.png"  width="28" /></span>',
+        '[疯了]': '<span><img src="widget://emotion/Expression_36.png"  width="28" /></span>',
+        '[衰]': '<span><img src="widget://emotion/Expression_37.png"  width="28" /></span>',
+        '[骷髅]': '<span><img src="widget://emotion/Expression_38.png"  width="28" /></span>',
+        '[敲打]': '<span><img src="widget://emotion/Expression_39.png"  width="28"/></span>',
+        '[再见]': '<span><img src="widget://emotion/Expression_40.png"  width="28"/></span>',
+        '[擦汗]': '<span><img src="widget://emotion/Expression_41.png"  width="28"/></span>',
+        '[抠鼻]': '<span><img src="widget://emotion/Expression_42.png"  width="28" /></span>',
+        '[鼓掌]': '<span><img src="widget://emotion/Expression_43.png"  width="28" /></span>',
+        '[糗大了]': '<span><img src="widget://emotion/Expression_44.png"  width="28" /></span>',
+        '[坏笑]': '<span><img src="widget://emotion/Expression_45.png"  width="28" /></span>',
+        '[左哼哼]': '<span><img src="widget://emotion/Expression_46.png"  width="28" /></span>',
+        '[右哼哼]': '<span><img src="widget://emotion/Expression_47.png"  width="28" /></span>',
+        '[哈欠]': '<span><img src="widget://emotion/Expression_48.png"  width="28" /></span>',
+        '[鄙视]': '<span><img src="widget://emotion/Expression_49.png"  width="28" /></span>',
+        '[委屈]': '<span><img src="widget://emotion/Expression_50.png"  width="28" /></span>',
+        '[快哭了]': '<span><img src="widget://emotion/Expression_51.png"  width="28" /></span>',
+        '[阴险]': '<span><img src="widget://emotion/Expression_52.png"  width="28" /></span>',
+        '[亲亲]': '<span><img src="widget://emotion/Expression_53.png"  width="28" /></span>',
+        '[吓]': '<span><img src="widget://emotion/Expression_54.png"  width="28" /></span>',
+        '[可怜]': '<span><img src="widget://emotion/Expression_55.png"  width="28" /></span>',
+        '[菜刀]': '<span><img src="widget://emotion/Expression_56.png"  width="28" /></span>',
+        '[西瓜]': '<span><img src="widget://emotion/Expression_57.png"  width="28" /></span>',
+        '[啤酒]': '<span><img src="widget://emotion/Expression_58.png"  width="28" /></span>',
+        '[篮球]': '<span><img src="widget://emotion/Expression_59.png"  width="28" /></span>',
+        '[乒乓]': '<span><img src="widget://emotion/Expression_60.png"  width="28" /></span>',
+        '[咖啡]': '<span><img src="widget://emotion/Expression_61.png"  width="28" /></span>',
+        '[饭]': '<span><img src="widget://emotion/Expression_62.png"  width="28" /></span>',
+        '[猪头]': '<span><img src="widget://emotion/Expression_63.png"  width="28" /></span>',
+        '[玫瑰]': '<span><img src="widget://emotion/Expression_64.png"  width="28" /></span>',
+        '[凋谢]': '<span><img src="widget://emotion/Expression_65.png"  width="28" /></span>',
+        '[嘴唇]': '<span><img src="widget://emotion/Expression_66.png"  width="28" /></span>',
+        '[爱心]': '<span><img src="widget://emotion/Expression_67.png"  width="28" /></span>',
+        '[心碎]': '<span><img src="widget://emotion/Expression_68.png"  width="28"/></span>',
+        '[蛋糕]': '<span><img src="widget://emotion/Expression_69.png"  width="28"/></span>',
+        '[闪电]': '<span><img src="widget://emotion/Expression_70.png"  width="28"/></span>',
+        '[炸弹]': '<span><img src="widget://emotion/Expression_71.png"  width="28" /></span>',
+        '[刀]': '<span><img src="widget://emotion/Expression_72.png"  width="28" /></span>',
+        '[足球]': '<span><img src="widget://emotion/Expression_73.png"  width="28" /></span>',
+        '[瓢虫]': '<span><img src="widget://emotion/Expression_74.png"  width="28" /></span>',
+        '[便便]': '<span><img src="widget://emotion/Expression_75.png"  width="28" /></span>',
+        '[月亮]': '<span><img src="widget://emotion/Expression_76.png"  width="28" /></span>',
+        '[太阳]': '<span><img src="widget://emotion/Expression_77.png"  width="28" /></span>',
+        '[礼物]': '<span><img src="widget://emotion/Expression_78.png"  width="28" /></span>',
+        '[拥抱]': '<span><img src="widget://emotion/Expression_79.png"  width="28" /></span>',
+        '[强]': '<span><img src="widget://emotion/Expression_80.png"  width="28" /></span>',
+        '[弱]': '<span><img src="widget://emotion/Expression_81.png"  width="28" /></span>',
+        '[握手]': '<span><img src="widget://emotion/Expression_82.png"  width="28" /></span>',
+        '[胜利]': '<span><img src="widget://emotion/Expression_83.png"  width="28" /></span>',
+        '[抱拳]': '<span><img src="widget://emotion/Expression_84.png"  width="28" /></span>',
+        '[勾引]': '<span><img src="widget://emotion/Expression_85.png"  width="28" /></span>',
+        '[拳头]': '<span><img src="widget://emotion/Expression_86.png"  width="28" /></span>',
+        '[差劲]': '<span><img src="widget://emotion/Expression_87.png"  width="28" /></span>',
+        '[爱你]': '<span><img src="widget://emotion/Expression_88.png"  width="28" /></span>',
+        '[NO]': '<span><img src="widget://emotion/Expression_89.png"  width="28" /></span>',
+        '[OK]': '<span><img src="widget://emotion/Expression_90.png"  width="28" /></span>',
+        '[爱情]': '<span><img src="widget://emotion/Expression_91.png"  width="28" /></span>',
+        '[飞吻]': '<span><img src="widget://emotion/Expression_92.png"  width="28" /></span>',
+        '[跳跳]': '<span><img src="widget://emotion/Expression_93.png"  width="28" /></span>',
+        '[发抖]': '<span><img src="widget://emotion/Expression_94.png"  width="28" /></span>',
+        '[怄火]': '<span><img src="widget://emotion/Expression_95.png"  width="28" /></span>',
+        '[转圈]': '<span><img src="widget://emotion/Expression_96.png"  width="28" /></span>',
+        '[磕头]': '<span><img src="widget://emotion/Expression_97.png"  width="28"/></span>',
+        '[回头]': '<span><img src="widget://emotion/Expression_98.png"  width="28"/></span>',
+        '[跳绳]': '<span><img src="widget://emotion/Expression_99.png"  width="28"/></span>',
+        '[投降]': '<span><img src="widget://emotion/Expression_100.png"  width="28" /></span>',
+        '[激动]': '<span><img src="widget://emotion/Expression_101.png"  width="28" /></span>',
+        '[街舞]': '<span><img src="widget://emotion/Expression_102.png"  width="28" /></span>',
+        '[献吻]': '<span><img src="widget://emotion/Expression_103.png"  width="28" /></span>',
+        '[左太极]': '<span><img src="widget://emotion/Expression_104.png"  width="28" /></span>',
+        '[右太极]': '<span><img src="widget://emotion/Expression_105.png"  width="28" /></span>'
+    };
+    text.replace(reg, function(a, b) {
+        msg=face[a] ? face[a] : a;
+    });
+    return msg;
+}
+
 
 function closeWindow() {
     api.closeWin();
@@ -237,7 +409,6 @@ function openLoading() {
         mask: 'rgba(0,0,0,0.5)',
         fixed: true
     }, function(ret) {
-        //alert(JSON.stringify(ret));
         g_loadingID = ret.id;
     });
 }
@@ -375,10 +546,7 @@ function leaveAllPushGroup() {
 function loadAllServiceType() {
     //查看本地是否已经存在，不存在请求服务器，存在就直接获取
     var g_service_type_dict = {};
-    var dict = api.getPrefs({
-        sync: true,
-        key: 'g_service_type_dict'
-    });
+    var dict=$api.getStorage('g_service_type_dict');
     var length = 0;
     for (var ever in dict) {
         length++;
@@ -407,10 +575,7 @@ function loadAllServiceType() {
                         "service_type_name_en": service_type_name_en
                     };
                 }
-                api.setPrefs({
-                    key: 'g_service_type_dict',
-                    value: g_service_type_dict
-                });
+                $api.setStorage('g_service_type_dict',g_service_type_dict);
                 api.sendEvent({
                     name: 'GetAllServiceTypeEvent',
                     extra: {
@@ -427,10 +592,7 @@ function loadAllServiceType() {
 function loadAllFaultType() {
     //查看本地是否已经存在，不存在请求服务器，存在就直接获取
     var g_failure_type_dict = {};
-    var dict = api.getPrefs({
-        sync: true,
-        key: 'g_failure_type_dict'
-    });
+    var dict=$api.getStorage('g_failure_type_dict');
     var length = 0;
     for (var ever in dict) {
         length++;
@@ -459,10 +621,7 @@ function loadAllFaultType() {
                         "failure_type_name_en": failure_type_name_en
                     };
                 }
-                api.setPrefs({
-                    key: 'g_failure_type_dict',
-                    value: g_failure_type_dict
-                });
+                $api.setStorage('g_failure_type_dict',g_failure_type_dict);
                 api.sendEvent({
                     name: 'GetAllFailureTypeEvent',
                     extra: {
@@ -479,10 +638,7 @@ function loadAllFaultType() {
 function loadAllOrderStatus() {
     //查看本地是否已经存在，不存在请求服务器，存在就直接获取
     var g_order_status = {};
-    var dict = api.getPrefs({
-        sync: true,
-        key: 'g_order_status'
-    });
+    var dict=$api.getStorage('g_order_status');
     var length = 0;
     for (var ever in dict) {
         length++;
@@ -500,21 +656,18 @@ function loadAllOrderStatus() {
         api.ajax({
             url: s,
             method: 'post'
-        }, function(rets, errs) {
-            if (rets) {
-                for (var i = 0; i < rets.length; i++) {
-                    var status_code = rets[i].status_code;
-                    var status_name = rets[i].status_name;
-                    var status_name_en = rets[i].status_name_en;
+        }, function(ret, err) {
+            if (ret) {
+                for (var i = 0; i < ret.length; i++) {
+                    var status_code = ret[i].status_code;
+                    var status_name = ret[i].status_name;
+                    var status_name_en = ret[i].status_name_en;
                     g_order_status[status_code] = {
                         "status_name": status_name,
                         "status_name_en": status_name_en
                     };
                 }
-                api.setPrefs({
-                    key: 'g_order_status',
-                    value: g_order_status
-                });
+                $api.setStorage('g_order_status',g_order_status);
                 api.sendEvent({
                     name: 'GetAllOrderStatusEvent',
                     extra: {
@@ -542,12 +695,8 @@ function imgExists(e) {
 //获取当前用户token
 function setToken() {
     try {
-        var accountStr = api.getPrefs({
-            sync: true,
-            key: 'g_account'
-        });
-        if (accountStr!= undefined) {
-            var account = JSON.parse(accountStr);
+        var account=$api.getStorage('g_account');
+        if (account != undefined) {
             var userId = account.username; //会员id
             var name = account.nickname; //会员昵称
             var portraitUri = 'http://' + serverIP + '/upload/pictures/' + account.icon_url; //会员头像
@@ -575,10 +724,10 @@ function setToken() {
                 }
             }, function(ret, err) {
                 if (ret) {
-                    api.setPrefs({
-                        key: 'token',
-                        value:ret.token
-                    });
+                    $api.setStorage('token', ret.token);
+                    $api.setStorage('zh', name);
+                    $api.setStorage('id', userId);
+                    $api.setStorage('tx', portraitUri);
                 } else {
                     toastFail("获取token失败");
                 }
@@ -588,24 +737,17 @@ function setToken() {
 }
 //获取本地存储的token
 function getToken() {
-    var token = api.getPrefs({
-        sync: true,
-        key: 'token'
-    });
+    var token=$api.getStorage('token');
     return token;
 }
 //获取本地账户信息
-function getAccount(){
-  var account;
-  try{
-    var accountStr = api.getPrefs({
-        sync: true,
-        key: 'g_account'
-    });
-    if(accountStr!=undefined){
-      account=JSON.parse(accountStr);
-    }
-  }catch(e){
-  }
-  return account;
+function getAccount() {
+    var account;
+    try {
+        var account1=$api.getStorage('g_account');
+        if (account1 != undefined) {
+            account = account1;
+        }
+    } catch (e) {}
+    return account;
 }

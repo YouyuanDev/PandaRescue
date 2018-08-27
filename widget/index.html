@@ -1053,10 +1053,7 @@
                         }
                     }
                     var account = ret.account;
-                    api.setPrefs({
-                        key: 'g_account',
-                        value: account
-                    });
+                    $api.setStorage('g_account',account);
                     setToken();
                     toastSuccess("自动登录成功!");
                     api.sendEvent({
