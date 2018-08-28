@@ -60,8 +60,10 @@
         <div class="aui-tips-title">连接服务器失败!</div>
         <i class="aui-iconfont aui-icon-close" onclick="closeAuiTip();"></i>
     </div>
+    <p><div class="aui-btn aui-btn-block aui-btn-outlined" onclick="openChat(1,'醉卧沙场笑看红尘','../../image/default_portrait.png')">18703611326</div></p>
+    <p><div class="aui-btn aui-btn-block aui-btn-outlined" onclick="openChat(15,'Dr.K','../../image/default_portrait.png')">13774216002</div></p>
     <div class="aui-content aui-margin-b-15 pr-body-bgcolor">
-        <ul class="aui-list aui-media-list item-list">
+        <ul class="aui-list aui-media-list item-list" id="hh_list">
 
         </ul>
     </div>
@@ -82,6 +84,7 @@
 <script type="text/javascript">
     var language_id = 0;
     var rong;
+    var g_senderUserId=new Array();
     apiready = function() {
             rong = api.require('rongCloud2');
             getConversationList();
@@ -108,9 +111,17 @@
             if (ret.status == 'success') {
                 var html = '';
                 for (var i in ret.result) {
-                    var rs = ret.result;
-                    var nType = rs.type;
+                    var rs = ret.result[i];
                     var senderUserId = rs.senderUserId;
+                    var targetId=rs.targetId;
+                    if(senderUserId==$api.getStorage('id')){
+                      break;
+                    }
+                    if($.inArray(senderUserId, g_senderUserId)!=-1){
+                       $("li[data-sender-id='"+senderUserId+"']").remove();
+                    }else{
+                      g_senderUserId.push(senderUserId);
+                    }
                     var extra = transExtra(rs.latestMessage.extra);
                     if (extra.xm1 == $api.getStorage('zh')) {
                         var xm = extra.xm2;
@@ -132,34 +143,26 @@
                     } else if (rs.objectName == 'RC:VcMsg') {
                         var types = '<div class="aui-list-item-text aui-font-size-12 aui-text-primary">[语音消息]</div>'
                     }
-                    html += '<li class="aui-list-item aui-list-item-middle" onclick="openChat(' + "'" + senderUserId + "'" + ',' + "'" + xm + "'" + ',' + "'" + tx + "'" + ')">';
+                    html += '<li class="aui-list-item aui-list-item-middle" data-sender-id="'+senderUserId+'" onclick="openChat(' + "'" + senderUserId + "'" + ',' + "'" + xm + "'" + ',' + "'" + tx + "'" + ')">';
                     html += '     <div class="aui-media-list-item-inner">';
                     html += '               <div class="aui-list-item-media wechat-avatar">';
                     html += shu;
-                    html += '                        <img src="' + tx + '" /></div>';
+                    html += '                        <img src="' + tx + '" onerror="imgExists(this);"/></div>';
                     html += '                        <div class="aui-list-item-inner">';
                     html += '                <div class="aui-list-item-text">';
-                    html += '                     <div class="aui-list-item-title">' + xm + '</div><div class="aui-list-item-right">' + TimeDifference(rs.sentTime) + '</div></div>';
+                    html += '                     <div class="aui-list-item-title">' + xm + '</div><div class="aui-list-item-right">' + timeDifference(rs.sentTime) + '</div></div>';
                     html += types;
                     html += '           </div>';
                     html += '     </div>';
                     html += '</li>';
+                    $api.html($api.dom('#hh_list'), html);
+                    html="";
                 }
-                $api.html($api.dom('#hh_list'), html);
                 api.refreshHeaderLoadDone();
             }
         })
     }
-    //json格式转换
-    function transExtra(arg) {
-        var result = '';
-        try {
-            result = eval('(' + arg + ')');
-        } catch (e) {
-            result = arg.slice(1, -1);
-        } finally {}
-        return result;
-    }
+
     //打开聊天界面
     function openChat(id, xm, tx) {
         api.openWin({
@@ -173,7 +176,9 @@
             },
             vScrollBarEnabled: false,
         });
-        if ($api.getStorage('id') == id) {} else {
+        if ($api.getStorage('id') == id) {
+
+        } else {
             rong.clearMessagesUnreadStatus({
                 conversationType: 'PRIVATE',
                 targetId: id

@@ -142,122 +142,132 @@ function parseMobiDate(str) {
 }
 //表情转换
 function expressionConversion(text) {
-    var msg="";
+    var msg = text;
     var reg = /\[.+?\]/g;
+    //var result = text;
     var face = {
-        '[微笑]': '<span><img src="widget://emotion/Expression_1.png"  width="28"/></span>',
-        '[撇嘴]': '<span><img src="widget://emotion/Expression_2.png"  width="28" /></span>',
-        '[色]': '<span><img src="widget://emotion/Expression_3.png"  width="28" /></span>',
-        '[发呆]': '<span><img src="widget://emotion/Expression_4.png"  width="28" /></span>',
-        '[得意]': '<span><img src="widget://emotion/Expression_5.png"  width="28" /></span>',
-        '[流泪]': '<span><img src="widget://emotion/Expression_6.png"  width="28" /></span>',
-        '[害羞]': '<span><img src="widget://emotion/Expression_7.png"  width="28" /></span>',
-        '[闭嘴]': '<span><img src="widget://emotion/Expression_8.png"  width="28" /></span>',
-        '[睡]': '<span><img src="widget://emotion/Expression_9.png"  width="28" /></span>',
-        '[大哭]': '<span><img src="widget://emotion/Expression_10.png"  width="28"/></span>',
-        '[尴尬]': '<span><img src="widget://emotion/Expression_11.png"  width="28"/></span>',
-        '[发怒]': '<span><img src="widget://emotion/Expression_12.png"  width="28"/></span>',
-        '[调皮]': '<span><img src="widget://emotion/Expression_13.png"  width="28" /></span>',
-        '[呲牙]': '<span><img src="widget://emotion/Expression_14.png"  width="28" /></span>',
-        '[惊讶]': '<span><img src="widget://emotion/Expression_15.png"  width="28" /></span>',
-        '[难过]': '<span><img src="widget://emotion/Expression_16.png"  width="28" /></span>',
-        '[酷]': '<span><img src="widget://emotion/Expression_17.png"  width="28" /></span>',
-        '[冷汗]': '<span><img src="widget://emotion/Expression_18.png"  width="28" /></span>',
-        '[抓狂]': '<span><img src="widget://emotion/Expression_19.png"  width="28" /></span>',
-        '[吐]': '<span><img src="widget://emotion/Expression_20.png"  width="28" /></span>',
-        '[偷笑]': '<span><img src="widget://emotion/Expression_21.png"  width="28" /></span>',
-        '[愉快]': '<span><img src="widget://emotion/Expression_22.png"  width="28" /></span>',
-        '[白眼]': '<span><img src="widget://emotion/Expression_23.png"  width="28" /></span>',
-        '[傲慢]': '<span><img src="widget://emotion/Expression_24.png"  width="28" /></span>',
-        '[饥饿]': '<span><img src="widget://emotion/Expression_25.png"  width="28" /></span>',
-        '[困]': '<span><img src="widget://emotion/Expression_26.png"  width="28" /></span>',
-        '[恐惧]': '<span><img src="widget://emotion/Expression_27.png"  width="28" /></span>',
-        '[流汗]': '<span><img src="widget://emotion/Expression_28.png"  width="28" /></span>',
-        '[憨笑]': '<span><img src="widget://emotion/Expression_29.png"  width="28" /></span>',
+        '[微笑]': '<span><img src="../../emotion/Expression_1.png"  width="28"/></span>',
+        '[撇嘴]': '<span><img src="../../emotion/Expression_2.png"  width="28" /></span>',
+        '[色]': '<span><img src="../../emotion/Expression_3.png"  width="28" /></span>',
+        '[发呆]': '<span><img src="../../emotion/Expression_4.png"  width="28" /></span>',
+        '[得意]': '<span><img src="../../emotion/Expression_5.png"  width="28" /></span>',
+        '[流泪]': '<span><img src="../../emotion/Expression_6.png"  width="28" /></span>',
+        '[害羞]': '<span><img src="../../emotion/Expression_7.png"  width="28" /></span>',
+        '[闭嘴]': '<span><img src="../../emotion/Expression_8.png"  width="28" /></span>',
+        '[睡]': '<span><img src="../../emotion/Expression_9.png"  width="28" /></span>',
+        '[大哭]': '<span><img src="../../emotion/Expression_10.png"  width="28"/></span>',
+        '[尴尬]': '<span><img src="../../emotion/Expression_11.png"  width="28"/></span>',
+        '[发怒]': '<span><img src="../../emotion/Expression_12.png"  width="28"/></span>',
+        '[调皮]': '<span><img src="../../emotion/Expression_13.png"  width="28" /></span>',
+        '[呲牙]': '<span><img src="../../emotion/Expression_14.png"  width="28" /></span>',
+        '[惊讶]': '<span><img src="../../emotion/Expression_15.png"  width="28" /></span>',
+        '[难过]': '<span><img src="../../emotion/Expression_16.png"  width="28" /></span>',
+        '[酷]': '<span><img src="../../emotion/Expression_17.png"  width="28" /></span>',
+        '[冷汗]': '<span><img src="../../emotion/Expression_18.png"  width="28" /></span>',
+        '[抓狂]': '<span><img src="../../emotion/Expression_19.png"  width="28" /></span>',
+        '[吐]': '<span><img src="../../emotion/Expression_20.png"  width="28" /></span>',
+        '[偷笑]': '<span><img src="../../emotion/Expression_21.png"  width="28" /></span>',
+        '[愉快]': '<span><img src="../../emotion/Expression_22.png"  width="28" /></span>',
+        '[白眼]': '<span><img src="../../emotion/Expression_23.png"  width="28" /></span>',
+        '[傲慢]': '<span><img src="../../emotion/Expression_24.png"  width="28" /></span>',
+        '[饥饿]': '<span><img src="../../emotion/Expression_25.png"  width="28" /></span>',
+        '[困]': '<span><img src="../../emotion/Expression_26.png"  width="28" /></span>',
+        '[恐惧]': '<span><img src="../../emotion/Expression_27.png"  width="28" /></span>',
+        '[流汗]': '<span><img src="../../emotion/Expression_28.png"  width="28" /></span>',
+        '[憨笑]': '<span><img src="../../emotion/Expression_29.png"  width="28" /></span>',
         /*从这*/
-        '[悠闲]': '<span><img src="widget://emotion/Expression_30.png"  width="28" /></span>',
-        '[奋斗]': '<span><img src="widget://emotion/Expression_31.png"  width="28" /></span>',
-        '[咒骂]': '<span><img src="widget://emotion/Expression_32.png"  width="28" /></span>',
-        '[疑问]': '<span><img src="widget://emotion/Expression_33.png"  width="28" /></span>',
-        '[嘘]': '<span><img src="widget://emotion/Expression_34.png"  width="28" /></span>',
-        '[晕]': '<span><img src="widget://emotion/Expression_35.png"  width="28" /></span>',
-        '[疯了]': '<span><img src="widget://emotion/Expression_36.png"  width="28" /></span>',
-        '[衰]': '<span><img src="widget://emotion/Expression_37.png"  width="28" /></span>',
-        '[骷髅]': '<span><img src="widget://emotion/Expression_38.png"  width="28" /></span>',
-        '[敲打]': '<span><img src="widget://emotion/Expression_39.png"  width="28"/></span>',
-        '[再见]': '<span><img src="widget://emotion/Expression_40.png"  width="28"/></span>',
-        '[擦汗]': '<span><img src="widget://emotion/Expression_41.png"  width="28"/></span>',
-        '[抠鼻]': '<span><img src="widget://emotion/Expression_42.png"  width="28" /></span>',
-        '[鼓掌]': '<span><img src="widget://emotion/Expression_43.png"  width="28" /></span>',
-        '[糗大了]': '<span><img src="widget://emotion/Expression_44.png"  width="28" /></span>',
-        '[坏笑]': '<span><img src="widget://emotion/Expression_45.png"  width="28" /></span>',
-        '[左哼哼]': '<span><img src="widget://emotion/Expression_46.png"  width="28" /></span>',
-        '[右哼哼]': '<span><img src="widget://emotion/Expression_47.png"  width="28" /></span>',
-        '[哈欠]': '<span><img src="widget://emotion/Expression_48.png"  width="28" /></span>',
-        '[鄙视]': '<span><img src="widget://emotion/Expression_49.png"  width="28" /></span>',
-        '[委屈]': '<span><img src="widget://emotion/Expression_50.png"  width="28" /></span>',
-        '[快哭了]': '<span><img src="widget://emotion/Expression_51.png"  width="28" /></span>',
-        '[阴险]': '<span><img src="widget://emotion/Expression_52.png"  width="28" /></span>',
-        '[亲亲]': '<span><img src="widget://emotion/Expression_53.png"  width="28" /></span>',
-        '[吓]': '<span><img src="widget://emotion/Expression_54.png"  width="28" /></span>',
-        '[可怜]': '<span><img src="widget://emotion/Expression_55.png"  width="28" /></span>',
-        '[菜刀]': '<span><img src="widget://emotion/Expression_56.png"  width="28" /></span>',
-        '[西瓜]': '<span><img src="widget://emotion/Expression_57.png"  width="28" /></span>',
-        '[啤酒]': '<span><img src="widget://emotion/Expression_58.png"  width="28" /></span>',
-        '[篮球]': '<span><img src="widget://emotion/Expression_59.png"  width="28" /></span>',
-        '[乒乓]': '<span><img src="widget://emotion/Expression_60.png"  width="28" /></span>',
-        '[咖啡]': '<span><img src="widget://emotion/Expression_61.png"  width="28" /></span>',
-        '[饭]': '<span><img src="widget://emotion/Expression_62.png"  width="28" /></span>',
-        '[猪头]': '<span><img src="widget://emotion/Expression_63.png"  width="28" /></span>',
-        '[玫瑰]': '<span><img src="widget://emotion/Expression_64.png"  width="28" /></span>',
-        '[凋谢]': '<span><img src="widget://emotion/Expression_65.png"  width="28" /></span>',
-        '[嘴唇]': '<span><img src="widget://emotion/Expression_66.png"  width="28" /></span>',
-        '[爱心]': '<span><img src="widget://emotion/Expression_67.png"  width="28" /></span>',
-        '[心碎]': '<span><img src="widget://emotion/Expression_68.png"  width="28"/></span>',
-        '[蛋糕]': '<span><img src="widget://emotion/Expression_69.png"  width="28"/></span>',
-        '[闪电]': '<span><img src="widget://emotion/Expression_70.png"  width="28"/></span>',
-        '[炸弹]': '<span><img src="widget://emotion/Expression_71.png"  width="28" /></span>',
-        '[刀]': '<span><img src="widget://emotion/Expression_72.png"  width="28" /></span>',
-        '[足球]': '<span><img src="widget://emotion/Expression_73.png"  width="28" /></span>',
-        '[瓢虫]': '<span><img src="widget://emotion/Expression_74.png"  width="28" /></span>',
-        '[便便]': '<span><img src="widget://emotion/Expression_75.png"  width="28" /></span>',
-        '[月亮]': '<span><img src="widget://emotion/Expression_76.png"  width="28" /></span>',
-        '[太阳]': '<span><img src="widget://emotion/Expression_77.png"  width="28" /></span>',
-        '[礼物]': '<span><img src="widget://emotion/Expression_78.png"  width="28" /></span>',
-        '[拥抱]': '<span><img src="widget://emotion/Expression_79.png"  width="28" /></span>',
-        '[强]': '<span><img src="widget://emotion/Expression_80.png"  width="28" /></span>',
-        '[弱]': '<span><img src="widget://emotion/Expression_81.png"  width="28" /></span>',
-        '[握手]': '<span><img src="widget://emotion/Expression_82.png"  width="28" /></span>',
-        '[胜利]': '<span><img src="widget://emotion/Expression_83.png"  width="28" /></span>',
-        '[抱拳]': '<span><img src="widget://emotion/Expression_84.png"  width="28" /></span>',
-        '[勾引]': '<span><img src="widget://emotion/Expression_85.png"  width="28" /></span>',
-        '[拳头]': '<span><img src="widget://emotion/Expression_86.png"  width="28" /></span>',
-        '[差劲]': '<span><img src="widget://emotion/Expression_87.png"  width="28" /></span>',
-        '[爱你]': '<span><img src="widget://emotion/Expression_88.png"  width="28" /></span>',
-        '[NO]': '<span><img src="widget://emotion/Expression_89.png"  width="28" /></span>',
-        '[OK]': '<span><img src="widget://emotion/Expression_90.png"  width="28" /></span>',
-        '[爱情]': '<span><img src="widget://emotion/Expression_91.png"  width="28" /></span>',
-        '[飞吻]': '<span><img src="widget://emotion/Expression_92.png"  width="28" /></span>',
-        '[跳跳]': '<span><img src="widget://emotion/Expression_93.png"  width="28" /></span>',
-        '[发抖]': '<span><img src="widget://emotion/Expression_94.png"  width="28" /></span>',
-        '[怄火]': '<span><img src="widget://emotion/Expression_95.png"  width="28" /></span>',
-        '[转圈]': '<span><img src="widget://emotion/Expression_96.png"  width="28" /></span>',
-        '[磕头]': '<span><img src="widget://emotion/Expression_97.png"  width="28"/></span>',
-        '[回头]': '<span><img src="widget://emotion/Expression_98.png"  width="28"/></span>',
-        '[跳绳]': '<span><img src="widget://emotion/Expression_99.png"  width="28"/></span>',
-        '[投降]': '<span><img src="widget://emotion/Expression_100.png"  width="28" /></span>',
-        '[激动]': '<span><img src="widget://emotion/Expression_101.png"  width="28" /></span>',
-        '[街舞]': '<span><img src="widget://emotion/Expression_102.png"  width="28" /></span>',
-        '[献吻]': '<span><img src="widget://emotion/Expression_103.png"  width="28" /></span>',
-        '[左太极]': '<span><img src="widget://emotion/Expression_104.png"  width="28" /></span>',
-        '[右太极]': '<span><img src="widget://emotion/Expression_105.png"  width="28" /></span>'
+        '[悠闲]': '<span><img src="../../emotion/Expression_30.png"  width="28" /></span>',
+        '[奋斗]': '<span><img src="../../emotion/Expression_31.png"  width="28" /></span>',
+        '[咒骂]': '<span><img src="../../emotion/Expression_32.png"  width="28" /></span>',
+        '[疑问]': '<span><img src="../../emotion/Expression_33.png"  width="28" /></span>',
+        '[嘘]': '<span><img src="../../emotion/Expression_34.png"  width="28" /></span>',
+        '[晕]': '<span><img src="../../emotion/Expression_35.png"  width="28" /></span>',
+        '[疯了]': '<span><img src="../../emotion/Expression_36.png"  width="28" /></span>',
+        '[衰]': '<span><img src="../../emotion/Expression_37.png"  width="28" /></span>',
+        '[骷髅]': '<span><img src="../../emotion/Expression_38.png"  width="28" /></span>',
+        '[敲打]': '<span><img src="../../emotion/Expression_39.png"  width="28"/></span>',
+        '[再见]': '<span><img src="../../emotion/Expression_40.png"  width="28"/></span>',
+        '[擦汗]': '<span><img src="../../emotion/Expression_41.png"  width="28"/></span>',
+        '[抠鼻]': '<span><img src="../../emotion/Expression_42.png"  width="28" /></span>',
+        '[鼓掌]': '<span><img src="../../emotion/Expression_43.png"  width="28" /></span>',
+        '[糗大了]': '<span><img src="../../emotion/Expression_44.png"  width="28" /></span>',
+        '[坏笑]': '<span><img src="../../emotion/Expression_45.png"  width="28" /></span>',
+        '[左哼哼]': '<span><img src="../../emotion/Expression_46.png"  width="28" /></span>',
+        '[右哼哼]': '<span><img src="../../emotion/Expression_47.png"  width="28" /></span>',
+        '[哈欠]': '<span><img src="../../emotion/Expression_48.png"  width="28" /></span>',
+        '[鄙视]': '<span><img src="../../emotion/Expression_49.png"  width="28" /></span>',
+        '[委屈]': '<span><img src="../../emotion/Expression_50.png"  width="28" /></span>',
+        '[快哭了]': '<span><img src="../../emotion/Expression_51.png"  width="28" /></span>',
+        '[阴险]': '<span><img src="../../emotion/Expression_52.png"  width="28" /></span>',
+        '[亲亲]': '<span><img src="../../emotion/Expression_53.png"  width="28" /></span>',
+        '[吓]': '<span><img src="../../emotion/Expression_54.png"  width="28" /></span>',
+        '[可怜]': '<span><img src="../../emotion/Expression_55.png"  width="28" /></span>',
+        '[菜刀]': '<span><img src="../../emotion/Expression_56.png"  width="28" /></span>',
+        '[西瓜]': '<span><img src="../../emotion/Expression_57.png"  width="28" /></span>',
+        '[啤酒]': '<span><img src="../../emotion/Expression_58.png"  width="28" /></span>',
+        '[篮球]': '<span><img src="../../emotion/Expression_59.png"  width="28" /></span>',
+        '[乒乓]': '<span><img src="../../emotion/Expression_60.png"  width="28" /></span>',
+        '[咖啡]': '<span><img src="../../emotion/Expression_61.png"  width="28" /></span>',
+        '[饭]': '<span><img src="../../emotion/Expression_62.png"  width="28" /></span>',
+        '[猪头]': '<span><img src="../../emotion/Expression_63.png"  width="28" /></span>',
+        '[玫瑰]': '<span><img src="../../emotion/Expression_64.png"  width="28" /></span>',
+        '[凋谢]': '<span><img src="../../emotion/Expression_65.png"  width="28" /></span>',
+        '[嘴唇]': '<span><img src="../../emotion/Expression_66.png"  width="28" /></span>',
+        '[爱心]': '<span><img src="../../emotion/Expression_67.png"  width="28" /></span>',
+        '[心碎]': '<span><img src="../../emotion/Expression_68.png"  width="28"/></span>',
+        '[蛋糕]': '<span><img src="../../emotion/Expression_69.png"  width="28"/></span>',
+        '[闪电]': '<span><img src="../../emotion/Expression_70.png"  width="28"/></span>',
+        '[炸弹]': '<span><img src="../../emotion/Expression_71.png"  width="28" /></span>',
+        '[刀]': '<span><img src="../../emotion/Expression_72.png"  width="28" /></span>',
+        '[足球]': '<span><img src="../../emotion/Expression_73.png"  width="28" /></span>',
+        '[瓢虫]': '<span><img src="../../emotion/Expression_74.png"  width="28" /></span>',
+        '[便便]': '<span><img src="../../emotion/Expression_75.png"  width="28" /></span>',
+        '[月亮]': '<span><img src="../../emotion/Expression_76.png"  width="28" /></span>',
+        '[太阳]': '<span><img src="../../emotion/Expression_77.png"  width="28" /></span>',
+        '[礼物]': '<span><img src="../../emotion/Expression_78.png"  width="28" /></span>',
+        '[拥抱]': '<span><img src="../../emotion/Expression_79.png"  width="28" /></span>',
+        '[强]': '<span><img src="../../emotion/Expression_80.png"  width="28" /></span>',
+        '[弱]': '<span><img src="../../emotion/Expression_81.png"  width="28" /></span>',
+        '[握手]': '<span><img src="../../emotion/Expression_82.png"  width="28" /></span>',
+        '[胜利]': '<span><img src="../../emotion/Expression_83.png"  width="28" /></span>',
+        '[抱拳]': '<span><img src="../../emotion/Expression_84.png"  width="28" /></span>',
+        '[勾引]': '<span><img src="../../emotion/Expression_85.png"  width="28" /></span>',
+        '[拳头]': '<span><img src="../../emotion/Expression_86.png"  width="28" /></span>',
+        '[差劲]': '<span><img src="../../emotion/Expression_87.png"  width="28" /></span>',
+        '[爱你]': '<span><img src="../../emotion/Expression_88.png"  width="28" /></span>',
+        '[NO]': '<span><img src="../../emotion/Expression_89.png"  width="28" /></span>',
+        '[OK]': '<span><img src="../../emotion/Expression_90.png"  width="28" /></span>',
+        '[爱情]': '<span><img src="../../emotion/Expression_91.png"  width="28" /></span>',
+        '[飞吻]': '<span><img src="../../emotion/Expression_92.png"  width="28" /></span>',
+        '[跳跳]': '<span><img src="../../emotion/Expression_93.png"  width="28" /></span>',
+        '[发抖]': '<span><img src="../../emotion/Expression_94.png"  width="28" /></span>',
+        '[怄火]': '<span><img src="../../emotion/Expression_95.png"  width="28" /></span>',
+        '[转圈]': '<span><img src="../../emotion/Expression_96.png"  width="28" /></span>',
+        '[磕头]': '<span><img src="../../emotion/Expression_97.png"  width="28"/></span>',
+        '[回头]': '<span><img src="../../emotion/Expression_98.png"  width="28"/></span>',
+        '[跳绳]': '<span><img src="../../emotion/Expression_99.png"  width="28"/></span>',
+        '[投降]': '<span><img src="../../emotion/Expression_100.png"  width="28" /></span>',
+        '[激动]': '<span><img src="../../emotion/Expression_101.png"  width="28" /></span>',
+        '[街舞]': '<span><img src="../../emotion/Expression_102.png"  width="28" /></span>',
+        '[献吻]': '<span><img src="../../emotion/Expression_103.png"  width="28" /></span>',
+        '[左太极]': '<span><img src="../../emotion/Expression_104.png"  width="28" /></span>',
+        '[右太极]': '<span><img src="../../emotion/Expression_105.png"  width="28" /></span>'
     };
-    text.replace(reg, function(a, b) {
-        msg=face[a] ? face[a] : a;
+    str = msg.replace(reg, function(a, b) {
+        return face[a] ? face[a] :a;
     });
-    return msg;
+    return str;
 }
-
+//json格式转换
+function transExtra(arg) {
+    var result = '';
+    try {
+        result = eval('(' + arg + ')');
+    } catch (e) {
+        result = arg.slice(1, -1);
+    } finally {}
+    return result;
+}
 
 function closeWindow() {
     api.closeWin();
@@ -546,7 +556,7 @@ function leaveAllPushGroup() {
 function loadAllServiceType() {
     //查看本地是否已经存在，不存在请求服务器，存在就直接获取
     var g_service_type_dict = {};
-    var dict=$api.getStorage('g_service_type_dict');
+    var dict = $api.getStorage('g_service_type_dict');
     var length = 0;
     for (var ever in dict) {
         length++;
@@ -575,7 +585,7 @@ function loadAllServiceType() {
                         "service_type_name_en": service_type_name_en
                     };
                 }
-                $api.setStorage('g_service_type_dict',g_service_type_dict);
+                $api.setStorage('g_service_type_dict', g_service_type_dict);
                 api.sendEvent({
                     name: 'GetAllServiceTypeEvent',
                     extra: {
@@ -592,7 +602,7 @@ function loadAllServiceType() {
 function loadAllFaultType() {
     //查看本地是否已经存在，不存在请求服务器，存在就直接获取
     var g_failure_type_dict = {};
-    var dict=$api.getStorage('g_failure_type_dict');
+    var dict = $api.getStorage('g_failure_type_dict');
     var length = 0;
     for (var ever in dict) {
         length++;
@@ -621,7 +631,7 @@ function loadAllFaultType() {
                         "failure_type_name_en": failure_type_name_en
                     };
                 }
-                $api.setStorage('g_failure_type_dict',g_failure_type_dict);
+                $api.setStorage('g_failure_type_dict', g_failure_type_dict);
                 api.sendEvent({
                     name: 'GetAllFailureTypeEvent',
                     extra: {
@@ -638,7 +648,7 @@ function loadAllFaultType() {
 function loadAllOrderStatus() {
     //查看本地是否已经存在，不存在请求服务器，存在就直接获取
     var g_order_status = {};
-    var dict=$api.getStorage('g_order_status');
+    var dict = $api.getStorage('g_order_status');
     var length = 0;
     for (var ever in dict) {
         length++;
@@ -667,7 +677,7 @@ function loadAllOrderStatus() {
                         "status_name_en": status_name_en
                     };
                 }
-                $api.setStorage('g_order_status',g_order_status);
+                $api.setStorage('g_order_status', g_order_status);
                 api.sendEvent({
                     name: 'GetAllOrderStatusEvent',
                     extra: {
@@ -695,9 +705,9 @@ function imgExists(e) {
 //获取当前用户token
 function setToken() {
     try {
-        var account=$api.getStorage('g_account');
+        var account = $api.getStorage('g_account');
         if (account != undefined) {
-            var userId = account.username; //会员id
+            var userId = account.id; //会员id
             var name = account.nickname; //会员昵称
             var portraitUri = 'http://' + serverIP + '/upload/pictures/' + account.icon_url; //会员头像
             var appKey = "4z3hlwrv4omet";
@@ -737,14 +747,14 @@ function setToken() {
 }
 //获取本地存储的token
 function getToken() {
-    var token=$api.getStorage('token');
+    var token = $api.getStorage('token');
     return token;
 }
 //获取本地账户信息
 function getAccount() {
     var account;
     try {
-        var account1=$api.getStorage('g_account');
+        var account1 = $api.getStorage('g_account');
         if (account1 != undefined) {
             account = account1;
         }

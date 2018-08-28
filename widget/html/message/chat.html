@@ -81,38 +81,42 @@
 <script type="text/javascript">
     var language_id = 0;
     apiready = function() {
-        fnSettingHeader();
-        var data = api.pageParam;
-        //设置聊天界面头部信息
-        var name = data.name;
-        var targetId=data.id;
-        //打开聊天Frame
-        var header = $api.byId('header');
-        var headerH = $api.offset(header).h;
-        if (name != undefined) {
-            $('.item-title-name').text(name);
+            fnSettingHeader();
+            var data = api.pageParam;
+            //设置聊天界面头部信息
+            var f_id = data.id;
+            var f_zh = data.zh;
+            var f_tx = data.tx;
+            //打开聊天Frame
+            var header = $api.byId('header');
+            var headerH = $api.offset(header).h;
+            if (f_zh != undefined) {
+                $('.item-title-name').text(f_zh);
+            }
+            if (f_id != undefined) {
+                api.openFrame({
+                    name: 'chat_frame',
+                    url: './chat_frame.html',
+                    rect: {
+                        x: 0,
+                        y: headerH,
+                        w: 'auto',
+                        h: api.winHeight - headerH - 52
+                    },
+                    hScrollBarEnabled:false,
+                    vScrollBarEnabled:false,
+                    pageParam: {
+                        f_id: f_id,
+                        f_zh: f_zh,
+                        f_tx: f_tx
+                    }
+                });
+            } else {
+                toastFail('系统异常,请刷新重试!');
+            }
+            hlLanguage("../../i18n/");
         }
-        if(targetId!=undefined){
-          api.openFrame({
-              name: 'chat_frame',
-              url: './chat_frame.html',
-              rect: {
-                  x: 0,
-                  y:headerH,
-                  w: 'auto',
-                  h:'auto',
-                  marginBottom:90
-              },
-              pageParam: {
-                  targetId:targetId
-              }
-          });
-        }else{
-          toastFail('系统异常,请刷新重试!');
-        }
-        hlLanguage("../../i18n/");
-    }
-    //关闭当前窗口
+        //关闭当前窗口
     function closeMyself() {
         api.closeWin({
             name: 'chat'

@@ -216,6 +216,7 @@
                 if (ret.success) {
                     toastSuccess(ret.message);
                     var url='http://' + serverIP +'/upload/pictures/'+imgUrl;
+                    $api.setStorage('tx', url);
                     $('.personal-header-img').attr('src',url);
                 } else {
                     toastFail(ret.message);
