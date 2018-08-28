@@ -60,8 +60,12 @@
         <div class="aui-tips-title">连接服务器失败!</div>
         <i class="aui-iconfont aui-icon-close" onclick="closeAuiTip();"></i>
     </div>
-    <p><div class="aui-btn aui-btn-block aui-btn-outlined" onclick="openChat(1,'醉卧沙场笑看红尘','../../image/default_portrait.png')">18703611326</div></p>
-    <p><div class="aui-btn aui-btn-block aui-btn-outlined" onclick="openChat(15,'Dr.K','../../image/default_portrait.png')">13774216002</div></p>
+    <p>
+        <div class="aui-btn aui-btn-block aui-btn-outlined" onclick="openChat(1,'醉卧沙场笑看红尘','../../image/default_portrait.png')">18703611326</div>
+    </p>
+    <p>
+        <div class="aui-btn aui-btn-block aui-btn-outlined" onclick="openChat(15,'Dr.K','../../image/default_portrait.png')">13774216002</div>
+    </p>
     <div class="aui-content aui-margin-b-15 pr-body-bgcolor">
         <ul class="aui-list aui-media-list item-list" id="hh_list">
 
@@ -84,12 +88,10 @@
 <script type="text/javascript">
     var language_id = 0;
     var rong;
-    var g_senderUserId=new Array();
+    var g_senderUserId = new Array();
     apiready = function() {
             rong = api.require('rongCloud2');
             getConversationList();
-            registerReceiveMessageListener();
-            registerUpdateConversationListListener();
             api.setRefreshHeaderInfo({
                 loadingImg: 'widget://image/loading.png',
                 bgColor: '#ccc',
@@ -102,6 +104,40 @@
                     api.refreshHeaderLoadDone();
                 }, 6000)
             });
+            api.addEventListener({
+                name: 'UpdateConversationListEvent'
+            }, function(ret, err) {
+                getConversationList();
+            });
+            // rong.init(function(ret, err) {
+            //     if (ret.status == 'success') {
+            //         //消息监听
+            //         //registerReceiveMessageListener();
+            //         //语音监听
+            //         registerUpdateConversationListListener();
+            //         rong.connect({
+            //             token: $api.getStorage('token')
+            //         }, function(ret, err) {
+            //             if(ret.status=='success'){
+            //               //如果有未读的消息，则发送事件
+            //               rong.getTotalUnreadCount(function(ret, err) {
+            //                  if(ret.status=='status'){
+            //                    api.sendEvent({
+            //                        name: 'updateTotalReceiveMessageEvent',
+            //                        extra: {
+            //                            total: ret.result
+            //                        }
+            //                    })
+            //                  }
+            //               })
+            //             }
+            //         });
+            //     } else {
+            //         toastFail("系统异常,聊天初始化失败!");
+            //     }
+            // });
+            // getConversationList();
+
 
             hlLanguage("../../i18n/");
         }
@@ -113,14 +149,14 @@
                 for (var i in ret.result) {
                     var rs = ret.result[i];
                     var senderUserId = rs.senderUserId;
-                    var targetId=rs.targetId;
-                    if(senderUserId==$api.getStorage('id')){
-                      break;
+                    var targetId = rs.targetId;
+                    if (senderUserId == $api.getStorage('id')) {
+                        break;
                     }
-                    if($.inArray(senderUserId, g_senderUserId)!=-1){
-                       $("li[data-sender-id='"+senderUserId+"']").remove();
-                    }else{
-                      g_senderUserId.push(senderUserId);
+                    if ($.inArray(senderUserId, g_senderUserId) != -1) {
+                        $("li[data-sender-id='" + senderUserId + "']").remove();
+                    } else {
+                        g_senderUserId.push(senderUserId);
                     }
                     var extra = transExtra(rs.latestMessage.extra);
                     if (extra.xm1 == $api.getStorage('zh')) {
@@ -143,7 +179,7 @@
                     } else if (rs.objectName == 'RC:VcMsg') {
                         var types = '<div class="aui-list-item-text aui-font-size-12 aui-text-primary">[语音消息]</div>'
                     }
-                    html += '<li class="aui-list-item aui-list-item-middle" data-sender-id="'+senderUserId+'" onclick="openChat(' + "'" + senderUserId + "'" + ',' + "'" + xm + "'" + ',' + "'" + tx + "'" + ')">';
+                    html += '<li class="aui-list-item aui-list-item-middle" data-sender-id="' + senderUserId + '" onclick="openChat(' + "'" + senderUserId + "'" + ',' + "'" + xm + "'" + ',' + "'" + tx + "'" + ')">';
                     html += '     <div class="aui-media-list-item-inner">';
                     html += '               <div class="aui-list-item-media wechat-avatar">';
                     html += shu;
@@ -156,7 +192,7 @@
                     html += '     </div>';
                     html += '</li>';
                     $api.html($api.dom('#hh_list'), html);
-                    html="";
+                    html = "";
                 }
                 api.refreshHeaderLoadDone();
             }

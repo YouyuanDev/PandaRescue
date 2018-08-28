@@ -58,6 +58,10 @@
         .fa-size {
             font-size: 1.2rem;
         }
+
+        .message-dot {
+            display: none;
+        }
     </style>
 </head>
 
@@ -71,6 +75,7 @@
         </div>
         <a class="aui-pull-right aui-btn">
             <i class="fa fa-commenting fa-2x fa-size" onclick="openMessage();"></i>
+            <div class="aui-dot message-dot"></div>
         </a>
     </header>
     <section class="flex-1">
@@ -105,9 +110,12 @@
     //故障类型集合
     var g_failure_type_dict = {};
     var timer_arr = new Array();
+    var rong;
     apiready = function() {
         fnSettingHeader();
         map = api.require('bMap');
+        rong = api.require('rongCloud2');
+        initRong();
         registerLoadAllServiceTypeEvent();
         registerLoadAllFaultTypeEvent();
         loadAllServiceType();
@@ -1053,7 +1061,7 @@
                         }
                     }
                     var account = ret.account;
-                    $api.setStorage('g_account',account);
+                    $api.setStorage('g_account', account);
                     setToken();
                     toastSuccess("自动登录成功!");
                     api.sendEvent({
@@ -1228,6 +1236,7 @@
     }
     //账户消息
     function openMessage() {
+        $('.message-dot').hide();
         api.openWin({
             name: 'message',
             url: './html/message/message.html',
@@ -1431,6 +1440,39 @@
                 requestSwitchAccounType(ret.value.account_type);
             }
         });
+    }
+    //初始化融云聊天服务器
+    function initRong() {
+        rong.init(function(ret, err) {
+            if (ret.status == 'success') {
+                //消息监听
+                registerReceiveMessageListener();
+                rong.connect({
+                    token: $api.getStorage('token')
+                }, function(ret, err) {});
+            } else {
+                toastFail("系统错误,连接聊天服务器异常!");
+            }
+        });
+    }
+    //设置消息监听
+    function registerReceiveMessageListener() {
+        rong.setOnReceiveMessageListener(function(ret, err) {
+            if (ret) {
+                $('.message-dot').show();
+                //发送更新会话列表命令
+                api.sendEvent({
+                    name: 'UpdateConversationListEvent'
+                });
+                //发送最新消息命令
+                api.sendEvent({
+                    name: 'NewMsgEvent',
+                    extra: {
+                        msg: ret.result.message
+                    }
+                })
+            }
+        })
     }
 </script>
 
