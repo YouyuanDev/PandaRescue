@@ -5,7 +5,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0" />
     <meta name="format-detection" content="telephone=no,email=no,date=no,address=no">
-    <title>消息</title>
+    <title>历史消息</title>
     <link rel="stylesheet" type="text/css" href="../../css/api.css" />
     <link rel="stylesheet" type="text/css" href="../../css/aui.css" />
     <link rel="stylesheet" type="text/css" href="../../css/font-awesome.min.css" />
@@ -20,7 +20,7 @@
       <a class="aui-pull-left aui-btn" onclick="closeMyself();">
           <span  class="fa fa-chevron-left"></span>
       </a>
-      <div class="aui-title pr-fontcolor item-title-name"></div>
+      <div class="aui-title pr-fontcolor i18n1" name="historicalmessage">历史消息</div>
   </header>
 </body>
 
@@ -34,41 +34,24 @@
     var language_id = 0;
     apiready = function() {
         fnSettingHeader();
-        var data = api.pageParam;
-        //设置聊天界面头部信息
-        var f_id = data.id;
-        var f_zh = data.zh;
-        var f_tx = data.tx;
-        //打开聊天Frame
-        var header = $api.byId('header');
-        var headerH = $api.offset(header).h;
-        if (f_zh != undefined) {
-            $('.item-title-name').text(f_zh);
-        }
         var header = $api.byId('header');
         var headerH = $api.offset(header).h;
         api.openFrame({
-            name: 'historical_message_frame',
-            url: './historical_message_frame.html',
+            name: 'historical_message_list_frame',
+            url: './historical_message_list_frame.html',
             rect: {
                 x: 0,
                 y: headerH,
                 w: 'auto',
                 h: api.winHeight - headerH
             },
-            bounces: false,
-            pageParam: {
-                f_id: f_id,
-                f_zh: f_zh,
-                f_tx: f_tx
-            }
+            bounces: false
         });
         hlLanguage("../../i18n/");
     }
     function closeMyself() {
         api.closeWin({
-            name: 'historical_message'
+            name: 'historical_message_list'
         });
     }
-
 </script>

@@ -5,7 +5,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0" />
     <meta name="format-detection" content="telephone=no,email=no,date=no,address=no">
-    <title>消息Frame</title>
+    <title>历史消息Frame</title>
     <link rel="stylesheet" type="text/css" href="../../css/api.css" />
     <link rel="stylesheet" type="text/css" href="../../css/aui.css" />
     <link rel="stylesheet" type="text/css" href="../../css/font-awesome.min.css" />
@@ -47,35 +47,17 @@
             text-align: center;
             display: none;
         }
-
-        .connection-failed-tip {
-            display: none;
-        }
     </style>
 </head>
 
 <body>
-    <div class="aui-tips connection-failed-tip" id="tips-1">
-        <i class="aui-iconfont aui-icon-info"></i>
-        <div class="aui-tips-title">连接服务器失败!</div>
-        <i class="aui-iconfont aui-icon-close" onclick="closeAuiTip();"></i>
-    </div>
-    <p>
-        <div class="aui-btn aui-btn-block aui-btn-outlined" onclick="openChat(1,'醉卧沙场笑看红尘','../../image/default_portrait.png')">18703611326</div>
-    </p>
-    <p>
-        <div class="aui-btn aui-btn-block aui-btn-outlined" onclick="openChat(15,'Dr.K','../../image/default_portrait.png')">13774216002</div>
-    </p>
     <div class="aui-content aui-margin-b-15 pr-body-bgcolor">
         <ul class="aui-list aui-media-list item-list" id="hh_list">
 
         </ul>
     </div>
     <div class="pr-empty">
-        <span class="empty-title"><span class="fa fa-info" style="padding-right:0.3rem;"></span><span class="i18n1" name="nohistoricalmessage">暂无消息!</span><span>
-    </div>
-    <div class="item-historical-container" onclick="openHistoricalMessageList();">
-        <span><span class="aui-margin-l-5 pr-fontcolor1">历史消息</span><span class="fa fa-chevron-right pr-fontcolor1"></span></span>
+        <span class="empty-title"><span class="fa fa-info" style="padding-right:0.3rem;"></span><span class="i18n1" name="loaded">加载完毕!</span><span>
     </div>
 </body>
 
@@ -88,32 +70,20 @@
 <script type="text/javascript">
     var language_id = 0;
     var rong;
+    var g_startTime=0;
     var g_senderUserId = new Array();
     apiready = function() {
             rong = api.require('rongCloud2');
-            getConversationList();
-            api.setRefreshHeaderInfo({
-                loadingImg: 'widget://image/loading.png',
-                bgColor: '#ccc',
-                textColor: '#fff',
-                textDown: '下拉刷新...',
-                textUp: '松开刷新...'
-            }, function(ret, err) {
-                getConversationList();
-                setTimeout(function() {
-                    api.refreshHeaderLoadDone();
-                }, 6000)
-            });
-            api.addEventListener({
-                name: 'UpdateConversationListEvent'
-            }, function(ret, err) {
-                getConversationList();
-            });
+            getConversationListByCount(g_startTime);
             hlLanguage("../../i18n/");
         }
-        //获取最近回话列表
-    function getConversationList() {
-        rong.getConversationList(function(ret, err) {
+        //分页获取回话列表
+    function getConversationListByCount(startTime) {
+        rong.getConversationListByCount({
+          typeList:['private','group','discussion','system'],
+          count:10,
+          startTime:g_startTime
+        },function(ret, err) {
             if (ret.status == 'success') {
                 var html = '';
                 if(ret.result.length<=0){
@@ -123,9 +93,9 @@
                     var rs = ret.result[i];
                     var senderUserId = rs.senderUserId;
                     var targetId = rs.targetId;
-                    if (senderUserId == $api.getStorage('id')) {
-                        break;
-                    }
+                    // if (senderUserId == $api.getStorage('id')) {
+                    //     break;
+                    // }
                     if ($.inArray(senderUserId, g_senderUserId) != -1) {
                         $("li[data-sender-id='" + senderUserId + "']").remove();
                     } else {
@@ -152,7 +122,7 @@
                     } else if (rs.objectName == 'RC:VcMsg') {
                         var types = '<div class="aui-list-item-text aui-font-size-12 aui-text-primary">[语音消息]</div>'
                     }
-                    html += '<li class="aui-list-item aui-list-item-middle" data-sender-id="' + senderUserId + '" onclick="openChat(' + "'" + senderUserId + "'" + ',' + "'" + xm + "'" + ',' + "'" + tx + "'" + ')">';
+                    html += '<li class="aui-list-item aui-list-item-middle" data-sender-id="' + senderUserId + '" onclick="openHistoricalMessageFrame(' + "'" + senderUserId + "'" + ',' + "'" + xm + "'" + ',' + "'" + tx + "'" + ')">';
                     html += '     <div class="aui-media-list-item-inner">';
                     html += '               <div class="aui-list-item-media wechat-avatar">';
                     html += shu;
@@ -173,66 +143,17 @@
             }
         })
     }
-
-    //打开聊天界面
-    function openChat(id, xm, tx) {
-        api.openWin({
-            reload: true,
-            name: 'chat',
-            url: './chat.html',
-            pageParam: {
-                id: id,
-                zh: xm,
-                tx: tx
-            },
-            vScrollBarEnabled: false,
-        });
-        if ($api.getStorage('id') == id) {
-
-        } else {
-            rong.clearMessagesUnreadStatus({
-                conversationType: 'PRIVATE',
-                targetId: id
-            }, function(ret, err) {})
-        }
-        api.sendEvent({
-            name: 'UpdateConversationListEvent'
-        });
-    }
-    //打开历史消息页面
-    function openHistoricalMessageList() {
-        api.openWin({
-            name: 'historical_message_list',
-            url: './historical_message_list.html',
-            reload: true,
-            pageParam: {}
-        });
-    }
-    //融云消息监听器
-    function registerReceiveMessageListener() {
-        rong.setOnReceiveMessageListener(function(ret, err) {
-            if (ret) {
-                //发送更新会话列表命令
-                api.sendEvent({
-                    name: 'UpdateConversationListEvent'
-                });
-                // 发送最新消息命令
-                api.sendEvent({
-                    name: 'new_msg',
-                    extra: {
-                        msg: ret.result.message
-                    }
-                })
-            }
-        })
-    }
-    //更新回话列表监听器
-    function registerUpdateConversationListListener() {
-        //发送更新会话列表命令
-        api.addEventListener({
-            name: 'UpdateConversationListEvent'
-        }, function(ret, err) {
-            getConversationList();
-        });
+    function openHistoricalMessageFrame(id,zh,tx){
+      api.openWin({
+          reload: true,
+          name: 'historical_message',
+          url: './historical_message.html',
+          pageParam: {
+              id: id,
+              zh: zh,
+              tx: tx
+          },
+          vScrollBarEnabled: false,
+      });
     }
 </script>
