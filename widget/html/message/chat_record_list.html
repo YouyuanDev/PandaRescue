@@ -5,23 +5,29 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0" />
     <meta name="format-detection" content="telephone=no,email=no,date=no,address=no">
-    <title>消息</title>
+    <title>历史消息</title>
     <link rel="stylesheet" type="text/css" href="../../css/api.css" />
     <link rel="stylesheet" type="text/css" href="../../css/aui.css" />
     <link rel="stylesheet" type="text/css" href="../../css/font-awesome.min.css" />
     <link rel="stylesheet" type="text/css" href="../../css/style.css" />
     <style>
-
+       
     </style>
 </head>
 
 <body>
-  <header id="header" class="aui-bar aui-bar-nav aui-bar-light personal-header pr-bgcolor">
-      <a class="aui-pull-left aui-btn" onclick="closeMyself();">
-          <span  class="fa fa-chevron-left"></span>
-      </a>
-      <div class="aui-title pr-fontcolor i18n1" name="message">消息</div>
-  </header>
+    <header id="header" class="aui-bar aui-bar-nav aui-bar-light personal-header pr-bgcolor">
+        <a class="aui-pull-left aui-btn close-btn" onclick="closeMyself();">
+            <span class="fa fa-chevron-left"></span>
+        </a>
+        <a class="aui-pull-left aui-btn cancel-btn" onclick="cancelSelect();">
+            <span class="i18n1" name="cancel">取消</span>
+        </a>
+        <div class="aui-title pr-fontcolor i18n1" name="historicalmessage">历史消息</div>
+        <a class="aui-pull-right aui-btn delete-btn" onclick="deleteSelect();">
+            <span class="i18n1" name="delete">删除</span>
+        </a>
+    </header>
 </body>
 
 </html>
@@ -33,12 +39,15 @@
 <script type="text/javascript">
     var language_id = 0;
     apiready = function() {
+        $('.cancel-btn').hide();
+        $('.delete-btn').hide();
         fnSettingHeader();
+        registCheckBoxSelectedEvent();
         var header = $api.byId('header');
         var headerH = $api.offset(header).h;
         api.openFrame({
-            name: 'message_frame',
-            url: './message_frame.html',
+            name: 'chat_record_list_frame',
+            url: './chat_record_list_frame.html',
             rect: {
                 x: 0,
                 y: headerH,
@@ -49,10 +58,34 @@
         });
         hlLanguage("../../i18n/");
     }
+
     function closeMyself() {
         api.closeWin({
-            name: 'message'
+            name: 'chat_record_list'
         });
     }
-
+    //监听复选框选中事件
+    function registCheckBoxSelectedEvent() {
+        api.addEventListener({
+            name: 'selectedCheckBoxEvent'
+        }, function(ret, err) {
+            $('.close-btn').hide();
+            $('.cancel-btn').show();
+            $('.delete-btn').show();
+        });
+    }
+    //取消事件
+    function cancelSelect(){
+      $('.close-btn').show();
+      $('.cancel-btn').hide();
+      $('.delete-btn').hide();
+    }
+    //删除事件
+    function deleteSelect(){
+      api.sendEvent({
+       name: 'deleteCheckBoxEvent',
+       extra: {
+       }
+      });
+    }
 </script>

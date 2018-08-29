@@ -114,153 +114,8 @@
             rong = api.require('rongCloud2');
             //获取最新一条记录
             getLatestMessages(g_f_id, 'PRIVATE');
-            //打开聊天窗体
-            //openUIChatBox();
-            //监听inputBar的move事件
-            //registerInputBarMoveEvent();
-            //监听录音事件
-            //registerRecorderEvent();
-            //监听新消息事件
-            //registerNewMsgEvent();
-            //下拉刷新
             setCustomRefreshHeaderInfo();
         }
-    //监听录音事件
-    function registerRecorderEvent() {
-        //监听录音摁下按钮
-        UIChatBox.addEventListener({
-            target: 'recordBtn',
-            name: 'press'
-        }, function(ret, err) {
-            timeDifference1 = new Date().getTime();
-            if (ret) {
-                var savePath = 'fs://lysd_' + (+new Date()) + '.amr';
-                api.startRecord({
-                    path: savePath
-                });
-            }
-        });
-        //监听录音松开录音按钮
-        UIChatBox.addEventListener({
-            target: 'recordBtn',
-            name: 'press_cancel'
-        }, function(ret, err) {
-            var timeDifference2 = new Date().getTime() - timeDifference1;
-            if (timeDifference2 <= 1000) {
-                stopRecord();
-                toastFail('语音时间较短，请重新录音');
-            } else if (timeDifference2 > 2000) {
-                api.stopRecord(function(ret, err) {
-                    if (ret.duration > 0) {
-                        var path = ret.path;
-                        var duration = ret.duration;
-                        var extra = {
-                            xm1: $api.getStorage('zh'),
-                            xm2: g_f_zh,
-                            tx1: $api.getStorage('tx'),
-                            tx2: g_f_tx
-                        };
-                        rong.sendVoiceMessage({
-                            conversationType: 'PRIVATE',
-                            targetId: g_f_id,
-                            voicePath: path,
-                            duration: duration,
-                            extra: JSON.stringify(extra)
-                        }, function(ret, err) {
-                            if (ret.status == 'prepare') {
-                                yy = ret.result.message.content.voicePath;
-                                timeDifference_len = ret.result.message.content.duration;
-                            } else if (ret.status == 'success') {
-                                var html = '';
-                                html += '<div class="aui-chat-item aui-chat-right">';
-                                html += '          <div class="aui-chat-media"><img src="' + $api.getStorage('tx') + '" onerror="imgExists(this);"/></div>';
-                                html += '          <div class="aui-chat-inner"><div class="aui-chat-name">' + $api.getStorage('zh') + '</div>';
-                                html += '               <div class="aui-chat-content_img">';
-                                html += '                        <div class="aui-chat-arrow"></div>';
-                                html += '<div onclick="play(this,\'' + yy + '\')" class="voice"> ' + timeDifference_len + ' "</div>';
-                                html += '               </div>';
-                                html += '          </div>';
-                                html += '</div>';
-                                $api.append($api.dom('#msglist'), html);
-                                pageDown(200);
-                            } else if (ret.status == 'error') {
-                                api.toast({
-                                    msg: '语音发送失败'
-                                });
-                            }
-                        });
-                    }
-                });
-            }
-        });
-        UIChatBox.addEventListener({
-            target: 'recordBtn',
-            name: 'move_in'
-        }, function(ret, err) {
-            timeDifference1 = new Date().getTime();
-            if (ret) {
-                var savePath = 'fs://lysd_' + (+new Date()) + '.amr';
-                api.startRecord({
-                    path: savePath
-                });
-            }
-        });
-        UIChatBox.addEventListener({
-            target: 'recordBtn',
-            name: 'move_out_cancel'
-        }, function(ret, err) {
-            var timeDifference2 = new Date().getTime() - timeDifference1;
-            if (timeDifference2 <= 1000) {
-                stopRecord();
-                toastFail('语音时间较短，请重新录音!');
-            } else if (timeDifference2 > 1000) {
-                api.stopRecord(function(ret, err) {
-                    if (ret.duration > 0) {
-                        var path = ret.path;
-                        var duration = ret.duration;
-                        var extra = {
-                            xm1: $api.getStorage('zh'),
-                            xm2: g_f_zh,
-                            tx1: $api.getStorage('tx'),
-                            tx2: g_f_tx
-                        };
-                        rong.sendVoiceMessage({
-                            conversationType: 'PRIVATE',
-                            targetId: g_f_id,
-                            voicePath: path,
-                            duration: duration,
-                            extra: JSON.stringify(extra)
-                        }, function(ret, err) {
-                            if (ret.status == 'prepare') {
-                                yy = ret.result.message.content.voicePath;
-                                timeDifference_len = ret.result.message.content.duration;
-                            } else if (ret.status == 'success') {
-                                var html = '';
-                                html += '<div class="aui-chat-item aui-chat-right">';
-                                html += '          <div class="aui-chat-media"><img src="' + $api.getStorage('tx') + '" onerror="imgExists(this);"/></div>';
-                                html += '          <div class="aui-chat-inner"><div class="aui-chat-name">' + $api.getStorage('zh') + '</div>';
-                                html += '               <div class="aui-chat-content_img">';
-                                html += '                        <div class="aui-chat-arrow"></div>';
-                                html += '<div onclick="play(this,\'' + yy + '\')" class="voice"> ' + timeDifference_len + ' "</div>';
-                                html += '               </div>';
-                                html += '          </div>';
-                                html += '</div>';
-                                $api.append($api.dom('#msglist'), html);
-                                pageDown(200);
-                                // api.sendEvent({
-                                //     name: 'senthh'
-                                // });
-                            } else if (ret.status == 'error') {
-                                api.toast({
-                                    msg: '语音发送失败'
-                                });
-                            }
-                        });
-                    }
-                });
-            }
-        });
-    }
     //下拉刷新
     function setCustomRefreshHeaderInfo() {
         api.setRefreshHeaderInfo({
@@ -480,7 +335,7 @@
                     api.refreshHeaderLoadDone();
                 } else {
                     api.toast({
-                        msg: '木有了消息啦…'
+                        msg: '消息加载完毕…'
                     });
                     api.refreshHeaderLoadDone();
                 }

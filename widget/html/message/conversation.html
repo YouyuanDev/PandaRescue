@@ -5,7 +5,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0" />
     <meta name="format-detection" content="telephone=no,email=no,date=no,address=no">
-    <title>历史消息</title>
+    <title>消息</title>
     <link rel="stylesheet" type="text/css" href="../../css/api.css" />
     <link rel="stylesheet" type="text/css" href="../../css/aui.css" />
     <link rel="stylesheet" type="text/css" href="../../css/font-awesome.min.css" />
@@ -16,12 +16,15 @@
 </head>
 
 <body>
-  <header id="header" class="aui-bar aui-bar-nav aui-bar-light personal-header pr-bgcolor">
-      <a class="aui-pull-left aui-btn" onclick="closeMyself();">
-          <span  class="fa fa-chevron-left"></span>
-      </a>
-      <div class="aui-title pr-fontcolor i18n1" name="historicalmessage">历史消息</div>
-  </header>
+    <header id="header" class="aui-bar aui-bar-nav aui-bar-light personal-header pr-bgcolor">
+        <a class="aui-pull-left aui-btn" onclick="closeMyself();">
+            <span class="fa fa-chevron-left"></span>
+        </a>
+        <div class="aui-title pr-fontcolor i18n1" name="message">消息</div>
+        <a class="aui-pull-right aui-btn" onclick="openHistoricalMessageList();">
+            <span><span class="aui-margin-l-5 pr-fontcolor">历史消息</span><span class="fa fa-chevron-right pr-fontcolor"></span></span>
+        </a>
+    </header>
 </body>
 
 </html>
@@ -37,8 +40,8 @@
         var header = $api.byId('header');
         var headerH = $api.offset(header).h;
         api.openFrame({
-            name: 'historical_message_list_frame',
-            url: './historical_message_list_frame.html',
+            name: 'conversation_frame',
+            url: './conversation_frame.html',
             rect: {
                 x: 0,
                 y: headerH,
@@ -49,9 +52,19 @@
         });
         hlLanguage("../../i18n/");
     }
+    //关闭当前页面
     function closeMyself() {
         api.closeWin({
-            name: 'historical_message_list'
+            name: 'conversation'
+        });
+    }
+    //打开历史消息页面
+    function openHistoricalMessageList() {
+        api.openWin({
+            name: 'chat_record_list',
+            url: './chat_record_list.html',
+            reload: true,
+            pageParam: {}
         });
     }
 </script>

@@ -48,8 +48,8 @@
         var header = $api.byId('header');
         var headerH = $api.offset(header).h;
         api.openFrame({
-            name: 'historical_message_frame',
-            url: './historical_message_frame.html',
+            name: 'chat_record_frame',
+            url: './chat_record_frame.html',
             rect: {
                 x: 0,
                 y: headerH,
@@ -67,7 +67,7 @@
     }
     function closeMyself() {
         api.closeWin({
-            name: 'historical_message'
+            name: 'chat_record'
         });
     }
 

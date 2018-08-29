@@ -23,6 +23,12 @@
             padding-right: 0.5rem;
         }
 
+        .aui-list .aui-list-item-media img {
+            width: 2rem;
+            height: 2rem;
+            border-radius: 50%;
+        }
+
         .aui-list .aui-list-item-text {
             width: 100%;
         }
@@ -43,21 +49,29 @@
         }
 
         .pr-empty {
-            padding: 5px 10px;
+            padding: 100px 10px;
             text-align: center;
             display: none;
+        }
+
+        .aui-list .item-delete {
+            display: none;
+            padding-top: 0.5rem;
         }
     </style>
 </head>
 
 <body>
+    <p>
+        <div class="aui-btn aui-btn-block aui-btn-outlined" id="btn">默认按钮(default)</div>
+    </p>
     <div class="aui-content aui-margin-b-15 pr-body-bgcolor">
         <ul class="aui-list aui-media-list item-list" id="hh_list">
 
         </ul>
     </div>
     <div class="pr-empty">
-        <span class="empty-title"><span class="fa fa-info" style="padding-right:0.3rem;"></span><span class="i18n1" name="loaded">加载完毕!</span><span>
+        <span class="empty-title"><span class="fa fa-info" style="padding-right:0.3rem;"></span><span class="i18n1" name="nohistoricalmessage">暂无历史消息!</span><span>
     </div>
 </body>
 
@@ -72,6 +86,7 @@
     var rong;
     var g_startTime=0;
     var g_senderUserId = new Array();
+    var time=0;
     apiready = function() {
             rong = api.require('rongCloud2');
             getConversationListByCount(g_startTime);
@@ -93,9 +108,9 @@
                     var rs = ret.result[i];
                     var senderUserId = rs.senderUserId;
                     var targetId = rs.targetId;
-                    // if (senderUserId == $api.getStorage('id')) {
-                    //     break;
-                    // }
+                    if(senderUserId==$api.getStorage('id')){
+                      senderUserId=targetId;
+                    }
                     if ($.inArray(senderUserId, g_senderUserId) != -1) {
                         $("li[data-sender-id='" + senderUserId + "']").remove();
                     } else {
@@ -122,19 +137,21 @@
                     } else if (rs.objectName == 'RC:VcMsg') {
                         var types = '<div class="aui-list-item-text aui-font-size-12 aui-text-primary">[语音消息]</div>'
                     }
-                    html += '<li class="aui-list-item aui-list-item-middle" data-sender-id="' + senderUserId + '" onclick="openHistoricalMessageFrame(' + "'" + senderUserId + "'" + ',' + "'" + xm + "'" + ',' + "'" + tx + "'" + ')">';
+                    html += '<li class="aui-list-item aui-list-item-middle" ontouchstart="handleTouchStartEvent(this);" ontouchmove="handleTouchMoveEvent(this);" ontouchend="handleTouchEndEvent(this);" data-sender-id="' + senderUserId + '" onclick="openHistoricalMessageFrame(' + "'" + senderUserId + "'" + ',' + "'" + xm + "'" + ',' + "'" + tx + "'" + ')">';
                     html += '     <div class="aui-media-list-item-inner">';
                     html += '               <div class="aui-list-item-media wechat-avatar">';
                     html += shu;
                     html += '                        <img src="' + tx + '" onerror="imgExists(this);"/></div>';
                     html += '                        <div class="aui-list-item-inner">';
                     html += '                <div class="aui-list-item-text">';
-                    html += '                     <div class="aui-list-item-title">' + xm + '</div><div class="aui-list-item-right">' + timeDifference(rs.sentTime) + '</div></div>';
+                    html += '                     <div class="aui-list-item-title">' + xm + '</div>';
+                    html += '<div class="aui-list-item-right item-delete"><input data-sender-id="'+senderUserId+'" class="aui-radio" type="radio" name="radio" checked></div>';
+                    html += '<div class="aui-list-item-right item-time">' + timeDifference(rs.sentTime) + '</div></div>';
                     html += types;
                     html += '           </div>';
                     html += '     </div>';
                     html += '</li>';
-                    $api.html($api.dom('#hh_list'), html);
+                    $api.append($api.dom('#hh_list'), html);
                     html = "";
                 }
                 api.refreshHeaderLoadDone();
@@ -146,14 +163,41 @@
     function openHistoricalMessageFrame(id,zh,tx){
       api.openWin({
           reload: true,
-          name: 'historical_message',
-          url: './historical_message.html',
+          name: 'chat_record',
+          url: './chat_record.html',
           pageParam: {
               id: id,
               zh: zh,
               tx: tx
           },
           vScrollBarEnabled: false,
+      });
+    }
+    function handleTouchStartEvent(obj){
+      time = setTimeout(function() {
+          time = 0;
+          selectedEvent();
+          $('.item-time').hide();
+          $('.item-delete').show();
+      }, 400);
+    }
+    function handleTouchMoveEvent(obj){
+      clearTimeout(time);
+      time = 0;
+    }
+    function handleTouchEndEvent(obj){
+      clearTimeout(time);
+      if (time != 0) {
+          return false;
+      }
+      return false;
+    }
+    //选中列表事件
+    function selectedEvent(){
+      api.sendEvent({
+       name: 'selectedCheckBoxEvent',
+       extra: {
+       }
       });
     }
 </script>

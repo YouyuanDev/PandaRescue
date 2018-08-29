@@ -73,8 +73,8 @@
         <div class="aui-title">
             <span class="item-account-type">普通用户</span>
         </div>
-        <a class="aui-pull-right aui-btn">
-            <i class="fa fa-commenting fa-2x fa-size" onclick="openMessage();"></i>
+        <a class="aui-pull-right aui-btn" onclick="openConversation();">
+            <i class="fa fa-commenting fa-2x fa-size"></i>
             <div class="aui-dot message-dot"></div>
         </a>
     </header>
@@ -1061,6 +1061,7 @@
                         }
                     }
                     var account = ret.account;
+                    clearStorage();
                     $api.setStorage('g_account', account);
                     setToken();
                     toastSuccess("自动登录成功!");
@@ -1235,11 +1236,11 @@
         });
     }
     //账户消息
-    function openMessage() {
+    function openConversation() {
         $('.message-dot').hide();
         api.openWin({
-            name: 'message',
-            url: './html/message/message.html',
+            name: 'conversation',
+            url: './html/message/conversation.html',
             reload: true,
             pageParam: {}
         });
@@ -1285,7 +1286,7 @@
         }, function(ret, err) {
             try {
                 if (ret) {
-                    g_service_type_dict = JSON.parse(ret.value.g_service_type_dict);
+                    g_service_type_dict =ret.value.g_service_type_dict;
                 }
             } catch (e) {
                 toastFail("系统错误,解析服务类型异常!");
@@ -1299,7 +1300,7 @@
         }, function(ret, err) {
             try {
                 if (ret) {
-                    g_failure_type_dict = JSON.parse(ret.value.g_failure_type_dict);
+                    g_failure_type_dict =ret.value.g_failure_type_dict;
                 }
             } catch (e) {
                 toastFail("系统错误,解析故障类型异常!");

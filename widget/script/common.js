@@ -1,6 +1,6 @@
 var header, headerHeight = 0,
     g_loadingID;
-var serverIP = '192.168.0.12:8080';
+var serverIP = '192.168.0.10:8080';
 
 function fnSettingHeader() {
     var sType = api.systemType;
@@ -550,6 +550,12 @@ function leaveAllPushGroup() {
             toastFail(err.msg);
         }
     });
+}
+//清空setStorage
+function clearStorage(){
+  $api.rmStorage('g_service_type_dict');
+  $api.rmStorage('g_failure_type_dict');
+  $api.rmStorage('g_order_status');
 }
 
 //加载服务类型

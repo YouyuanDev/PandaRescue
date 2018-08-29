@@ -286,7 +286,6 @@
                         tx1: $api.getStorage('tx'),
                         tx2: g_f_tx
                     };
-
                     rong.sendTextMessage({
                         conversationType: 'PRIVATE',
                         targetId: g_f_id,
@@ -326,7 +325,6 @@
             if (ret) {
                 var h = g_h;
                 var h1 =g_winHeight - h - ret.inputBarHeight - ret.panelHeight;
-                console.log("api.winHeight="+g_winHeight +",ret.inputBarHeight="+ret.inputBarHeight+",ret.panelHeight="+ret.panelHeight);
                 api.setFrameAttr({
                     name: 'chat_frame',
                     rect: {
@@ -742,7 +740,7 @@
                     api.refreshHeaderLoadDone();
                 } else {
                     api.toast({
-                        msg: '木有了消息啦…'
+                        msg: '消息加载完毕…'
                     });
                     api.refreshHeaderLoadDone();
                 }

@@ -287,7 +287,7 @@
         }, function(ret, err) {
             try {
                 if (ret.value.g_service_type_dict != undefined)
-                    g_service_type_dict = JSON.parse(ret.value.g_service_type_dict);
+                    g_service_type_dict = ret.value.g_service_type_dict;
             } catch (e) {
                 toastFail('加载服务类型异常!');
             }
@@ -300,7 +300,7 @@
         }, function(ret, err) {
             try {
                 if (ret.value.g_failure_type_dict != undefined)
-                    g_failure_type_dict = JSON.parse(ret.value.g_failure_type_dict);
+                    g_failure_type_dict =ret.value.g_failure_type_dict;
             } catch (e) {
                 toastFail('加载故障类型异常!');
             }
@@ -313,7 +313,7 @@
         }, function(ret, err) {
             try {
                 if (ret.value.g_order_status != undefined)
-                    g_order_status_dict = JSON.parse(ret.value.g_order_status);
+                    g_order_status_dict =ret.value.g_order_status;
             } catch (e) {
                 toastFail('获取订单状态类型异常!');
             }

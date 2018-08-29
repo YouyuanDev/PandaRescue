@@ -43,7 +43,7 @@
         }
 
         .pr-empty {
-            padding: 5px 10px;
+            padding:100px 10px;
             text-align: center;
             display: none;
         }
@@ -72,10 +72,7 @@
         </ul>
     </div>
     <div class="pr-empty">
-        <span class="empty-title"><span class="fa fa-info" style="padding-right:0.3rem;"></span><span class="i18n1" name="nohistoricalmessage">暂无消息!</span><span>
-    </div>
-    <div class="item-historical-container" onclick="openHistoricalMessageList();">
-        <span><span class="aui-margin-l-5 pr-fontcolor1">历史消息</span><span class="fa fa-chevron-right pr-fontcolor1"></span></span>
+        <span class="empty-title"><span class="fa fa-info" style="padding-right:0.3rem;"></span><span class="i18n1" name="noconversation">暂无会话!</span><span>
     </div>
 </body>
 
@@ -104,11 +101,7 @@
                     api.refreshHeaderLoadDone();
                 }, 6000)
             });
-            api.addEventListener({
-                name: 'UpdateConversationListEvent'
-            }, function(ret, err) {
-                getConversationList();
-            });
+            registerUpdateConversationListListener();
             hlLanguage("../../i18n/");
         }
         //获取最近回话列表
@@ -164,7 +157,7 @@
                     html += '           </div>';
                     html += '     </div>';
                     html += '</li>';
-                    $api.html($api.dom('#hh_list'), html);
+                    $api.append($api.dom('#hh_list'), html);
                     html = "";
                 }
                 api.refreshHeaderLoadDone();
@@ -198,33 +191,6 @@
         api.sendEvent({
             name: 'UpdateConversationListEvent'
         });
-    }
-    //打开历史消息页面
-    function openHistoricalMessageList() {
-        api.openWin({
-            name: 'historical_message_list',
-            url: './historical_message_list.html',
-            reload: true,
-            pageParam: {}
-        });
-    }
-    //融云消息监听器
-    function registerReceiveMessageListener() {
-        rong.setOnReceiveMessageListener(function(ret, err) {
-            if (ret) {
-                //发送更新会话列表命令
-                api.sendEvent({
-                    name: 'UpdateConversationListEvent'
-                });
-                // 发送最新消息命令
-                api.sendEvent({
-                    name: 'new_msg',
-                    extra: {
-                        msg: ret.result.message
-                    }
-                })
-            }
-        })
     }
     //更新回话列表监听器
     function registerUpdateConversationListListener() {
