@@ -27,11 +27,13 @@
         .aui-chat .aui-chat-header {
             margin-bottom: 0px;
         }
-        .aui-chat .aui-chat-media img{
-          width:2rem;
-          height:2rem;
-          border-radius:50%;
+
+        .aui-chat .aui-chat-media img {
+            width: 2rem;
+            height: 2rem;
+            border-radius: 50%;
         }
+
         .aui-chat .aui-chat-content_img {
             color: #212121;
             font-size: 0.7rem;
@@ -75,7 +77,6 @@
             padding-left: 1.4rem;
             color: #424242;
         }
-
     </style>
 </head>
 
@@ -167,7 +168,7 @@
     var rong;
     var UIChatBox;
     var UIMediaScanner;
-    var imageClip;
+    var photoBrowser;
     var g_h, g_f_id, g_f_tx, g_f_zh;
     var g_winHeight;
     var g_header_arr = new Array();
@@ -177,9 +178,10 @@
             g_f_id = data.f_id + '';
             g_f_zh = data.f_zh;
             g_f_tx = data.f_tx;
-            g_winHeight=api.winHeight;
+            g_winHeight = api.winHeight;
             UIChatBox = api.require('UIChatBox');
             rong = api.require('rongCloud2');
+            photoBrowser = api.require('photoBrowser');
             //获取最新一条记录
             getLatestMessages(g_f_id, 'PRIVATE');
             //打开聊天窗体
@@ -258,11 +260,12 @@
                     title: '拍照',
                     normalImg: 'widget://image/photo_normal.png',
                     activeImg: 'widget://image/photo_selected.png'
-                }, {
-                    title: '位置',
-                    normalImg: 'widget://image/location_normal.png',
-                    activeImg: 'widget://image/location_selected.png'
-                }]
+                 }//, {
+                //     title: '位置',
+                //     normalImg: 'widget://image/location_normal.png',
+                //     activeImg: 'widget://image/location_selected.png'
+                // }
+                ]
             }
         }, function(ret, err) {
             var eventType = ret.eventType;
@@ -324,7 +327,7 @@
         }, function(ret, err) {
             if (ret) {
                 var h = g_h;
-                var h1 =g_winHeight - h - ret.inputBarHeight - ret.panelHeight;
+                var h1 = g_winHeight - h - ret.inputBarHeight - ret.panelHeight;
                 api.setFrameAttr({
                     name: 'chat_frame',
                     rect: {
@@ -481,12 +484,16 @@
         }, function(ret, err) {
             var html = '';
             if (ret.value.msg.targetId == g_f_id) {
+                var timeStr = timeDifference(ret.value.msg.sentTime);
+                if ($.inArray(timeStr, g_header_arr) == -1) {
+                    html += '<div class="aui-chat-header">' + timeStr + '</div>';
+                    g_header_arr.push(timeStr);
+                }
                 if (ret.value.msg.objectName == 'RC:TxtMsg') {
                     txt = expressionConversion(ret.value.msg.content.text);
-                    html += '<div class="aui-chat-header">' + timeDifference(ret.value.msg.sentTime) + '</div>';
                     html += '<div class="aui-chat-item aui-chat-left">';
-                    html += '          <div class="aui-chat-media"><img src="' +g_f_tx + '" /></div>';
-                    html += '          <div class="aui-chat-inner"><div class="aui-chat-name">' + g_f_zh+ '</div>';
+                    html += '          <div class="aui-chat-media"><img src="' + g_f_tx + '" /></div>';
+                    html += '          <div class="aui-chat-inner"><div class="aui-chat-name">' + g_f_zh + '</div>';
                     html += '               <div class="aui-chat-content">';
                     html += '                        <div class="aui-chat-arrow"></div>';
                     html += txt;
@@ -494,7 +501,6 @@
                     html += '          </div>';
                     html += '</div>';
                 } else if (ret.value.msg.objectName == 'RC:ImgMsg') {
-                    html += '<div class="aui-chat-header">' + timeDifference(ret.value.msg.sentTime) + '</div>';
                     html += '<div class="aui-chat-item aui-chat-left">';
                     html += '          <div class="aui-chat-media"><img src="' + g_f_tx + '" /></div>';
                     html += '          <div class="aui-chat-inner"><div class="aui-chat-name">' + g_f_zh + '</div>';
@@ -505,9 +511,8 @@
                     html += '          </div>';
                     html += '</div>';
                 } else if (ret.value.msg.objectName == 'RC:VcMsg') {
-                    html += '<div class="aui-chat-header">' + timeDifference(ret.value.msg.sentTime) + '</div>';
                     html += '<div class="aui-chat-item aui-chat-left">';
-                    html += '          <div class="aui-chat-media"><img src="' + g_f_tx+ '" /></div>';
+                    html += '          <div class="aui-chat-media"><img src="' + g_f_tx + '" /></div>';
                     html += '          <div class="aui-chat-inner"><div class="aui-chat-name">' + g_f_zh + '</div>';
                     html += '               <div class="aui-chat-content_img">';
                     html += '                        <div class="aui-chat-arrow"></div>';
@@ -771,9 +776,11 @@
     }
     //打开图像
     function openImage(path) {
-        var imageBrowser = api.require('imageBrowser');
-        imageBrowser.openImages({
-            imageUrls: [path]
+        photoBrowser.open({
+            images: [path],
+            bgColor: '#000'
+        }, function(ret, err) {
+
         });
     }
     //获取图片

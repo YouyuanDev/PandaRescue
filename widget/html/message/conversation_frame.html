@@ -23,6 +23,12 @@
             padding-right: 0.5rem;
         }
 
+        .aui-list .aui-list-item-media img {
+            width: 2rem;
+            height: 2rem;
+            border-radius: 50%;
+        }
+
         .aui-list .aui-list-item-text {
             width: 100%;
         }
@@ -43,12 +49,16 @@
         }
 
         .pr-empty {
-            padding:100px 10px;
+            padding: 100px 10px;
             text-align: center;
             display: none;
         }
 
         .connection-failed-tip {
+            display: none;
+        }
+
+        .item-historical {
             display: none;
         }
     </style>
@@ -74,6 +84,11 @@
     <div class="pr-empty">
         <span class="empty-title"><span class="fa fa-info" style="padding-right:0.3rem;"></span><span class="i18n1" name="noconversation">暂无会话!</span><span>
     </div>
+    <div class="aui-card-list item-historical">
+       <div class="aui-card-list-footer aui-text-center" onclick="openHistoricalMessageList();">
+             <span><span class="aui-margin-l-5 pr-fontcolor1 i18n1" name="historicalmessage">历史消息</span><span class="fa fa-chevron-right pr-fontcolor1"></span></span>
+    </div>
+    </div>
 </body>
 
 </html>
@@ -89,6 +104,7 @@
     apiready = function() {
             rong = api.require('rongCloud2');
             getConversationList();
+            getConversationListByCount();
             api.setRefreshHeaderInfo({
                 loadingImg: 'widget://image/loading.png',
                 bgColor: '#ccc',
@@ -109,8 +125,8 @@
         rong.getConversationList(function(ret, err) {
             if (ret.status == 'success') {
                 var html = '';
-                if(ret.result.length<=0){
-                  $('.pr-empty').show();
+                if (ret.result.length <= 0) {
+                    $('.pr-empty').show();
                 }
                 for (var i in ret.result) {
                     var rs = ret.result[i];
@@ -125,6 +141,9 @@
                         g_senderUserId.push(senderUserId);
                     }
                     var extra = transExtra(rs.latestMessage.extra);
+                    if(extra==undefined){
+                      break;
+                    }
                     if (extra.xm1 == $api.getStorage('zh')) {
                         var xm = extra.xm2;
                         var tx = extra.tx2;
@@ -161,8 +180,8 @@
                     html = "";
                 }
                 api.refreshHeaderLoadDone();
-            }else{
-               $('.pr-empty').show();
+            } else {
+                $('.pr-empty').show();
             }
         })
     }
@@ -200,5 +219,29 @@
         }, function(ret, err) {
             getConversationList();
         });
+    }
+
+    //打开历史消息页面
+    function openHistoricalMessageList() {
+        api.openWin({
+            name: 'chat_record_list',
+            url: './chat_record_list.html',
+            reload: true,
+            pageParam: {}
+        });
+    }
+    //获取历史聊天会话
+    function getConversationListByCount() {
+        rong.getConversationListByCount({
+          typeList:['private','group','discussion','system'],
+          count:10,
+          startTime:0
+        },function(ret, err) {
+             if(ret){
+               if(ret.result.length>0){
+                 $('.item-historical').show();
+               }
+             }
+        })
     }
 </script>

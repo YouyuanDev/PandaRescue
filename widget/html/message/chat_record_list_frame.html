@@ -62,9 +62,6 @@
 </head>
 
 <body>
-    <p>
-        <div class="aui-btn aui-btn-block aui-btn-outlined" id="btn">默认按钮(default)</div>
-    </p>
     <div class="aui-content aui-margin-b-15 pr-body-bgcolor">
         <ul class="aui-list aui-media-list item-list" id="hh_list">
 
@@ -87,9 +84,14 @@
     var g_startTime=0;
     var g_senderUserId = new Array();
     var time=0;
+    var g_selected=false;
     apiready = function() {
             rong = api.require('rongCloud2');
             getConversationListByCount(g_startTime);
+            registerCancelCheckBoxEvent();
+            registerDeleteCheckBoxEvent();
+            registerAllCheckBoxEvent();
+            registerCancelAllCheckBoxEvent();
             hlLanguage("../../i18n/");
         }
         //分页获取回话列表
@@ -117,6 +119,9 @@
                         g_senderUserId.push(senderUserId);
                     }
                     var extra = transExtra(rs.latestMessage.extra);
+                    if(extra==undefined){
+                      break;
+                    }
                     if (extra.xm1 == $api.getStorage('zh')) {
                         var xm = extra.xm2;
                         var tx = extra.tx2;
@@ -137,7 +142,7 @@
                     } else if (rs.objectName == 'RC:VcMsg') {
                         var types = '<div class="aui-list-item-text aui-font-size-12 aui-text-primary">[语音消息]</div>'
                     }
-                    html += '<li class="aui-list-item aui-list-item-middle" ontouchstart="handleTouchStartEvent(this);" ontouchmove="handleTouchMoveEvent(this);" ontouchend="handleTouchEndEvent(this);" data-sender-id="' + senderUserId + '" onclick="openHistoricalMessageFrame(' + "'" + senderUserId + "'" + ',' + "'" + xm + "'" + ',' + "'" + tx + "'" + ')">';
+                    html += '<li class="aui-list-item aui-list-item-middle" data-sender-id="'+senderUserId+'" ontouchstart="handleTouchStartEvent(this);" ontouchmove="handleTouchMoveEvent(this);" ontouchend="handleTouchEndEvent(this);" data-sender-id="' + senderUserId + '" onclick="openHistoricalMessageFrame(' + "'" + senderUserId + "'" + ',' + "'" + xm + "'" + ',' + "'" + tx + "'" + ')">';
                     html += '     <div class="aui-media-list-item-inner">';
                     html += '               <div class="aui-list-item-media wechat-avatar">';
                     html += shu;
@@ -145,7 +150,7 @@
                     html += '                        <div class="aui-list-item-inner">';
                     html += '                <div class="aui-list-item-text">';
                     html += '                     <div class="aui-list-item-title">' + xm + '</div>';
-                    html += '<div class="aui-list-item-right item-delete"><input data-sender-id="'+senderUserId+'" class="aui-radio" type="radio" name="radio" checked></div>';
+                    html += '<div class="aui-list-item-right item-delete"><input  class="aui-radio" type="checkbox"></div>';
                     html += '<div class="aui-list-item-right item-time">' + timeDifference(rs.sentTime) + '</div></div>';
                     html += types;
                     html += '           </div>';
@@ -161,6 +166,9 @@
         })
     }
     function openHistoricalMessageFrame(id,zh,tx){
+      if(g_selected){
+        return;
+      }
       api.openWin({
           reload: true,
           name: 'chat_record',
@@ -176,6 +184,7 @@
     function handleTouchStartEvent(obj){
       time = setTimeout(function() {
           time = 0;
+          g_selected=true;
           selectedEvent();
           $('.item-time').hide();
           $('.item-delete').show();
@@ -198,6 +207,76 @@
        name: 'selectedCheckBoxEvent',
        extra: {
        }
+      });
+    }
+    //监听取消选中事件
+    function registerCancelCheckBoxEvent(){
+      api.addEventListener({
+          name: 'cancelCheckBoxEvent'
+      }, function(ret, err) {
+        $('.item-time').show();
+        $('.item-delete').hide();
+        $("input[type='checkbox']").prop('checked',false);
+        g_selected=false;
+      });
+    }
+    //监听删除选中事件
+    function registerDeleteCheckBoxEvent(){
+      api.addEventListener({
+          name: 'deleteCheckBoxEvent'
+      }, function(ret, err) {
+          //遍历所有的选中的targetId
+          var senderid_arr=new Array();
+          $('#hh_list li').each(function(){
+               var is_select=$(this).find('.aui-radio').prop("checked");
+               if(is_select){
+                  var senderid=$(this).attr('data-sender-id');
+                  if(senderid!=undefined){
+                    if($.inArray(senderid,senderid_arr)==-1)
+                        senderid_arr.push(senderid);
+                  }
+               }
+          });
+          if(senderid_arr.length>0){
+            for (var i = 0; i < senderid_arr.length; i++) {
+              var now_id=senderid_arr[i]+'';
+              $("li[data-sender-id='"+now_id+"']").remove();
+              //先删除消息
+              rong.clearMessages({
+                   conversationType: 'PRIVATE',
+                    targetId:now_id
+                  }, function(ret, err) {
+                      if(ret.status=='success'){
+                        //后删除对话
+                        rong.removeConversation({
+                         conversationType: 'PRIVATE',
+                         targetId:now_id
+                        }, function(ret, err) {
+                           //清除列表
+                           $("li[data-sender-id='"+now_id+"']").remove();
+                        });
+                      }
+                });
+            }
+          }else{
+            toastSuccess('请选择删除的对话!');
+          }
+      });
+    }
+    //监听全选事件
+    function registerAllCheckBoxEvent(){
+      api.addEventListener({
+          name: 'allCheckBoxEvent'
+      }, function(ret, err) {
+         $("input[type='checkbox']").prop('checked',true);
+      });
+    }
+    //监听取消全选事件
+    function registerCancelAllCheckBoxEvent(){
+      api.addEventListener({
+          name: 'cancelAllCheckBoxEvent'
+      }, function(ret, err) {
+         $("input[type='checkbox']").prop('checked',false);
       });
     }
 </script>

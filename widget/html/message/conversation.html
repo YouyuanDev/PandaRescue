@@ -21,9 +21,7 @@
             <span class="fa fa-chevron-left"></span>
         </a>
         <div class="aui-title pr-fontcolor i18n1" name="message">消息</div>
-        <a class="aui-pull-right aui-btn" onclick="openHistoricalMessageList();">
-            <span><span class="aui-margin-l-5 pr-fontcolor">历史消息</span><span class="fa fa-chevron-right pr-fontcolor"></span></span>
-        </a>
+
     </header>
 </body>
 
@@ -58,13 +56,5 @@
             name: 'conversation'
         });
     }
-    //打开历史消息页面
-    function openHistoricalMessageList() {
-        api.openWin({
-            name: 'chat_record_list',
-            url: './chat_record_list.html',
-            reload: true,
-            pageParam: {}
-        });
-    }
+  
 </script>
