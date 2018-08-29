@@ -17,7 +17,6 @@
 
         .container {
             width: 100%;
-
             /*border:1px solid #8B8989;*/
         }
 
@@ -39,6 +38,16 @@
         .pr-empty .empty-title {
             width: 100%;
             font-size: 1rem;
+        }
+
+        .item-active {
+            background-color: #EBEBEB;
+        }
+
+        .item-evaluation {
+            padding: 0.3rem 0.1rem;
+            color: #FF4500;
+            width: auto;
         }
     </style>
 </head>
@@ -202,8 +211,8 @@
     //发送弹出标注信息事件
     function popupBubble(obj) {
         var company_no = $(obj).attr('data-no');
-        $(obj).addClass('pr-bgcolor');
-        $(obj).siblings('li').removeClass('pr-bgcolor');
+        $(obj).addClass('item-active');
+        $(obj).siblings('li').removeClass('item-active');
         var company_location_lon = $(obj).attr('company-location-lon');
         var company_location_lat = $(obj).attr('company-location-lat');
         //计算路程距离
@@ -239,6 +248,7 @@
             '<div id="dis_' + company_no + '" class="aui-list-item-right">直线距离' + distance + 'km</div>' +
             '</div>' +
             '<div class="aui-list-item-text">' + company_address + '</div>' +
+            '<div class="aui-list-item-text"><div class="item-evaluation" data-no="'+company_no+'" onclick="seeEvaluationInformation(this);">查看评价<div></div>' +
             '</div>' +
             '</div>' +
             '</li>';
@@ -254,14 +264,13 @@
                 var $obj = $("li[data-no='" + company_no + "']");
                 if ($obj != undefined) {
                     try {
-                        $obj.addClass('pr-bgcolor');
-                        $obj.siblings('li').removeClass('pr-bgcolor');
-                        var top = $obj.offset().top;
-                        $('.container').animate({
-                            scrollTop: top + "px"
+                        $obj.addClass('item-active');
+                        $obj.siblings('li').removeClass('item-active');
+                        var $container=$('.container');
+                        $(document.body).animate({
+                            scrollTop:$obj.offset().top - $container.offset().top + $container.scrollTop()
                         }, 300);
                     } catch (e) {
-                        alert(234);
                     }
                 }
             }
@@ -282,6 +291,26 @@
             loadNearbyCompany();
 
         });
+    }
+    //查看评价信息
+    function seeEvaluationInformation(obj){
+        var company_no=$(obj).attr('data-no');
+        if(company_no!=undefined){
+          api.openWin({
+            name: 'company_comment',
+            url: '../evaluation/company_comment.html',
+            animation:{
+              type:"push",
+              subType:"from_bottom",
+              duration:300
+            },
+            pageParam:{
+               company_no:company_no
+            }
+          });
+        }else{
+          toastFail("系统繁忙,请稍后重试!");
+        }
     }
 </script>
 
