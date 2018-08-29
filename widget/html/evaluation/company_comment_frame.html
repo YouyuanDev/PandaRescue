@@ -25,17 +25,21 @@
 </head>
 
 <body>
-  <section class="aui-content-padded">
-      <div class="aui-card-list">
-          <div class="aui-card-list-header diy-img">
-               <i class="fa fa-phone-square"></i>
-          </div>
-          <div class="aui-card-list-content-padded">
-              <p class="diy-p diy-font-p i18n1" name="contactnumber">联系电话</p>
-              <p class="diy-p">(021) 6665 0051</p>
-          </div>
-      </div>
-  </section>
+  <div class="aui-content aui-margin-b-15">
+    <ul class="aui-list aui-media-list" id="cmt-list">
+        <li class="aui-list-header">
+             <div class="aui-row">
+                 <div class="aui-row-padded">
+                   <div class="aui-col-xs-12">
+                     <div class="aui-col-xs-6"><span>总评价:</span><span class="item-count"></span></div>
+                      <div class="aui-col-xs-6"></div>
+                   </div>
+                 </div>
+             </div>
+        </li>
+
+    </ul>
+  </div>
 </body>
 
 </html>
@@ -47,10 +51,142 @@
 <script type="text/javascript">
     var language_id = 0;
     var g_company_no;
+    var g_start=1;
     apiready = function() {
         var data=api.pageParam;
         g_company_no=data.company_no;
-        
+        loadAvgRating();
+        loadCompanyComment(g_start);
         hlLanguage("../../i18n/");
+    }
+    //分页加载所有评论
+    function loadCompanyComment(start){
+      if(g_company_no==undefined){
+        return;
+      }
+      var s = 'http://' + serverIP + '/Comment/getCommentByCompanyNo.action';
+      api.ajax({
+          url: s,
+          method: 'post',
+          timeout: 30,
+          dataType: 'json',
+          data: {
+              values: {
+                  company_no:g_company_no,
+                  page:start,
+                  rows:20
+              }
+          }
+      }, function(ret, err) {
+          if (ret) {
+                var data=ret.data;
+                var count=ret.count;
+                $('.item-count').text(count);
+                for (var i = 0; i < data.length; i++) {
+                   $('#cmt-list').append(makeCommentTempalate(data[i]));
+                }
+          } else {
+              toastFail("系统错误,获取评论信息失败!错误码:" + err.code);
+          }
+      });
+
+    }
+    //加载平均rating
+    function loadAvgRating(){
+      if(g_company_no==undefined){
+        return;
+      }
+      var s = 'http://' + serverIP + '/Comment/getAvgRatingByCompanyNo.action';
+      api.ajax({
+          url: s,
+          method: 'post',
+          timeout: 30,
+          dataType: 'json',
+          data: {
+              values: {
+                  comany_no:g_company_no
+              }
+          }
+      }, function(ret, err) {
+          if (ret) {
+
+          } else {
+              toastFail("系统错误,获取平均值失败!错误码:" + err.code);
+          }
+      });
+    }
+    //制作评价模板
+    function makeCommentTempalate(data){
+      var icon_url,nickname;
+      var anonymous=data.anonymous;
+      if(anonymous!=undefined&&(anonymous+'')!='1'){
+        icon_url='http://' + serverIP + '/upload/pictures/'+data.icon_url;
+        nickname="匿名";
+      }else{
+        icon_url='../../image/default_portrait.png';
+        nickname=data.nickname;
+      }
+      var rating=data.rating;
+      var remark=data.remark;
+      var template='';
+      template+='<li class="aui-list-item">';
+      template+=   '<div class="aui-media-list-item-inner">';
+      template+=       '<div class="aui-list-item-media">';
+      template+=             '<img src="'+icon_url+'" onerror="imgExists(this);">';
+      template+=       '</div>';
+      template+=        '<div class="aui-list-item-inner">';
+      template+=            '<div class="aui-list-item-text">';
+      template+=                '<div class="aui-list-item-title">'+nickname+'</div>';
+      template+=                '<div class="aui-list-item-right">'+getDate1(data.comment_time)+'</div>';
+      template+=            '</div>';
+      if(rating!=undefined){
+        template+= '<div class="aui-list-item-text">';
+        template+='<p>';
+        for (var i = 0; i < parseInt(rating); i++) {
+          template+='<span class="fa fa-star fa-2x pr-fontcolor3 star" data-grade="1"></span>';
+        }
+        for (var i = 0; i < 5-parseInt(rating); i++) {
+          template+='<span class="fa fa-star fa-2x pr-fontcolor1 star" data-grade="1"></span>';
+        }
+        template+='</p>';
+        template+=  '</div>';
+        template+= '<div class="aui-list-item-text">';
+        template+='<p class="item-desc pr-fontcolor4">';
+        template+= getCommentDesc(parseInt(rating));
+        template+='</p>';
+        template+=  '</div>';
+        getCommentDesc(parseInt(rating));
+      }
+      if(remark!=undefined){
+        template+= '<div class="aui-list-item-text">';
+        template+= remark;
+        template+=  '</div>';
+      }
+      template+=        '</div>';
+      template+=    '</div>';
+      template+= '</li>';
+      return template;
+    }
+    //评价等级描述
+    function getCommentDesc(index) {
+        var desc = "";
+        switch (index) {
+            case 1:
+                desc = "非常不满意,各方面很差!";
+                break;
+            case 2:
+                desc = "不满意,比较差!";
+                break;
+            case 3:
+                desc = "一般,还需改善!";
+                break;
+            case 4:
+                desc = "比较满意,仍可改善!";
+                break;
+            case 5:
+                desc = "非常满意,无可挑剔!";
+                break;
+        }
+        return desc;
     }
 </script>
