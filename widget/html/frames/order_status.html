@@ -31,6 +31,7 @@
             background-color: #73C0B6;
             color: #fff;
             border-radius: 3px 3px 0px 0px;
+            display: none;
         }
 
         .cancel-order {
@@ -125,9 +126,7 @@
     var map;
     var g_f_id,g_f_zh,g_f_tx,g_f_phone;
     apiready = function() {
-        //registerUpdateOrderStatusEvent();
         map = api.require('bMap');
-        $('.order-status').hide();
         var data = api.pageParam;
         var account_type = data.account_type;
         var order = data.order;
@@ -147,7 +146,16 @@
                 person_lat = arr[1];
             }
         }
-        getRouteDistance(person_lon, person_lat, order.company_location_lon, order.company_location_lat);
+        var company_lon_lat=order.company_user_location;
+        var company_lon, company_lat;
+        if (company_lon_lat != undefined && company_lon_lat != "") {
+            var arr = person_lon_lat.split(',');
+            if (arr.length > 1) {
+                company_lon = arr[0];
+                company_lat = arr[1];
+            }
+        }
+        getRouteDistance(person_lon, person_lat, company_lon, company_lat);
         if (account_type == "person_user") {
             $('.item-name').text(order.company_name);
             $('.item-fee').text(order.service_fee + "元");
@@ -163,22 +171,17 @@
                 }
             }
             $('.item-icon').attr('src', icon_url);
-            // $('.item-phone').attr("disabled", false);
-            // $('.item-phone').removeClass('item-color');
-            //$('.item-phone').attr('data-phone', order.cell_phone);
             g_f_id=order.company_id;
             g_f_zh=order.company_nickname;
-            g_f_tx=order.company_icon_url;
+            g_f_tx='http://' + serverIP + '/upload/pictures/'+order.company_icon_url;
             g_f_phone=order.company_cell_phone;
         } else if (account_type == "company_user") {
             $('.item-icon-container').hide();
             $('.item-name').text(getDate1(order_time));
             $('.item-fee').text(order.service_fee + "元");
-            // $('.item-phone').attr("disabled", true);
-            // $('.item-phone').addClass('item-color');
             g_f_id=order.user_id;
             g_f_zh=order.user_nickname;
-            g_f_tx=order.user_icon_url;
+            g_f_tx='http://' + serverIP + '/upload/pictures/'+order.user_icon_url;
             g_f_phone=order.user_cell_phone;
         }
         if (account_type != undefined && status_code != undefined) {
@@ -285,10 +288,7 @@
 
     //请求支付信息
     function payOrder() {
-
-        //var s = 'http://' + serverIP + '/PersonUser/PersonUserPayOrder.action';
         var s = 'http://' + serverIP + '/Order/getCurrentOrderAliPayInfo.action';
-
         api.ajax({
             url: s,
             method: 'post',
