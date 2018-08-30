@@ -55,6 +55,41 @@
         .item-inner span{
           font-size:1rem;
         }
+        .aui-list .aui-list-item-media img{
+           width:2rem;height:2rem;
+        }
+        .aui-list:before {
+            height: 1px;
+            background-color: #fff;
+            display: block;
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: auto;
+            bottom: auto;
+            width: 100%;
+            z-index: 2;
+            -webkit-transform-origin: 50% 100%;
+            transform-origin: 50% 100%;
+            pointer-events: none;
+        }
+        .aui-list .aui-list-item:after {
+            height: 1px;
+            background-color: #fff;
+            display: block;
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: auto;
+            bottom: auto;
+            width: 100%;
+            z-index: 2;
+            -webkit-transform-origin: 50% 100%;
+            transform-origin: 50% 100%;
+            pointer-events: none;
+        }
     </style>
 </head>
 
@@ -70,7 +105,7 @@
                           </div>
                             <div class="aui-media-list-item-inner">
                                 <div class="aui-list-item-media" style="width:3rem;">
-                                    <img src="../../image/default_portrait.png" class="aui-img-round aui-list-img-sm item-icon" style="width:2rem;height:2rem;">
+                                    <img src="../../image/default_portrait.png" onerror="imgExists(this);" class="aui-img-round aui-list-img-sm item-icon">
                                 </div>
                                 <div class="aui-list-item-inner">
                                     <div class="aui-list-item-text item-nickname">
@@ -135,6 +170,7 @@
     var g_order_no;
     var person_user_location_lon;
     var person_user_location_lat;
+    var g_user_id,g_nickname,g_icon_url;
     apiready = function() {
             map = api.require('bMap');
             var data = api.pageParam;
@@ -149,9 +185,10 @@
                    g_rowData=JSON.parse(g_rowData_str);
                    var order_no=g_rowData.order_no;
                    g_order_no=order_no;
-                   var phone_no=g_rowData.cell_phone;
-                   var icon_url=g_rowData.icon_url;
-                   var nickname=g_rowData.nickname;
+                   g_user_id=g_rowData.user_id;
+                   g_nickname=g_rowData.user_nickname;
+                   var icon_url=g_rowData.user_icon_url;
+                   var phone_no=g_rowData.user_cell_phone;
                    var address=g_rowData.address;
                    var service_type_name=g_rowData.service_type_name;
                    var failure_type_name=g_rowData.failure_type_name;
@@ -164,10 +201,11 @@
                    $('.item-phone').attr('data-phone',phone_no);
                    if(icon_url!=undefined){
                      var url='http://' + serverIP + '/upload/pictures/'+icon_url;
+                     g_icon_url=url;
                      $('.item-icon').attr('src',url);
                    }
-                   if(nickname!=undefined&&nickname!=""){
-                      $('.item-nickname').text(nickname);
+                   if(g_nickname!=undefined&&g_nickname!=""){
+                      $('.item-nickname').text(g_nickname);
                    }else{
                      $('.item-nickname').text('尚未有签名!');
                    }
@@ -216,14 +254,11 @@
         }, function(ret, err) {
             if (ret) {
                 if (ret.status) {
-                    //ret.plans[0].duration;
-                    //alert(order_no + " distance=" + ret.plans[0].distance);
                     $("#dis_" + order_no).text('驾车：'+getDistance(ret.plans[0].distance)+'km '+'耗时：'+convertSecToMin(ret.plans[0].duration)+'分钟');
                 } else {
                     toastFail("系统错误!");
                 }
             } else {
-                //alert(err.msg);
                 toastFail("系统错误" + err.msg);
             }
 
@@ -297,7 +332,32 @@
     }
     //发送消息
     function sendMessage(){
-      toastSuccess("暂未开通此功能!敬请等待!");
+      if(g_user_id==undefined||g_user_id==""||g_nickname==""||g_nickname==""||g_icon_url==undefined||g_icon_url==""){
+         toastFail("未查到此用户,请刷新重试!");
+         return;
+      }
+      var rong = api.require('rongCloud2');
+      if ($api.getStorage('id') == g_user_id) {
+      } else {
+          rong.clearMessagesUnreadStatus({
+              conversationType: 'PRIVATE',
+              targetId: g_user_id
+          }, function(ret, err) {})
+      }
+      api.sendEvent({
+          name: 'UpdateConversationListEvent'
+      });
+      api.openWin({
+          reload: true,
+          name: 'chat',
+          url: '../message/chat.html',
+          pageParam: {
+              id: g_user_id,
+              zh: g_nickname,
+              tx: g_icon_url
+          },
+          vScrollBarEnabled: false,
+      });
     }
     //返回事件
     function back(){

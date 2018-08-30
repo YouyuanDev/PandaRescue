@@ -761,3 +761,12 @@ function getAccount() {
     } catch (e) {}
     return account;
 }
+//中英文提示转换
+function GetTextByLanguage(chTxt,enTxt){
+   var language=getCookie();
+   if(language==undefined||language=="zh-CN"|| language == ""){
+     return chTxt;
+   }else if(language=="en"){
+     return enTxt;
+   }
+}

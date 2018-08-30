@@ -70,12 +70,12 @@
         <div class="aui-tips-title">连接服务器失败!</div>
         <i class="aui-iconfont aui-icon-close" onclick="closeAuiTip();"></i>
     </div>
-    <p>
+    <!-- <p>
         <div class="aui-btn aui-btn-block aui-btn-outlined" onclick="openChat(1,'醉卧沙场笑看红尘','../../image/default_portrait.png')">18703611326</div>
     </p>
     <p>
         <div class="aui-btn aui-btn-block aui-btn-outlined" onclick="openChat(15,'Dr.K','../../image/default_portrait.png')">13774216002</div>
-    </p>
+    </p> -->
     <div class="aui-content aui-margin-b-15 pr-body-bgcolor">
         <ul class="aui-list aui-media-list item-list" id="hh_list">
 
@@ -141,8 +141,8 @@
                         g_senderUserId.push(senderUserId);
                     }
                     var extra = transExtra(rs.latestMessage.extra);
-                    if(extra==undefined){
-                      break;
+                    if (extra == undefined) {
+                        break;
                     }
                     if (extra.xm1 == $api.getStorage('zh')) {
                         var xm = extra.xm2;
@@ -188,17 +188,6 @@
 
     //打开聊天界面
     function openChat(id, xm, tx) {
-        api.openWin({
-            reload: true,
-            name: 'chat',
-            url: './chat.html',
-            pageParam: {
-                id: id,
-                zh: xm,
-                tx: tx
-            },
-            vScrollBarEnabled: false,
-        });
         if ($api.getStorage('id') == id) {
 
         } else {
@@ -210,6 +199,18 @@
         api.sendEvent({
             name: 'UpdateConversationListEvent'
         });
+        api.openWin({
+            reload: true,
+            name: 'chat',
+            url: './chat.html',
+            pageParam: {
+                id: id,
+                zh: xm,
+                tx: tx
+            },
+            vScrollBarEnabled: false,
+        });
+
     }
     //更新回话列表监听器
     function registerUpdateConversationListListener() {
@@ -233,15 +234,15 @@
     //获取历史聊天会话
     function getConversationListByCount() {
         rong.getConversationListByCount({
-          typeList:['private','group','discussion','system'],
-          count:10,
-          startTime:0
-        },function(ret, err) {
-             if(ret){
-               if(ret.result.length>0){
-                 $('.item-historical').show();
-               }
-             }
+            typeList: ['private', 'group', 'discussion', 'system'],
+            count: 10,
+            startTime: 0
+        }, function(ret, err) {
+            if (ret) {
+                if (ret.result.length > 0) {
+                    $('.item-historical').show();
+                }
+            }
         })
     }
 </script>

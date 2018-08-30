@@ -492,7 +492,7 @@
                 if (ret.value.msg.objectName == 'RC:TxtMsg') {
                     txt = expressionConversion(ret.value.msg.content.text);
                     html += '<div class="aui-chat-item aui-chat-left">';
-                    html += '          <div class="aui-chat-media"><img src="' + g_f_tx + '" /></div>';
+                    html += '          <div class="aui-chat-media"><img src="' + g_f_tx + '" onerror="imgExists(this);"/></div>';
                     html += '          <div class="aui-chat-inner"><div class="aui-chat-name">' + g_f_zh + '</div>';
                     html += '               <div class="aui-chat-content">';
                     html += '                        <div class="aui-chat-arrow"></div>';
@@ -502,7 +502,7 @@
                     html += '</div>';
                 } else if (ret.value.msg.objectName == 'RC:ImgMsg') {
                     html += '<div class="aui-chat-item aui-chat-left">';
-                    html += '          <div class="aui-chat-media"><img src="' + g_f_tx + '" /></div>';
+                    html += '          <div class="aui-chat-media"><img src="' + g_f_tx + '" onerror="imgExists(this);"/></div>';
                     html += '          <div class="aui-chat-inner"><div class="aui-chat-name">' + g_f_zh + '</div>';
                     html += '               <div class="aui-chat-content_img">';
                     html += '                        <div class="aui-chat-arrow"></div>';
@@ -512,7 +512,7 @@
                     html += '</div>';
                 } else if (ret.value.msg.objectName == 'RC:VcMsg') {
                     html += '<div class="aui-chat-item aui-chat-left">';
-                    html += '          <div class="aui-chat-media"><img src="' + g_f_tx + '" /></div>';
+                    html += '          <div class="aui-chat-media"><img src="' + g_f_tx + '" onerror="imgExists(this);"/></div>';
                     html += '          <div class="aui-chat-inner"><div class="aui-chat-name">' + g_f_zh + '</div>';
                     html += '               <div class="aui-chat-content_img">';
                     html += '                        <div class="aui-chat-arrow"></div>';

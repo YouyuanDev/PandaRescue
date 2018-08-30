@@ -702,7 +702,7 @@
         }, function(ret, err) {
             if (ret) {
                 var order = undefined;
-                var status_code, status_name, status_name_en, company_user_location, person_user_location, contact_person, cell_phone;
+                var status_code, status_name, status_name_en;
                 if ($.isArray(ret)) {
                     for (var i = 0; i < ret.length; i++) {
                         order = ret[0];
@@ -711,10 +711,6 @@
                         status_code = order.status_code;
                         status_name = order.status_name;
                         status_name_en = order.status_name_en;
-                        company_user_location = order.company_user_location;
-                        person_user_location = order.person_user_location;
-                        contact_person = order.contact_person;
-                        cell_phone = order.cell_phone;
                     }
                     if (g_order_status != status_code) {
                         g_order_status = status_code;
@@ -1417,9 +1413,7 @@
                 duration: 300
             },
             pageParam: {
-                account_type: g_account_type,
-                g_service_type_dict: g_service_type_dict,
-                g_failure_type_dict: g_failure_type_dict
+                account_type: g_account_type
             }
         });
     }

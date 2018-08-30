@@ -27,6 +27,10 @@
         .current-phone{
           display: none;
         }
+        .aui-btn-block{
+          height:2rem;
+          line-height:2rem;
+        }
     </style>
 </head>
 
@@ -78,16 +82,17 @@
                     <div class="aui-list-item-input">
                         <input type="number" placeholder="验证码" id="verificationcode">
                     </div>
+                    <div class="aui-list-item-input">
+                       <button class="aui-btn aui-btn-block pr-fontcolor pr-bgcolor i18n1 send-btn" name="sendauthenticationcode" onclick="sendAuthenticationCode();">发送验证码</button>
+                    </div>
                 </div>
             </li>
         </ul>
     </div>
-    <div class="aui-content aui-margin-b-15">
-        <button class="aui-btn aui-btn-block pr-fontcolor pr-bgcolor i18n1 send-btn" name="sendauthenticationcode" onclick="sendAuthenticationCode();">发送验证码</button>
-    </div>
-    <footer class="aui-bar aui-bar-tab" id="footer">
-        <div class="aui-btn aui-btn-block pr-fontcolor pr-bgcolor i18n1" onclick="" name="confirm" onclick="submitForm();">确认</div>
-    </footer>
+    <div class="aui-btn aui-btn-block pr-fontcolor pr-bgcolor i18n1"  name="confirm" onclick="submitForm();">确认</div>
+    <!-- <footer class="aui-bar aui-bar-tab" id="footer">
+        
+    </footer> -->
 </body>
 
 </html>
@@ -106,9 +111,10 @@
         var account=getAccount();
         if(account!=undefined){
           var phone=account.cell_phone;
+          txt=txt+phone.substring(0,3)+"****"+phone.substring(7,11);
           if(phone!=undefined){
             $('#oldphone').val(phone);
-            $('.current-phone').text(txt+""+phone);
+            $('.current-phone').text(txt);
             $('.current-phone').show();
           }
         }
@@ -125,10 +131,10 @@
         var phone = $('#phone').val().trim();
         if (phone != undefined && phone != "") {
             if (!isPhoneNo(phone)) {
-                toastFail("手机号不合法!");
+                toastFail("新手机号不合法!");
             }
         } else {
-            toastFail("请输入手机号!");
+            toastFail("请输入新手机号!");
             return;
         }
         var s = 'http://' + serverIP + '/Login/APPIsCellphoneNoValidForRegister.action';
@@ -158,7 +164,6 @@
         $('.send-btn').text("剩余" + count + "s");
         $('.send-btn').removeClass('pr-bgcolor');
         codeInterval = setInterval("codeSetInterval()", 1000);
-        return;
         if (phone != undefined && phone != "") {
             var s = 'http://' + serverIP + '/Login/SendVerCodeSMS.action';
             api.ajax({
@@ -218,7 +223,6 @@
           toastFail('请输入验证码!');
           return;
         }
-        return;
         api.confirm({
             title: '提示',
             msg: '确定要修改手机号吗?',
@@ -226,13 +230,15 @@
         }, function(ret, err) {
             var index = ret.buttonIndex;
             if (index == 1) {
-                var s = 'http://' + serverIP + '/AccountOperation/SendVerCodeSMS.action';
+                var s = 'http://' + serverIP + '/Login/APPChangeCellphone.action';
                 api.ajax({
                     url: s,
                     method: 'post',
                     data: {
                         values: {
-                            cellphoneno: phone
+                            old_cellphoneno: oldphone,
+                            new_cellphoneno:newphone,
+                            verifycode:verificationcode
                         }
                     }
                 }, function(ret, err) {
@@ -254,6 +260,11 @@
                             });
                         } else {
                             toastFail(ret.msg);
+                            if (ret.relogin) {
+                                api.sendEvent({
+                                    name: 'reloginEvent'
+                                });
+                            }
                         }
                     } else {
                         toastFail("系统错误!错误码:" + err.code);

@@ -171,9 +171,9 @@
             if (data != undefined) {
                 g_account_type = data.account_type;
                 if (g_account_type == "person_user") {
-                    $('.account-type-span').text("普通用户");
+                    $('.account-type-span').text(GetTextByLanguage("普通用户","Personal"));
                 } else if (g_account_type == "company_user") {
-                    $('.account-type-span').text("商户");
+                    $('.account-type-span').text(GetTextByLanguage("商户","Merchant"));
                 }
             }
             registerTouchEvent();
