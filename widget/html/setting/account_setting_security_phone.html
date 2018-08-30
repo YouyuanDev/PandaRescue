@@ -14,8 +14,18 @@
         .diy-img img {
             margin: auto;
         }
+
         .diy-p {
             text-align: center;
+            word-wrap: break-word;
+        }
+
+        .aui-list .aui-list-item-label {
+            color: #A7A9A9;
+            width: 75%;
+        }
+        .current-phone{
+          display: none;
         }
     </style>
 </head>
@@ -23,7 +33,7 @@
 <body class="pr-body-bgcolor">
     <header id="header" class="aui-bar aui-bar-nav aui-bar-light personal-header pr-bgcolor ">
         <a class="aui-pull-left aui-btn" onclick="closeMyself();">
-            <span  class="fa fa-chevron-left"></span>
+            <span class="fa fa-chevron-left"></span>
         </a>
         <div class="aui-title pr-fontcolor i18n1" name="changephonenumber">修改手机号</div>
     </header>
@@ -33,20 +43,30 @@
                 <img src="../../image/phone.png" />
             </div>
             <div class="aui-card-list-content-padded">
-                <p class="diy-p">您当前的手机号为187****1326</p>
-                <p class="diy-p">更换后其他信息不变,修改后必须使用该手机号重新登录。仅支持修改到未注册的手机号,如果手机号已注册,请退出当前账号,并登录要修改到的手机号进行注销。</p>
+                <p class="diy-p i18n1 current-phone" name="currentphone">您当前的手机号为</p>
+                <p class="diy-p i18n1" name="modufyphonedsc">更换后其他信息不变,修改后必须使用该手机号重新登录。仅支持修改到未注册的手机号,如果手机号已注册,请退出当前账号,并登录要修改到的手机号进行注销。</p>
             </div>
         </div>
     </section>
     <div class="aui-content aui-margin-b-15">
         <ul class="aui-list aui-form-list">
+          <li class="aui-list-item">
+              <div class="aui-list-item-inner">
+                  <div class="aui-list-item-label i18n1" name="oldphonenumber">
+                      旧手机号
+                  </div>
+                  <div class="aui-list-item-input">
+                      <input type="tel" placeholder="旧手机号" id="oldphone">
+                  </div>
+              </div>
+          </li>
             <li class="aui-list-item">
                 <div class="aui-list-item-inner">
                     <div class="aui-list-item-label i18n1" name="newphonenumber">
                         新手机号
                     </div>
                     <div class="aui-list-item-input">
-                        <input type="tel" placeholder="新手机号">
+                        <input type="tel" placeholder="新手机号" id="phone">
                     </div>
                 </div>
             </li>
@@ -56,24 +76,17 @@
                         验证码
                     </div>
                     <div class="aui-list-item-input">
-                        <input type="number" placeholder="验证码">
+                        <input type="number" placeholder="验证码" id="verificationcode">
                     </div>
                 </div>
             </li>
-            <!-- <li class="aui-list-item">
-                <div class="aui-list-item-inner">
-                    <div class="aui-list-item-input">
-                       <div class="aui-btn aui-btn-block pr-bgcolor i18n1" name="sendauthenticationcode">发送验证码</div>
-                    </div>
-                </div>
-            </li> -->
         </ul>
     </div>
     <div class="aui-content aui-margin-b-15">
-      <div class="aui-btn aui-btn-block pr-fontcolor pr-bgcolor i18n1" name="sendauthenticationcode">发送验证码</div>
+        <button class="aui-btn aui-btn-block pr-fontcolor pr-bgcolor i18n1 send-btn" name="sendauthenticationcode" onclick="sendAuthenticationCode();">发送验证码</button>
     </div>
     <footer class="aui-bar aui-bar-tab" id="footer">
-        <div class="aui-btn aui-btn-block pr-fontcolor pr-bgcolor i18n1" onclick="" name="changephonenumber">确认更换</div>
+        <div class="aui-btn aui-btn-block pr-fontcolor pr-bgcolor i18n1" onclick="" name="confirm" onclick="submitForm();">确认</div>
     </footer>
 </body>
 
@@ -85,14 +98,168 @@
 <script type="text/javascript" src="../../script/common.js"></script>
 <script type="text/javascript">
     var language_id = 0;
+    var count = 60;
     apiready = function() {
-            fnSettingHeader();
-            hlLanguage("../../i18n/");
+        fnSettingHeader();
+        hlLanguage("../../i18n/");
+        var txt=$('.current-phone').text();
+        var account=getAccount();
+        if(account!=undefined){
+          var phone=account.cell_phone;
+          if(phone!=undefined){
+            $('#oldphone').val(phone);
+            $('.current-phone').text(txt+""+phone);
+            $('.current-phone').show();
+          }
         }
+    }
 
     function closeMyself() {
         api.closeFrame({
             name: 'account_setting_security_phone'
+        });
+    }
+    //发送验证码
+    function sendAuthenticationCode() {
+        //判断用户是否已经注册
+        var phone = $('#phone').val().trim();
+        if (phone != undefined && phone != "") {
+            if (!isPhoneNo(phone)) {
+                toastFail("手机号不合法!");
+            }
+        } else {
+            toastFail("请输入手机号!");
+            return;
+        }
+        var s = 'http://' + serverIP + '/Login/APPIsCellphoneNoValidForRegister.action';
+        api.ajax({
+            url: s,
+            method: 'post',
+            data: {
+                values: {
+                    cellphoneno: phone
+                }
+            }
+        }, function(ret, err) {
+            if (ret) {
+                if (ret.success) {
+                    sendVerificationCode(phone);
+                } else {
+                    toastFail("不能使用已存在的手机号!");
+                }
+            } else {
+                toastFail("系统错误!错误码:" + err.code);
+            }
+        });
+    }
+    //发送验证码
+    function sendVerificationCode(phone) {
+        $('.send-btn').attr("disabled", true);
+        $('.send-btn').text("剩余" + count + "s");
+        $('.send-btn').removeClass('pr-bgcolor');
+        codeInterval = setInterval("codeSetInterval()", 1000);
+        return;
+        if (phone != undefined && phone != "") {
+            var s = 'http://' + serverIP + '/Login/SendVerCodeSMS.action';
+            api.ajax({
+                url: s,
+                method: 'post',
+                data: {
+                    values: {
+                        cellphoneno: phone
+                    }
+                }
+            }, function(ret, err) {
+                if (ret) {
+                    if (ret.success) {
+                        toastSuccess(ret.msg);
+                        $('.send-btn').attr("disabled", "disabled");
+                        $('.send-btn').text("剩余" + count + "s");
+                        $('.send-btn').removeClass('pr-bgcolor');
+                        codeInterval = setInterval("codeSetInterval()", 1000);
+                    } else {
+                        toastFail(ret.msg);
+                    }
+                } else {
+                    toastFail("系统错误!错误码:" + err.code);
+                }
+            });
+        } else {
+            toastFail("请输入手机号!");
+        }
+    }
+    //设置倒计时
+    function codeSetInterval() {
+        if (count > 1) {
+            count--;
+            $('.send-btn').text("剩余" + count + "s");
+        } else {
+            clearInterval(codeInterval);
+            $('.send-btn').removeAttr("disabled");
+            $('.send-btn').text("发送验证码");
+            $('.send-btn').addClass('pr-bgcolor');
+            count = 60;
+        }
+    }
+    //表单提交
+    function submitForm() {
+        var oldphone=$('#oldphone').val();
+        var newphone=$('#phone').val();
+        var verificationcode=$('#verificationcode').val();
+        if(oldphone==undefined||oldphone==""){
+          toastFail('请输入旧手机号!');
+          return;
+        }
+        if(newphone==undefined||newphone==""){
+          toastFail('请输入新手机号!');
+          return;
+        }
+        if(verificationcode==undefined||verificationcode==""){
+          toastFail('请输入验证码!');
+          return;
+        }
+        return;
+        api.confirm({
+            title: '提示',
+            msg: '确定要修改手机号吗?',
+            buttons: ['确定', '取消']
+        }, function(ret, err) {
+            var index = ret.buttonIndex;
+            if (index == 1) {
+                var s = 'http://' + serverIP + '/AccountOperation/SendVerCodeSMS.action';
+                api.ajax({
+                    url: s,
+                    method: 'post',
+                    data: {
+                        values: {
+                            cellphoneno: phone
+                        }
+                    }
+                }, function(ret, err) {
+                    if (ret) {
+                        if (ret.success) {
+                            //修改成功后清除Storage中账户信息
+                            $api.rmStorage('g_account');
+                            $api.rmStorage('token');
+                            $api.rmStorage('zh');
+                            $api.rmStorage('id');
+                            $api.rmStorage('tx');
+                            //跳转到登录页面
+                            api.openWin({
+                                name: 'login',
+                                url: '../login/login.html',
+                                pageParam: {
+                                    name: 'test'
+                                }
+                            });
+                        } else {
+                            toastFail(ret.msg);
+                        }
+                    } else {
+                        toastFail("系统错误!错误码:" + err.code);
+                    }
+                });
+            }
         });
     }
 </script>

@@ -698,15 +698,9 @@ function loadAllOrderStatus() {
 }
 //判断图片是否有效
 function imgExists(e) {
-    var imgurl = '../../image/default_portrait.png';
-    var ImgObj = new Image(); //判断默认图片是否存在
-    ImgObj.src = imgurl;
-    //没有图片，则返回-1
-    if (ImgObj.fileSize > 0 || (ImgObj.width > 0 && ImgObj.height > 0)) {
-        e.src = imgurl;
-    } else {
-        e.onerror = null;
-    }
+    var imgurl = 'http://' + serverIP + '/images/default_portrait.png';
+    e.src = imgurl;
+    e.onerror = null;
 }
 //获取当前用户token
 function setToken() {
@@ -767,4 +761,3 @@ function getAccount() {
     } catch (e) {}
     return account;
 }
- 
