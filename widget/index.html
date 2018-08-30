@@ -168,12 +168,12 @@
             },
             zoomLevel: 17,
             showUserLocation: true,
-            fixed:false
+            fixed: false
         }, function(ret) {
             if (ret.status) {
-                setTimeout(function() {
-                    showUserLocation();
-                }, 100);
+                //setTimeout(function() {
+                showUserLocation();
+                //}, 100);
                 setTimeout(function() {
                     getLocationServices();
                 }, 200);
@@ -203,17 +203,31 @@
     }
     //5.获取用户位置信息
     function getUserLocation() {
-        map.getCurrentLocation(
-            function(ret, err) {
-                if (ret.status) {
-                    g_my_lon = ret.lon;
-                    g_my_lat = ret.lat;
-                    initMapSDKOK();
-                } else {
-                    map.stopLocation();
-                    toastFail('getUserLocation 失败');
-                }
-            });
+        map.getLocation({
+            accuracy: '10m',
+            autoStop: true,
+            filter: 1
+        }, function(ret, err) {
+            if (ret.status) {
+              g_my_lon = ret.lon;
+              g_my_lat = ret.lat;
+              initMapSDKOK();
+            } else {
+                map.stopLocation();
+                toastFail('定位失败,刷新重试!');
+            }
+        });
+        // map.getCurrentLocation(
+        //     function(ret, err) {
+        //         if (ret.status) {
+        //             g_my_lon = ret.lon;
+        //             g_my_lat = ret.lat;
+        //             initMapSDKOK();
+        //         } else {
+        //             map.stopLocation();
+        //             toastFail('getUserLocation 失败');
+        //         }
+        //     });
     }
     //初始化地图成功,获取最新订单信息
     function initMapSDKOK() {
@@ -537,7 +551,7 @@
         api.addEventListener({
             name: 'refreshEvent'
         }, function(ret, err) {
-            getCurrentOrder();
+            getUserLocation();
         });
     }
 
@@ -1287,7 +1301,7 @@
         }, function(ret, err) {
             try {
                 if (ret) {
-                    g_service_type_dict =ret.value.g_service_type_dict;
+                    g_service_type_dict = ret.value.g_service_type_dict;
                 }
             } catch (e) {
                 toastFail("系统错误,解析服务类型异常!");
@@ -1301,7 +1315,7 @@
         }, function(ret, err) {
             try {
                 if (ret) {
-                    g_failure_type_dict =ret.value.g_failure_type_dict;
+                    g_failure_type_dict = ret.value.g_failure_type_dict;
                 }
             } catch (e) {
                 toastFail("系统错误,解析故障类型异常!");

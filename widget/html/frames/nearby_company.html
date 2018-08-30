@@ -47,13 +47,29 @@
 
         .item-evaluation {
             padding: 0.3rem 0.1rem;
-            color: #FF4500;
+            color: #FFA500;
             width: auto;
+        }
+        .aui-list:before {
+            height: 1px;
+            background-color: #fff;
+            display: block;
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: auto;
+            bottom: auto;
+            width: 100%;
+            z-index: 2;
+            -webkit-transform-origin: 50% 100%;
+            transform-origin: 50% 100%;
+            pointer-events: none;
         }
     </style>
 </head>
 
-<body class="wrap pr-body-bgcolor">
+<body class="pr-body-bgcolor">
     <div class="container">
         <div class="aui-content aui-margin-b-15">
             <div class="poilist-container">
@@ -109,7 +125,6 @@
                   if(ret.rows.length<=0){
                     allow_scroll=false;
                   }
-                  //g_CompanyList.length = 0;
                   for (var i=0; i <ret.rows.length; i++) {
                       var id=g_companyList.length+i;
                       annotations.push( {
@@ -150,10 +165,8 @@
     function showCompany(company_data) {
         if (company_data != undefined) {
             var template = "";
-            //alert("company_data.length="+company_data.length);
             for (var i = 0; i < company_data.length; i++) {
                 template += companyListTemplate(company_data[i].company_location_lon, company_data[i].company_location_lat, company_data[i].company_no, company_data[i].company_name, company_data[i].address, getDistance(company_data[i].distance),company_data[i].upload_files);
-                //getRouteDistance(company_data[i]);
             }
             $('#poilist-ul').append(template);
             if (company_data.length <= 0) {
@@ -187,10 +200,7 @@
         }, function(ret, err) {
             if (ret) {
                 if (ret.status) {
-                    //ret.plans[0].duration;
-                    //alert(company_no + " distance=" + ret.plans[0].distance);
                     $("#dis_" + company_no).text('驾车：' + getDistance(ret.plans[0].distance) + 'km ' + '耗时：' + convertSecToMin(ret.plans[0].duration) + '分钟');
-
                 } else {
                     toastFail("系统错误!");
                 }
@@ -292,16 +302,18 @@
         if(company_no!=undefined){
           api.openWin({
             name: 'company_comment',
-            url: '../evaluation/company_comment.html',
+            url: '../comment/company_comment.html',
             animation:{
               type:"push",
               subType:"from_bottom",
               duration:300
             },
+            bgColor:'#000',
             pageParam:{
                company_no:company_no
             }
           });
+
         }else{
           toastFail("系统繁忙,请稍后重试!");
         }

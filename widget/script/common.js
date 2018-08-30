@@ -254,7 +254,7 @@ function expressionConversion(text) {
         '[右太极]': '<span><img src="../../emotion/Expression_105.png"  width="28" /></span>'
     };
     str = msg.replace(reg, function(a, b) {
-        return face[a] ? face[a] :a;
+        return face[a] ? face[a] : a;
     });
     return str;
 }
@@ -552,10 +552,10 @@ function leaveAllPushGroup() {
     });
 }
 //清空setStorage
-function clearStorage(){
-  $api.rmStorage('g_service_type_dict');
-  $api.rmStorage('g_failure_type_dict');
-  $api.rmStorage('g_order_status');
+function clearStorage() {
+    $api.rmStorage('g_service_type_dict');
+    $api.rmStorage('g_failure_type_dict');
+    $api.rmStorage('g_order_status');
 }
 
 //加载服务类型
@@ -767,3 +767,4 @@ function getAccount() {
     } catch (e) {}
     return account;
 }
+ 
