@@ -11,15 +11,58 @@
     <link rel="stylesheet" type="text/css" href="../../css/font-awesome.min.css" />
     <link rel="stylesheet" type="text/css" href="../../css/style.css" />
     <style>
-    .diy-img i {
-        margin: auto;
-        font-size:4rem;
+    .aui-list .aui-list-header{
+       display: none;
+       background-color:#F2F5F6;
     }
-    .diy-p {
+    .item-header{
+      text-align: center;
+    }
+    .item-header span{
+      font-size:0.7rem;
+    }
+    .item-header .item-avg-rating,.item-header .item-count{
+      font-size:1rem;
+    }
+    .aui-row{
+      width:100%;
+      padding:0.5rem;
+    }
+    .aui-list .aui-list-item-media{
+      width:3rem;
+      height:3rem;
+      padding:0.5rem 0.2rem 0.5rem 0rem;
+      padding-right: 0.5rem;
+    }
+    .aui-list .aui-list-item-media img{
+       width:2rem;
+       height:2rem;
+       border-radius:50%;
+    }
+    .pr-empty {
+        padding:40px 10px;
         text-align: center;
+        display: none;
     }
-    .diy-font-p{
-      font-size:0.8rem;color:#000;
+    .item-remark{
+       padding:0.2rem;
+       background-color:#F2F5F6;
+    }
+    .item-star{
+      padding:0.2rem 0rem;
+    }
+    .item-desc{
+      padding:0.3rem 0rem;
+    }
+   .item-content-container{
+      padding-left:0rem;
+      padding-top:0.2rem;
+      padding-bottom:0.2rem;
+    }
+    .item-content-select {
+        border: 1px solid #A7A9A9;
+        color:#A7A9A9;
+        text-align: center;
     }
     </style>
 </head>
@@ -31,14 +74,16 @@
              <div class="aui-row">
                  <div class="aui-row-padded">
                    <div class="aui-col-xs-12">
-                     <div class="aui-col-xs-6"><span>总评价:</span><span class="item-count"></span></div>
-                      <div class="aui-col-xs-6"></div>
+                      <div class="aui-col-xs-6 item-header"><span class="i18n1" name="score">评分:</span><span class="item-avg-rating pr-fontcolor5"></span></div>
+                      <div class="aui-col-xs-6  item-header"><span class="i18n1" name="totalevaluation">总评价:</span><span class="item-count pr-fontcolor5"></span></div>
                    </div>
                  </div>
              </div>
         </li>
-
     </ul>
+  </div>
+  <div class="pr-empty">
+      <span class="empty-title"><span class="fa fa-info" style="padding-right:0.3rem;"></span><span class="i18n1" name="noevaluation">暂无评价!</span><span>
   </div>
 </body>
 
@@ -57,6 +102,7 @@
         g_company_no=data.company_no;
         loadAvgRating();
         loadCompanyComment(g_start);
+        isRollingToEnd();
         hlLanguage("../../i18n/");
     }
     //分页加载所有评论
@@ -64,6 +110,7 @@
       if(g_company_no==undefined){
         return;
       }
+      openLoading();
       var s = 'http://' + serverIP + '/Comment/getCommentByCompanyNo.action';
       api.ajax({
           url: s,
@@ -79,15 +126,27 @@
           }
       }, function(ret, err) {
           if (ret) {
-                var data=ret.data;
-                var count=ret.count;
-                $('.item-count').text(count);
-                for (var i = 0; i < data.length; i++) {
-                   $('#cmt-list').append(makeCommentTempalate(data[i]));
+                if(ret.success){
+                  var data=ret.data;
+                  var count=ret.count;
+                  $('.item-count').text(count);
+                  if($.isArray(data)){
+                    if(data.length>0){
+                      $('.aui-list-header').show();
+                      for (var i = 0; i < data.length; i++) {
+                         $('#cmt-list').append(makeCommentTempalate(data[i]));
+                      }
+                    }else{
+                      $('.pr-empty').show();
+                    }
+                  }
+                }else{
+                   $('.pr-empty').show();
                 }
           } else {
               toastFail("系统错误,获取评论信息失败!错误码:" + err.code);
           }
+          closeLoading();
       });
 
     }
@@ -104,14 +163,14 @@
           dataType: 'json',
           data: {
               values: {
-                  comany_no:g_company_no
+                  company_no:g_company_no
               }
           }
       }, function(ret, err) {
           if (ret) {
-
-          } else {
-              toastFail("系统错误,获取平均值失败!错误码:" + err.code);
+             if(ret.success){
+                $('.item-avg-rating').text(ret.message);
+             }
           }
       });
     }
@@ -119,15 +178,16 @@
     function makeCommentTempalate(data){
       var icon_url,nickname;
       var anonymous=data.anonymous;
-      if(anonymous!=undefined&&(anonymous+'')!='1'){
+      if(anonymous!=undefined&&anonymous!='1'){
         icon_url='http://' + serverIP + '/upload/pictures/'+data.icon_url;
-        nickname="匿名";
+        nickname=data.nickname;
       }else{
         icon_url='../../image/default_portrait.png';
-        nickname=data.nickname;
+        nickname="匿名";
       }
       var rating=data.rating;
       var remark=data.remark;
+      var options=data.options;
       var template='';
       template+='<li class="aui-list-item">';
       template+=   '<div class="aui-media-list-item-inner">';
@@ -137,11 +197,11 @@
       template+=        '<div class="aui-list-item-inner">';
       template+=            '<div class="aui-list-item-text">';
       template+=                '<div class="aui-list-item-title">'+nickname+'</div>';
-      template+=                '<div class="aui-list-item-right">'+getDate1(data.comment_time)+'</div>';
+      template+=                '<div class="aui-list-item-right">'+timeDifference(data.comment_time)+'</div>';
       template+=            '</div>';
       if(rating!=undefined){
         template+= '<div class="aui-list-item-text">';
-        template+='<p>';
+        template+='<p class="item-star">';
         for (var i = 0; i < parseInt(rating); i++) {
           template+='<span class="fa fa-star fa-2x pr-fontcolor3 star" data-grade="1"></span>';
         }
@@ -150,15 +210,30 @@
         }
         template+='</p>';
         template+=  '</div>';
+      }
+      if(options!=undefined){
+        var arr=options.split(',');
+        template+= '<div class="aui-list-item-text">';
+        template+= '<div class="aui-row  item-content-container">';
+        template+= '    <div class="aui-row-padded">';
+        for (var i = 0; i < arr.length; i++) {
+           if(arr[i]!=undefined&&arr[i]!=""){
+               template+=setCommentOptionTemplate(arr[i]);
+           }
+        }
+        template+= '   </div>';
+        template+= '</div>';
+        template+= '</div>';
+      }
+      if(rating!=undefined){
         template+= '<div class="aui-list-item-text">';
         template+='<p class="item-desc pr-fontcolor4">';
         template+= getCommentDesc(parseInt(rating));
         template+='</p>';
         template+=  '</div>';
-        getCommentDesc(parseInt(rating));
       }
       if(remark!=undefined){
-        template+= '<div class="aui-list-item-text">';
+        template+= '<div class="aui-list-item-text item-remark">';
         template+= remark;
         template+=  '</div>';
       }
@@ -188,5 +263,24 @@
                 break;
         }
         return desc;
+    }
+    //设置评论选项模板
+    function setCommentOptionTemplate(str) {
+        var template = '<div class="aui-col-xs-6">' +
+            '  <div class="item-content item-content-select pr-fontcolor1">' + str + '</div>' +
+            '  </div>';
+        return template;
+    }
+    //是否滚动到底部
+    function isRollingToEnd() {
+        api.addEventListener({
+            name: 'scrolltobottom',
+            extra: {
+                threshold: 0 //设置距离底部多少距离时触发,默认值为0,数字类型
+            }
+        }, function(ret, err) {
+            g_start=g_start+1;
+            loadCompanyComment(g_start);
+        });
     }
 </script>

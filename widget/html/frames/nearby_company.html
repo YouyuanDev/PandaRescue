@@ -33,6 +33,7 @@
             width: 100%;
             height: auto;
             text-align: center;
+            display: none;
         }
 
         .pr-empty .empty-title {
@@ -53,9 +54,6 @@
 </head>
 
 <body class="wrap pr-body-bgcolor">
-    <!-- <div class="pr-empty">
-        <span class="empty-title"><span class="fa fa-info" style="padding-right:0.3rem;"></span><span class="i18n1" name="nobusiness">附近暂无商家!</span><span>
-    </div> -->
     <div class="container">
         <div class="aui-content aui-margin-b-15">
             <div class="poilist-container">
@@ -75,22 +73,18 @@
 <script type="text/javascript" src="../../script/jquery-3.3.1.min.js"></script>
 <script type="text/javascript" src="../../script/common.js"></script>
 <script type="text/javascript">
-    //var company_data;
     var my_lon;
     var my_lat;
     var g_start=1;
     var allow_scroll=true;
     var g_companyList=[];
     apiready = function() {
-        $('.pr-empty').hide();
         var data = api.pageParam;
-        //company_data = data.company;
         my_lon = data.g_my_lon;
         my_lat = data.g_my_lat;
         map = api.require('bMap');
         registerCompanyInfoScrollEvent();
         loadNearbyCompany();
-        //showCompany();
         isRollingToEnd();
     }
     // //加载附近的商户
@@ -248,7 +242,7 @@
             '<div id="dis_' + company_no + '" class="aui-list-item-right">直线距离' + distance + 'km</div>' +
             '</div>' +
             '<div class="aui-list-item-text">' + company_address + '</div>' +
-            '<div class="aui-list-item-text"><div class="item-evaluation" data-no="'+company_no+'" onclick="seeEvaluationInformation(this);">查看评价<div></div>' +
+            '<div class="aui-list-item-text"><div class="item-evaluation" data-no="'+company_no+'" onclick="openReviewsInformation(this);">查看评价<div></div>' +
             '</div>' +
             '</div>' +
             '</li>';
@@ -293,7 +287,7 @@
         });
     }
     //查看评价信息
-    function seeEvaluationInformation(obj){
+    function openReviewsInformation(obj){
         var company_no=$(obj).attr('data-no');
         if(company_no!=undefined){
           api.openWin({

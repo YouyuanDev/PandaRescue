@@ -11,15 +11,14 @@
     <link rel="stylesheet" type="text/css" href="../../css/font-awesome.min.css" />
     <link rel="stylesheet" type="text/css" href="../../css/style.css" />
     <style>
-        .img-son,
         .img-son {
-            height: 6rem;
+            height:6rem;
         }
-
         .img-container {
             padding: 0.5rem;
+            padding-top:0rem;
+            margin-top:-0.5rem;
         }
-
         .company-pic {
             padding: 0.1rem;
             width: 100%;
@@ -37,6 +36,19 @@
 
         .aui-list .aui-list-item-label {
             width: 55%;
+        }
+        .item-upload{
+          width:100%;
+          text-align: center;
+          padding:0.2rem 0.5rem;
+        }
+        .item-upload img{
+          margin: auto;
+          width:1rem;
+          height:1rem
+        }
+        .item-delete-tip{
+          display: none;
         }
     </style>
 </head>
@@ -177,13 +189,14 @@
         <ul class="aui-list aui-form-list">
             <li class="aui-list-item">
                 <div class="aui-list-item-inner">
-                    <!-- <div class="aui-list-item-label i18n1" name="putforwardcash">
-                        提现
-                    </div> -->
                     <div class="aui-list-item-input">
-                        <!-- <div class="aui-label company-balance"></div> -->
                         <div class="item-cash">
                             <div class="aui-btn aui-btn-block pr-fontcolor pr-bgcolor i18n1" name="withdraw" onclick="putForwardCash();">提现</div>
+                        </div>
+                    </div>
+                    <div class="aui-list-item-input">
+                        <div class="item-cash">
+                            <div class="aui-btn aui-btn-block i18n1" name="viewreviews" onclick="openReviewsInformation();">查看评价</div>
                         </div>
                     </div>
                 </div>
@@ -191,25 +204,19 @@
         </ul>
     </div>
     <section class="aui-grid img-container">
-        <div class="aui-row">
-            <div class="aui-col-xs-4 img-plus" onclick="addCompanyPicture();">
+        <div class="aui-row img-plus">
+            <!-- <div class="aui-col-xs-4 img-plus" onclick="addCompanyPicture();">
                 <img src="../../image/add_picture.png" class="company-pic" />
-            </div>
+            </div> -->
         </div>
     </section>
-    <!-- <div class="aui-content aui-margin-b-15 img-container">
-        <ul class="aui-list aui-form-list">
-            <li class="aui-list-item">
-                <div class="aui-list-item-inner">
-                    <div class="aui-row aui-row-padded">
-                        <div class="aui-col-xs-4 img-plus" onclick="addCompanyPicture();">
-                            <img src="../../image/add_picture.png" class="company-pic" />
-                        </div>
-                    </div>
-                </div>
-            </li>
-        </ul>
-    </div> -->
+    <div class="aui-content">
+      <p class="item-upload i18n1" name="uploadpictureandfindyou">*上传几张店铺照片,方便用户能够找到你!</p>
+      <p class="item-upload i18n1 item-delete-tip" name="clickdelete">*点击图片删除!</p>
+      <p class="item-upload" onclick="addCompanyPicture();">
+        <img src="../../image/upload.png"/>
+      </p>
+    </div>
 </body>
 
 </html>
@@ -222,16 +229,15 @@
     var g_id, g_is_verified, g_upload_files = "",
         g_balance = "";
     var map;
+    var g_company_no;
     apiready = function() {
+            $('.img-plus').empty();
             fnSettingHeader();
+            map = api.require('bMap');
+            loadCompanyInfo();
             registerUploadPhotosEvent();
             registerSaveCompanyUserInfoEvent();
             registerUpdateCompanyProfileEvent();
-            map = api.require('bMap');
-            var data = api.pageParam;
-            if (data != undefined) {
-                loadCompanyInfo();
-            }
             hlLanguage("../../i18n/");
         }
         //商户信息修改
@@ -285,7 +291,6 @@
     }
     //加载商户信息
     function loadCompanyInfo() {
-        $('.img-son').remove();
         openLoading();
         var s = 'http://' + serverIP + '/CompanyUser/getCompanyUserInfo.action';
         api.ajax({
@@ -299,6 +304,7 @@
                     company_location_lat, contact_person, cell_phone, address, lane_line, is_verified, balance, upload_files;
                 if (ret.success) {
                     g_id = ret.company.id;
+                    g_company_no=ret.company.company_no;
                     company_name = ret.company.company_name;
                     company_tax_code = ret.company.company_tax_code;
                     company_location_lon = ret.company.company_location_lon;
@@ -367,17 +373,16 @@
                 if (upload_files != undefined && upload_files != "") {
                     g_upload_files = upload_files;
                     var imgArr = upload_files.split(';');
-
                     var imgUrl = 'http://' + serverIP + '/upload/pictures/';
                     var count = 0;
                     for (var i = 0; i < imgArr.length; i++) {
                         if (imgArr[i] != "") {
-                            $('.img-plus').before(makeTemplateOfCompanyUserInfo(imgArr[i], imgUrl + imgArr[i]));
+                            $('.img-plus').append(makeTemplateOfCompanyUserInfo(imgArr[i], imgUrl + imgArr[i]));
                             count++;
                         }
                     }
                     if (count > 0) {
-                        $('.img-container').show();
+                        $('.img-container').show();$('.item-delete-tip').show();
                     }
                 }
             } else {
@@ -524,7 +529,7 @@
                     toastSuccess(ret.message);
                     var url = 'http://' + serverIP + '/upload/pictures/' + imgUrl;
                     g_upload_files = g_upload_files + imgUrl + ";";
-                    $('.img-plus').before(makeTemplateOfCompanyUserInfo(imgUrl, url));
+                    $('.img-plus').append(makeTemplateOfCompanyUserInfo(imgUrl, url));
                 } else {
                     toastFail(ret.message);
                 }
@@ -556,5 +561,24 @@
         }, function(ret, err) {
             loadCompanyInfo();
         });
+    }
+    //打开评价
+    function openReviewsInformation(){
+      if(g_company_no!=undefined){
+        api.openWin({
+          name: 'company_comment',
+          url: '../evaluation/company_comment.html',
+          animation:{
+            type:"push",
+            subType:"from_bottom",
+            duration:300
+          },
+          pageParam:{
+             company_no:g_company_no
+          }
+        });
+      }else{
+        toastFail("系统繁忙,请稍后重试!");
+      }
     }
 </script>

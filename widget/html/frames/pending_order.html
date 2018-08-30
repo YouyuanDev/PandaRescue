@@ -29,6 +29,7 @@
             width: 100%;
             height: auto;
             text-align: center;
+            display: none;
         }
 
         .pr-empty .empty-title {
@@ -58,9 +59,6 @@
 </head>
 
 <body class="wrap">
-    <!-- <div class="pr-empty">
-        <span class="empty-title"><span class="fa fa-info" style="padding-right:0.3rem;"></span><span>暂无订单!</span><span>
-    </div> -->
     <div class="container">
         <div class="aui-content aui-margin-b-15">
             <div class="poilist-container">
@@ -138,7 +136,6 @@
     var person_user_location_lon;
     var person_user_location_lat;
     apiready = function() {
-            $('.pr-empty').hide();
             map = api.require('bMap');
             var data = api.pageParam;
             var g_rowData_str=data.rowData;
@@ -147,10 +144,9 @@
             g_my_lon=data.my_lon;
             g_my_lat=data.my_lat;
             g_headerH=data.g_headerH;
-
             if(g_rowData_str!=undefined){
               try{
-                g_rowData=JSON.parse(g_rowData_str);
+                   g_rowData=JSON.parse(g_rowData_str);
                    var order_no=g_rowData.order_no;
                    g_order_no=order_no;
                    var phone_no=g_rowData.cell_phone;
