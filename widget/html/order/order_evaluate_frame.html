@@ -143,7 +143,7 @@
                 <div class="aui-list-item item-submit-container">
                     <div class="aui-list-item-inner">
                         <div class="aui-list-item-title item-title">
-                            <div class="aui-btn aui-btn-block i18n1 item-submit" name="submit" onclick="submitForm();">提交</div>
+                            <div class="aui-btn aui-btn-block i18n1 item-submit pr-bgcolor" name="submit" onclick="submitForm();">提交</div>
                         </div>
                     </div>
                 </div>
@@ -156,13 +156,12 @@
 <script type="text/javascript" src="../../script/common.js"></script>
 <script type="text/javascript" src="../../script/language.js"></script>
 <script type="text/javascript">
-    var g_order_no, g_person_user_no, g_comany_no;
-    var g_winHeight;
-    var g_goodArr, g_badArr;
-    var g_rating, g_options, g_remark, g_person_user_no, g_anonymous, g_comany_no;
+    var g_winHeight,g_goodArr, g_badArr;
+    var g_order_no,g_rating, g_options, g_remark, g_person_user_no, g_anonymous, g_comany_no;
     apiready = function() {
             var data = api.pageParam;
             var order = data.order;
+            g_order_no=data.order_no;
             g_account_type = data.account_type;
             g_person_user_no = data.person_user_no;
             g_comany_no = data.company_no;
@@ -350,7 +349,7 @@
         });
         g_options = g_options_arr.join(',');
         g_remark = $('.item-textarea').val();
-        if (g_person_user_no == undefined && g_person_user_no == "" || g_comany_no == undefined || g_comany_no == "") {
+        if (g_order_no==undefined||g_order_no==""||g_person_user_no == undefined ||g_person_user_no == "" || g_comany_no == undefined || g_comany_no == "") {
             toastFail("评价失败!");
             return;
         }
@@ -367,6 +366,7 @@
             data: {
                 values: {
                     id: 0,
+                    order_no:g_order_no,
                     rating: g_rating,
                     options: g_options,
                     remark: g_remark,

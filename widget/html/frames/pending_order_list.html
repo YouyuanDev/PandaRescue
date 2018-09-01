@@ -29,7 +29,7 @@
             width: 100%;
             height: auto;
             text-align: center;
-            display:none;
+            display: none;
         }
 
         .pr-empty .empty-title {
@@ -83,7 +83,6 @@
     var map;
     var my_lon,my_lat;
     var g_start=1;
-    var allow_scroll=true;
     var g_companyList=[];
     var g_headerH;
     apiready = function() {
@@ -101,41 +100,44 @@
         }
         //加载所有未接单的订单
         function loadAllPendingOrder() {
-            if (my_lon != undefined && my_lat != undefined) {
-                var s = 'http://' + serverIP + '/CompanyUser/getNearByPendingOrders.action';
-                api.ajax({
-                    url: s,
-                    method: 'post',
-                    data: {
-                        values: {
-                            lon: my_lon,
-                            lat:my_lat,
-                            page: g_start,
-                            rows: 20
-                        }
+            if(my_lon==undefined||my_lon==""||my_lat== undefined||my_lat==""){
+              toastFail("无定位信息");
+              return;
+            }
+            var s = 'http://' + serverIP + '/CompanyUser/getNearByPendingOrders.action';
+            api.ajax({
+                 url: s,
+                 method: 'post',
+                 data: {
+                    values: {
+                        lon: my_lon,
+                        lat:my_lat,
+                        page: g_start,
+                        rows: 20
                     }
+                 }
                 }, function(ret, errs) {
                     try{
-
-
-                    if (ret) {
-                      var annotations = [];
-                      var bubble = [];
-                      if(ret.rows.length<=0){
-                        toastFail("加载完毕!");
-                        $('.pr-empty').show();
-                        allow_scroll=false;
-                      }else{
-                        $('.pr-empty').hide();
-                      }
-                      var count=ret.rows.length;
-                        for (var i = 0; i < ret.rows.length; i++) {
+                       if (ret) {
+                         var annotations = [];
+                         var bubble = [];
+                         var count=ret.rows.length;
+                         if(count<=0){
+                           toastFail("加载完毕!");
+                           $('.pr-empty').show();
+                           return;
+                         }else{
+                           $('.pr-empty').hide();
+                         }
+                         if(count>=20||g_start==1){
+                            g_start=g_start+1;
+                         }
+                         for (var i = 0; i < ret.rows.length; i++) {
                             var id=g_companyList.length+i;
                             var service_type_name_obj = g_service_type_dict[ret.rows[i].service_type_code];
+                            var service_type_name = "";
                             if (service_type_name_obj!= undefined){
                                service_type_name=service_type_name_obj.service_type_name;
-                            }else{
-                                service_type_name = "";
                             }
                             var failure_type_code_list=ret.rows[i].failure_type_code_list;
                             var failure_type_name="";
@@ -173,7 +175,7 @@
                                 lat=lonlatArr[1];
                                 rowData["lon"]=lon;
                                 rowData["lat"]=lat;
-                                //注意:getNameFromCoords为异步查询
+                                //异步查询,根据lon、lat坐标查询所在位置描述
                                 map.getNameFromCoords({
                                    lon:lon,
                                    lat:lat
@@ -192,8 +194,7 @@
                                          address:address
                                       });
                                       rowData["address"]=address;
-                                      var template=pendingOrderListTemplate(rowData);
-                                      $('#poilist-ul').append(template);
+                                      $('#poilist-ul').append(pendingOrderListTemplate(rowData));
                                       if(index==(count-1)){
                                         api.sendEvent({
                                          name: 'loadAllPendingOrderEvent',
@@ -214,11 +215,13 @@
                                     }
                                   }
                                 });
-                                //map.getNameFromCoords语句结束
+                                // map.getNameFromCoords语句结束
                               }
+                              // lonlatArr.length>=2结束
                             }
                             // lonlat------if语句结束
                         }
+                        // for循环结束
                     } else {
                         toastFail("系统错误!错误码:" + errs.code);
                     }
@@ -226,55 +229,7 @@
                     toastFail("获取附近订单时异常!");
                   }
                 });
-            } else {
-                toastFail("无定位信息");
-            }
         }
-        //展示待接单状态的订单信息
-    // function showPendingOrder(pending_order_data) {
-    //     if (pending_order_data != undefined) {
-    //         var template = "";
-    //         for (var i = 0; i < pending_order_data.length; i++) {
-    //             try {
-    //                 var service_type_name = g_service_type_dict[pending_order_data[i].service_type_code].service_type_name;
-    //                 if (service_type_name == undefined)
-    //                     service_type_name = "";
-    //                 var str = pending_order_data[i].failure_type_code_list;
-    //                 var code_list = str.split(',');
-    //                 var failure_type_name = "";
-    //                 for (var j = 0; j < code_list.length; j++) {
-    //                     if (code_list[j] != undefined && code_list[j] != "") {
-    //                         failure_type_name = failure_type_name + g_failure_type_dict[code_list[j]].failure_type_name + ",";
-    //                     }
-    //                 }
-    //                 if (failure_type_name.length > 0 && (failure_type_name.lastIndexOf(',') == failure_type_name.length - 1)) {
-    //                     failure_type_name = failure_type_name.substring(0, failure_type_name.length - 1);
-    //                 }
-    //                 if (code_list.length <= 0)
-    //                     failure_type_name = "";
-    //                 // var failure_type_name=g_failure_type_dict[pending_order_data[i].failure_type_code].failure_type_name;
-    //                 // if(failure_type_name==undefined)
-    //                 var person_user_location_str=pending_order_data[i].person_user_location;
-    //                 var lon_lat = person_user_location_str.split(',');
-    //                 var person_user_location_lon,person_user_location_lat;
-    //                 if(lon_lat.length==2){
-    //                   person_user_location_lon=lon_lat[0];
-    //                   person_user_location_lat=lon_lat[1];
-    //                 }
-    //                 template += pendingOrderListTemplate(person_user_location_lon,person_user_location_lat,pending_order_data[i].order_no, service_type_name, failure_type_name, getDistance(pending_order_data[i].distance));
-    //             } catch (e) {
-    //                 alert(e);
-    //             }
-    //         }
-    //         $('#poilist-ul').append(template);
-    //         if (pending_order_data.length <= 0) {
-    //             toastFail("加载完毕!");
-    //         }
-    //     }
-    // }
-
-
-
     //获取两点间的路线距离
     function getRouteDistance(order_no, person_user_location_lon, person_user_location_lat) {
         var p_lon = person_user_location_lon;
@@ -369,14 +324,6 @@
                      '</div>' +
                   '</div>' +
             '</div>' +
-            // '<div class="aui-media-list-item-inner item-line">' +
-            //       '<div class="aui-list-item-inner">' +
-            //           '<div class="aui-list-item-text">' +
-            //               '<div class="aui-list-item-title"></div>' +
-            //               '<div id="dis_'+order_no+'" class="aui-list-item-right"><div class="aui-btn pr-bgcolor" data-no="'+order_no+'" person-user-location-lon="'+person_user_location_lon+'" person-user-location-lat="'+person_user_location_lat+'" onclick="popupBubble(this)">接单</div></div>' +
-            //           '</div>' +
-            //       '</div>' +
-            // '</div>' +
             '</li>';
         return template;
     }
@@ -411,7 +358,6 @@
                 threshold: 0 //设置距离底部多少距离时触发,默认值为0,数字类型
             }
         }, function(ret, err) {
-            g_start=g_start+1;
             loadAllPendingOrder();
         });
     }

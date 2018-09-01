@@ -90,6 +90,22 @@
             transform-origin: 50% 100%;
             pointer-events: none;
         }
+        .aui-list:after {
+        height:1px;
+        background-color: #ddd;
+        display: block;
+        content: '';
+        position: absolute;
+        top: auto;
+        right: auto;
+        bottom: 0;
+        left: 0;
+        width: 100%;
+        z-index: 2;
+        -webkit-transform-origin: 50% 100%;
+        transform-origin: 50% 100%;
+        pointer-events: none;
+    }
     </style>
 </head>
 
@@ -99,7 +115,7 @@
             <div class="poilist-container">
                 <div class="aui-content aui-margin-b-15">
                     <ul id="poilist-ul" class="aui-list aui-media-list">
-                        <li class="aui-list-item aui-list-item-middle item-split">
+                        <li class="aui-list-item aui-list-item-middle">
                           <div class="aui-media-list-item-inner item-inner">
                             <sapn class="fa fa-chevron-left" onclick="back();"></sapn>
                           </div>
@@ -226,10 +242,13 @@
                    }
               }catch(e){
                 toastFail("获取订单详情失败!");
+                closeSelf();
               }
             }else{
               toastFail("获取订单详情失败!");
+              closeSelf();
             }
+            setFrameHeight();
         }
     //获取两点间的路线距离
     function getRouteDistance(order_no, person_user_location_lon, person_user_location_lat) {
@@ -387,9 +406,27 @@
           from: 'pending_order_list',
           to: 'mask'
       });
-       api.closeFrame({
-         name: 'pending_order'
-       });
+      closeSelf();
+    }
+    function closeSelf(){
+      api.closeFrame({
+        name: 'pending_order'
+      });
+    }
+    function setFrameHeight() {
+        var h = $('.container')[0].scrollHeight;
+        api.setFrameAttr({
+            name: 'pending_order',
+            rect: {
+                x: 0,
+                y: api.winHeight - h - 10,
+                w: api.winWidth,
+                h: 'auto',
+                marginLeft: 10,
+                marginBottom: 10,
+                marginRight: 10
+            },
+        });
     }
 </script>
 

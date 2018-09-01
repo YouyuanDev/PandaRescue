@@ -14,27 +14,14 @@
         .submit-btn {
             height: 2.3rem;
             width: 100%;
-            /*background-color: #81a9c3;*/
             color: white;
             line-height: 2.3rem;
             text-align: center;
         }
-        /*.close-btn {
-            display: block;
-            float: right;
-            padding: 0px 8px;
-            color: #000;
-            font-size: 1rem;
-        }*/
-        /*.aui-bar-nav {
-            background-color: #fff;
-        }*/
-
         .aui-list .aui-list-item {
             padding-top: 0.6rem;
             padding-bottom: 0.6rem;
         }
-
         .aui-list .aui-list-item-input label {
             padding-top: 0.2rem;
         }
@@ -72,16 +59,13 @@
         .cost-item{
           padding:0.2rem;
         }
+        .cost-container{
+          display: none;
+        }
     </style>
 </head>
 
 <body>
-    <!-- <header id="header" class="aui-bar aui-bar-nav aui-bar-light personal-header pr-bgcolor">
-      <a class="aui-pull-right aui-btn" onclick="closeServiceTypeForm();">
-          <span class="fa fa-close"></span>
-      </a>
-  </header> -->
-    <!-- <div class="service-container"> -->
     <div class="aui-content aui-margin-b-15">
         <input type="hidden" value="0" class="id" />
         <ul class="aui-list aui-form-list">
@@ -150,9 +134,9 @@
         <!-- <Br /> -->
     </section>
     <!-- </div> -->
-    <footer class="aui-bar aui-bar-tab service-footer">
-        <button class="submit-btn pr-bgcolor pr-color i18n1" name="submit" onclick="submitForm();">提交</button>
-    </footer>
+    <section class="aui-content-padded">
+      <button class="submit-btn pr-bgcolor pr-color i18n1" name="submit" onclick="submitForm();">提交</button>
+    </section>
 </body>
 <script type="text/javascript" src="../../script/api.js"></script>
 <script type="text/javascript" src="../../script/jquery-3.3.1.min.js"></script>
@@ -164,7 +148,6 @@
     var map, g_language;
     apiready = function() {
             fnSettingHeader();
-            $('.cost-container').hide();
             map = api.require('bMap');
             if (getCookie() == undefined || getCookie() == "zh-CN") {
                 g_language = true;
@@ -179,6 +162,7 @@
         }
         //加载服务类型
     function loadAllServiceType() {
+        openLoading();
         var s = 'http://' + serverIP + '/ServiceType/getAllServiceType.action';
         api.ajax({
             url: s,
@@ -201,10 +185,12 @@
             } else {
                 toastFail("系统错误,加载服务类型失败!错误码:" + err.code);
             }
+            closeLoading();
         });
     }
     //加载故障类型
     function loadAllFaultType() {
+      openLoading();
         var s = 'http://' + serverIP + '/FailureType/getAllFailureType.action';
         api.ajax({
             url: s,
@@ -226,6 +212,7 @@
             } else {
                 toastFail("系统错误,加载故障类型失败!错误码:" + err.code);
             }
+            closeLoading();
         });
     }
     //关闭表单
@@ -301,15 +288,6 @@
                                         msg: ret.message
                                     });
                                     if (ret.success) {
-                                        //var order_no=ret.OrderNo;
-                                        //alert(order_no+"完成");
-                                        //发送订单完成事件
-                                        // api.sendEvent({
-                                        //     name: 'OrderStatusEvent',
-                                        //     extra: {
-                                        //         order_no:order_no
-                                        //     }
-                                        // });
                                         api.closeWin({
                                             name: 'rescueWin'
                                         });
@@ -328,9 +306,7 @@
                                 $('.submit-btn').attr('disabled', false);
                             });
                         } else {
-                            api.alert({
-                                msg: "获取定位失败,请重新定位!"
-                            });
+                            toastFail('获取定位失败,请重新定位!');
                             $('.submit-btn').attr('disabled', false);
                         }
                     } else {

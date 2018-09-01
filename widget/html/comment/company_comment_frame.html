@@ -101,12 +101,12 @@
         var data=api.pageParam;
         g_company_no=data.company_no;
         loadAvgRating();
-        loadCompanyComment(g_start);
+        loadCompanyComment();
         isRollingToEnd();
         hlLanguage("../../i18n/");
     }
     //分页加载所有评论
-    function loadCompanyComment(start){
+    function loadCompanyComment(){
       if(g_company_no==undefined){
         return;
       }
@@ -120,7 +120,7 @@
           data: {
               values: {
                   company_no:g_company_no,
-                  page:start,
+                  page:g_start,
                   rows:20
               }
           }
@@ -130,15 +130,21 @@
                   var data=ret.data;
                   var count=ret.count;
                   $('.item-count').text(count);
-                  if($.isArray(data)){
+                  try{
                     if(data.length>0){
+                      $('.pr-empty').hide();
                       $('.aui-list-header').show();
                       for (var i = 0; i < data.length; i++) {
                          $('#cmt-list').append(makeCommentTempalate(data[i]));
                       }
+                      if(data.length>=20||g_start==1){
+                        g_start+=1;
+                      }
                     }else{
                       $('.pr-empty').show();
                     }
+                  }catch(e){
+                    toastFail('系统错误,获取评论信息失败!');
                   }
                 }else{
                    $('.pr-empty').show();
@@ -279,8 +285,7 @@
                 threshold: 0 //设置距离底部多少距离时触发,默认值为0,数字类型
             }
         }, function(ret, err) {
-            g_start=g_start+1;
-            loadCompanyComment(g_start);
+            loadCompanyComment();
         });
     }
 </script>

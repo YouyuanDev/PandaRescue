@@ -84,7 +84,22 @@
             transform-origin: 50% 100%;
             pointer-events: none;
         }
-
+        .aui-list:before {
+            height: 1px;
+            background-color: #fff;
+            display: block;
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: auto;
+            bottom: auto;
+            width: 100%;
+            z-index: 2;
+            -webkit-transform-origin: 50% 100%;
+            transform-origin: 50% 100%;
+            pointer-events: none;
+        }
         .diy-list .diy-list-span span:first-child {
             width: 1.5rem;
         }
@@ -171,9 +186,9 @@
             if (data != undefined) {
                 g_account_type = data.account_type;
                 if (g_account_type == "person_user") {
-                    $('.account-type-span').text(GetTextByLanguage("普通用户","Personal"));
+                    $('.account-type-span').text(GetTextByLanguage("普通用户", "Personal"));
                 } else if (g_account_type == "company_user") {
-                    $('.account-type-span').text(GetTextByLanguage("商户","Merchant"));
+                    $('.account-type-span').text(GetTextByLanguage("商户", "Merchant"));
                 }
             }
             registerTouchEvent();
@@ -335,9 +350,9 @@
             var account = getAccount();
             if (account != undefined) {
                 g_account = account;
-                g_account_nickname =account.nickname;
-                g_account_icon =account.icon_url;
-                setAccountInfo(g_account_icon,g_account_nickname);
+                g_account_nickname = account.nickname;
+                g_account_icon = account.icon_url;
+                setAccountInfo(g_account_icon, g_account_nickname);
             } else {
                 var s = 'http://' + serverIP + '/AccountOperation/getAccountInfo.action';
                 api.ajax({
@@ -360,7 +375,7 @@
                                 });
                             }
                         }
-                        setAccountInfo(g_account_icon,g_account_nickname);
+                        setAccountInfo(g_account_icon, g_account_nickname);
                     } else {
                         toastFail('系统出错,错误码:' + err.code);
                     }
@@ -371,18 +386,18 @@
         }
     }
     //设置账户界面信息
-    function setAccountInfo(g_account_icon,g_account_nickname){
-      if (g_account_icon != undefined && g_account_icon != "") {
-          var url = 'http://' + serverIP + '/upload/pictures/' + g_account_icon;
-          $('.account-header').attr('src', url);
-      }
-      if (g_account_nickname != undefined && g_account_nickname != "") {
-          $('.account-name-span').removeClass('account-name-samll-span');
-          $('.account-name-span').text(g_account_nickname);
-      } else {
-          $('.account-name-span').text('点击修改昵称吧!');
-          $('.account-name-span').addClass('account-name-samll-span');
-      }
+    function setAccountInfo(g_account_icon, g_account_nickname) {
+        if (g_account_icon != undefined && g_account_icon != "") {
+            var url = 'http://' + serverIP + '/upload/pictures/' + g_account_icon;
+            $('.account-header').attr('src', url);
+        }
+        if (g_account_nickname != undefined && g_account_nickname != "") {
+            $('.account-name-span').removeClass('account-name-samll-span');
+            $('.account-name-span').text(g_account_nickname);
+        } else {
+            $('.account-name-span').text('点击修改昵称吧!');
+            $('.account-name-span').addClass('account-name-samll-span');
+        }
     }
 </script>
 

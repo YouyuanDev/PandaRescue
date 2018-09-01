@@ -70,12 +70,6 @@
         <div class="aui-tips-title">连接服务器失败!</div>
         <i class="aui-iconfont aui-icon-close" onclick="closeAuiTip();"></i>
     </div>
-    <!-- <p>
-        <div class="aui-btn aui-btn-block aui-btn-outlined" onclick="openChat(1,'醉卧沙场笑看红尘','../../image/default_portrait.png')">18703611326</div>
-    </p>
-    <p>
-        <div class="aui-btn aui-btn-block aui-btn-outlined" onclick="openChat(15,'Dr.K','../../image/default_portrait.png')">13774216002</div>
-    </p> -->
     <div class="aui-content aui-margin-b-15 pr-body-bgcolor">
         <ul class="aui-list aui-media-list item-list" id="hh_list">
 
@@ -133,7 +127,8 @@
                     var senderUserId = rs.senderUserId;
                     var targetId = rs.targetId;
                     if (senderUserId == $api.getStorage('id')) {
-                        break;
+                        //break;
+                        senderUserId=targetId;
                     }
                     if ($.inArray(senderUserId, g_senderUserId) != -1) {
                         $("li[data-sender-id='" + senderUserId + "']").remove();
