@@ -58,22 +58,6 @@
         .aui-list .aui-list-item-media img{
            width:2rem;height:2rem;
         }
-        .aui-list:before {
-            height: 1px;
-            background-color: #fff;
-            display: block;
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: auto;
-            bottom: auto;
-            width: 100%;
-            z-index: 2;
-            -webkit-transform-origin: 50% 100%;
-            transform-origin: 50% 100%;
-            pointer-events: none;
-        }
         .aui-list .aui-list-item:after {
             height: 1px;
             background-color: #fff;
@@ -111,9 +95,8 @@
 
 <body class="wrap">
     <div class="container">
-        <div class="aui-content aui-margin-b-15">
-            <div class="poilist-container">
-                <div class="aui-content aui-margin-b-15">
+        <div class="aui-content">
+                <div class="aui-content">
                     <ul id="poilist-ul" class="aui-list aui-media-list">
                         <li class="aui-list-item aui-list-item-middle">
                           <div class="aui-media-list-item-inner item-inner">
@@ -166,7 +149,6 @@
                         </li>
                     </ul>
                 </div>
-            </div>
         </div>
         <div class="pr-empty">
             <span class="empty-title"><span class="fa fa-info" style="padding-right:0.3rem;"></span><span>暂无订单!</span><span>

@@ -444,6 +444,9 @@ function convertSecToMin(sec) {
         sec = sec / 60;
         sec = sec.toFixed(0);
     }
+    if(sec<=0){
+      return "<1";
+    }
     return sec;
 }
 
@@ -769,4 +772,12 @@ function GetTextByLanguage(chTxt,enTxt){
    }else if(language=="en"){
      return enTxt;
    }
+}
+//判断字符串是否是undefined或空字符串
+function isUndefinedOrEmpty(str){
+  if(str==undefined||str.trim(str)==""){
+    return true;
+  }else{
+    return false;
+  }
 }

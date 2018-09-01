@@ -34,10 +34,9 @@
         .pr-empty {
             width: 100%;
             height: auto;
+            padding:0.5rem;
             text-align: center;
-            justify-content: center;
-            align-items: center;
-            display: -webkit-flex;
+            display: none;
         }
 
         .pr-empty .empty-title {
@@ -53,6 +52,9 @@
 
         </ul>
     </div>
+    <div class="pr-empty">
+        <span class="empty-title"><span class="fa fa-info" style="padding-right:0.3rem;"></span><span class="i18n1" name="nohistoricalorder">暂无历史订单!</span><span>
+    </div>
 </body>
 
 </html>
@@ -63,13 +65,12 @@
 <script type="text/javascript" src="../../script/common.js"></script>
 <script type="text/javascript">
     var language_id = 0,
-        start = 1,
-        g_service_type_dict, g_failure_type_dict, g_order_status_dict, g_allow_load = true;
+        g_start = 1,
+        g_service_type_dict, g_failure_type_dict, g_order_status_dict;
     var g_account_type;
     apiready = function() {
             var data = api.pageParam;
             g_account_type = data.account_type;
-            $('.pr-empty').hide();
             registerLoadAllServiceTypeEvent();
             registerLoadAllFaultTypeEvent();
             registerLoadAllOrderStatusEvent();
@@ -77,7 +78,7 @@
             loadAllFaultType();
             loadAllOrderStatus();
             //下拉刷新,下拉加载
-            //dropdownLoading();
+            dropdownLoading();
             //是否滚动到底部
             isRollingToEnd();
             loadAccountOrder();
@@ -94,7 +95,7 @@
             textUp: '松开刷新...'
         }, function(ret, err) {
             //在这里从服务器加载数据,加载完成后调用api.refreshHeaderLoadDone()方法恢复组件到默认状态
-            start = 1;
+            g_start = 1;
             loadAccountOrder();
             setTimeout(function() {
                 //执行刷新
@@ -111,9 +112,7 @@
                 threshold: 0 //设置距离底部多少距离时触发,默认值为0,数字类型
             }
         }, function(ret, err) {
-            if (g_allow_load) {
-                loadAccountOrder();
-            }
+            loadAccountOrder();
         });
     }
 
@@ -128,13 +127,19 @@
             dataType: 'json',
             data: {
                 values: {
-                    page: start,
+                    page: g_start,
                     rows: 20
                 }
             }
         }, function(ret, err) {
             if (ret) {
                 if (ret.success) {
+                     if(ret.orderList.length>=20||g_start==1){
+                         g_start = g_start + 1;
+                       $('.pr-empty').hide();
+                     }else{
+                       $('.pr-empty').show();
+                     }
                     if (ret.orderList.length > 0) {
                         var data = ret.orderList;
                         for (var i = 0; i < data.length; i++) {
@@ -151,21 +156,13 @@
                                 $('.aui-content .aui-list').append(getOrderTemplate(order_no, person_user_no, company_no, order_time, order_status, service_type_code, failure_type_code_list));
                             }
                         }
-                        start = start + 1;
                         changeServiceTypeFaultType();
                     } else {
-                        if (start == 1) {
-                            $('.aui-content').remove();
-                            $(document.body).append(addEmptyInfo());
-                        } else {
-                            $('.aui-content').after(addEmptyInfo());
-                        }
-                        g_allow_load = false;
+                        $('.pr-empty').show();
                     }
                 } else {
                     toastFail(ret.msg);
-                    $('.aui-content').after(addEmptyInfo());
-                    g_allow_load = false;
+                    $('.pr-empty').show();
                     if (ret.relogin) {
                         api.sendEvent({
                             name: 'reloginEvent'
@@ -175,7 +172,6 @@
                 }
             } else {
                 toastFail('获取订单信息时出错,错误信息:' + err.code);
-                g_allow_load = false;
                 if (ret.relogin) {
                     api.sendEvent({
                         name: 'reloginEvent'
@@ -272,13 +268,6 @@
         } else {
             toastFail("暂时无法查看,请刷新重试!");
         }
-    }
-    //添加数据为空时显示的空模板
-    function addEmptyInfo() {
-        var template = '<div class="pr-empty">' +
-            '<span class="empty-title"><span class="fa fa-info" style="padding-right:0.3rem;"></span><span class="i18n1" name="nohistoricalorder">暂无历史订单!</span><span>' +
-            '</div>';
-        return template;
     }
     //注册加载所有服务类型事件
     function registerLoadAllServiceTypeEvent() {

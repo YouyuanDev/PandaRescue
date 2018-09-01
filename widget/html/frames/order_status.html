@@ -39,7 +39,7 @@
         }
 
         .item-container {
-            height: 90px;
+            height:auto;
         }
 
         .item-icon {
@@ -77,7 +77,8 @@
         .item-distance-container {
             overflow: hidden;
             text-overflow: ellipsis;
-            white-space: nowrap;
+            white-space: normal;
+            word-break: break-all;
         }
     </style>
 </head>
@@ -99,7 +100,7 @@
                             <span class="item-distance"></span>
                         </div>
                         <div class="aui-list-item-text">
-                            <p><span onclick="sendMessage();" class="fa fa-commenting item-message"></span><span onclick="callUser();"  class="fa fa-phone item-phone"></span></p>
+                            <p><span onclick="sendMessage();" class="fa fa-commenting item-message"></span><span onclick="callUser();" class="fa fa-phone item-phone"></span></p>
                         </div>
                     </div>
 
@@ -119,7 +120,7 @@
 <script type="text/javascript" src="../../script/language.js"></script>
 <script type="text/javascript">
     var map;
-    var g_f_id,g_f_zh,g_f_tx,g_f_phone;
+    var g_f_id, g_f_zh, g_f_tx, g_f_phone;
     apiready = function() {
         map = api.require('bMap');
         var data = api.pageParam;
@@ -129,9 +130,7 @@
         var status_name = order.status_name;
         var status_name_en = order.status_name_en;
         var order_time = order.order_time;
-        if (order_time != undefined) {
-            $('.item-time').text(getDate1(order_time));
-        }
+        $('.item-time').text(getDate1(order_time));
         var person_lon_lat = order.person_user_location;
         var person_lon, person_lat;
         if (person_lon_lat != undefined && person_lon_lat != "") {
@@ -141,7 +140,7 @@
                 person_lat = arr[1];
             }
         }
-        var company_lon_lat=order.company_user_location;
+        var company_lon_lat = order.company_user_location;
         var company_lon, company_lat;
         if (company_lon_lat != undefined && company_lon_lat != "") {
             var arr = person_lon_lat.split(',');
@@ -166,18 +165,18 @@
                 }
             }
             $('.item-icon').attr('src', icon_url);
-            g_f_id=order.company_id;
-            g_f_zh=order.company_nickname;
-            g_f_tx='http://' + serverIP + '/upload/pictures/'+order.company_icon_url;
-            g_f_phone=order.company_cell_phone;
+            g_f_id = order.company_id;
+            g_f_zh = order.company_nickname;
+            g_f_tx = 'http://' + serverIP + '/upload/pictures/' + order.company_icon_url;
+            g_f_phone = order.company_cell_phone;
         } else if (account_type == "company_user") {
             $('.item-icon-container').hide();
             $('.item-name').text(getDate1(order_time));
             $('.item-fee').text(order.service_fee + "元");
-            g_f_id=order.user_id;
-            g_f_zh=order.user_nickname;
-            g_f_tx='http://' + serverIP + '/upload/pictures/'+order.user_icon_url;
-            g_f_phone=order.user_cell_phone;
+            g_f_id = order.user_id;
+            g_f_zh = order.user_nickname;
+            g_f_tx = 'http://' + serverIP + '/upload/pictures/' + order.user_icon_url;
+            g_f_phone = order.user_cell_phone;
         }
         if (account_type != undefined && status_code != undefined) {
             drawStatusPanel(account_type, status_code, status_name, status_name_en);
@@ -190,7 +189,7 @@
         $('.order-status').empty();
         var language = getCookie();
         var template = "";
-        $('.order-status-desc').text(GetTextByLanguage(status_name,status_name_en));
+        $('.order-status-desc').text(GetTextByLanguage(status_name, status_name_en));
         //makeButtonTemplate(函数名，中文按钮名，英文按钮名)
         $('.buttons').append(makeButtonTemplate("cancelOrder('" + account_type + "');", "取消订单", "Cancel the order"));
         if (account_type == "person_user") {
@@ -429,39 +428,35 @@
     }
     //获取两点间的路线距离
     function getRouteDistance(person_lon, person_lat, company_lon, company_lat) {
-        if (person_lon != undefined && person_lat != undefined && company_lon != undefined && company_lat != undefined) {
-            map.removeRoute({
-                ids: [1]
-            });
-            //计算路线距离
-            map.searchRoute({
-                id: 1,
-                type: 'drive',
-                policy: 'ecar_time_first',
-                start: {
-                    lon: company_lon,
-                    lat: company_lat
-                },
-                end: {
-                    lon: person_lon,
-                    lat: person_lat
-                }
-            }, function(ret, err) {
-                if (ret) {
-                    if (ret.status) {
-                        $('.item-distance').text('驾车：' + getDistance(ret.plans[0].distance) + 'km ' + '耗时：' + convertSecToMin(ret.plans[0].duration) + '分钟');
-                        $('.item-time').hide();
-                    } else {
-                        $('.item-distance').text('暂时未能获取到驾车距离和耗时信息!');
-                    }
-                } else {
-                    $('.item-distance').text('暂时未能获取到驾车距离和耗时信息!');
-                    //toastFail(''+err.code);
-                }
-            });
-        } else {
-            $('.item-distance').text('暂时未能获取到驾车距离和耗时信息!');
+        $('.item-distance').text(GetTextByLanguage('暂时未能获取到驾车距离和耗时信息!','Temporarily unable to get driving distance and time-consuming information!'));
+        if (isUndefinedOrEmpty(person_lon) || isUndefinedOrEmpty(person_lat) || isUndefinedOrEmpty(company_lon) || isUndefinedOrEmpty(company_lat)) {
+            return;
         }
+        map.removeRoute({
+            ids: [1]
+        });
+        //计算路线距离
+        map.searchRoute({
+            id: 1,
+            type: 'drive',
+            policy: 'ecar_time_first',
+            start: {
+                lon: company_lon,
+                lat: company_lat
+            },
+            end: {
+                lon: person_lon,
+                lat: person_lat
+            }
+        }, function(ret, err) {
+            if (ret) {
+                if (ret.status) {
+                    $('.item-distance').text(GetTextByLanguage('驾车：','Drive: ') + getDistance(ret.plans[0].distance) + 'km ' + GetTextByLanguage('耗时：','Time consuming: ')+ convertSecToMin(ret.plans[0].duration) + GetTextByLanguage('分钟','Min'));
+                    $('.item-time').hide();
+                }
+            }
+        });
+
     }
     //拨打电话
     function callUser() {
@@ -477,9 +472,9 @@
     //发送消息
     function sendMessage() {
         //获取对方的id,zh(昵称),tx(头像路径)
-        if(g_f_id==undefined||g_f_id==""||g_f_zh==undefined||g_f_zh==""||g_f_tx==undefined||g_f_tx==""){
-          toastFail("请稍等片刻!");
-          return;
+        if (g_f_id == undefined || g_f_id == "" || g_f_zh == undefined || g_f_zh == "" || g_f_tx == undefined || g_f_tx == "") {
+            toastFail("请稍等片刻!");
+            return;
         }
         var rong = api.require('rongCloud2');
         if ($api.getStorage('id') == g_f_id) {
