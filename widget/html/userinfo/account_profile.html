@@ -100,7 +100,7 @@
                     </div>
                 </div>
             </li>
-            <li class="aui-list-item">
+            <!-- <li class="aui-list-item">
                 <div class="aui-list-item-inner">
                     <div class="aui-list-item-label i18n1" name="lastlogintime">
                         上次登录时间
@@ -109,7 +109,7 @@
                         <input class="account-logon-time-input" type="text" readonly="readonly" placeholder="">
                     </div>
                 </div>
-            </li>
+            </li> -->
         </ul>
     </div>
 </body>
@@ -124,7 +124,6 @@
     var g_account, g_id;
     apiready = function() {
         fnSettingHeader();
-
         registerUploadPhotosEvent();
         var data = api.pageParam;
         if (data != undefined) {
@@ -157,9 +156,9 @@
                 if (g_account_register_time != undefined && g_account_register_time != "") {
                     $('.account-register-time-input').val(getDate1(g_account_register_time));
                 }
-                if (g_account_lastlogin_time != undefined && g_account_lastlogin_time != "") {
-                    $('.account-logon-time-input').val(getDate1(g_account_lastlogin_time));
-                }
+                // if (g_account_lastlogin_time != undefined && g_account_lastlogin_time != "") {
+                //     $('.account-logon-time-input').val(getDate1(g_account_lastlogin_time));
+                // }
             }
         }
         hlLanguage("../../i18n/");
