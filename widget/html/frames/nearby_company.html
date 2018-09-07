@@ -14,14 +14,14 @@
         body {
             width: 100%;
             height: 100%;
-            background-color:#fff;
+            background-color: #fff;
         }
 
         .container {
             width: 100%;
-            height:100%;
+            height: 100%;
             overflow-y: scroll;
-            padding:2px;
+            padding: 2px;
             box-sizing: border-box;
         }
 
@@ -30,12 +30,13 @@
             height: 100%;
             overflow-y: scroll;
             box-sizing: border-box;
-            box-shadow: 0px 1px 4px rgba(0,0,0,0.2);
+            box-shadow: 0px 1px 4px rgba(0, 0, 0, 0.2);
         }
 
         .poilist-container ul li:first-child {
             border-top: none;
         }
+
         .pr-empty {
             width: 100%;
             height: auto;
@@ -79,7 +80,7 @@
 
 <!-- <body class="pr-body-bgcolor"> -->
 
-<body >
+<body>
     <div class="container">
         <div class="container-inner">
             <div class="aui-content aui-margin-b-15">
@@ -93,9 +94,9 @@
             </div>
             <div class="pr-empty">
                 <span class="empty-title"><span class="fa fa-info" style="padding-right:0.3rem;"></span><span class="i18n1" name="nobusiness">附近暂无商家!</span><span>
+            </div>
         </div>
     </div>
-      </div>
 </body>
 <script type="text/javascript" src="../../script/api.js"></script>
 <script type="text/javascript" src="../../script/jquery-3.3.1.min.js"></script>
@@ -270,7 +271,7 @@
             '</li>';
         return template;
     }
-    //监听地图标注点击事件，商户滚动
+    //监听地图标注点击事件，找到对应商户所在项，并将所在项滚动到最顶部
     function registerCompanyInfoScrollEvent() {
         api.addEventListener({
             name: 'CompanyInfoScrollEventListener'
@@ -283,9 +284,12 @@
                         $obj.addClass('item-active');
                         $obj.siblings('li').removeClass('item-active');
                         var $container=$('.container');
-                        $(document.body).animate({
-                            scrollTop:$obj.offset().top - $container.offset().top + $container.scrollTop()
+                        $('.container-inner').animate({
+                            scrollTop:$obj.offset().top
                         }, 300);
+                        // $('.container-inner').animate({
+                        //     scrollTop:$obj.offset().top - $container.offset().top + $container.scrollTop()
+                        // }, 300);
                     } catch (e) {
                     }
                 }

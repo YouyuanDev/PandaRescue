@@ -629,7 +629,7 @@ function loadAllFaultType() {
         api.ajax({
             url: s,
             method: 'post'
-        }, function(rets, errs) {
+        }, function(rets, err) {
             if (rets) {
                 for (var i = 0; i < rets.length; i++) {
                     var failure_type_code = rets[i].failure_type_code;

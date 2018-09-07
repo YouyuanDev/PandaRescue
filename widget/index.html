@@ -93,8 +93,8 @@
     var g_my_lon, g_my_lat;
     //百度地图
     var map;
-    //刷新订单状态和自己的坐标的定时器
-    //var g_orderStatusInterval, g_userLocationInterval;
+    //定义融云即时通信
+    var rong;
     //刷新坐标的定时器
     var g_PersonUserAndCompanyUserLocationInterval = -1;
     //商户列表
@@ -109,8 +109,6 @@
     var g_service_type_dict = {};
     //故障类型集合
     var g_failure_type_dict = {};
-    var timer_arr = new Array();
-    var rong;
     apiready = function() {
         fnSettingHeader();
         map = api.require('bMap');
@@ -172,9 +170,9 @@
             fixed: false
         }, function(ret) {
             if (ret.status) {
-                //setTimeout(function() {
+                setTimeout(function() {
                 showUserLocation();
-                //}, 100);
+                }, 100);
                 setTimeout(function() {
                     getLocationServices();
                 }, 200);
@@ -236,28 +234,20 @@
     }
     //注册app前台，后台切换事件
     function registerPauseResumeEvent() {
+        //监听用户重新打开程序事件
         api.addEventListener({
             name: 'resume'
         }, function(ret, err) {
-            //alert('应用回到前台');
-            toastSuccess('欢迎回来，重新获取数据');
             getCurrentOrder();
         });
-        api.addEventListener({
-            name: 'pause'
-        }, function(ret, err) {
-            //toastSuccess('应用进入后台');
-            //console.log('应用进入后台');
-            toastSuccess('应用进入后台');
-            //updateLocation();
-        });
+        //监听应用进入后台事件
+        // api.addEventListener({
+        //     name: 'pause'
+        // }, function(ret, err) {
+        //     toastSuccess('应用进入后台');
+        // });
     }
-
-
-
-
-
-    //设置商户标注信息
+    //百度地图设置商户标注信息
     function setCompanyAnnotations(annotations) {
         //此处应获取附近的商户信息  121.498034  31.385146
         map.addAnnotations({
@@ -266,13 +256,16 @@
             draggable: false
         }, function(ret) {
             if (ret) {
+                //当商户标注被点击的时候
                 if (ret.eventType == "click") {
+                    //获取被点击标注对应的商户编号
                     var company_no;
                     for (var i = 0; i < g_CompanyList.length; i++) {
                         if (g_CompanyList[i].id == ret.id) {
                             company_no = g_CompanyList[i].company_no;
                         }
                     }
+                    //发送滚动附近商户列表的事件
                     api.sendEvent({
                         name: 'CompanyInfoScrollEventListener',
                         extra: {
@@ -283,7 +276,7 @@
             }
         });
     }
-    //设置所有待接单订单标注信息
+    //百度地图设置所有待接单订单标注信息
     function setPendingOrderAnnotations(annotations) {
         map.addAnnotations({
             annotations: annotations,
@@ -291,13 +284,16 @@
             draggable: false
         }, function(ret) {
             if (ret) {
+                //当待接单订单标注被点击的时候
                 if (ret.eventType == "click") {
+                    //获取被点击标注对应的订单编号
                     var order_no;
                     for (var i = 0; i < g_CompanyList.length; i++) {
                         if (g_CompanyList[i].id == ret.id) {
                             order_no = g_CompanyList[i].order_no;
                         }
                     }
+                    //发送滚动待接单订单列表的事件
                     g_selected_pending_order_no = order_no;
                     api.sendEvent({
                         name: 'PendingOrderScrollEvent',
@@ -313,7 +309,6 @@
     function setCompanyBubble(bubble_id, company_name) {
         map.setBubble({
             id: bubble_id,
-            // bgImg: 'widget://image/bubble_bg.png',
             content: {
                 title: company_name,
                 subTitle: company_name,
@@ -326,16 +321,12 @@
                 illusAlign: 'left'
             }
         }, function(ret) {
-            // if (ret) {
-            //     alert(ret.eventType);
-            // }
         });
     }
     //设置未接单订单标注弹出气泡
     function setPendingOrderBubble(bubble_id, service_type_name, failure_type_name, address) {
         map.setBubble({
             id: bubble_id,
-            // bgImg: 'widget://image/bubble_bg.png',
             content: {
                 title: failure_type_name,
                 subTitle: address,
@@ -348,18 +339,10 @@
                 illusAlign: 'left'
             }
         }, function(ret) {
-            // if (ret) {
-            //     alert(ret.eventType);
-            // }
         });
     }
     //商户标注弹出气泡
     function popupCompanyBubble(company_no) {
-        for (var i = 0; i < g_CompanyList.length; i++) {
-            if (g_CompanyList[i].company_no == company_no) {
-                company_no = g_CompanyList[i].id;
-            }
-        }
         if (company_no != undefined) {
             map.popupBubble({
                 id: company_no
@@ -367,15 +350,10 @@
         }
     }
     //待接单标注弹出气泡
-    function popupPendingOrderBubble(company_no) {
-        for (var i = 0; i < g_CompanyList.length; i++) {
-            if (g_CompanyList[i].company_no == company_no) {
-                company_no = g_CompanyList[i].id;
-            }
-        }
-        if (company_no != undefined) {
+    function popupPendingOrderBubble(order_no) {
+        if (order_no != undefined) {
             map.popupBubble({
-                id: company_no
+                id: order_no
             });
         }
     }
@@ -391,9 +369,9 @@
                 h: 30
             },
             pageParam: {
-
             }
         });
+        //设置定位按钮在遮罩层下面
         api.sendFrameToBack({
             from: 'locating_button',
             to: 'mask'
@@ -414,10 +392,11 @@
 
             }
         });
-        // api.sendFrameToBack({
-        //     from: 'refresh_button',
-        //     to: 'mask'
-        // });
+        //设置刷新按钮在遮罩层下面
+        api.sendFrameToBack({
+            from: 'refresh_button',
+            to: 'mask'
+        });
     }
     //打开求救按钮
     function openSosButton() {
@@ -434,6 +413,7 @@
 
             }
         });
+        //设置求救按钮在遮罩层下面
         api.sendFrameToBack({
             from: 'sos_button',
             to: 'mask'
@@ -451,9 +431,9 @@
                 h: 64
             },
             pageParam: {
-
             }
         });
+        //设置接单按钮在遮罩层下面
         api.sendFrameToBack({
             from: 'receipt_button',
             to: 'mask'
@@ -477,8 +457,10 @@
                 g_my_lat: g_my_lat
             }
         });
+        //打开定位和刷新按钮
         openLocatingButton();
         openSosButton();
+        //设置附近商家Frame在遮罩层下面
         api.sendFrameToBack({
             from: 'nearby_company',
             to: 'mask'
@@ -508,9 +490,7 @@
                 g_failure_type_dict: g_failure_type_dict
             }
         });
-        //openLocatingButton();
-        //openReceiptButton();
-        //设置Frame层级问题
+        //设置待接单订单Frame在遮罩层下面
         api.sendFrameToBack({
             from: 'pending_order_list',
             to: 'mask'
@@ -521,6 +501,7 @@
         api.addEventListener({
             name: 'ClickCompanyListEventListener'
         }, function(ret, err) {
+            //弹出商户标注
             popupCompanyBubble(ret.value.company_no);
         });
     }
@@ -530,10 +511,11 @@
             name: 'ClickPendingOrderListEventListener'
         }, function(ret, err) {
             g_selected_pending_order_no = ret.value.order_no;
+            //弹出待接单订单标注
+            popupPendingOrderBubble(ret.value.order_no);
             api.sendEvent({
                 name: 'receiptEvent'
             });
-            popupPendingOrderBubble(ret.value.order_no);
         });
     }
     //设置用户位置
