@@ -64,10 +64,11 @@
     var language_id = 0;
     apiready = function() {
             fnSettingHeader();
+            //设置版本号
             $('.version-p').text("V"+api.appVersion);
             hlLanguage("../../i18n/");
         }
-
+        //关闭当前Frame
     function closeMyself() {
         api.closeFrame({
             name: 'about_pandarescue'

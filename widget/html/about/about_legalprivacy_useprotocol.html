@@ -54,8 +54,10 @@
     var language_id = 0;
     apiready = function() {
         fnSettingHeader();
+        //获取导航栏高度
         var header = $api.byId('header');
         var headerH = $api.offset(header).h;
+        //打开使用协议Frame
         api.openFrame({
             name: 'about_legalprivacy_useprotocol_frame',
             url: './about_legalprivacy_useprotocol_frame.html',
@@ -69,7 +71,7 @@
         });
         hlLanguage("../../i18n/");
     }
-
+   //关闭当前Frame
     function closeMyself() {
         api.closeWin({
             name: 'about_legalprivacy_useprotocol'

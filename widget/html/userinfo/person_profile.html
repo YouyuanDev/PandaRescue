@@ -102,14 +102,12 @@
             fnSettingHeader();
             var data = api.pageParam;
             if (data != undefined) {
+                //加载个人信息
                 loadPersonalInfo();
             }
             hlLanguage("../../i18n/");
         }
-        //根据语言环境不同设置占位符
-    function setPlaceholder() {
-
-    }
+        //修改个人信息
     function submitForm() {
       if(g_id==undefined&&g_id==""){
         toastFail("系统繁忙,请稍后重试!");
@@ -153,6 +151,7 @@
             dataType: 'json'
         }, function(ret, err) {
             if (ret) {
+                //名称、性别、手机号、身份证号、认证标识
                 var name, gender, cell_phone, id_card, is_verified;
                 if (ret.success) {
                     g_id=ret.personUser.id;
@@ -203,7 +202,7 @@
             closeLoading();
         });
     }
-    //打开个人实名认证通道
+    //打开个人实名认证通道页面
     function openPersonAuthentication(){
       api.openFrame({
           name: 'person_authentication',

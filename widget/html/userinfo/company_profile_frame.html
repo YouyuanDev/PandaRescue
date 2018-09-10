@@ -12,13 +12,15 @@
     <link rel="stylesheet" type="text/css" href="../../css/style.css" />
     <style>
         .img-son {
-            height:6rem;
+            height: 6rem;
         }
+
         .img-container {
             padding: 0.5rem;
-            padding-top:0rem;
-            margin-top:-0.5rem;
+            padding-top: 0rem;
+            margin-top: -0.5rem;
         }
+
         .company-pic {
             padding: 0.1rem;
             width: 100%;
@@ -37,18 +39,21 @@
         .aui-list .aui-list-item-label {
             width: 55%;
         }
-        .item-upload{
-          width:100%;
-          text-align: center;
-          padding:0.2rem 0.5rem;
+
+        .item-upload {
+            width: 100%;
+            text-align: center;
+            padding: 0.2rem 0.5rem;
         }
-        .item-upload img{
-          margin: auto;
-          width:1rem;
-          height:1rem
+
+        .item-upload img {
+            margin: auto;
+            width: 1rem;
+            height: 1rem
         }
-        .item-delete-tip{
-          display: none;
+
+        .item-delete-tip {
+            display: none;
         }
     </style>
 </head>
@@ -144,7 +149,7 @@
                         <input class="company-lat-input" type="text" placeholder="纬度">
                     </div>
                     <div class="aui-list-item-right" style="padding-right:1rem;">
-                </div>
+                    </div>
             </li>
             <li class="aui-list-item">
                 <div class="aui-list-item-inner aui-list-item-arrow" onclick="openCompanyAuthentication();">
@@ -156,49 +161,49 @@
                 </div>
             </li>
         </ul>
-    </div>
-    <div class="aui-content aui-margin-b-15">
-        <ul class="aui-list aui-form-list">
-            <li class="aui-list-item">
-                <div class="aui-list-item-inner">
-                    <div class="aui-list-item-label i18n1" name="balance">
-                    </div>
-                    <div class="aui-list-item-input">
-                        <div class="aui-label company-balance"></div>
-                    </div>
-                </div>
-            </li>
-        </ul>
-    </div>
-    <div class="aui-content aui-margin-b-15">
-        <ul class="aui-list aui-form-list">
-            <li class="aui-list-item">
-                <div class="aui-list-item-inner">
-                    <div class="aui-list-item-input">
-                        <div class="item-cash">
-                            <div class="aui-btn aui-btn-block pr-fontcolor pr-bgcolor i18n1" name="withdraw" onclick="putForwardCash();">提现</div>
-                        </div>
-                    </div>
-                    <div class="aui-list-item-input">
-                        <div class="item-cash">
-                            <div class="aui-btn aui-btn-block i18n1" name="viewreviews" onclick="openReviewsInformation();">查看评价</div>
-                        </div>
-                    </div>
-                </div>
-            </li>
-        </ul>
-    </div>
-    <section class="aui-grid img-container">
-        <div class="aui-row img-plus">
         </div>
-    </section>
-    <div class="aui-content">
-      <p class="item-upload i18n1" name="uploadpictureandfindyou">*上传几张店铺照片,方便用户能够找到你!</p>
-      <p class="item-upload i18n1 item-delete-tip" name="clickdelete">*点击图片删除!</p>
-      <p class="item-upload" onclick="addCompanyPicture();">
-        <img src="../../image/upload.png"/>
-      </p>
-    </div>
+        <div class="aui-content aui-margin-b-15">
+            <ul class="aui-list aui-form-list">
+                <li class="aui-list-item">
+                    <div class="aui-list-item-inner">
+                        <div class="aui-list-item-label i18n1" name="balance">
+                        </div>
+                        <div class="aui-list-item-input">
+                            <div class="aui-label company-balance"></div>
+                        </div>
+                    </div>
+                </li>
+            </ul>
+        </div>
+        <div class="aui-content aui-margin-b-15">
+            <ul class="aui-list aui-form-list">
+                <li class="aui-list-item">
+                    <div class="aui-list-item-inner">
+                        <div class="aui-list-item-input">
+                            <div class="item-cash">
+                                <div class="aui-btn aui-btn-block pr-fontcolor pr-bgcolor i18n1" name="withdraw" onclick="putForwardCash();">提现</div>
+                            </div>
+                        </div>
+                        <div class="aui-list-item-input">
+                            <div class="item-cash">
+                                <div class="aui-btn aui-btn-block i18n1" name="viewreviews" onclick="openReviewsInformation();">查看评价</div>
+                            </div>
+                        </div>
+                    </div>
+                </li>
+            </ul>
+        </div>
+        <section class="aui-grid img-container">
+            <div class="aui-row img-plus">
+            </div>
+        </section>
+        <div class="aui-content">
+            <p class="item-upload i18n1" name="uploadpictureandfindyou">*上传几张店铺照片,方便用户能够找到你!</p>
+            <p class="item-upload i18n1 item-delete-tip" name="clickdelete">*点击图片删除!</p>
+            <p class="item-upload" onclick="addCompanyPicture();">
+                <img src="../../image/upload.png" />
+            </p>
+        </div>
 </body>
 
 </html>
@@ -213,25 +218,33 @@
     var map;
     var g_company_no;
     apiready = function() {
+            //清空存放照片的容器
             $('.img-plus').empty();
             fnSettingHeader();
             map = api.require('bMap');
+            //加载商户信息
             loadCompanyInfo();
+            //图片上传事件
             registerUploadPhotosEvent();
+            //修改商户信息事件
             registerSaveCompanyUserInfoEvent();
+            //监听关闭提现页面事件
             registerUpdateCompanyProfileEvent();
             hlLanguage("../../i18n/");
         }
-        //商户信息修改
+        //商户信息修改提交
     function submitForm() {
-        if (g_id == undefined && g_id == "") {
+        //如果商户信息对应的id为空
+        if (isUndefinedOrEmpty(g_id)) {
             toastFail("系统繁忙,请稍后重试!");
             return;
         }
+        //获取商户的认证标识
         if (g_is_verified == undefined && g_is_verified == "") {
             toastFail("修改失败!");
             return;
         } else {
+            //如果商户在认证中或者认证完成信息不能修改
             if (g_is_verified == 1) {
                 toastFail("审核中,信息不能修改!");
                 return;
@@ -273,6 +286,7 @@
     }
     //加载商户信息
     function loadCompanyInfo() {
+        //打开进度条
         openLoading();
         var s = 'http://' + serverIP + '/CompanyUser/getCompanyUserInfo.action';
         api.ajax({
@@ -282,11 +296,12 @@
             dataType: 'json'
         }, function(ret, err) {
             if (ret) {
+                //变量依次为:商户名、商户成立时间、商户税号、经度、纬度、联系人、手机号、地址、座机号、认证标识、余额、商户图片名集合
                 var company_name, company_found_date, company_tax_code, company_location_lon,
                     company_location_lat, contact_person, cell_phone, address, lane_line, is_verified, balance, upload_files;
                 if (ret.success) {
                     g_id = ret.company.id;
-                    g_company_no=ret.company.company_no;
+                    g_company_no = ret.company.company_no;
                     company_name = ret.company.company_name;
                     company_tax_code = ret.company.company_tax_code;
                     company_location_lon = ret.company.company_location_lon;
@@ -308,6 +323,7 @@
                         });
                     }
                 }
+                //根据不同字段找到对应的文本框并赋值
                 if (company_name != undefined && company_name != "") {
                     $('.company-name-input').val(company_name);
                 }
@@ -343,20 +359,23 @@
                 if (is_verified != undefined && is_verified != "") {
                     g_is_verified = is_verified;
                     if (is_verified == 0) {
-                        $('.company-certified').text("未认证");
+                        $('.company-certified').text(isUndefinedOrEmpty("未认证","Uncertified"));
                     } else if (is_verified == 1) {
-                        $('.company-certified').text("已认证");
+                        $('.company-certified').text(isUndefinedOrEmpty("已认证","Certified"));
                     } else if (is_verified == 2) {
-                        $('.company-certified').text("审核中");
+                        $('.company-certified').text(isUndefinedOrEmpty("审核中","Audit"));
                     } else if (is_verified == 3) {
-                        $('.company-certified').text("认证失败");
+                        $('.company-certified').text(isUndefinedOrEmpty("认证失败","Fail"));
                     }
                 }
+                //获取商户上传的图片
                 if (upload_files != undefined && upload_files != "") {
                     g_upload_files = upload_files;
+                    //以";"将图片名集合分割
                     var imgArr = upload_files.split(';');
                     var imgUrl = 'http://' + serverIP + '/upload/pictures/';
                     var count = 0;
+                    //遍历图片名集合，生成图片模板
                     for (var i = 0; i < imgArr.length; i++) {
                         if (imgArr[i] != "") {
                             $('.img-plus').append(makeTemplateOfCompanyUserInfo(imgArr[i], imgUrl + imgArr[i]));
@@ -364,7 +383,8 @@
                         }
                     }
                     if (count > 0) {
-                        $('.img-container').show();$('.item-delete-tip').show();
+                        $('.img-container').show();
+                        $('.item-delete-tip').show();
                     }
                 }
             } else {
@@ -382,6 +402,7 @@
         }, function(ret, err) {
             if (ret.status) {
                 toastSuccess("定位成功!");
+                //获取经纬度
                 var lon = ret.lon;
                 var lat = ret.lat;
                 $('.company-lon-input').val(lon);
@@ -391,7 +412,7 @@
             }
         });
     }
-    //打开商户认证通道
+    //打开商户认证通道界面
     function openCompanyAuthentication() {
         api.openFrame({
             name: 'company_authentication',
@@ -410,14 +431,14 @@
             }
         });
     }
-    //注册修改商户信息事件
+    //修改商户信息事件
     function registerSaveCompanyUserInfoEvent() {
         api.addEventListener({
             name: 'SaveCompanyUserInfoEvent'
         }, function(ret, err) {
+            //提交表单
             submitForm();
         });
-
     }
     //生成商户信息图片展示模板
     function makeTemplateOfCompanyUserInfo(imgName, url) {
@@ -435,12 +456,16 @@
         }, function(ret, err) {
             var index = ret.buttonIndex;
             if (index == 1) {
+                //获取点击的对象
                 var $obj = $(obj);
+                //获取点击对象的data-name属性,该属性保存了图片名
                 var imgName = $obj.attr('data-name');
+                //判断商户信息对应的id 和要删除的图片名是否存在
                 if (g_id == undefined && g_id == "" && imgName == undefined && imgName == "") {
                     toastFail("移除图片失败!");
                     return;
                 }
+                //在图片集中移除刚刚删除的图片名
                 var temp = g_upload_files.replace(imgName + ";", "");
                 var s = 'http://' + serverIP + '/CompanyUser/saveCompanyUserInfo.action';
                 api.ajax({
@@ -458,6 +483,7 @@
                     if (ret) {
                         if (ret.success) {
                             toastSuccess(ret.message);
+                            //重新赋值图片集
                             g_upload_files = temp;
                             $obj.remove();
                         } else {
@@ -472,7 +498,7 @@
     }
     //添加图片
     function addCompanyPicture() {
-        selectPicture();
+        selectPicture(2);
     }
     //监听图片上传成功事件
     function registerUploadPhotosEvent() {
@@ -480,11 +506,13 @@
         api.addEventListener({
             name: 'UploadPictureEvent'
         }, function(ret, err) {
-            var imgUrl = ret.value.imgUrl;
-            var base64Data = ret.value.base64Data;
-            updateCompanyPicture(imgUrl);
+            var type = ret.value.type;
+            if (!isUndefinedOrEmpty(type) && type == 2) {
+                var imgUrl = ret.value.imgUrl;
+                var base64Data = ret.value.base64Data;
+                updateCompanyPicture(imgUrl);
+            }
         });
-
     }
     //上传用户选择的图片
     function updateCompanyPicture(imgUrl) {
@@ -510,7 +538,9 @@
                 if (ret.success) {
                     toastSuccess(ret.message);
                     var url = 'http://' + serverIP + '/upload/pictures/' + imgUrl;
+                    //更新图片集
                     g_upload_files = g_upload_files + imgUrl + ";";
+                    //添加图片到模板中
                     $('.img-plus').append(makeTemplateOfCompanyUserInfo(imgUrl, url));
                 } else {
                     toastFail(ret.message);
@@ -520,7 +550,7 @@
             }
         });
     }
-    //提现
+    //打开商户提现界面
     function putForwardCash() {
         api.openFrame({
             name: 'putforward_cash',
@@ -545,22 +575,22 @@
         });
     }
     //打开评价
-    function openReviewsInformation(){
-      if(g_company_no!=undefined){
-        api.openWin({
-          name: 'company_comment',
-          url: '../evaluation/company_comment.html',
-          animation:{
-            type:"push",
-            subType:"from_bottom",
-            duration:300
-          },
-          pageParam:{
-             company_no:g_company_no
-          }
-        });
-      }else{
-        toastFail("系统繁忙,请稍后重试!");
-      }
+    function openReviewsInformation() {
+        if (g_company_no != undefined) {
+            api.openWin({
+                name: 'company_comment',
+                url: '../evaluation/company_comment.html',
+                animation: {
+                    type: "push",
+                    subType: "from_bottom",
+                    duration: 300
+                },
+                pageParam: {
+                    company_no: g_company_no
+                }
+            });
+        } else {
+            toastFail("系统繁忙,请稍后重试!");
+        }
     }
 </script>

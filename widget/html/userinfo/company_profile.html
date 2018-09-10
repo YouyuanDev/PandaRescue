@@ -36,8 +36,10 @@
 <script type="text/javascript">
     apiready = function() {
         fnSettingHeader();
+        //获取导航栏高度
         var header = $api.byId('header');
         var headerH = $api.offset(header).h;
+        //打开账户信息Frame
         api.openFrame({
             name: 'company_profile_frame',
             url: './company_profile_frame.html',
@@ -52,7 +54,7 @@
         });
         hlLanguage("../../i18n/");
     }
-
+    //保存商户信息事件
     function submitForm() {
         api.sendEvent({
             name: 'SaveCompanyUserInfoEvent',

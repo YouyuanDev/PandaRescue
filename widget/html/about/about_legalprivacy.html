@@ -58,13 +58,13 @@
             fnSettingHeader();
             hlLanguage("../../i18n/");
         }
-
+      //关闭当前Frame
     function closeMyself() {
         api.closeFrame({
             name: 'about_legalprivacy'
         });
     }
-    //打开使用协议
+    //打开使用协议页面
     function openUseProtocol() {
         api.openWin({
             name: 'about_legalprivacy_useprotocol',
@@ -82,11 +82,10 @@
                 duration: 300
             },
             pageParam: {
-
             }
         });
     }
-    //打开个人信息保护及隐私
+    //打开个人信息保护及隐私页面
     function openPersonalAndPrivacy() {
         api.openWin({
             name: 'about_legalprivacy_personalprivacy',
@@ -107,7 +106,7 @@
             }
         });
     }
-    //账号和安全
+    //打开账号和安全页面
     function accountsAndSecurity() {
         api.openFrame({
             name: 'account_setting_security',

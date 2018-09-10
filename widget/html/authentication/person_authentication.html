@@ -77,17 +77,24 @@
             height: 6rem;
             background-color: #F2F5F6;
             background-repeat: no-repeat;
-            background-size: 6rem 6rem;
-            -moz-background-size: 6rem 6rem;
-            -webkit-background-size: 6rem 6rem;
-            -o-background-size: 6rem 6rem;
+            background-position: center center;
+            background-attachment: fixed;
+            background-size: 100% 100%;
         }
 
         .bg-picture img {
-          padding:0px;
-          width: 5rem;
-          height:5rem;
-          margin:auto;
+            padding: 0px;
+            width: 5rem;
+            height: 5rem;
+            margin: auto;
+        }
+
+        .bg-item {
+            background-color: #F2F5F6 !important;
+        }
+
+        .bg-item-active {
+            background-color: #73C0B6 !important;
         }
     </style>
 </head>
@@ -95,7 +102,7 @@
 <body class="pr-body-bgcolor">
     <header id="header" class="aui-bar aui-bar-nav aui-bar-light personal-header pr-bgcolor ">
         <a class="aui-pull-left aui-btn" onclick="closeMyself();">
-            <span  class="fa fa-chevron-left"></span>
+            <span class="fa fa-chevron-left"></span>
         </a>
         <div class="aui-title pr-fontcolor i18n1" name="realnameauthentication">实名认证</div>
     </header>
@@ -181,31 +188,42 @@
 <script src="../../script/language.js" type="text/javascript"></script>
 <script type="text/javascript" src="../../script/common.js"></script>
 <script type="text/javascript">
+    //变量以次为:语言环境id、身份证正面图片路径、身份证背面图片路径、身份证正反面标识
     var language_id = 0,
         g_idcard_front_picture, g_idcard_opposite_picture, select_type = 0;
     apiready = function() {
             fnSettingHeader();
+            //加载认证信息
             loadAuthenticationInfo();
+            //图片上传事件
             registerUploadPhotosEvent();
             hlLanguage("../../i18n/");
         }
         //获取身份验证信息
     function loadAuthenticationInfo() {
-        $('.process-content').find('span').eq(0).css("background-color", "#73C0B6");
-        $('.process-content').find('span').eq(1).css("background-color", "#F2F5F6");
-        $('.process-content').find('span').eq(2).css("background-color", "#F2F5F6");
+        //设置认证进度为提交阶段
+        $('.process-content').find('span').eq(0).addClass("bg-item-active");
+        $('.process-content').find('span').eq(1).removeClass("bg-item-active");
+        $('.process-content').find('span').eq(2).removeClass("bg-item-active");
+        //设置默认禁用提交按钮
+        $('.process-submit-btn').attr('disabled', true).removeClass('pr-bgcolor');
+        //隐藏上传图片容器
         $('.process-content-container').hide();
+        //隐藏显示认证信息容器
         $('.process-show-container').hide();
-        $('.process-submit-btn').attr('disabled','disabled').css('background-color', '#dddddd');
+        //隐藏撤销认证的容器
         $('.process-cancel-container').hide();
+        //设置背景图片内容为空
         $('.bg-picture').css({
             'background-image': '',
             'background-color': '#F2F5F6'
         });
+        //清理图片名全局变量
         g_idcard_front_picture = undefined;
         g_idcard_opposite_picture = undefined;
-        //加载个人信息
+        //打开加载动画
         openLoading();
+        //获取认证信息
         var s = 'http://' + serverIP + '/PersonUser/getPersonUserInfo.action';
         api.ajax({
             url: s,
@@ -215,52 +233,59 @@
         }, function(ret, err) {
             if (ret) {
                 if (ret.success) {
+                    //是否认证标识
                     var is_verified = ret.personUser.is_verified;
+                    //身份证前面图片名
                     var id_card_picture_front = ret.personUser.id_card_picture_front;
+                    //身份证背面图片名
                     var id_card_picture_back = ret.personUser.id_card_picture_back;
-                    var front_url, back_url;
+                    //身份证前面、背面图片路径
+                    var url = 'http://' + serverIP + '/upload/pictures/',
+                        front_url, back_url;
                     if (id_card_picture_front != undefined && id_card_picture_front != "") {
-                        front_url = 'http://' + serverIP + '/upload/pictures/' + id_card_picture_front;
+                        front_url = url + id_card_picture_front;
                     }
                     if (id_card_picture_back != undefined && id_card_picture_back != "") {
-                        back_url = 'http://' + serverIP + '/upload/pictures/' + id_card_picture_back;
+                        back_url = url + id_card_picture_back;
                     }
                     if (front_url != undefined && back_url != undefined) {
-                      $('.process-show-container .idcardfront-picture img').attr('src', front_url);
-                      $('.process-show-container .idcardopposite-picture img').attr('src', back_url);
+                        $('.process-show-container .idcardfront-picture img').attr('src', front_url);
+                        $('.process-show-container .idcardopposite-picture img').attr('src', back_url);
                     }
                     // 0:未认证 1:已认证 2:审核中  3:认证失败
                     if (is_verified != undefined && is_verified != "") {
-                        if (is_verified == 0) {
-                            //未认证
+                        if (is_verified == 0) { //未认证
+                            //显示提交证件图片内容
                             $('.process-content-container').show();
-                            $('.process-submit-btn').attr('disabled',false).css('background-color', '#73C0B6');
-                        } else if (is_verified == 1) {
-                            //已完成
-                            $('.process-content').find('span').eq(0).css("background-color", "#73C0B6");
-                            $('.process-content').find('span').eq(1).css("background-color", "#73C0B6");
-                            $('.process-content').find('span').eq(2).css("background-color", "#73C0B6");
+                            //设置提交按钮可用
+                            $('.process-submit-btn').attr('disabled', false).addClass('pr-bgcolor');
+                        } else if (is_verified == 1) { //已完成
+                            //设置认证进入为认证完成阶段
+                            $('.process-content').find('span').addClass('bg-item-active');
+                            //设置显示认证信息
                             $('.process-show-container').show();
-                            $('.process-submit-btn').attr('disabled', 'disabled').css('background-color', '#dddddd');
-                        } else if (is_verified == 2) {
-                            //审核中
-                            $('.process-content').find('span').eq(0).css("background-color", "#73C0B6");
-                            $('.process-content').find('span').eq(1).css("background-color", "#73C0B6");
+                        } else if (is_verified == 2) { //审核中
+                            //设置认证进入为认证审核阶段
+                            $('.process-content').find('span').eq(0).addClass('bg-item-active');
+                            $('.process-content').find('span').eq(1).addClass('bg-item-active');
+                            //显示提交的认证信息
                             $('.process-show-container').show();
-                            $('.process-submit-btn').attr('disabled', 'disabled').css('background-color', '#dddddd');
+                            //设置显示取消认证内容
                             $('.process-cancel-container').show();
-                        } else if (is_verified == 3) {
-                            //失败
+                        } else if (is_verified == 3) { //失败
+                            //隐藏进度
                             $('.process-bar').hide();
+                            //清理提示
                             $('.process-tips-p').empty();
                             $('.process-tips-p').append('<i class="fa fa-close"></i>');
-                            $('.process-tips-dsc').text("认证失败,请联系客服!");
-                            $('.process-submit-btn').attr('disabled', 'disabled').css('background-color', '#dddddd');
+                            //设置描述内容
+                            $('.process-tips-dsc').text(GetTextByLanguage("认证失败,请联系客服!", "Fail to authenticate, please contact customer service!"));
+                            //提示框显示
                             $('.process-tips-container').show();
+                            //提交按钮隐藏
                             $('.process-btn-container').hide();
                         }
                     } else {
-                        $('.process-content').find('span').eq(0).css("background-color", "#73C0B6");
                         $('.process-content-container').show();
                         $('.process-btn-container').show();
                     }
@@ -287,12 +312,12 @@
     //上传身份证正面
     function uploadIdCardPictureFront() {
         select_type = 0;
-        selectPicture();
+        selectPicture(0);
     }
     //上传身份证背面
     function uploadIdCardPictureOpposite() {
         select_type = 1;
-        selectPicture();
+        selectPicture(0);
     }
     //关闭窗体
     function closeMyself() {
@@ -307,31 +332,28 @@
             name: 'UploadPictureEvent'
         }, function(ret, err) {
             if (ret) {
-                var imgUrl = ret.value.imgUrl;
-                var url = 'http://' + serverIP + '/upload/pictures/' + imgUrl;
-                if (select_type == 0) {
-                    g_idcard_front_picture = imgUrl;
-                    $('.idcardfront-picture-active').css({
-                        'background': 'url(' + url + ')',
-                        'background-size': '6rem 6rem',
-                        '-webkit-background-size': '6rem 6rem',
-                        '-moz-background-size': '6rem 6rem',
-                        '-o-background-size': '6rem 6rem'
-                    });
-                } else if (select_type == 1) {
-                    g_idcard_opposite_picture = imgUrl;
-                    $('.idcardopposite-picture-active').css({
-                        'background': 'url(' + url + ')',
-                        'background-size': '6rem 6rem',
-                        '-webkit-background-size': '6rem 6rem',
-                        '-moz-background-size': '6rem 6rem',
-                        '-o-background-size': '6rem 6rem'
-                    });
+                var type = ret.value.type;
+                if (!isUndefinedOrEmpty(type) && type == 0) {
+                    var imgUrl = ret.value.imgUrl;
+                    var url = 'http://' + serverIP + '/upload/pictures/' + imgUrl;
+                    if (select_type == 0) {
+                        //设置身份证正面路径为刚上传的图片
+                        g_idcard_front_picture = imgUrl;
+                        $('.idcardfront-picture-active').css({
+                            'background-image': 'url(' + url + ')'
+                        });
+                    } else if (select_type == 1) {
+                        //设置身份证背面路径为刚上传的图片
+                        g_idcard_opposite_picture = imgUrl;
+                        $('.idcardopposite-picture-active').css({
+                            'background-image': 'url(' + url + ')'
+                        });
+                    }
                 }
             }
         });
     }
-    //提交
+    //提交认证信息
     function submitForm() {
         if (g_idcard_front_picture == undefined || g_idcard_opposite_picture == undefined) {
             toastFail("请提交所需照片!");
@@ -354,6 +376,7 @@
             if (ret) {
                 if (ret.success) {
                     toastSuccess(ret.message);
+                    //提交成功，从新加载认证信息
                     loadAuthenticationInfo();
                 } else {
                     toastFail(ret.message);

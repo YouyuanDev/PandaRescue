@@ -18,10 +18,12 @@
             line-height: 2.3rem;
             text-align: center;
         }
+
         .aui-list .aui-list-item {
             padding-top: 0.6rem;
             padding-bottom: 0.6rem;
         }
+
         .aui-list .aui-list-item-input label {
             padding-top: 0.2rem;
         }
@@ -56,11 +58,13 @@
             right: 0.2rem;
             top: 0.2rem;
         }
-        .cost-item{
-          padding:0.2rem;
+
+        .cost-item {
+            padding: 0.2rem;
         }
-        .cost-container{
-          display: none;
+
+        .cost-container {
+            display: none;
         }
     </style>
 </head>
@@ -119,23 +123,23 @@
         </div>
     </div>
     <section class="aui-content-padded cost-container">
-            <div class="cost-item pr-body-bgcolor">
-              <span class="i18n1" name="servicecost"></span>
-              <div class="aui-label">
-                 <span class="service-cost"></span><span>￥</span>
-              </div>
+        <div class="cost-item pr-body-bgcolor">
+            <span class="i18n1" name="servicecost"></span>
+            <div class="aui-label">
+                <span class="service-cost"></span><span>￥</span>
             </div>
-            <div class="cost-item pr-body-bgcolor">
-              <span class="i18n1" name="totalamount"></span>
-              <div class="aui-label aui-label-danger">
-                 <span class="total-cost"></span><span>￥</span>
-              </div>
+        </div>
+        <div class="cost-item pr-body-bgcolor">
+            <span class="i18n1" name="totalamount"></span>
+            <div class="aui-label aui-label-danger">
+                <span class="total-cost"></span><span>￥</span>
             </div>
+        </div>
         <!-- <Br /> -->
     </section>
     <!-- </div> -->
     <section class="aui-content-padded">
-      <button class="submit-btn pr-bgcolor pr-color i18n1" name="submit" onclick="submitForm();">提交</button>
+        <button class="submit-btn pr-bgcolor pr-color i18n1" name="submit" onclick="submitForm();">提交</button>
     </section>
 </body>
 <script type="text/javascript" src="../../script/api.js"></script>
@@ -190,7 +194,7 @@
     }
     //加载故障类型
     function loadAllFaultType() {
-      openLoading();
+        openLoading();
         var s = 'http://' + serverIP + '/FailureType/getAllFailureType.action';
         api.ajax({
             url: s,
@@ -320,7 +324,7 @@
     }
     //选择图片
     function userSelectPicture() {
-        selectPicture();
+        selectPicture(4);
     }
     //监听头像更换成功事件
     function registerUploadPhotosEvent() {
@@ -328,10 +332,12 @@
         api.addEventListener({
             name: 'UploadPictureEvent'
         }, function(ret, err) {
-            var imgUrl = ret.value.imgUrl;
-            $('.img-container .aui-row-padded').append(makePictureTemplate(imgUrl));
+            var type = ret.value.type;
+            if (!isUndefinedOrEmpty(type) && type == 4) {
+                var imgUrl = ret.value.imgUrl;
+                $('.img-container .aui-row-padded').append(makePictureTemplate(imgUrl));
+            }
         });
-
     }
     //删除图片
     function deletePicture(obj) {

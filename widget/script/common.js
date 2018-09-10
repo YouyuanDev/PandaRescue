@@ -283,19 +283,20 @@ function checkNetWork() {
     }
 }
 //图片上传
-function selectPicture() {
+function selectPicture(type) {
     api.actionSheet({
         title: '上传图片',
         cancelTitle: '取消',
         buttons: ['拍照', '从手机相册选择']
     }, function(ret, err) {
         if (ret) {
-            getPicture(ret.buttonIndex);
+            getPicture(ret.buttonIndex,type);
         }
     });
 }
 
-function getPicture(sourceType) {
+function getPicture(sourceType,type) {
+    //type类型(0：代表普通用户认证上传图片，1：代表商户认证上传图片，2：代表商户上传店铺照片,3：用户修改头像 4：用户发布求救表单上传图片 可以扩展)
     if (sourceType == 1) { // 拍照
         api.getPicture({
             sourceType: 'camera',
@@ -328,7 +329,8 @@ function getPicture(sourceType) {
                                 api.sendEvent({
                                     name: 'UploadPictureEvent',
                                     extra: {
-                                        imgUrl: ret.imgUrl
+                                        imgUrl: ret.imgUrl,
+                                        type:type
                                     }
                                 });
                                 toastSuccess("上传成功!");
@@ -376,7 +378,8 @@ function getPicture(sourceType) {
                                 api.sendEvent({
                                     name: 'UploadPictureEvent',
                                     extra: {
-                                        imgUrl: ret.imgUrl
+                                        imgUrl: ret.imgUrl,
+                                        type:type
                                     }
                                 });
                                 toastSuccess("上传成功!");
@@ -775,10 +778,13 @@ function GetTextByLanguage(chTxt,enTxt){
 }
 //判断字符串是否是undefined或空字符串
 function isUndefinedOrEmpty(str){
-  str=str+"";
-  if(str==undefined||str.trim()==""){
+  if(str==undefined){
     return true;
   }else{
-    return false;
+    str=str+"";
+    if(str.trim()=="")
+      return true;
+    else
+      return false;
   }
 }

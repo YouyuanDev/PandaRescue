@@ -124,17 +124,26 @@
     var g_account, g_id;
     apiready = function() {
         fnSettingHeader();
+        //图片上传事件
         registerUploadPhotosEvent();
         var data = api.pageParam;
         if (data != undefined) {
+            //获取传过来的账户信息
             g_account = data.g_account;
             if (g_account != undefined) {
+                //账户信息对应的id
                 g_id = g_account.id;
+                //账户名
                 var g_account_nickname = g_account.nickname;
+                //账户头像
                 var g_account_icon = g_account.icon_url;
+                //账户类型
                 var g_account_type = g_account.account_type;
+                //账户状态
                 var g_account_state = g_account.account_status;
+                //注册时间
                 var g_account_register_time = g_account.register_time;
+                //上次登录时间
                 var g_account_lastlogin_time = g_account.last_login_time;
                 if (g_account_nickname != undefined && g_account_nickname != "") {
                     $('.account-name-input').val(g_account_nickname);
@@ -163,7 +172,7 @@
         }
         hlLanguage("../../i18n/");
     }
-
+    //修改账户信息
     function submitForm() {
         if (g_id == undefined && g_id == "") {
             toastFail("系统繁忙,请稍后重试!");
@@ -194,7 +203,7 @@
     }
     //更换头像
     function changeHeader() {
-        selectPicture();
+        selectPicture(3);
     }
     //更新用户头像
     function updateAccountIcon(imgUrl) {
@@ -216,12 +225,17 @@
                 if (ret.success) {
                     toastSuccess(ret.message);
                     var url='http://' + serverIP +'/upload/pictures/'+imgUrl;
+                    //将修改后的头像更改到本地缓存
                     $api.setStorage('tx', url);
+                    //获取本地保存的账户信息
                     var account=$api.getStorage('g_account');
                     if(account!=undefined){
+                       //修改本地保存的账户信息中的头像路径
                        account.icon_url=imgUrl;
+                       //修改本地缓存的账户信息最后要重新设置不然没有效果
                        $api.setStorage('g_account', account);
                     }
+                    //设置头像路径
                     $('.personal-header-img').attr('src',url);
                 } else {
                     toastFail(ret.message);
@@ -242,9 +256,12 @@
         api.addEventListener({
             name: 'UploadPictureEvent'
         }, function(ret, err) {
-             var imgUrl=ret.value.imgUrl;
-             var base64Data=ret.value.base64Data;
-             updateAccountIcon(imgUrl);
+          var type = ret.value.type;
+          if (!isUndefinedOrEmpty(type) && type == 3) {
+            var imgUrl=ret.value.imgUrl;
+            var base64Data=ret.value.base64Data;
+            updateAccountIcon(imgUrl);
+          }
         });
 
     }

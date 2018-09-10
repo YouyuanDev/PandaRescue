@@ -126,8 +126,6 @@
         registLocatingCompanyLocationEvent();
         registerLoadNearbyCompanyEvent();
         registerSetPendingOrderAnnotationsEvent();
-        registerOrderStatusEvent();
-        registerCancelOrderEvent();
         registerReloginEvent();
         registerCompanyListEvent();
         setPushListener();
@@ -547,16 +545,9 @@
                     lat: lat
                 }
             });
-
-            // api.sendEvent({
-            //     name: 'ClickPendingOrderListEventListener',
-            //     extra: {
-            //         order_no: order_no
-            //     }
-            // });
         });
     }
-    //
+    //注册根据经纬度设置百度地图中心点的事件(商户列表点击的时候使用)
     function registLocatingCompanyLocationEvent() {
         api.addEventListener({
             name: 'LocatingCompanyLocationEvent'
@@ -570,6 +561,7 @@
                     lat: lat
                 }
             });
+            //发送商户列表点击事件(滚动商户列表使用)
             api.sendEvent({
                 name: 'ClickCompanyListEventListener',
                 extra: {
@@ -601,9 +593,9 @@
                     if (ret) {
                         if (ret.success) {
                             toastSuccess(ret.message);
-                            //接单成功
                         } else {
                             toastFail(ret.message);
+                            //如果用户已掉线
                             if (ret.relogin) {
                                 api.sendEvent({
                                     name: 'reloginEvent'
@@ -619,48 +611,23 @@
             }
         });
     }
-    //监听生成订单后事件
-    function registerOrderStatusEvent() {
-        api.addEventListener({
-            name: 'OrderStatusEvent'
-        }, function(ret, err) {
-            //getCurrentOrder();
-            // if (ret.value.order_no != undefined) {
-            //     //关闭附近商户列表和求救Frame
-            //     updateOrderStatus(ret.value.order_no);
-            // } else {
-            //     api.alert({
-            //         msg: "服务器繁忙,请刷新重试!"
-            //     });
-            // }
-        });
-    }
-    //取消订单事件
-    function registerCancelOrderEvent() {
-        api.addEventListener({
-            name: 'CancelOrderEvent'
-        }, function(ret, err) {
-            //关闭订单frame
-            //打开附近商户frame和求救frame
-        });
-    }
-
     //session不存在relogin事件
     function registerReloginEvent() {
         api.addEventListener({
             name: 'reloginEvent'
         }, function(ret, err) {
+            //获取用户session
             getUserSession();
         });
     }
-
-
     //监听账户类型变化事件
     function registerChangeAccountTypeEvent() {
         api.addEventListener({
             name: 'ChangeAccountTypeEvent'
         }, function(ret, err) {
+            //设置账户类型
             g_account_type = ret.value.account_type;
+            //获取用户最新的订单状态
             getCurrentOrder();
         });
     }
@@ -685,9 +652,11 @@
                 var order = undefined;
                 var status_code, status_name, status_name_en;
                 if ($.isArray(ret)) {
+                    //获取正在进行中的订单
                     for (var i = 0; i < ret.length; i++) {
                         order = ret[0];
                     }
+                    //获取订单的状态编号、中文名称、英文名称
                     if (order != undefined) {
                         status_code = order.status_code;
                         status_name = order.status_name;
@@ -695,11 +664,14 @@
                     }
                     if (g_order_status != status_code) {
                         g_order_status = status_code;
+                        //如果订单状态为已接单未付款
                         if (status_code == "confirmed") {
                             //如果是用户
                             if (g_account_type == "person_user") {
+                                //获取商户编号
                                 var company_no = order.company_no;
                                 var ids = [];
+                                //获取除了此订单之外的所有的商户编号集合
                                 for (var i = 0; i < g_CompanyList.length; i++) {
                                     if (g_CompanyList[i].company_no == company_no) {
                                         continue;
@@ -707,12 +679,15 @@
                                         ids.push(g_CompanyList[i].id);
                                     }
                                 }
+                                //移除所有在集合中标注
                                 map.removeAnnotations({
                                     ids: ids
                                 });
-                            } else {
+                            } else {//如果是商户
+                                //获取订单编号
                                 var order_no = order.order_no;
                                 var ids = [];
+                                //获取除了此订单之外的所有的订单编号集合
                                 for (var i = 0; i < g_PendingOrderList.length; i++) {
                                     if (g_PendingOrderList[i].order_no == order_no) {
                                         continue;
@@ -720,34 +695,35 @@
                                         ids.push(g_PendingOrderList[i].id);
                                     }
                                 }
+                                //移除所有在集合中标注
                                 map.removeAnnotations({
                                     ids: ids
                                 });
                             }
                         } else if (status_code == "pending") {
-
-                        } else if (status_code == "paid") {
-
+                          //如果订单状态为待接单
+                        } else if (status_code == "confirmedpaid") {
+                          //如果订单状态为已付款
                         } else if (status_code == "inservice") {
-
+                          //如果订单状态为服务中
                         } else if (status_code == "finished") {
-
+                          //如果订单状态为已完成
                         } else if (status_code == "cancelled") {
-
+                          //如果订单状态为已取消
                         }
                     }
                     if (status_name != undefined && status_name != "") {
+                        //打开定位按钮
                         openLocatingButton();
+                        //打开订单状态窗体
                         openOrderStatusFrame(order);
                     }
                 }
-
             } else {
                 toastFail("系统错误,获取订单状态!错误码:" + err.code);
             }
         });
     }
-
     //获取当前订单的个人用户和商户用户当前位置，唯一同步地理信息的地方
     function getPersonUserAndCompanyUserCurrentLocation() {
         var s = 'http://' + serverIP + '/Order/getPersonUserAndCompanyUserCurrentLocation.action';
@@ -760,6 +736,7 @@
         }, function(ret, err) {
             if (ret) {
                 if (ret.success) {
+                    //更新对方的位置，绘制路线
                     drawLocation(ret.accountType, ret.person_user_location, ret.company_user_location);
                 } else {
                     toastFail(ret.msg);
@@ -775,36 +752,42 @@
             }
         });
     }
-
     //画对方的位置
     function drawLocation(accountType, person_user_location, company_user_location) {
         //更新对方的位置, 此处改为定时更新客户位置信息
-        if (accountType == "person_user") {
+        if (accountType == "person_user") {//如果为普通用户
             if (company_user_location == undefined || company_user_location == "") {
                 return;
             }
+            //获取商户以","分割的字符串坐标
             var lon_lat = company_user_location.split(',');
             if (lon_lat.length > 1) {
                 var lon = lon_lat[0];
                 var lat = lon_lat[1];
-                updateCompanyUserLocation(g_CompanyList.length, lon, lat);
+                //更新商户位置
+                updateCompanyUserAnnotation(g_CompanyList.length, lon, lat);
+                //绘制路线
                 drawRouteFromBeginToEnd(g_my_lon, g_my_lat, lon, lat);
             }
-        } else if (accountType == "company_user") {
+        } else if (accountType == "company_user") {//如果为商户
             if (person_user_location == undefined || person_user_location == "") {
                 return;
             }
+              //获取用户以","分割的字符串坐标
             var lon_lat = person_user_location.split(',');
             if (lon_lat.length > 1) {
                 var lon = lon_lat[0];
                 var lat = lon_lat[1];
-                updatePersonUserLocation(g_PendingOrderList.length, lon, lat);
+                //更新用户位置
+                updatePersonUserAnnotation(g_PendingOrderList.length, lon, lat);
+                //绘制路线
                 drawRouteFromBeginToEnd(g_my_lon, g_my_lat, lon, lat);
             }
         }
     }
     //上传坐标
     function SendLocationToServer(now_lon, now_lat, order_no, distanceToLastLocation) {
+        //坐标组装
         var my_location = now_lon + "," + now_lat;
         var s = 'http://' + serverIP + '/Order/updateLocation.action';
         api.ajax({
@@ -821,7 +804,9 @@
         }, function(ret, err) {
             if (ret) {
                 if (ret.success) {
+                    //如果上次位置和本次位置距离大于10m
                     if (distanceToLastLocation > 10) {
+                        //自动移动地图可视区域中心点到用户当前坐标位置
                         map.showUserLocation({
                             isShow: true,
                             trackingMode: 'none'
@@ -836,10 +821,12 @@
 
     //更新订单用户坐标
     function updateOrderUserLocation(order_no) {
+        //如果订单编号为空,停止定位用户位置
         if (order_no == undefined) {
             map.stopLocation();
             return;
         }
+        //获取用户位置
         map.getLocation({
             accuracy: '10m',
             autoStop: false,
@@ -850,6 +837,7 @@
                 var now_lat = ret.lat;
                 //获取上次和当前距离差，大于1m则更新位置
                 if (g_my_lon != undefined && g_my_lat != undefined && now_lon != undefined && now_lat != undefined) {
+                    //获取当前用户位置与上次位置的距离
                     map.getDistance({
                         start: {
                             lon: g_my_lon,
@@ -868,7 +856,6 @@
                     SendLocationToServer(now_lon, now_lat, order_no, 100);
                 }
             } else {
-                //map.stopLocation();
                 toastFail('获取用户信息时出错,错误信息:' + err.code);
             }
         });
@@ -894,23 +881,27 @@
                 order: order
             }
         });
+        //设置订单状态Frame在遮罩层下面
         api.sendFrameToBack({
             from: 'order_status',
             to: 'mask'
         });
     }
-    //更新商户所派人员坐标
-    function updateCompanyUserLocation(id, lon, lat, title, subTitle) {
+    //更新商户所派人员标注位置
+    function updateCompanyUserAnnotation(id, lon, lat, title, subTitle) {
+        //判断标注是否存在
         map.annotationExist({
             id: id
         }, function(ret) {
             if (ret.status) {
+                //如果标注存在,修改标注所在位置
                 map.setAnnotationCoords({
                     id: id,
                     lon: lon,
                     lat: lat
                 });
             } else {
+                //如果标注不存在,添加标注
                 map.addAnnotations({
                     annotations: [{
                         id: id,
@@ -920,6 +911,7 @@
                     icon: 'widget://image/company_user_128.png',
                     draggable: false
                 }, function(ret) {});
+                //设置标注点击时弹出的信息
                 map.setBubble({
                     id: id,
                     content: {
@@ -936,20 +928,22 @@
                 }, function(ret) {});
             }
         });
-
     }
-    //更新用户坐标
-    function updatePersonUserLocation(id, lon, lat, title, subTitle) {
+    //更新用户标注位置
+    function updatePersonUserAnnotation(id, lon, lat, title, subTitle) {
+        //判断标注是否存在
         map.annotationExist({
             id: id
         }, function(ret) {
             if (ret.status) {
+                //如果存在设置标注位置
                 map.setAnnotationCoords({
                     id: id,
                     lon: lon,
                     lat: lat
                 });
             } else {
+                //如果不存在，先添加标注
                 map.addAnnotations({
                     annotations: [{
                         id: id,
@@ -959,6 +953,7 @@
                     icon: 'widget://image/help_64.png',
                     draggable: false
                 }, function(ret) {});
+                //设置标注点击时弹出的信息
                 map.setBubble({
                     id: id,
                     content: {
@@ -986,48 +981,42 @@
         }, function(rets, err) {
             if (rets) {
                 if (rets.success) {
+                    //发送账户类型改变的事件
                     api.sendEvent({
                         name: 'ChangeAccountTypeEvent',
                         extra: {
                             account_type: rets.accountType
                         }
                     });
-
+                    //设置头部账户类型信息
                     $('.aui-title').append("<i>" + rets.accountType + "<i>");
                     return;
                 } else {
+                    //获取账户信息
                     var data = getAccount();
                     try {
+                        //如果不为空
                         if (data != undefined) {
                             var phone = account.username;
                             var password = account.password;
+                            //用户自动登录
                             autoLoginWithCellPhoneNo(phone, password);
                             return;
                         } else {
-                            api.openWin({
-                                name: 'login',
-                                url: './html/login/login.html',
-                                reload: true,
-                                pageParam: {}
-                            });
+                            //打开登录页面
+                            openLogin();
                         }
                     } catch (e) {
                         toastFail('系统错误,请重新登录!');
+                        openLogin();
                     }
                 }
-                api.openWin({
-                    name: 'login',
-                    url: './html/login/login.html',
-                    reload: true,
-                    pageParam: {}
-                });
-
             } else {
                 toastFail("系统错误,检测用户是否登录失败!错误码:" + err.code);
             }
         });
     }
-    //如果本地存在用户登录信息，则请求后台session或者刷新session
+    //自动登录事件,如果本地存在用户登录信息，则请求后台session或者刷新session
     function autoLoginWithCellPhoneNo(phone, password) {
         var s = 'http://' + serverIP + '/Login/LoginWithCellPhoneNo.action';
         api.ajax({
@@ -1053,25 +1042,22 @@
                         }
                     }
                     var account = ret.account;
+                    //清理本地缓存
                     clearStorage();
+                    //设置账户信息到本地
                     $api.setStorage('g_account', account);
+                    //设置连接融云聊天服务器的token信息
                     setToken();
-                    toastSuccess("自动登录成功!");
+                    //发送改变账户的事件
                     api.sendEvent({
                         name: 'ChangeAccountTypeEvent',
                         extra: {
                             account_type: ret.accountType
                         }
                     });
-
                 } else {
                     toastFail(ret.msg);
-                    api.openWin({
-                        name: 'login',
-                        url: './html/login/login.html',
-                        reload: true,
-                        pageParam: {}
-                    });
+                    openLogin();
                 }
             } else {
                 toastFail("系统错误,自动登录登录失败!错误码:" + err.code);
@@ -1093,7 +1079,6 @@
             clearPanel();
             if (rets) {
                 g_account_type = rets.accountType;
-                var language = getLanguage();
                 var desc = "";
                 if(g_account_type == "person_user"){
                   desc=GetTextByLanguage("普通用户","Person");
@@ -1102,7 +1087,7 @@
                 }
                 $('.item-account-type').text(desc);
                 if (rets.success) {
-                    //存在进行中订单
+                    //存在进行中订单,更新订单状态
                     updateOrderStatus(rets.order_no);
                 } else {
                     //为了关闭定时器
@@ -1133,15 +1118,18 @@
     }
     //更新当前订单的状态
     function updateOrderStatus(order_no) {
-        //关闭附近商户列表和求救Frame
+        //清理定时器
         if (order_no == undefined && g_PersonUserAndCompanyUserLocationInterval != -1) {
             window.clearInterval(g_PersonUserAndCompanyUserLocationInterval);
             g_PersonUserAndCompanyUserLocationInterval = -1;
         }
+        //获取订单状态
         getOrderStatusInfo(order_no);
+        //更新订单用户坐标
         updateOrderUserLocation(order_no);
         if (order_no != undefined) {
             if (g_PersonUserAndCompanyUserLocationInterval == -1) {
+                //开启更新用户和商户坐标的定时器
                 g_PersonUserAndCompanyUserLocationInterval = window.setInterval(function() {
                     getPersonUserAndCompanyUserCurrentLocation();
                 }, 5000);
@@ -1159,7 +1147,6 @@
            map.close();
       });
     }
-
     //注册加载附近商户的信息事件
     function registerLoadNearbyCompanyEvent() {
         api.addEventListener({
@@ -1168,15 +1155,16 @@
             var annotations = ret.value.annotations;
             var companyList = ret.value.g_companyList;
             var bubble = ret.value.bubble;
-            //g_annotations=annotations;
+            //设置全局商户信息列表
             g_CompanyList = companyList;
+            //设置商户的标注信息
             setCompanyAnnotations(annotations);
+            //设置商户标注点击时弹出的内容
             for (var i = 0; i < bubble.length; i++) {
                 setCompanyBubble(bubble[i].id, bubble[i].company_name);
             }
         });
     }
-
     //注册加载所有未接单的订单事件
     function registerSetPendingOrderAnnotationsEvent() {
         api.addEventListener({
@@ -1185,15 +1173,17 @@
             var annotations = ret.value.annotations;
             var orderList = ret.value.g_PendingOrderList;
             var bubble = ret.value.bubble;
+              //设置全局待接单信息列表
             g_PendingOrderList = orderList;
+              //设置待接单的标注信息
             setPendingOrderAnnotations(annotations);
+            //设置待接单标注点击时弹出的内容
             for (var i = 0; i < bubble.length; i++) {
                 setPendingOrderBubble(bubble[i].id, bubble[i].service_type_name, bubble[i].failure_type_name, bubble[i].address);
             }
         });
     }
-
-    //切换至普通账户
+    //账户类型切换事件
     function requestSwitchAccounType(account_type) {
         //向后台发出请求判断是否能够切换
         var s = 'http://' + serverIP + '/Login/APPSwitchAccoutType.action';
@@ -1209,6 +1199,7 @@
             if (rets) {
                 if (rets.success) {
                     toastSuccess(rets.msg);
+                    //发送账户类型改变的事件
                     api.sendEvent({
                         name: 'ChangeAccountTypeEvent',
                         extra: {
@@ -1229,8 +1220,9 @@
             }
         });
     }
-    //账户消息
+    //打开对话窗体
     function openConversation() {
+        //隐藏消息通知的红点
         $('.message-dot').hide();
         api.openWin({
             name: 'conversation',
@@ -1242,20 +1234,25 @@
     //清屏
     function clearPanel() {
         var company_ids = [],pending_order_ids=[];
+        //获取所有的商户信息数组
         for (var i = 0; i < g_CompanyList.length; i++) {
             company_ids.push(g_CompanyList[i].id);
         }
+        //获取所有的待接单信息数组
         for (var i = 0; i < g_PendingOrderList.length; i++) {
             pending_order_ids.push(g_PendingOrderList[i].id);
         }
         company_ids.push(g_CompanyList.length);
         pending_order_ids.push(g_PendingOrderList.length);
+        //移除商户信息标注
         map.removeAnnotations({
             ids: company_ids
         });
+        //移除待接单信息标注
         map.removeAnnotations({
             ids: pending_order_ids
         });
+        //移除标注弹出框
         map.removeRoute({
             company_ids: [1]
         });
@@ -1335,22 +1332,15 @@
             }
         });
     }
-
-    // function openLogin() {
-    //     api.openWin({
-    //         name: 'login',
-    //         url: './html/login/login.html',
-    //         reload: true,
-    //         pageParam: {}
-    //     });
-    // }
     //绘制两点之间路线
     function drawRouteFromBeginToEnd(begin_lon, begin_lat, end_lon, end_lat) {
-        //alert(begin_lon+":"+begin_lat+":"+end_lon+":"+end_lat);
+        //如果起始点和终点坐标部位空
         if (begin_lon != undefined && begin_lat != undefined && end_lon != undefined && end_lat != undefined) {
+            //先移除已经存在的路线
             map.removeRoute({
                 ids: [1]
             });
+            //搜索路线
             map.searchRoute({
                 id: 1,
                 type: 'drive',
@@ -1365,14 +1355,13 @@
                 }
             }, function(ret, err) {
                 if (ret.status) {
+                    //绘制路线
                     map.drawRoute({
                         id: 1,
                         autoresizing: false,
                         index: 0
                     }, function(ret) {
-                        api.alert({
-                            msg: JSON.stringify(ret)
-                        });
+
                     });
                 }
             });
@@ -1380,6 +1369,7 @@
     }
     //侧滑打开账户设置
     function openAccount() {
+        //打开遮罩层
         api.openFrame({
             name: 'mask',
             url: './html/frames/mask.html',
@@ -1391,6 +1381,7 @@
                 h: api.height
             }
         });
+        //打开账户设置页面
         api.openFrame({
             name: 'account',
             url: './html/frames/account.html',
@@ -1411,12 +1402,12 @@
             }
         });
     }
-
     //监听遮罩层点击事件
     function registerMaskEvent() {
         api.addEventListener({
             name: 'MaskClickEvent'
         }, function(ret, err) {
+            //关闭遮罩层和账户设置页面
             closeMaskAndAccountFrame();
         });
     }
@@ -1435,13 +1426,10 @@
             name: 'SwitchAccountTypeEvent'
         }, function(ret, err) {
             if (ret) {
-                api.closeFrame({
-                    name: 'mask'
-                });
-                api.closeFrame({
-                    name: 'account'
-                });
-                requestSwitchAccounType(ret.value.account_type);
+                 //关闭遮罩层和账户设置页面
+                 closeMaskAndAccountFrame();
+                 //账户类型切换
+                 requestSwitchAccounType(ret.value.account_type);
             }
         });
     }
@@ -1451,6 +1439,7 @@
             if (ret.status == 'success') {
                 //消息监听
                 registerReceiveMessageListener();
+                //连接融云聊天服务器
                 rong.connect({
                     token: $api.getStorage('token')
                 }, function(ret, err) {});
@@ -1461,8 +1450,10 @@
     }
     //设置消息监听
     function registerReceiveMessageListener() {
+        //开始消息监听
         rong.setOnReceiveMessageListener(function(ret, err) {
             if (ret) {
+                //显示消息通知的红点
                 $('.message-dot').show();
                 //发送更新会话列表命令
                 api.sendEvent({
@@ -1477,6 +1468,15 @@
                 })
             }
         })
+    }
+    //打开登录页面
+    function openLogin(){
+      api.openWin({
+          name: 'login',
+          url: './html/login/login.html',
+          reload: true,
+          pageParam: {}
+      });
     }
 </script>
 
