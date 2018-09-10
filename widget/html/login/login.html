@@ -140,20 +140,12 @@
     var forgetPasswordInterval;
     var count = 60;
     apiready = function() {
+        //设置顶部导航栏位置
         fnSettingHeader();
-        var data = api.pageParam;
-        if (data != undefined) {
-            var cellphoneno = data.cellphoneno;
-            var password = data.password;
-            if (cellphoneno != undefined) {
-                $("#phone").val(cellphoneno);
-            }
-            if (password != undefined) {
-                $("#password").val(password);
-            }
-        }
+        //获取账户信息
         var account = getAccount();
         if (account != undefined) {
+            //获取账户名和密码
             var username = account.username;
             var password = account.password;
             if (username != undefined) {
@@ -165,7 +157,7 @@
         }
         hlLanguage("../../i18n/");
     }
-
+    //打开注册账户页面
     function registerAccount() {
         api.openWin({
             name: 'register',
@@ -176,13 +168,13 @@
     }
     //忘记密码
     function forgetPassword() {
+        //获取手机号
         var phone = $('#phone').val();
         if (phone != undefined && phone != "") {
             if (!isPhoneNo(phone)) {
                 toastFail("手机号不合法!");
                 return;
             }
-
             var s = 'http://' + serverIP + '/Login/ForgotPassword.action';
             api.ajax({
                 url: s,
@@ -196,8 +188,11 @@
                 if (ret) {
                     if (ret.success) {
                         toastSuccess(ret.msg);
+                        //获取验证码的倒计时
                         forgetPasswordInterval = setInterval("forgetPasswordSetInterval()", 1000);
+                        //忘记密码按钮隐藏
                         $('.forget-password').hide();
+                        //倒计时按钮显示
                         $('.forget-password-interval').show();
                     } else {
                         toastFail(ret.msg);
@@ -231,6 +226,7 @@
                         var account = ret.account;
                         var account_type = ret.accountType;
                         toastSuccess(ret.msg);
+                        //发送账户类型改变的事件
                         api.sendEvent({
                             name: 'ChangeAccountTypeEvent',
                             extra: {
@@ -247,17 +243,18 @@
                                 joinPushGroup(rolelist[i]);
                             }
                         }
+                        //清理本地缓存
                         clearStorage();
+                        //设置账户信息到本地缓存
                         $api.setStorage('g_account',account);
+                        //设置token信息到融云聊天服务器
                         setToken();
+                        //打开主页面
                         api.openWin({
                             name: 'inde',
                             url: '../../index.html',
                             reload: true
                         });
-                        // api.closeToWin({
-                        //     name: 'root'
-                        // });
                     } else {
                         toastFail(ret.msg);
                     }
@@ -286,8 +283,11 @@
             count--;
             $('.send-btn').text("剩余" + count + "s");
         } else {
+            //清理倒计时
             clearInterval(forgetPasswordInterval);
+            //倒计时按钮显示
             $('.forget-password-interval').hide();
+            //忘记密码按钮隐藏
             $('.forget-password').show();
             count = 60;
             $('.send-btn').text("剩余" + count + "s");

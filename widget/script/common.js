@@ -764,7 +764,7 @@ function getAccount() {
     } catch (e) {}
     return account;
 }
-//中英文提示转换
+//中英文提示转换(参数:中文,英文)
 function GetTextByLanguage(chTxt,enTxt){
    var language=getCookie();
    if(language==undefined||language=="zh-CN"|| language == ""){
@@ -775,7 +775,8 @@ function GetTextByLanguage(chTxt,enTxt){
 }
 //判断字符串是否是undefined或空字符串
 function isUndefinedOrEmpty(str){
-  if(str==undefined||str.trim(str)==""){
+  str=str+"";
+  if(str==undefined||str.trim()==""){
     return true;
   }else{
     return false;

@@ -90,6 +90,9 @@
         transform-origin: 50% 100%;
         pointer-events: none;
     }
+    .item-distance-container{
+      display: none;
+    }
     </style>
 </head>
 
@@ -120,6 +123,13 @@
                                     </div>
                                 </div>
                             </div>
+                            <div class="aui-media-list-item-inner item-line item-distance-container">
+                                <div class="aui-list-item-inner">
+                                    <div class="aui-list-item-text">
+                                        <div class="aui-list-item-title item-distance"></div>
+                                    </div>
+                                </div>
+                            </div>
                             <div class="aui-media-list-item-inner item-line">
                                 <div class="aui-list-item-inner">
                                     <div class="aui-list-item-text">
@@ -141,7 +151,7 @@
                                     <div class="aui-list-item-text">
                                         <div class="aui-list-item-title"></div>
                                         <div class="aui-list-item-right">
-                                            <div class="aui-btn pr-bgcolor" onclick="popupBubble()">接单</div>
+                                            <div class="aui-btn pr-bgcolor" onclick="receiptOrder()">接单</div>
                                         </div>
                                     </div>
                                 </div>
@@ -159,15 +169,21 @@
 <script type="text/javascript" src="../../script/jquery-3.3.1.min.js"></script>
 <script type="text/javascript" src="../../script/common.js"></script>
 <script type="text/javascript">
+    //定义服务类型和故障类型
     var g_service_type_dict, g_failure_type_dict;
+    //百度地图
     var map;
+    //当前用户坐标
     var g_my_lon,g_my_lat;
-    var g_companyList=[];
+    //订单信息
     var g_rowData;
+    //标题栏高度
     var g_headerH;
+    //订单编号
     var g_order_no;
-    var person_user_location_lon;
-    var person_user_location_lat;
+    //发布订单的用户的坐标
+    var person_user_location_lon,person_user_location_lat;
+    //发布订单的用户的id,昵称,头像
     var g_user_id,g_nickname,g_icon_url;
     apiready = function() {
             map = api.require('bMap');
@@ -178,6 +194,7 @@
             g_my_lon=data.my_lon;
             g_my_lat=data.my_lat;
             g_headerH=data.g_headerH;
+            //如果订单信息不为空
             if(g_rowData_str!=undefined){
               try{
                    g_rowData=JSON.parse(g_rowData_str);
@@ -185,8 +202,11 @@
                    g_order_no=order_no;
                    g_user_id=g_rowData.user_id;
                    g_nickname=g_rowData.user_nickname;
+                   //发布订单人的头像
                    var icon_url=g_rowData.user_icon_url;
+                   //发布订单人的手机号
                    var phone_no=g_rowData.user_cell_phone;
+                   //发布订单人的地址
                    var address=g_rowData.address;
                    var service_type_name=g_rowData.service_type_name;
                    var failure_type_name=g_rowData.failure_type_name;
@@ -194,7 +214,9 @@
                    var lat=g_rowData.lat;
                    person_user_location_lon=lon;
                    person_user_location_lat=lat;
+                   //此订单费用
                    var fee=g_rowData.service_fee;
+                   //订单发布时间
                    var order_time=getDate1(g_rowData.order_time);
                    $('.item-phone').attr('data-phone',phone_no);
                    if(icon_url!=undefined){
@@ -222,6 +244,8 @@
                    if(failure_type_name!=undefined&&failure_type_name!=""){
                      $('.item-failure-type').text(failure_type_name);
                    }
+                   //获取驾车行驶商户到用户之间的最短距离和时间
+                   getRouteDistance(person_user_location_lon,person_user_location_lat);
               }catch(e){
                 toastFail("获取订单详情失败!");
                 closeSelf();
@@ -230,12 +254,9 @@
               toastFail("获取订单详情失败!");
               closeSelf();
             }
-            setFrameHeight();
         }
     //获取两点间的路线距离
-    function getRouteDistance(order_no, person_user_location_lon, person_user_location_lat) {
-        var p_lon = person_user_location_lon;
-        var p_lat = person_user_location_lat;
+    function getRouteDistance(person_user_location_lon, person_user_location_lat) {
         map.removeRoute({
           ids: [1]
         });
@@ -243,37 +264,33 @@
         map.searchRoute({
             id: 1,
             type: 'drive',
-            policy: 'ecar_time_first/ecar_dis_first',
+            policy: 'ecar_time_first',
             start: {
-                lon: my_lon,
-                lat: my_lat
+                lon: g_my_lon,
+                lat: g_my_lat
             },
             end: {
-                lon: p_lon,
-                lat: p_lat
+                lon: person_user_location_lon,
+                lat: person_user_location_lat
             }
         }, function(ret, err) {
             if (ret) {
                 if (ret.status) {
-                    $("#dis_" + order_no).text('驾车：'+getDistance(ret.plans[0].distance)+'km '+'耗时：'+convertSecToMin(ret.plans[0].duration)+'分钟');
-                } else {
-                    toastFail("系统错误!");
+                    $('.item-distance').text('驾车：'+getDistance(ret.plans[0].distance)+'km '+'耗时：'+convertSecToMin(ret.plans[0].duration)+'分钟');
+                    $('.item-distance-container').show();
                 }
-            } else {
-                toastFail("系统错误" + err.msg);
             }
-
+            //设置Frame高度
+            setFrameHeight();
         });
     }
-
-    //发送弹出标注信息事件
-    function popupBubble() {
+    //接单按钮点击，开始接单
+    function receiptOrder() {
         if(g_order_no!=undefined){
+          //发送接单事件
           api.sendEvent({
-              name: 'LocatingPersonUserLocationEvent',
+              name: 'receiptEvent',
               extra: {
-                  lon: person_user_location_lon,
-                  lat:person_user_location_lat,
                   order_no:g_order_no
               }
           });
@@ -281,8 +298,6 @@
         }else{
           toastFail('未查到订单编号!');
         }
-        //计算路程距离
-        //getRouteDistance(order_no, person_user_location_lon, person_user_location_lat);
     }
     //监听地图标注点击事件，订单滚动
     function registerPendingOrderScrollEvent() {
@@ -307,18 +322,6 @@
             }
         });
     }
-    //是否滚动到底部
-    function isRollingToEnd() {
-        api.addEventListener({
-            name: 'scrolltobottom',
-            extra: {
-                threshold: 0 //设置距离底部多少距离时触发,默认值为0,数字类型
-            }
-        }, function(ret, err) {
-            g_start=g_start+1;
-            loadAllPendingOrder();
-        });
-    }
     //拨打电话
     function callUser(obj){
       var phone_no=$(obj).attr('data-phone');
@@ -338,16 +341,19 @@
          return;
       }
       var rong = api.require('rongCloud2');
-      if ($api.getStorage('id') == g_user_id) {
-      } else {
+      //如果发布订单的用户id不等于当前用户id
+      if ($api.getStorage('id')!= g_user_id) {
+          //清除未读的消息状态
           rong.clearMessagesUnreadStatus({
               conversationType: 'PRIVATE',
               targetId: g_user_id
           }, function(ret, err) {})
       }
+      //更新对话列表
       api.sendEvent({
           name: 'UpdateConversationListEvent'
       });
+      //打开聊天窗口
       api.openWin({
           reload: true,
           name: 'chat',
@@ -360,7 +366,7 @@
           vScrollBarEnabled: false,
       });
     }
-    //返回事件
+    //点击返回按钮事件
     function back(){
       if(g_headerH==undefined||g_headerH==""){
         g_headerH=80;
@@ -384,17 +390,20 @@
               headerH:g_headerH
           }
       });
+      //设置订单列表在遮罩层下面
       api.sendFrameToBack({
           from: 'pending_order_list',
           to: 'mask'
       });
       closeSelf();
     }
+    //关闭当前窗体
     function closeSelf(){
       api.closeFrame({
         name: 'pending_order'
       });
     }
+    //设置Frame高度
     function setFrameHeight() {
         var h = $('.container')[0].scrollHeight;
         api.setFrameAttr({

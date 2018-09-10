@@ -137,6 +137,7 @@
 <script type="text/javascript">
     var g_account;
     apiready = function() {
+            //设置顶部导航栏位置
             fnSettingHeader();
             var data = api.pageParam;
             if (data != undefined) {
@@ -152,6 +153,7 @@
                   $('.app-cache').text(size + "MB");
                 }
             });
+            //翻译设置
             hlLanguage("../../i18n/");
         }
         //退出登录
@@ -166,6 +168,8 @@
             if (ret) {
                 if (ret.success) {
                     toastSuccess(ret.message);
+                    //定制更新用户位置
+                    stopUpdateUserLocation();
                     //退出成功，返回到主页面
                     api.openWin({
                         name: 'login',
@@ -179,7 +183,7 @@
             }
         });
     }
-    //语言设置
+    //打开语言设置
     function changeLanguage() {
         api.openFrame({
             name: 'account_setting_language',
@@ -282,4 +286,12 @@
             }
         });
     }
+    //停止更新主页面定时上传用户坐标
+  function stopUpdateUserLocation(){
+    api.sendEvent({
+        name: 'StopUpdateUserLocationEvent',
+        extra: {
+        }
+    });
+  }
 </script>

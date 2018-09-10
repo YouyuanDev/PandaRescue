@@ -56,6 +56,9 @@
             margin-bottom: 0.5rem;
             border-radius: 0.2rem;
         }
+        .item-active {
+            background-color: #EBEBEB;
+        }
     </style>
 </head>
 
@@ -79,11 +82,17 @@
 <script type="text/javascript" src="../../script/jquery-3.3.1.min.js"></script>
 <script type="text/javascript" src="../../script/common.js"></script>
 <script type="text/javascript">
+    //定义服务类型和故障类型集合
     var g_service_type_dict, g_failure_type_dict;
+    //百度地图
     var map;
+    //当前用户坐标
     var my_lon,my_lat;
+    //分页查询开始页
     var g_start=1;
-    var g_companyList=[];
+    //订单编号集合
+    var g_orderList=[];
+    //标题栏高度
     var g_headerH;
     apiready = function() {
             map = api.require('bMap');
@@ -93,16 +102,23 @@
             g_service_type_dict = data.g_service_type_dict;
             g_failure_type_dict = data.g_failure_type_dict;
             g_headerH=data.headerH;
+            //注册订单列表滚动事件
             registerPendingOrderScrollEvent();
+            //分页加载待接单订单
             loadAllPendingOrder();
+            //下拉刷新
+            setCustomRefreshHeaderInfo();
+            //是否滚动到底部
             isRollingToEnd();
         }
         //加载所有未接单的订单
         function loadAllPendingOrder() {
-            if(my_lon==undefined||my_lon==""||my_lat== undefined||my_lat==""){
+            //判断当前用户位置是否为空
+            if(isUndefinedOrEmpty(my_lon)||isUndefinedOrEmpty(my_lat)){
               toastFail("无定位信息");
               return;
             }
+            //分页查询商户附近的订单
             var s = 'http://' + serverIP + '/CompanyUser/getNearByPendingOrders.action';
             api.ajax({
                  url: s,
@@ -118,8 +134,11 @@
                 }, function(ret, errs) {
                     try{
                        if (ret) {
+                         //订单标注
                          var annotations = [];
+                         //订单弹出点击时弹出的标注
                          var bubble = [];
+                         //获取订单总数
                          var count=ret.rows.length;
                          if(count<=0){
                            toastFail("加载完毕!");
@@ -128,16 +147,20 @@
                          }else{
                            $('.pr-empty').hide();
                          }
+                         //如果获取的总数大于等于20并且当前起始页为1则起始页加一
                          if(count>=20||g_start==1){
                             g_start=g_start+1;
                          }
+                         //遍历获取的订单信息数组
                          for (var i = 0; i < ret.rows.length; i++) {
-                            var id=g_companyList.length+i;
+                            var id=g_orderList.length+i;
+                            //获取当前订单服务类型
                             var service_type_name_obj = g_service_type_dict[ret.rows[i].service_type_code];
                             var service_type_name = "";
                             if (service_type_name_obj!= undefined){
                                service_type_name=service_type_name_obj.service_type_name;
                             }
+                            //获取当前订单故障类型
                             var failure_type_code_list=ret.rows[i].failure_type_code_list;
                             var failure_type_name="";
                             if(failure_type_code_list!=undefined&&failure_type_code_list!=""){
@@ -154,7 +177,8 @@
                             if(failure_type_name.length>0){
                               failure_type_name=failure_type_name.substring(0,failure_type_name.length-1);
                             }
-                            g_companyList.push({
+                            //向订单数组中添加项
+                            g_orderList.push({
                                 id: id,
                                 order_no: ret.rows[i].order_no
                             });
@@ -181,11 +205,13 @@
                                   }, function(ret, err) {
                                  if (ret.status) {
                                       var address=ret.address;
+                                      //向标注集合中添加标注项
                                       annotations.push({
                                           id: id,
                                           lon: lon,
                                           lat:lat
                                       });
+                                      //项标注弹出框集合中添加项
                                       bubble.push({
                                          id:id,
                                          service_type_name:service_type_name,
@@ -193,13 +219,15 @@
                                          address:address
                                       });
                                       rowData["address"]=address;
+                                      //向列表中添加生成的模板
                                       $('#poilist-ul').append(pendingOrderListTemplate(rowData));
+                                      //如果遍历到最后一条数据,则发送设置待接单的标注信息
                                       if(index==(count-1)){
                                         api.sendEvent({
-                                         name: 'loadAllPendingOrderEvent',
+                                         name: 'setPendingOrderAnnotationsEvent',
                                          extra: {
                                                 annotations:annotations,
-                                                g_companyList:g_companyList,
+                                                g_PendingOrderList:g_orderList,
                                                 bubble:bubble
                                              }
                                          });
@@ -224,53 +252,19 @@
                     } else {
                         toastFail("系统错误!错误码:" + errs.code);
                     }
+
                   }catch(e){
                     toastFail("获取附近订单时异常!");
                   }
                 });
         }
-    //获取两点间的路线距离
-    function getRouteDistance(order_no, person_user_location_lon, person_user_location_lat) {
-        var p_lon = person_user_location_lon;
-        var p_lat = person_user_location_lat;
-        map.removeRoute({
-          ids: [1]
-        });
-        //计算路线距离
-        map.searchRoute({
-            id: 1,
-            type: 'drive',
-            policy: 'ecar_time_first/ecar_dis_first',
-            start: {
-                lon: my_lon,
-                lat: my_lat
-            },
-            end: {
-                lon: p_lon,
-                lat: p_lat
-            }
-        }, function(ret, err) {
-            if (ret) {
-                if (ret.status) {
-                    //ret.plans[0].duration;
-                    //alert(order_no + " distance=" + ret.plans[0].distance);
-                    $("#dis_" + order_no).text('驾车：'+getDistance(ret.plans[0].distance)+'km '+'耗时：'+convertSecToMin(ret.plans[0].duration)+'分钟');
-                } else {
-                    toastFail("系统错误!");
-                }
-            } else {
-                //alert(err.msg);
-                toastFail("系统错误" + err.msg);
-            }
-
-        });
-    }
-
     //发送弹出标注信息事件
     function popupBubble(obj) {
+        //获取订单编号和发布此订单的人的坐标
         var order_no = $(obj).attr('data-no');
         var person_user_location_lon = $(obj).attr('person-user-location-lon');
         var person_user_location_lat = $(obj).attr('person-user-location-lat');
+        //发送定位用户位置的事件
         api.sendEvent({
             name: 'LocatingPersonUserLocationEvent',
             extra: {
@@ -279,12 +273,6 @@
                 order_no:order_no
             }
         });
-        api.sendEvent({
-            name: 'receiptEvent'
-        });
-        //计算路程距离
-        //getRouteDistance(order_no, person_user_location_lon, person_user_location_lat);
-
     }
     //生成模板 pendingOrderListTemplate(lon,lat,service_type_name, failure_type_name,distance,address,rows[i])
     function pendingOrderListTemplate(rowData) {
@@ -336,8 +324,8 @@
                 var $obj = $("li[data-no='" + order_no + "']");
                 if ($obj != undefined) {
                     try {
-                        $obj.addClass('pr-color');
-                        $obj.siblings('li').removeClass('pr-color');
+                        $obj.addClass('item-active');
+                        $obj.siblings('li').removeClass('item-active');
                         var top = $obj.offset().top;
                         $("html,body").animate({
                             scrollTop: top + "px"
@@ -347,6 +335,29 @@
                     }
                 }
             }
+        });
+    }
+    //下拉刷新
+    function setCustomRefreshHeaderInfo() {
+        api.setRefreshHeaderInfo({
+            loadingImg: 'widget://image/loading.png',
+            bgColor: '#ccc',
+            textColor: '#fff',
+            textDown: '下拉刷新...',
+            textUp: '松开刷新...'
+        }, function(ret, err) {
+            //设置分页查询起始页为1
+            g_start=1;
+            //清理内容
+            $('#poilist-ul').empty();
+            //关闭加载完毕的提示框
+             $('.pr-empty').hide();
+            //分页查询
+            loadAllPendingOrder();
+            //关闭加载动画
+            setTimeout(function() {
+                api.refreshHeaderLoadDone();
+            }, 3000)
         });
     }
     //是否滚动到底部
@@ -384,10 +395,12 @@
                    g_headerH:g_headerH
                }
            });
+           //设置订单详情页面在遮罩层下面
            api.sendFrameToBack({
                from: 'pending_order',
                to: 'mask'
            });
+           //关闭当前Frame
            api.closeFrame({
                name: 'pending_order_list'});
          }
