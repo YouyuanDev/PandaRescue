@@ -38,7 +38,7 @@
 <body class="pr-body-bgcolor">
     <header id="header" class="aui-bar aui-bar-nav aui-bar-light personal-header pr-bgcolor">
         <a class="aui-pull-left aui-btn" onclick="closeMyself();">
-            <span  class="fa fa-chevron-left"></span>
+            <span class="fa fa-chevron-left"></span>
         </a>
         <div class="aui-title pr-fontcolor i18n1" name="useprotocol">使用协议</div>
     </header>
@@ -53,25 +53,27 @@
 <script type="text/javascript">
     var language_id = 0;
     apiready = function() {
-        fnSettingHeader();
-        //获取导航栏高度
-        var header = $api.byId('header');
-        var headerH = $api.offset(header).h;
-        //打开使用协议Frame
-        api.openFrame({
-            name: 'about_legalprivacy_useprotocol_frame',
-            url: './about_legalprivacy_useprotocol_frame.html',
-            rect: {
-                x: 0,
-                y: headerH,
-                w: 'auto',
-                h: api.winHeight - headerH
-            },
-            bounces: false
-        });
-        hlLanguage("../../i18n/");
-    }
-   //关闭当前Frame
+            fnSettingHeader();
+            //获取导航栏高度
+            var header = $api.byId('header');
+            var headerH = $api.offset(header).h;
+            //使用webBrowser打开远程使用协议html页面
+            var url='http://'+serverIP+"/data/about_legalprivacy_useprotocol_frame.html"
+            var browser = api.require('webBrowser');
+            browser.openView({
+                url: url,
+                rect: {
+                    x: 0,
+                    y: headerH,
+                    w: 'auto',
+                    h: api.winHeight - headerH
+                }
+            }, function(ret, err) {
+
+            });
+            hlLanguage("../../i18n/");
+        }
+        //关闭当前Frame
     function closeMyself() {
         api.closeWin({
             name: 'about_legalprivacy_useprotocol'

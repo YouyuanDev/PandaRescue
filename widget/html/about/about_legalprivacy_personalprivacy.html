@@ -55,17 +55,19 @@
         //获取导航栏高度
         var header = $api.byId('header');
         var headerH = $api.offset(header).h;
-        //打开个人信息保护和隐私政策Frame
-        api.openFrame({
-            name: 'about_legalprivacy_personalprivacy_frame',
-            url: './about_legalprivacy_personalprivacy_frame.html',
+        //使用webBrowser打开远程个人信息保护和隐私政策html页面
+        var url='http://'+serverIP+"/data/about_legalprivacy_personalprivacy_frame.html"
+        var browser = api.require('webBrowser');
+        browser.openView({
+            url: url,
             rect: {
                 x: 0,
                 y: headerH,
                 w: 'auto',
                 h: api.winHeight - headerH
-            },
-            bounces: false
+            }
+        }, function(ret, err) {
+
         });
         hlLanguage("../../i18n/");
     }
