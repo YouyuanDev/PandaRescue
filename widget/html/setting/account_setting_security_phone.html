@@ -90,9 +90,6 @@
         </ul>
     </div>
     <div class="aui-btn aui-btn-block pr-fontcolor pr-bgcolor i18n1"  name="confirm" onclick="submitForm();">确认</div>
-    <!-- <footer class="aui-bar aui-bar-tab" id="footer">
-
-    </footer> -->
 </body>
 
 </html>
@@ -103,13 +100,17 @@
 <script type="text/javascript" src="../../script/common.js"></script>
 <script type="text/javascript">
     var language_id = 0;
+    //计时器
     var count = 60;
     apiready = function() {
         fnSettingHeader();
         hlLanguage("../../i18n/");
+        //获取手机号
         var txt=$('.current-phone').text();
+        //获取本地缓存的账户信息
         var account=getAccount();
         if(account!=undefined){
+          //用户手机号
           var phone=account.cell_phone;
           txt=txt+phone.substring(0,3)+"****"+phone.substring(7,11);
           if(phone!=undefined){
@@ -119,7 +120,7 @@
           }
         }
     }
-
+    //关闭当前window
     function closeMyself() {
         api.closeFrame({
             name: 'account_setting_security_phone'
@@ -178,6 +179,7 @@
                 if (ret) {
                     if (ret.success) {
                         toastSuccess(ret.msg);
+                        //开始倒计时
                         $('.send-btn').attr("disabled", "disabled");
                         $('.send-btn').text("剩余" + count + "s");
                         $('.send-btn').removeClass('pr-bgcolor');
@@ -208,18 +210,21 @@
     }
     //表单提交
     function submitForm() {
+        //旧手机号
         var oldphone=$('#oldphone').val();
+        //新手机号
         var newphone=$('#phone').val();
+        //验证码
         var verificationcode=$('#verificationcode').val();
-        if(oldphone==undefined||oldphone==""){
+        if(isUndefinedOrEmpty(oldphone)){
           toastFail('请输入旧手机号!');
           return;
         }
-        if(newphone==undefined||newphone==""){
+        if(isUndefinedOrEmpty(newphone)){
           toastFail('请输入新手机号!');
           return;
         }
-        if(verificationcode==undefined||verificationcode==""){
+        if(isUndefinedOrEmpty(verificationcode)){
           toastFail('请输入验证码!');
           return;
         }
@@ -244,7 +249,7 @@
                 }, function(ret, err) {
                     if (ret) {
                         if (ret.success) {
-                            //修改成功后清除Storage中账户信息
+                            //修改成功后清除本地缓存的账户信息
                             $api.rmStorage('g_account');
                             $api.rmStorage('token');
                             $api.rmStorage('zh');

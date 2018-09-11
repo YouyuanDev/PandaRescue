@@ -53,14 +53,18 @@
     var language_id=0;
     apiready = function() {
         fnSettingHeader();
+        //获取当前语言环境
         loadLanguage();
         hlLanguage("../../i18n/");
     }
-
+    //获取当前语言环境
     function loadLanguage() {
         var language = $api.getStorage('userLanguage');
+        //移除算有的选中项
         $('.language-li').find('span').removeClass('fa-check-circle').addClass('fa-circle-thin');
+        //如果当前语言为英文
         if (language == "en") {
+            //设置英文选项为选中项
             $('.language-en').find('span').removeClass('fa-circle-thin').addClass('fa-check-circle');
             language_id=1;
         } else {
@@ -68,7 +72,7 @@
             language_id=0;
         }
     }
-    //退出登录
+    //设置语言环境到本地缓存
     function changeLanguage() {
       if(language_id==0){
         $api.setStorage('userLanguage','zh-CN');
@@ -79,11 +83,13 @@
     }
     //选择语言事件
     function selectLanguage(obj, type) {
+        //先移除所有的选中项
         $(obj).find('span').removeClass('fa-circle-thin').addClass('fa-check-circle');
+        //设置选中项
         $(obj).siblings('li').find('span').removeClass('fa-check-circle').addClass('fa-circle-thin');
         language_id=type;
     }
-
+    //关闭当前window
     function closeMyself() {
         api.closeFrame({
             name: 'account_setting_language'

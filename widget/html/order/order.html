@@ -54,10 +54,13 @@
     var g_account_type;
     apiready = function() {
         fnSettingHeader();
+        //获取导航栏高度
         var header = $api.byId('header');
         var headerH = $api.offset(header).h;
         var data = api.pageParam;
+        //账户类型
         g_account_type = data.account_type;
+        //打开订单页面Frame
         api.openFrame({
             name: 'order_frame',
             url: './order_frame.html',
@@ -75,7 +78,7 @@
         });
         hlLanguage("../../i18n/");
     }
-
+    //关闭当前window
     function closeMyself() {
         api.closeWin({
             name: 'order'

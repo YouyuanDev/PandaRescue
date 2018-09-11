@@ -179,9 +179,11 @@
 <script type="text/javascript" src="../../script/common.js"></script>
 <script type="text/javascript" src="../../script/language.js"></script>
 <script type="text/javascript">
-    var g_order_no, g_account_type, g_account_type, g_person_user_no, g_comany_no;
+    //订单编号、账户类型、用户编号、商户编号
+    var g_order_no, g_account_type, g_person_user_no, g_comany_no;
     apiready = function() {
             var data = api.pageParam;
+            //获取订单信息
             var order = data.order;
             if (order != undefined) {
                 g_order_no = order.order_no;
@@ -189,10 +191,11 @@
                 g_account_type = data.account_type;
                 g_person_user_no = data.person_user_no;
                 g_comany_no = data.company_no;
-                //如果传过来的账户类型不存在，或者账户类型为person，则不显示评价按钮
+                //如果传过来的账户类型不存在，或者账户类型为商户，则不显示评价按钮
                 if (g_account_type == undefined || g_account_type == "company_user") {
                     $('.buttons').hide();
                 }
+                //商户头像
                 var upload_files = order.upload_files;
                 var icon_url;
                 if (upload_files != undefined && upload_files != "") {
@@ -201,11 +204,17 @@
                         icon_url = arr[0];
                     }
                 }
+                //商户名
                 var company_name = order.company_name;
+                //商户地址
                 var company_address = order.address;
+                //订单费用
                 var fee = order.service_fee;
+                //订单开始时间
                 var time = getDate1(order.order_time);
+                //订单对应的服务类型
                 var service_type = order.service_type;
+                //订单对应的故障类型
                 var failure_type = order.failure_type;
                 $('.item-icon').attr('src', icon_url);
                 if (company_name != undefined)
@@ -224,11 +233,14 @@
                 if (fee != undefined) {
                     $('.item-fee').text(fee);
                 }
+                //打开加载动画
                 openLoading();
+                //加载评论信息
                 loadCommentInfo(g_order_no);
+                //监听评价完成事件
                 registerCompletedCommentEvent();
-                //setFrameHeight();
             } else {
+                //关闭订单详情Frame
                 api.closeFrame({
                     name: 'order_detail_frame'
                 });
@@ -250,6 +262,7 @@
                     marginRight: 10
                 },
             });
+            //关闭加载动画
             closeLoading();
         }, 500);
     }
@@ -257,6 +270,7 @@
     function evaluateCompany() {
         if (g_order_no != undefined) {
             //先查看订单是否已经评价，如果已经评价则打出评价信息
+            //打开订单评价页面
             api.openFrame({
                 name: 'order_evaluate_frame',
                 url: './order_evaluate_frame.html',
@@ -274,6 +288,7 @@
                 },
                 bounces: false
             });
+            //隐藏订单详情页面
             api.setFrameAttr({
                 name: 'order_detail_frame',
                 hidden: true
@@ -300,12 +315,19 @@
                         var dataArr = ret.data;
                         if (dataArr.length > 0) {
                             var data = dataArr[0]
+                            //星级
                             var grade = data.rating;
+                            //评价选项
                             var options = data.options;
+                            //评价内容
                             var remark = data.remark;
+                            //显示评价星级
                             setCommentGrade(grade);
+                            //显示评价选项
                             setCommentOptions(options);
+                            //显示评价内容
                             setCommentDesc(remark);
+                            //隐藏提交按钮
                             $('.buttons').hide();
                             $('.comment-container').show();
                         } else {
@@ -334,9 +356,11 @@
             if (grade != undefined) {
                 var data_grade = parseInt(grade);
                 g_rating = data_grade;
+                //设置对应星级描述
                 $('.item-desc').text(getCommentDesc(data_grade));
                 $('.star').removeClass('pr-fontcolor3');
                 $('.star').addClass('pr-fontcolor1');
+                //设置星级颜色
                 for (var i = 0; i < data_grade; i++) {
                     $('.star').eq(i).addClass('pr-fontcolor3');
                 }
@@ -373,9 +397,11 @@
     //设置评论选项
     function setCommentOptions(options) {
         try {
-            if (options != undefined && options != "") {
+            if (!isUndefinedOrEmpty(options)) {
+                //评价选项以","分割
                 var optArr = options.split(',');
                 if (optArr.length > 0) {
+                    //遍历评价选项集合,生成模板
                     for (var i = 0; i < optArr.length; i++) {
                         setCommentOptionTemplate(optArr[i]);
                     }

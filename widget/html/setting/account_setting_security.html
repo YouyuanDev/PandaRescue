@@ -56,12 +56,14 @@
 <script type="text/javascript" src="../../script/common.js"></script>
 <script type="text/javascript">
     var language_id = 0,
-        g_account;
+        g_account;//账号信息
     apiready = function() {
             var data = api.pageParam;
             if (data != undefined) {
+                //获取账号信息
                 g_account = data.g_account;
                 if(g_account!=undefined){
+                    //用户手机号
                     var phone=g_account.cell_phone;
                     if(phone!=undefined&&phone!=""){
                       phone=phone.substring(0,3)+"****"+phone.substring(7,11);
@@ -72,7 +74,7 @@
             fnSettingHeader();
             hlLanguage("../../i18n/");
         }
-        //修改手机号
+        //打开修改手机号页面
     function changePhoneNumber() {
         api.openFrame({
             name: 'account_setting_security_phone',
@@ -137,7 +139,7 @@
             }
         });
     }
-
+   //关闭当前window
     function closeMyself() {
         api.closeFrame({
             name: 'account_setting_security'

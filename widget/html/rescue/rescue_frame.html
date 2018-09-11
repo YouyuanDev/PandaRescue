@@ -5,7 +5,7 @@
     <meta charset="utf-8">
     <meta name="viewport" content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,initial-scale=1.0,width=device-width" />
     <meta name="format-detection" content="telephone=no,email=no,date=no,address=no">
-    <title>servicetype</title>
+    <title>援救表单Frame</title>
     <link rel="stylesheet" type="text/css" href="../../css/api.css" />
     <link rel="stylesheet" type="text/css" href="../../css/aui.css" />
     <link rel="stylesheet" type="text/css" href="../../css/style.css" />
@@ -153,14 +153,20 @@
     apiready = function() {
             fnSettingHeader();
             map = api.require('bMap');
-            if (getCookie() == undefined || getCookie() == "zh-CN") {
+            //获取语言环境
+            var language=getCookie();
+            if (language == undefined||language== "zh-CN") {
                 g_language = true;
             } else {
                 g_language = false;
             }
+            //监听图片上传事件
             registerUploadPhotosEvent();
+            //关闭表单
             closeServiceTypeForm();
+            //加载服务类型
             loadAllServiceType();
+            //加载故障类型
             loadAllFaultType();
             hlLanguage("../../i18n/");
         }
@@ -247,14 +253,18 @@
         }, function(ret, err) {
             if (ret.buttonIndex == 1) {
                 var s = 'http://' + serverIP + '/PersonUser/PersonUserSubmitPendingOrder.action';
+                //获取用户选择的服务类型
                 var service_type_code = $("input[name='radio']:checked").val();
                 var arr = new Array();
                 $('input[name="checkbox"]:checked').each(function() {
                     arr.push($(this).val());
                 });
+                //获取用户选择的故障类型集合
                 var failure_type_code = arr.join(",");
+                //获取用户经纬坐标
                 var person_user_location = "";
                 var imgUrl = "";
+                //获取上传的图片集合
                 $('.imgBox  .temp-container img').each(function() {
                     var temp = $(this).attr("data-url");
                     if (temp != undefined) {
@@ -292,6 +302,7 @@
                                         msg: ret.message
                                     });
                                     if (ret.success) {
+                                        //如果提交成功，关闭当前 window
                                         api.closeWin({
                                             name: 'rescueWin'
                                         });
@@ -326,7 +337,7 @@
     function userSelectPicture() {
         selectPicture(4);
     }
-    //监听头像更换成功事件
+    //监听上传图片事件
     function registerUploadPhotosEvent() {
         //如监听网络连接事件
         api.addEventListener({
@@ -378,14 +389,16 @@
     }
     //服务类型选择事件
     function serviceTypeChoiceOfEvent(obj) {
+        //获取服务费用
         var service_rate = $(obj).attr('data-rate');
-        if (service_rate != undefined && service_rate != "") {
+        if (!isUndefinedOrEmpty(service_rate)) {
+            //显示费用容器
             $('.cost-container').show();
+            //设置费用和总费用
             $('.service-cost').text(service_rate);
             $('.total-cost').text(service_rate);
         }
     }
-    //故障类型选择事件
 </script>
 
 </html>

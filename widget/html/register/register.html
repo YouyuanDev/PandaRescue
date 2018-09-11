@@ -119,16 +119,8 @@
                             <div class="send-container">
                                 <button class="send-btn send-btn-active pr-bgcolor" onclick="APPIsCellphoneNoValidForRegister();">发送验证码</button>
                             </div>
-                            <!-- <div class="aui-btn">默认按钮(default)</div> -->
-                            <!-- <button class="send-btn">发送验证码</button> -->
                         </div>
                     </div>
-                    <!-- <div class="aui-list-item-label-icon">
-                        <i class="aui-iconfont aui-icon-mobile"></i>
-                    </div> -->
-                    <!-- <div class="aui-list-item-input">
-                        <input id="phone" type="text" placeholder="手机号">
-                    </div> -->
                 </div>
             </li>
             <li class="aui-list-item">
@@ -187,6 +179,7 @@
         fnSettingHeader();
         hlLanguage("../../i18n/");
     }
+    //打开登录页面
     function openLogin() {
         api.openWin({
             name: 'login',
@@ -196,12 +189,16 @@
     }
     //账户注册
     function accountRegister() {
+        //手机号
         var phone = $('#phone').val().trim();
+        //密码
         var password = $('#password').val().trim();
+        //再次输入的密码
         var againPassword = $('#again-password').val().trim();
+        //验证码
         var verificationCode = $('#verification-code').val().trim();
         //判断手机号或密码是否合法
-        if (phone != undefined && phone != "") {
+        if (!isUndefinedOrEmpty(phone)) {
             if (!isPhoneNo(phone)) {
                 toastFail("手机号不合法!");
                 return;
@@ -210,11 +207,11 @@
             toastFail("请输入手机号!");
             return;
         }
-        if (verificationCode == undefined || verificationCode == "") {
+        if (isUndefinedOrEmpty(verificationCode)) {
             toastFail("请输入验证码!");
             return;
         }
-        if (password != undefined && password != "") {
+        if (isUndefinedOrEmpty(password)) {
             if (!isPassword(password)) {
                 toastFail("密码由6-15位数字和字母组成!");
                 return;
@@ -223,7 +220,7 @@
             toastFail("密码不能为空!");
             return;
         }
-        if (againPassword != undefined && againPassword != "") {
+        if (!isUndefinedOrEmpty(againPassword)) {
             if (password != againPassword) {
                 toastFail("两次输入的密码不一致!");
                 return;
@@ -309,6 +306,7 @@
               if (ret) {
                  if(ret.success){
                    toastSuccess(ret.msg);
+                   //倒计时开始
                    $('.send-btn').attr("disabled", "disabled");
                    $('.send-btn').text("剩余" + count + "s");
                    $('.send-btn').removeClass('send-btn-active');

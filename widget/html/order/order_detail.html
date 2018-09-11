@@ -35,7 +35,9 @@
 <script type="text/javascript" src="../../script/common.js"></script>
 <script type="text/javascript">
     var language_id = 0;
+    //百度地图
     var map;
+    //订单编号、账户类型、用户编号、商户编号
     var g_order,g_account_type,g_person_user_no,g_comany_no;
     apiready = function() {
         fnSettingHeader();
@@ -49,10 +51,11 @@
         if (g_order == undefined) {
             toastFail("暂时无法查看,请刷新重试!");
         }
+        //初始化百度地图
         initMapSDK();
         hlLanguage("../../i18n/");
     }
-
+    //关闭当前window
     function closeMyself() {
         api.closeWin({
             name: 'order_detail'
@@ -93,7 +96,6 @@
                     isShow: false,
                     trackingMode: 'none'
                 });
-
                 //设置订单起始点标注和气泡信息
                 var person_lon_lat=g_order.person_user_location;
                 var lon,lat;
@@ -101,12 +103,11 @@
                 if(arr.length>1){
                   lon=arr[0];
                   lat=arr[1];
+                  //设置地图中心点位置
                   setMapCenter(lon, lat);
+                  //添加标注
                   addAnnotation(1, lon, lat, "service_start.png");
-                  //addBubble(1,lon, lat);
                 }
-                //var company_lon = g_order.company_location_lon;
-                //var company_lat = g_order.company_location_lat;
                 //打开订单详情Frame
                 openDetailFrame();
             } else {

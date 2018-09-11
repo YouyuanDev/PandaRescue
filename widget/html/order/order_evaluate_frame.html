@@ -5,7 +5,7 @@
     <meta charset="utf-8">
     <meta name="viewport" content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,initial-scale=1.0,width=device-width" />
     <meta name="format-detection" content="telephone=no,email=no,date=no,address=no">
-    <title>Order Status</title>
+    <title>评价订单</title>
     <link rel="stylesheet" type="text/css" href="../../css/api.css" />
     <link rel="stylesheet" type="text/css" href="../../css/aui.css" />
     <link rel="stylesheet" type="text/css" href="../../css/style.css" />
@@ -90,6 +90,9 @@
             border-color: #73C0B6;
             background-color: #73C0B6;
         }
+        .item-content-container{
+          display: none;
+        }
     </style>
 </head>
 
@@ -156,7 +159,11 @@
 <script type="text/javascript" src="../../script/common.js"></script>
 <script type="text/javascript" src="../../script/language.js"></script>
 <script type="text/javascript">
+    //var goodArr = ["及时到达", "态度友善", "价格公道"];
+    //var badArr = ["服务晚点", "态度恶劣", "价格偏高", "欺瞒用户", "索要好评"];
+    //窗体高度、好评描述结婚、差评描述集合
     var g_winHeight, g_goodArr, g_badArr;
+    //订单编号、评价星级、评价选项、评价内容、用户编号、是否匿名标识、商户编号
     var g_order_no, g_rating, g_options, g_remark, g_person_user_no, g_anonymous, g_comany_no;
     apiready = function() {
             var data = api.pageParam;
@@ -165,12 +172,15 @@
             g_account_type = data.account_type;
             g_person_user_no = data.person_user_no;
             g_comany_no = data.company_no;
-            if (g_person_user_no == undefined && g_person_user_no == "" || g_comany_no == undefined || g_comany_no == "") {
+            //如果用户编号或者商户编号为空
+            if (isUndefinedOrEmpty(g_person_user_no)||isUndefinedOrEmpty(g_comany_no)) {
+                //隐藏提交按钮
                 $('.item-submit-container').hide();
             }
-            $('.item-content-container').hide();
             g_winHeight = api.winHeight;
+            //监听输入评价内容框字体变化
             registerTextareaChange();
+            //加载评价类型
             loadEvaluationType();
         }
         //设置Frame高度自适应
@@ -188,23 +198,29 @@
     }
     //关闭当前Frame
     function closeMyself() {
+        //显示订单详情页
         api.setFrameAttr({
             name: 'order_detail_frame',
             hidden: false
         });
+        //关闭评价页
         api.closeFrame({
             name: 'order_evaluate_frame'
         });
-
     }
     //评价等级
     function evaluateGrade(obj) {
+        //显示星级评价描述内容
         $('.item-content-container').show();
+        //获取星级
         var data_grade_str = $(obj).attr('data-grade');
         if (data_grade_str != undefined) {
+            //星级字符串转整型
             var data_grade = parseInt(data_grade_str);
             g_rating = data_grade;
+            //设置星级描述
             $('.item-desc').text(getGradeDesc(data_grade));
+            //设置星级颜色
             $('.star').removeClass('pr-fontcolor3');
             $('.star').addClass('pr-fontcolor1');
             for (var i = 0; i < data_grade; i++) {
@@ -241,7 +257,7 @@
 
         return desc;
     }
-    //选择评价内容
+    //选择评价选项内容
     function selectEvaluateContent(obj) {
         var data_select = $(obj).attr('data-select');
         $(obj).removeClass('item-content-select');
@@ -259,10 +275,12 @@
         if (goodArr != undefined && badArr != undefined) {
             var template = "";
             $('.content-container').empty();
+            //获取语言环境
             var language = getCookie();
             if (language == undefined) {
                 language = "zh-CN";
             }
+            //如果为好评
             if (flag == 0) {
                 for (var i = 0; i < goodArr.length; i++) {
                     var name = goodArr[i].name;
@@ -274,7 +292,7 @@
                         '  </div>';
                     $('.content-container').append(template);
                 }
-            } else if (flag == 1) {
+            } else if (flag == 1) {//如果为差评
                 for (var i = 0; i < badArr.length; i++) {
                     var name = badArr[i].name;
                     if (language == "en") {
@@ -287,13 +305,13 @@
                 }
             }
         }
-        //var goodArr = ["及时到达", "态度友善", "价格公道"];
-        //var badArr = ["服务晚点", "态度恶劣", "价格偏高", "欺瞒用户", "索要好评"];
+
     }
     //设置实时监听textarea输入字数
     function registerTextareaChange() {
         $('.item-textarea').mouseover(function() {
             var h = api.safeArea.top;
+            //设置评价页面高度
             api.setFrameAttr({
                 name: 'order_evaluate_frame',
                 rect: {
@@ -306,9 +324,11 @@
         }).mouseout(function() {
             setFrameHeight();
         });
+        //实时监听文本框内容变化
         $('.item-textarea').bind('propertychange input', function() {
             var content = $('.item-textarea').val();
             var counter = $('.item-textarea').val().length;
+            //获取文本框字数
             if (counter > 50) {
                 content = content.substring(0, 50);
             }
@@ -334,12 +354,14 @@
     }
     //提交评价
     function submitForm() {
+       //获取是否匿名标识
         var anonymous = $('.item-anonymous').is(':checked');
         if (anonymous) {
             g_anonymous = 1;
         } else {
             g_anonymous = 0;
         }
+        //获取评价选项
         var g_options_arr = [];
         $('.item-content').each(function() {
             var select = $(this).attr('data-select');
@@ -348,12 +370,15 @@
             }
         });
         g_options = g_options_arr.join(',');
+        //获取评价内容
         g_remark = $('.item-textarea').val();
-        if (g_order_no == undefined || g_order_no == "" || g_person_user_no == undefined || g_person_user_no == "" || g_comany_no == undefined || g_comany_no == "") {
+        //如果订单编号、用户编号或者商户编号有一个为空
+        if (isUndefinedOrEmpty(g_order_no ) ||isUndefinedOrEmpty(g_person_user_no)|| isUndefinedOrEmpty(g_comany_no)) {
             toastFail("评价失败!");
             return;
         }
-        if ((g_rating == undefined || g_rating == "") && (g_options == undefined || g_options == "") && (g_remark == undefined || g_remark == "")) {
+        //如果评价星级、选项、内容都为空
+        if (isUndefinedOrEmpty(g_rating) && isUndefinedOrEmpty(g_options) &&isUndefinedOrEmpty(g_remark)) {
             toastSuccess("评价信息不能为空!");
             return;
         }
@@ -379,12 +404,12 @@
             if (ret) {
                 if (ret.success) {
                     toastSuccess(ret.message);
+                    //发送评价完成事件
                     api.sendEvent({
                         name: 'CompletedCommentEvent',
                         extra: {
                         }
                     });
-
                     //评价成功，关闭页面
                     api.closeFrame({
                         name: 'order_evaluate_frame'
