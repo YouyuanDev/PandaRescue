@@ -1,66 +1,17 @@
 var header, headerHeight = 0,
     g_loadingID;
-var serverIP = '192.168.0.12:8080';
-
+var serverIP = '192.168.0.11:8080';
+//设置导航栏兼容ios和Android
 function fnSettingHeader() {
     var sType = api.systemType;
     var header = $api.byId('header');
     if (sType == "ios") {
         $api.fixIos7Bar(header);
-
     } else if (sType == "android") {
         $api.fixStatusBar(header);
     }
 }
-
-function fnReadyFrame() {
-    var nav = $api.byId('header');
-    var navHeight = $api.offset(nav).h;
-    var frameName = api.winName + '_frame';
-    api.openFrame({
-        name: frameName,
-        url: './' + frameName + '.html',
-        bounces: true,
-        rect: {
-            x: 0,
-            y: navHeight,
-            w: 'auto',
-            h: 'auto'
-        },
-        vScrollBarEnabled: false
-    });
-};
-
-function JudgeLogin() {
-    //$api.rmStorage('operatorno');
-    var userInfo = $api.getStorage('operatorno');
-    if (userInfo != undefined) {
-        return true;
-    } else {
-        return false;
-    }
-
-}
-
-function formatterdate(value, row, index) {
-    if (value != undefined && value != null)
-        return getDateOnly(value);
-    else
-        return "";
-}
-
-function getDateOnly(str) {
-    if (str != undefined && str != "") {
-        var oDate = new Date(str);
-        y = oDate.getFullYear();
-        m = oDate.getMonth() + 1;
-        d = oDate.getDate();
-        return y + '-' + (m < 10 ? ('0' + m) : m) + '-' + (d < 10 ? ('0' + d) : d);
-    } else {
-        return "";
-    }
-}
-
+//设置日期显示的格式(如:2018-09-09 09:09:09)
 function getDate1(str) {
     if (str != undefined && str != "") {
         var oDate = new Date(str);
@@ -132,19 +83,10 @@ function formatTime(now, type) {
     }
     return dateTime;
 }
-//字符串转date
-function parseMobiDate(str) {
-    if (str != undefined)
-        return new Date(Date.parse(str));
-    else
-        return new Date();
-
-}
 //表情转换
 function expressionConversion(text) {
     var msg = text;
     var reg = /\[.+?\]/g;
-    //var result = text;
     var face = {
         '[微笑]': '<span><img src="../../emotion/Expression_1.png"  width="28"/></span>',
         '[撇嘴]': '<span><img src="../../emotion/Expression_2.png"  width="28" /></span>',
@@ -268,11 +210,10 @@ function transExtra(arg) {
     } finally {}
     return result;
 }
-
+//关闭window
 function closeWindow() {
     api.closeWin();
 }
-
 //检查用户是否有网络
 function checkNetWork() {
     var connectionType = api.connectionType;
@@ -294,7 +235,7 @@ function selectPicture(type) {
         }
     });
 }
-
+//选择图片(sourceType代表是图库选择开始直接拍照，type标识用户上传照片的用途)
 function getPicture(sourceType,type) {
     //type类型(0：代表普通用户认证上传图片，1：代表商户认证上传图片，2：代表商户上传店铺照片,3：用户修改头像 4：用户发布求救表单上传图片 可以扩展)
     if (sourceType == 1) { // 拍照
@@ -397,19 +338,6 @@ function getPicture(sourceType,type) {
         });
     }
 }
-//图片模板
-function pictureTemplate(imgUrl, imgData) {
-    var template = '<div class="temp-container">' +
-        '<div onclick="delSelectPicture(this)" class="temp-del-icon">x</div>' +
-        '<img id="imgUp" data-url="' + imgUrl + '" src="' + imgData + '"/>' +
-        '</div>';
-    return template;
-}
-//删除选择的照片
-function delSelectPicture(obj) {
-    var picUrl = $(obj).siblings('img').attr('data-url');
-    $(obj).parent().remove();
-}
 //打开加载进度条
 function openLoading() {
     var UILoading = api.require('UILoading');
@@ -452,14 +380,6 @@ function convertSecToMin(sec) {
     }
     return sec;
 }
-
-// function ClearLoadingPicture() {
-//     var uiloading = api.require('UILoading');
-//     uiloading.closeFlower({
-//         id: g_loadingID
-//     });
-//     g_loadingID = 0;
-// }
 //验证手机号是否合法
 function isPhoneNo(phone) {
     var pattern = /^1[34578]\d{9}$/;
@@ -467,6 +387,7 @@ function isPhoneNo(phone) {
 }
 //验证密码是否合法
 function isPassword(password) {
+    //正则表达式 6-15位数字和字母组成
     var pattern = /^[0-9a-zA-Z_]{6,15}$/;
     return pattern.test(password);
 }
@@ -486,20 +407,12 @@ function toastFail(txt) {
         location: 'middle'
     });
 }
-//数据为空时的模板
-function makeEmptyTemplate(con) {
-    // var template = '<div class="pr-empty">' + con + '</div>';
-    // return template;
-}
-
 //绑定Push推送
 function bindPush(username) {
     var push = api.require('push');
     push.bind({
         userName: username,
         userId: username
-            // userName: api.deviceId,
-            // userId: api.deviceId
     }, function(ret, err) {
         if (ret.status == true) {
             toastSuccess(username + "bind成功");
@@ -510,7 +423,6 @@ function bindPush(username) {
         }
     });
 }
-
 //解除绑定Push推送
 function unbindPush(username) {
     var push = api.require('push');
@@ -527,7 +439,6 @@ function unbindPush(username) {
 }
 // 加入推送群组
 function joinPushGroup(groupName) {
-
     var push = api.require('push');
     //加入组
     push.joinGroup({
@@ -557,22 +468,24 @@ function leaveAllPushGroup() {
         }
     });
 }
-//清空setStorage
+//清空本地缓存的信息
 function clearStorage() {
     $api.rmStorage('g_service_type_dict');
     $api.rmStorage('g_failure_type_dict');
     $api.rmStorage('g_order_status');
 }
-
 //加载服务类型
 function loadAllServiceType() {
     //查看本地是否已经存在，不存在请求服务器，存在就直接获取
     var g_service_type_dict = {};
+    //获取本地缓存的服务类型集合
     var dict = $api.getStorage('g_service_type_dict');
     var length = 0;
+    //遍历集合
     for (var ever in dict) {
         length++;
     }
+    //如果集合存在并且集合有数据
     if (dict != undefined && length > 0) {
         g_service_type_dict = dict;
         api.sendEvent({
@@ -702,13 +615,13 @@ function loadAllOrderStatus() {
         });
     }
 }
-//判断图片是否有效
+//判断图片是否有效,如果图片无效则用默认图片代替
 function imgExists(e) {
     var imgurl = 'http://' + serverIP + '/images/default_portrait.png';
     e.src = imgurl;
     e.onerror = null;
 }
-//获取当前用户token
+//获取当前用户token,用于融云聊天服务
 function setToken() {
     try {
         var account = $api.getStorage('g_account');
@@ -716,8 +629,8 @@ function setToken() {
             var userId = account.id; //会员id
             var name = account.nickname; //会员昵称
             var portraitUri = 'http://' + serverIP + '/upload/pictures/' + account.icon_url; //会员头像
-            var appKey = "4z3hlwrv4omet";
-            var appSecret = "IejI9Cs6qfTCU";
+            var appKey = "4z3hlwrv4omet";//融云申请的key
+            var appSecret = "IejI9Cs6qfTCU";//融云申请的秘钥
             var nonce = Math.floor(Math.random() * 1000000); //随机数
             var timestamp = Date.now(); //时间戳
             var signature = sha1("" + appSecret + nonce + timestamp); //数据签名(通过哈希加密计算)
