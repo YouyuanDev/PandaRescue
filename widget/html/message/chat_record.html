@@ -35,18 +35,17 @@
     apiready = function() {
         fnSettingHeader();
         var data = api.pageParam;
-        //设置聊天界面头部信息
+        //设置聊天界面头部信息(对方id、昵称、头像)
         var f_id = data.id;
         var f_zh = data.zh;
         var f_tx = data.tx;
-        //打开聊天Frame
+        //获取导航栏高度
         var header = $api.byId('header');
         var headerH = $api.offset(header).h;
         if (f_zh != undefined) {
             $('.item-title-name').text(f_zh);
         }
-        var header = $api.byId('header');
-        var headerH = $api.offset(header).h;
+        //打开历史消息记录Frame
         api.openFrame({
             name: 'chat_record_frame',
             url: './chat_record_frame.html',
@@ -65,6 +64,7 @@
         });
         hlLanguage("../../i18n/");
     }
+    //关闭当前window
     function closeMyself() {
         api.closeWin({
             name: 'chat_record'

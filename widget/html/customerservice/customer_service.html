@@ -34,8 +34,10 @@
     var language_id = 0;
     apiready = function() {
         fnSettingHeader();
+        //获取导航栏高度
         var header = $api.byId('header');
         var headerH = $api.offset(header).h;
+        //打开客服中心的Frame
         api.openFrame({
             name: 'customer_service_frame',
             url: './customer_service_frame.html',
@@ -49,6 +51,7 @@
         });
         hlLanguage("../../i18n/");
     }
+    //关闭当前Window
     function closeMyself() {
         api.closeWin({
             name: 'customer_service'

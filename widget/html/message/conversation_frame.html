@@ -93,12 +93,17 @@
 <script type="text/javascript" src="../../script/common.js"></script>
 <script type="text/javascript">
     var language_id = 0;
+    //融云模块
     var rong;
+    //发送消息的用户id集合
     var g_senderUserId = new Array();
     apiready = function() {
             rong = api.require('rongCloud2');
+            //获取对话列表
             getConversationList();
+            //获取历史聊天会话
             getConversationListByCount();
+            //下拉刷新
             api.setRefreshHeaderInfo({
                 loadingImg: 'widget://image/loading.png',
                 bgColor: '#ccc',
@@ -111,6 +116,7 @@
                     api.refreshHeaderLoadDone();
                 }, 6000)
             });
+            //注册更新会话列表事件
             registerUpdateConversationListListener();
             hlLanguage("../../i18n/");
         }
@@ -119,22 +125,26 @@
         rong.getConversationList(function(ret, err) {
             if (ret.status == 'success') {
                 var html = '';
+                //如果最近没有会话
                 if (ret.result.length <= 0) {
                     $('.pr-empty').show();
                 }
+                //遍历查询的会话列表
                 for (var i in ret.result) {
                     var rs = ret.result[i];
                     var senderUserId = rs.senderUserId;
                     var targetId = rs.targetId;
+                    //如果发送方id和当前用户id相同
                     if (senderUserId == $api.getStorage('id')) {
-                        //break;
                         senderUserId=targetId;
                     }
+                    //判断当前遍历的id是否在数组中，不在添加
                     if ($.inArray(senderUserId, g_senderUserId) != -1) {
                         $("li[data-sender-id='" + senderUserId + "']").remove();
                     } else {
                         g_senderUserId.push(senderUserId);
                     }
+                    //获取消息的附加信息
                     var extra = transExtra(rs.latestMessage.extra);
                     if (extra == undefined) {
                         break;
@@ -191,9 +201,11 @@
                 targetId: id
             }, function(ret, err) {})
         }
+        //更新会话列表事件
         api.sendEvent({
             name: 'UpdateConversationListEvent'
         });
+        //打开聊天页面
         api.openWin({
             reload: true,
             name: 'chat',

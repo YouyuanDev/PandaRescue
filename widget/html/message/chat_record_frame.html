@@ -98,11 +98,13 @@
 <script type="text/javascript" src="../../script/common.js"></script>
 <script type="text/javascript">
     var language_id = 0;
+    //融云模块
     var rong;
-    var UIChatBox;
+    //手机相册模块
     var UIMediaScanner;
-    var imageClip;
+    //对方id、头像、昵称
     var g_f_id, g_f_tx, g_f_zh;
+    //消息时间集合
     var g_header_arr = new Array();
     apiready = function() {
             var data = api.pageParam;
@@ -114,6 +116,7 @@
             rong = api.require('rongCloud2');
             //获取最新一条记录
             getLatestMessages(g_f_id, 'PRIVATE');
+            //下拉加载
             setCustomRefreshHeaderInfo();
         }
     //下拉刷新
@@ -412,10 +415,8 @@
                         pageDown(300);
                     }
                 });
-                UIChatBox.closeBoard();
             } else {
                 toastFail('图像获取失败!');
-                UIChatBox.closeBoard();
             }
         });
     }

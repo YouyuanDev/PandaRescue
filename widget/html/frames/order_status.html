@@ -112,7 +112,6 @@
             </div>
         </div>
     </div>
-    <!-- </div> -->
 </body>
 <script type="text/javascript" src="../../script/api.js"></script>
 <script type="text/javascript" src="../../script/jquery-3.3.1.min.js"></script>
@@ -120,17 +119,25 @@
 <script type="text/javascript" src="../../script/language.js"></script>
 <script type="text/javascript">
     var map;
+    //对方id、昵称、头像、手机号
     var g_f_id, g_f_zh, g_f_tx, g_f_phone;
     apiready = function() {
         map = api.require('bMap');
         var data = api.pageParam;
+        //账户类型
         var account_type = data.account_type;
+        //订单信息
         var order = data.order;
+        //订单状态
         var status_code = order.status_code;
+        //状态中文名
         var status_name = order.status_name;
+        //状态英文名
         var status_name_en = order.status_name_en;
+        //订单开始时间
         var order_time = order.order_time;
         $('.item-time').text(getDate1(order_time));
+        //用户经纬度坐标
         var person_lon_lat = order.person_user_location;
         var person_lon, person_lat;
         if (person_lon_lat != undefined && person_lon_lat != "") {
@@ -140,6 +147,7 @@
                 person_lat = arr[1];
             }
         }
+        //商户经纬度坐标
         var company_lon_lat = order.company_user_location;
         var company_lon, company_lat;
         if (company_lon_lat != undefined && company_lon_lat != "") {
@@ -149,10 +157,15 @@
                 company_lat = arr[1];
             }
         }
+        //绘制路径
         getRouteDistance(person_lon, person_lat, company_lon, company_lat);
+        //如果当前账户为普通用户
         if (account_type == "person_user") {
+            //设置商户名
             $('.item-name').text(order.company_name);
+            //设置订单费用
             $('.item-fee').text(order.service_fee + "元");
+            //设置商户头像，默认为upload_files中";"分割后第一张图片
             var upload_files = order.upload_files;
             var icon_url = "../../image/default_portrait.png";
             if (upload_files != undefined) {
@@ -165,35 +178,46 @@
                 }
             }
             $('.item-icon').attr('src', icon_url);
+            //设置全局变量的对方id、昵称、头像、手机号
             g_f_id = order.company_id;
             g_f_zh = order.company_nickname;
             g_f_tx = 'http://' + serverIP + '/upload/pictures/' + order.company_icon_url;
             g_f_phone = order.company_cell_phone;
-        } else if (account_type == "company_user") {
+        } else if (account_type == "company_user") {//如果当前账户为商户
+            //隐藏头像显示区域
             $('.item-icon-container').hide();
+            //设置订单开始时间
             $('.item-name').text(getDate1(order_time));
+            //设置订单费用
             $('.item-fee').text(order.service_fee + "元");
+              //设置全局变量的对方id、昵称、头像、手机号
             g_f_id = order.user_id;
             g_f_zh = order.user_nickname;
             g_f_tx = 'http://' + serverIP + '/upload/pictures/' + order.user_icon_url;
             g_f_phone = order.user_cell_phone;
         }
+        //如果账户类型、订单状态不为空
         if (account_type != undefined && status_code != undefined) {
+            //绘制订单状态内容
             drawStatusPanel(account_type, status_code, status_name, status_name_en);
         }
+        //设置当前Frame高度
         setFrameHeight();
     }
-
+    //绘制订单状态内容
     function drawStatusPanel(account_type, status_code, status_name, status_name_en) {
+        //清空按钮组
         $('.buttons').empty();
+        //清空订单状态显示内容
         $('.order-status').empty();
-        var language = getCookie();
         var template = "";
+        //设置当前订单状态描述
         $('.order-status-desc').text(GetTextByLanguage(status_name, status_name_en));
-        //makeButtonTemplate(函数名，中文按钮名，英文按钮名)
+        //添加按钮组makeButtonTemplate(函数名，中文按钮名，英文按钮名)
         $('.buttons').append(makeButtonTemplate("cancelOrder('" + account_type + "');", "取消订单", "Cancel the order"));
+        //如果账户类型为普通用户
         if (account_type == "person_user") {
-            //pending,confirmed,confirmedpaid,inservice,finished,cancelled,finishedconfirmed
+            //订单状态pending(待接单),confirmed(已接单未付款),confirmedpaid(已接单已付款),inservice(服务中),finished(已完成未确认),cancelled(已取消),finishedconfirmed(确认完成)
             if (status_code == "confirmed") { //支付
                 $('.order-status').show();
                 $('.order-status').append(makeButtonTemplate("payOrder();", "去支付", "Pay"));
@@ -205,7 +229,7 @@
             } else if (status_code == "finishedconfirmed") {
                 $('.buttons').empty();
             }
-        } else if (account_type == "company_user") {
+        } else if (account_type == "company_user") {  //如果账户类型为商户
             if (status_code == "pending") {
 
             } else if (status_code == "confirmed") {
@@ -225,7 +249,7 @@
             }
         }
     }
-
+    //根据订单状态添加按钮组
     function makeButtonTemplate(buttonFunctionName, buttonName, buttonEnName) {
         var language = getCookie();
         var template = "";
@@ -236,7 +260,6 @@
         }
         return template;
     }
-
     //调用客户端手机支付
     function aliPay(orderInfo) {
         var aliPay = api.require('aliPay');
@@ -267,7 +290,6 @@
                 } else {
                     toastFail("返回码:" + ret.code);
                 }
-
             } else {
                 api.alert({
                     title: '系统错误，支付失败',
@@ -278,8 +300,6 @@
 
         });
     }
-
-
     //请求支付信息
     function payOrder() {
         var s = 'http://' + serverIP + '/Order/getCurrentOrderAliPayInfo.action';
@@ -307,7 +327,7 @@
             }
         });
     }
-    //取消支付
+    //取消订单
     function cancelOrder(account_type) {
         api.confirm({
             title: '提示',
@@ -348,7 +368,7 @@
         });
 
     }
-    //确认完成
+    //确认完成订单
     function confirmFinishedOrder() {
         var s = 'http://' + serverIP + '/PersonUser/confirmOrderFinish.action';
         api.ajax({
@@ -480,14 +500,17 @@
         if ($api.getStorage('id') == g_f_id) {
 
         } else {
+            //设置未读信息为已读
             rong.clearMessagesUnreadStatus({
                 conversationType: 'PRIVATE',
                 targetId: g_f_id
             }, function(ret, err) {})
         }
+        //更新回话列表
         api.sendEvent({
             name: 'UpdateConversationListEvent'
         });
+        //打开聊天页面
         api.openWin({
             reload: true,
             name: 'chat',
@@ -500,7 +523,7 @@
             vScrollBarEnabled: false,
         });
     }
-
+   // 设置页面高度
     function setFrameHeight() {
         var h = $('.container')[0].scrollHeight;
         api.setFrameAttr({

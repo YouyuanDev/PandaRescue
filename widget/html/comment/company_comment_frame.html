@@ -99,15 +99,20 @@
     var g_start=1;
     apiready = function() {
         var data=api.pageParam;
+        //获取商户编号
         g_company_no=data.company_no;
+        //获取平均评价等级
         loadAvgRating();
+        //分页查询评价内容
         loadCompanyComment();
+        //判断是否滚动到底部
         isRollingToEnd();
         hlLanguage("../../i18n/");
     }
     //分页加载所有评论
     function loadCompanyComment(){
-      if(g_company_no==undefined){
+       //判断商户编号是否为空
+      if(isUndefinedOrEmpty(g_company_no)){
         return;
       }
       openLoading();
@@ -127,16 +132,22 @@
       }, function(ret, err) {
           if (ret) {
                 if(ret.success){
+                  //评价信息
                   var data=ret.data;
+                  //总评价数
                   var count=ret.count;
                   $('.item-count').text(count);
                   try{
                     if(data.length>0){
+                      //隐藏加载完毕提示框
                       $('.pr-empty').hide();
+                      //显示平均评价等级和总评价数
                       $('.aui-list-header').show();
+                      //遍历评价内容，添加模板
                       for (var i = 0; i < data.length; i++) {
                          $('#cmt-list').append(makeCommentTempalate(data[i]));
                       }
+                      //如果获取的数据大于等于20或者起始页等于1，则起始页加1
                       if(data.length>=20||g_start==1){
                         g_start+=1;
                       }
@@ -158,7 +169,8 @@
     }
     //加载平均rating
     function loadAvgRating(){
-      if(g_company_no==undefined){
+      //判断商户编号是否为空
+      if(isUndefinedOrEmpty(g_company_no)){
         return;
       }
       var s = 'http://' + serverIP + '/Comment/getAvgRatingByCompanyNo.action';
@@ -175,6 +187,7 @@
       }, function(ret, err) {
           if (ret) {
              if(ret.success){
+                //设置平均评价等级
                 $('.item-avg-rating').text(ret.message);
              }
           }
@@ -182,17 +195,23 @@
     }
     //制作评价模板
     function makeCommentTempalate(data){
+      //用户照片、昵称
       var icon_url,nickname;
+      //是否匿名标识
       var anonymous=data.anonymous;
+      //如果不是匿名,则显示真是用户头像和昵称
       if(anonymous!=undefined&&anonymous!='1'){
         icon_url='http://' + serverIP + '/upload/pictures/'+data.icon_url;
         nickname=data.nickname;
-      }else{
+      }else{//否则显示默认头像和匿名
         icon_url='../../image/default_portrait.png';
         nickname="匿名";
       }
+      //评价星级
       var rating=data.rating;
+      //评论信息
       var remark=data.remark;
+      //评价选项
       var options=data.options;
       var template='';
       template+='<li class="aui-list-item">';
@@ -285,6 +304,7 @@
                 threshold: 0 //设置距离底部多少距离时触发,默认值为0,数字类型
             }
         }, function(ret, err) {
+            //加载评论信息
             loadCompanyComment();
         });
     }

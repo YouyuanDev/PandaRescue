@@ -11,7 +11,9 @@
     <link rel="stylesheet" type="text/css" href="../../css/font-awesome.min.css" />
     <link rel="stylesheet" type="text/css" href="../../css/style.css" />
     <style>
-
+     .cancel-btn,.delete-btn,.all-btn,.cancel-all-btn{
+       display: none;
+     }
     </style>
 </head>
 
@@ -41,14 +43,13 @@
 <script type="text/javascript">
     var language_id = 0;
     apiready = function() {
-        $('.cancel-btn').hide();
-        $('.delete-btn').hide();
-        $('.all-btn').hide();
-        $('.cancel-all-btn').hide();
         fnSettingHeader();
+        //注册选中checkbox事件
         registCheckBoxSelectedEvent();
+        //获取导航栏高度
         var header = $api.byId('header');
         var headerH = $api.offset(header).h;
+        //打开历史消息Frame页面
         api.openFrame({
             name: 'chat_record_list_frame',
             url: './chat_record_list_frame.html',
@@ -62,7 +63,7 @@
         });
         hlLanguage("../../i18n/");
     }
-
+    //关闭当前Window
     function closeMyself() {
         api.closeWin({
             name: 'chat_record_list'
@@ -73,8 +74,10 @@
         api.addEventListener({
             name: 'selectedCheckBoxEvent'
         }, function(ret, err) {
+            //隐藏关闭和历史消息按钮
             $('.close-btn').hide();
             $('.historical-btn').hide();
+            //显示全选、取消、删除按钮
             $('.all-btn').show();
             $('.cancel-btn').show();
             $('.delete-btn').show();
@@ -82,12 +85,15 @@
     }
     //取消事件
     function cancelSelect(){
+      //关闭、历史消息按钮显示
       $('.close-btn').show();
       $('.historical-btn').show();
+      //隐藏取消、删除、全选、取消全选按钮
       $('.cancel-btn').hide();
       $('.delete-btn').hide();
       $('.all-btn').hide();
       $('.cancel-all-btn').hide();
+      //发送取消选中事件
       api.sendEvent({
        name: 'cancelCheckBoxEvent',
        extra: {
@@ -104,22 +110,28 @@
     }
     //全选事件
     function allSelect(){
+      //发送全选事件
       api.sendEvent({
        name: 'allCheckBoxEvent',
        extra: {
        }
       });
+      //隐藏全选按钮
       $('.all-btn').hide();
+      //显示取消全选按钮
       $('.cancel-all-btn').show();
     }
     //取消全选事件
     function cancelAllSelect(){
+      //发送取消去选事件
       api.sendEvent({
        name: 'cancelAllCheckBoxEvent',
        extra: {
        }
       });
+      //显示全选按钮
       $('.all-btn').show();
+      //隐藏取消全选按钮
       $('.cancel-all-btn').hide();
     }
 </script>

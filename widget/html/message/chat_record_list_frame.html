@@ -80,17 +80,27 @@
 <script type="text/javascript" src="../../script/common.js"></script>
 <script type="text/javascript">
     var language_id = 0;
+    //融云即时通讯
     var rong;
+    //会话的时间戳（获取这个时间戳之前的会话列表，0表示从最新开始获取）
     var g_startTime=0;
+    //消息id集合
     var g_senderUserId = new Array();
+    //定时器
     var time=0;
+    //判断是选中还是点击的标识
     var g_selected=false;
     apiready = function() {
             rong = api.require('rongCloud2');
+            //分页获取会话列表
             getConversationListByCount(g_startTime);
+            //监听取消选中事件
             registerCancelCheckBoxEvent();
+            //监听删除消息事件
             registerDeleteCheckBoxEvent();
+            //监听全选事件
             registerAllCheckBoxEvent();
+            //监听取消全选事件
             registerCancelAllCheckBoxEvent();
             hlLanguage("../../i18n/");
         }
@@ -165,10 +175,13 @@
             }
         })
     }
+    //打开历史消息记录页面
     function openHistoricalMessageFrame(id,zh,tx){
+      //判断是否选中了会话列表的一行还是点击了某一行
       if(g_selected){
         return;
       }
+      //打开历史消息记录页面
       api.openWin({
           reload: true,
           name: 'chat_record',
@@ -181,6 +194,7 @@
           vScrollBarEnabled: false,
       });
     }
+    //触摸屏幕开始
     function handleTouchStartEvent(obj){
       time = setTimeout(function() {
           time = 0;
@@ -190,11 +204,15 @@
           $('.item-delete').show();
       }, 400);
     }
+      //触摸屏幕移动
     function handleTouchMoveEvent(obj){
+      //清理定时器
       clearTimeout(time);
       time = 0;
     }
+      //触摸屏幕结束
     function handleTouchEndEvent(obj){
+      //清理定时器
       clearTimeout(time);
       if (time != 0) {
           return false;
@@ -229,9 +247,12 @@
           var senderid_arr=new Array();
           $('#hh_list li').each(function(){
                var is_select=$(this).find('.aui-radio').prop("checked");
+               //如果选中
                if(is_select){
                   var senderid=$(this).attr('data-sender-id');
+                  //获取消息id
                   if(senderid!=undefined){
+                    //如果消息不在数组中，添加到数组
                     if($.inArray(senderid,senderid_arr)==-1)
                         senderid_arr.push(senderid);
                   }

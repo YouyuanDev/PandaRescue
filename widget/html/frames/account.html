@@ -178,21 +178,26 @@
 <script src="../../script/jquery.i18n.properties-1.0.9.js" type="text/javascript"></script>
 <script src="../../script/language.js" type="text/javascript"></script>
 <script type="text/javascript">
+    //账户信息、账户类型、昵称、头像、账户类型描述
     var g_account, g_account_type, g_account_nickname, g_account_icon,g_text;
     apiready = function() {
             fnSettingHeader();
+            //获取账户信息
             loadAccountInfo();
             var data = api.pageParam;
             if (data != undefined) {
+                //账户类型
                 g_account_type = data.account_type;
+                //如果是普通用户
                 if (g_account_type == "person_user") {
                     g_text=GetTextByLanguage("普通用户", "Personal");
                     $('.account-type-span').text(g_text);
-                } else if (g_account_type == "company_user") {
+                } else if (g_account_type == "company_user") {//如果为商户
                     g_text=GetTextByLanguage("商户", "Merchant")
                     $('.account-type-span').text(g_text);
                 }
             }
+            //监听点击屏幕的事件
             registerTouchEvent();
             hlLanguage("../../i18n/");
         }
@@ -207,6 +212,7 @@
                 g_account: g_account
             }
         });
+        //发送遮罩层点击事件
         api.sendEvent({
             name: 'MaskClickEvent'
         });
@@ -221,6 +227,7 @@
                 account_type: g_account_type
             }
         });
+          //发送遮罩层点击事件
         api.sendEvent({
             name: 'MaskClickEvent'
         });
@@ -247,6 +254,7 @@
             reload: true,
             pageParam: {}
         });
+          //发送遮罩层点击事件
         api.sendEvent({
             name: 'MaskClickEvent'
         });
@@ -259,6 +267,7 @@
             reload: true,
             pageParam: {}
         });
+          //发送遮罩层点击事件
         api.sendEvent({
             name: 'MaskClickEvent'
         });
@@ -271,6 +280,7 @@
             reload: true,
             pageParam: {}
         });
+          //发送遮罩层点击事件
         api.sendEvent({
             name: 'MaskClickEvent'
         });
@@ -278,11 +288,13 @@
     //账户切换事件
     function requestSwitchAccounType() {
         if (g_account_type != undefined) {
+           //如果为普通用户，切换为商户
             if (g_account_type == "person_user") {
                 g_account_type = "company_user";
-            } else if (g_account_type == "company_user") {
+            } else if (g_account_type == "company_user") {//如果为商户，切换为普通用户
                 g_account_type = "person_user";
             }
+            //发送切换账户类型的事件
             api.sendEvent({
                 name: 'SwitchAccountTypeEvent',
                 extra: {
@@ -295,6 +307,7 @@
     }
     //监听页面滑动事件
     function registerTouchEvent() {
+        //滑动开始事件
         $(document.body).on('touchstart', function(e) {
             //touchstart事件
             var $tb = $(this);
@@ -350,13 +363,16 @@
     function loadAccountInfo() {
         //先判断本地是否是否存在
         try {
+            //获取本地账户信息
             var account = getAccount();
+            //如果本地缓存的账户信息存在
             if (account != undefined) {
                 g_account = account;
                 g_account_nickname = account.nickname;
                 g_account_icon = account.icon_url;
+                //设置账户信息
                 setAccountInfo(g_account_icon, g_account_nickname);
-            } else {
+            } else {//如果不存在,访问后台
                 var s = 'http://' + serverIP + '/AccountOperation/getAccountInfo.action';
                 api.ajax({
                     url: s,

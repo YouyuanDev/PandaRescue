@@ -90,6 +90,7 @@
     apiready = function() {
             fnSettingHeader();
             var data = api.pageParam;
+            //获取余额
             g_balance = data.g_balance;
             if (g_balance != undefined) {
                 $('.item-balance').text(g_balance);
@@ -102,7 +103,7 @@
         if (cash != undefined && cash > 0)
             $('#cash').val(cash);
     }
-
+    //关闭当前Frame
     function closeMyself() {
         //刷新父页面
         api.sendEvent({
@@ -110,14 +111,16 @@
             extra: {
             }
         });
+        //关闭当前Frame
         api.closeFrame({
             name: 'putforward_cash'
         });
     }
     //提现
     function beginWithdraw() {
+        //获取提现金额
         var amount = $('#cash').val();
-        if (amount != undefined && amount != "" && !isNaN(amount)) {
+        if (!isUndefinedOrEmpty(amount)&& !isNaN(amount)) {
             if (amount <= 0) {
                 toastFail('提现金额不能少于0元');
                 return;
@@ -138,7 +141,9 @@
                     toastSuccess(ret.msg);
                     if (ret.success) {
                         var cash = $('.item-balance').text();
+                        //计算提现后余额
                         cash = cash - amount;
+                        //显示余额
                         $('.item-balance').text(cash);
                         $('#cash').val('');
                     }

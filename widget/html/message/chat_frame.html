@@ -87,73 +87,7 @@
         <i class="aui-iconfont aui-icon-close" onclick="closeAuiTip();"></i>
     </div>
     <section class="aui-chat chat-container" id="msglist">
-        <!-- <div class="aui-chat-header">2016年7月13日</div>
-        <div class="aui-chat-item aui-chat-left">
-            <div class="aui-chat-media">
-                <img src="../../image/default_portrait.png" />
-            </div>
-            <div class="aui-chat-inner">
-                <div class="aui-chat-name">AUI <span class="aui-label aui-label-warning">2.0</span></div>
-                <div class="aui-chat-content">
-                    <div class="aui-chat-arrow"></div>
-                    Hello AUI 2.0!
-                </div>
-                <div class="aui-chat-status aui-chat-status-refresh">
-                    <i class="aui-iconfont aui-icon-correct aui-text-success"></i>
-                </div>
-            </div>
-        </div>
-        <div class="aui-chat-item aui-chat-right">
-            <div class="aui-chat-media">
-                <img src="../../image/default_portrait.png" />
-            </div>
-            <div class="aui-chat-inner">
-                <div class="aui-chat-name">流浪男</div>
-                <div class="aui-chat-content">
-                    <div class="aui-chat-arrow"></div>
-                    你好！
-                </div>
-                <div class="aui-chat-status">
-                    <i class="aui-iconfont aui-icon-info aui-text-danger"></i>
-                </div>
-            </div>
-        </div>
-        <div class="aui-chat-item aui-chat-left">
-            <div class="aui-chat-media">
-                <img src="../../image/default_portrait.png" />
-            </div>
-            <div class="aui-chat-inner">
-                <div class="aui-chat-name">AUI <span class="aui-label aui-label-warning">2.0</span></div>
-                <div class="aui-chat-content">
-                    <div class="aui-chat-arrow"></div>
-                    <img src="../../image/default_portrait.png" />
-                </div>
-            </div>
-        </div>
-        <div class="aui-chat-item aui-chat-right">
-            <div class="aui-chat-media">
-                <img src="../../image/default_portrait.png" />
-            </div>
-            <div class="aui-chat-inner">
-                <div class="aui-chat-name">流浪男</div>
-                <div class="aui-chat-content">
-                    <div class="aui-chat-arrow"></div>
-                    以前拍摄的牛背山星空
-                </div>
-            </div>
-        </div>
-        <div class="aui-chat-item aui-chat-left">
-            <div class="aui-chat-media">
-                <img src="../../image/default_portrait.png" />
-            </div>
-            <div class="aui-chat-inner">
-                <div class="aui-chat-name">AUI <span class="aui-label aui-label-warning">2.0</span></div>
-                <div class="aui-chat-content">
-                    <div class="aui-chat-arrow"></div>
-                    <img src="../../image/default_portrait.png" />
-                </div>
-            </div>
-        </div> -->
+
     </section>
 </body>
 
@@ -166,11 +100,15 @@
 <script type="text/javascript">
     var language_id = 0;
     var rong;
+    //聊天对话框
     var UIChatBox;
-    var UIMediaScanner;
+    //相册管理器
     var photoBrowser;
+    // 导航栏高度 对方id、头像、昵称
     var g_h, g_f_id, g_f_tx, g_f_zh;
+    //聊天页面高度
     var g_winHeight;
+    //存放消息发送时间的数组
     var g_header_arr = new Array();
     apiready = function() {
             var data = api.pageParam;
@@ -195,7 +133,7 @@
             //下拉刷新
             setCustomRefreshHeaderInfo();
         }
-        //打开聊天对话框
+        //打开聊天对话框(具体解释看APIClound UIChatBox组件开发文档)
     function openUIChatBox() {
         UIChatBox.open({
             placeholder: '',
@@ -268,27 +206,32 @@
                 ]
             }
         }, function(ret, err) {
+            //事件类型
             var eventType = ret.eventType;
             var msg = ret.msg;
             if (eventType == 'clickExtras') {
+                //如果点击了相册
                 if (ret.index == 0) {
                     getPicture('library')
                     pageDown(300);
-                } else if (ret.index == 1) {
+                } else if (ret.index == 1) {//如果点击了拍照
                     getPicture('camera')
                     pageDown(300);
                 }
             }
+            //如果事件为发送消息事件
             if (eventType == 'send') {
                 if ($api.trimAll(ret.msg) == '') {
                     toastFail('不能发送空白消息');
                 } else {
+                    //xm1为当前用户昵称、tx1为当前用户头像路径、xm2为对方昵称、tx2为对方头像路径
                     var extra = {
                         xm1: $api.getStorage('zh'),
                         xm2: g_f_zh,
                         tx1: $api.getStorage('tx'),
                         tx2: g_f_tx
                     };
+                    //发送消息
                     rong.sendTextMessage({
                         conversationType: 'PRIVATE',
                         targetId: g_f_id,
@@ -361,11 +304,13 @@
             target: 'recordBtn',
             name: 'press_cancel'
         }, function(ret, err) {
+            //获取录音时间
             var timeDifference2 = new Date().getTime() - timeDifference1;
+            //如果录音时间小于1秒钟，提示录音过短
             if (timeDifference2 <= 1000) {
                 stopRecord();
                 toastFail('语音时间较短，请重新录音');
-            } else if (timeDifference2 > 2000) {
+            } else if (timeDifference2 > 2000) {如果录音时间大于2秒钟，
                 api.stopRecord(function(ret, err) {
                     if (ret.duration > 0) {
                         var path = ret.path;
@@ -376,6 +321,7 @@
                             tx1: $api.getStorage('tx'),
                             tx2: g_f_tx
                         };
+                        //发送录音
                         rong.sendVoiceMessage({
                             conversationType: 'PRIVATE',
                             targetId: g_f_id,
@@ -463,9 +409,6 @@
                                 html += '</div>';
                                 $api.append($api.dom('#msglist'), html);
                                 pageDown(200);
-                                // api.sendEvent({
-                                //     name: 'senthh'
-                                // });
                             } else if (ret.status == 'error') {
                                 api.toast({
                                     msg: '语音发送失败'
@@ -483,13 +426,15 @@
             name: 'NewMsgEvent'
         }, function(ret, err) {
             var html = '';
+            //如果发送消息人的id 为当前对方的id
             if (ret.value.msg.targetId == g_f_id) {
                 var timeStr = timeDifference(ret.value.msg.sentTime);
+                //判断发送消息时间数组中是否存在当前消息发送的时间,不存在添加
                 if ($.inArray(timeStr, g_header_arr) == -1) {
                     html += '<div class="aui-chat-header">' + timeStr + '</div>';
                     g_header_arr.push(timeStr);
                 }
-                if (ret.value.msg.objectName == 'RC:TxtMsg') {
+                if (ret.value.msg.objectName == 'RC:TxtMsg') {//如果消息类型为文本消息
                     txt = expressionConversion(ret.value.msg.content.text);
                     html += '<div class="aui-chat-item aui-chat-left">';
                     html += '          <div class="aui-chat-media"><img src="' + g_f_tx + '" onerror="imgExists(this);"/></div>';
@@ -500,7 +445,7 @@
                     html += '               </div>';
                     html += '          </div>';
                     html += '</div>';
-                } else if (ret.value.msg.objectName == 'RC:ImgMsg') {
+                } else if (ret.value.msg.objectName == 'RC:ImgMsg') {//如果消息类型为图片消息
                     html += '<div class="aui-chat-item aui-chat-left">';
                     html += '          <div class="aui-chat-media"><img src="' + g_f_tx + '" onerror="imgExists(this);"/></div>';
                     html += '          <div class="aui-chat-inner"><div class="aui-chat-name">' + g_f_zh + '</div>';
@@ -510,7 +455,7 @@
                     html += '          </div>';
                     html += '          </div>';
                     html += '</div>';
-                } else if (ret.value.msg.objectName == 'RC:VcMsg') {
+                } else if (ret.value.msg.objectName == 'RC:VcMsg') {//如果消息类型为视频消息
                     html += '<div class="aui-chat-item aui-chat-left">';
                     html += '          <div class="aui-chat-media"><img src="' + g_f_tx + '" onerror="imgExists(this);"/></div>';
                     html += '          <div class="aui-chat-inner"><div class="aui-chat-name">' + g_f_zh + '</div>';

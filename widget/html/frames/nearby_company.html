@@ -78,8 +78,6 @@
     </style>
 </head>
 
-<!-- <body class="pr-body-bgcolor"> -->
-
 <body>
     <div class="container">
         <div class="container-inner">
@@ -87,7 +85,6 @@
                 <div class="poilist-container">
                     <div class="aui-content aui-margin-b-15">
                         <ul id="poilist-ul" class="aui-list aui-media-list">
-
                         </ul>
                     </div>
                 </div>
@@ -102,23 +99,28 @@
 <script type="text/javascript" src="../../script/jquery-3.3.1.min.js"></script>
 <script type="text/javascript" src="../../script/common.js"></script>
 <script type="text/javascript">
-    var my_lon;
-    var my_lat;
+    //当前用户的经纬度
+    var my_lon,my_lat;
+    //分页查询起始页
     var g_start=1;
-    var allow_scroll=true;
+    //商户编号集合
     var g_companyList=[];
     apiready = function() {
         var data = api.pageParam;
         my_lon = data.g_my_lon;
         my_lat = data.g_my_lat;
         map = api.require('bMap');
+        //商户信心列表滚动事件
         registerCompanyInfoScrollEvent();
+        //查询附近商户信息
         loadNearbyCompany();
+        //是否滚动到底部
         isRollingToEnd();
     }
     // //加载附近的商户
     function loadNearbyCompany() {
-        if (my_lon != undefined &&my_lat != undefined&&allow_scroll) {
+        //如果当前用户经纬度不为空，切附近商户信息尚未查询完毕
+        if (my_lon != undefined &&my_lat != undefined) {
             var s = 'http://' + serverIP + '/PersonUser/getNearByCompany.action';
             api.ajax({
                 url: s,
@@ -128,41 +130,53 @@
                         lon: my_lon,
                         lat:my_lat,
                         page: g_start,
-                        rows: 3
+                        rows:5
                     }
                 }
             }, function(ret, err) {
                 if (ret) {
+                  //商户标注
                   var annotations = [];
+                  //商户标注弹出的信息
                   var bubble = [];
-                  if(ret.rows.length<=0){
-                    allow_scroll=false;
-                  }
+                  //遍历商户信息集合
                   for (var i=0; i <ret.rows.length; i++) {
                       var id=g_companyList.length+i;
+                      //添加商户标注
                       annotations.push( {
                           id: id,
                           lon: ret.rows[i].company_location_lon,
                           lat: ret.rows[i].company_location_lat
                       });
+                      //向商户编号集合中添加当前商户编号
                       g_companyList.push({
                           id: id,
                           company_no: ret.rows[i].company_no
                       });
+                      //向标注弹出信息集合中追加弹出信息
                       bubble.push({
                          id:id,
                          company_name:ret.rows[i].company_name
                       });
-                  }
-                    showCompany(ret.rows);
-                    api.sendEvent({
-                     name: 'loadNearbyCompanyEvent',
-                     extra: {
-                            annotations:annotations,
-                            g_companyList:g_companyList,
-                            bubble:bubble
-                         }
-                     });
+                   }
+                   //判断查询的商户信息是否为空
+                   if(ret.rows.length>0){
+                     //显示商户信息
+                      showCompany(ret.rows);
+                      //发送加载商户信息的事件
+                      api.sendEvent({
+                       name: 'loadNearbyCompanyEvent',
+                       extra: {
+                              annotations:annotations,
+                              g_companyList:g_companyList,
+                              bubble:bubble
+                           }
+                       });
+                       g_start+=1;
+                     }else{
+                       toastFail("加载完毕!");
+                     }
+                     //判断元素中商户信息模板的个数，如果为0显示商户信息加载完毕的提示信息
                      if($('#poilist-ul').find('li').length<=0){
                         $('.pr-empty').show();
                      }
@@ -176,39 +190,31 @@
     }
     //展示附近商户信息
     function showCompany(company_data) {
-        if (company_data != undefined) {
             var template = "";
+            //遍历商户信息，生成模板
             for (var i = 0; i < company_data.length; i++) {
                 template += companyListTemplate(company_data[i].company_location_lon, company_data[i].company_location_lat, company_data[i].company_no, company_data[i].company_name, company_data[i].address, getDistance(company_data[i].distance),company_data[i].upload_files);
             }
+            //向元素中追加生成的模板
             $('#poilist-ul').append(template);
-            if (company_data.length <= 0) {
-              toastFail("加载完毕!");
-            }
-        }
     }
-
-
     //获取两点间的路线距离
     function getRouteDistance(company_no, company_location_lon, company_location_lat) {
-        var c_lon = company_location_lon;
-        var c_lat = company_location_lat;
-
         map.removeRoute({
-                    ids: [1]
+          ids: [1]
         });
         //计算路线距离
         map.searchRoute({
             id: 1,
             type: 'drive',
-            policy: 'ecar_time_first/ecar_dis_first',
+            policy:'ecar_time_first',
             start: {
                 lon: my_lon,
                 lat: my_lat
             },
             end: {
-                lon: c_lon,
-                lat: c_lat
+                lon: company_location_lon,
+                lat: company_location_lat
             }
         }, function(ret, err) {
             if (ret) {
@@ -228,12 +234,15 @@
     //发送弹出标注信息事件
     function popupBubble(obj) {
         var company_no = $(obj).attr('data-no');
+        //改变点击的商户列表的背景色
         $(obj).addClass('item-active');
         $(obj).siblings('li').removeClass('item-active');
+        //获取点击的商户的经纬度坐标
         var company_location_lon = $(obj).attr('company-location-lon');
         var company_location_lat = $(obj).attr('company-location-lat');
         //计算路程距离
         getRouteDistance(company_no, company_location_lon, company_location_lat);
+        //发送定位商户位置的事件
         api.sendEvent({
             name: 'LocatingCompanyLocationEvent',
             extra: {
@@ -243,9 +252,10 @@
             }
         });
     }
-    //生成模板
+    //生成模板(参数为商户经度、纬度、商户编号、商户名、地址、距离、头像)
     function companyListTemplate(company_location_lon, company_location_lat, company_no, company_name, company_address, distance,upload_files) {
         var imgUrl="../../image/default_portrait.png";
+        //默认为upload_files中第一张图片为商户的头像
         if(upload_files!=undefined&&upload_files!=""){
           var imgArr=upload_files.split(';');
           if(imgArr.length>0){
@@ -262,9 +272,10 @@
             '<div class="aui-list-item-inner">' +
             '<div class="aui-list-item-text">' +
             '<div class="aui-list-item-title aui-font-size-14">' + company_name + '</div>' +
-            '<div id="dis_' + company_no + '" class="aui-list-item-right">直线距离' + distance + 'km</div>' +
+            '<div  class="aui-list-item-right">直线距离' + distance + 'km</div>' +
             '</div>' +
             '<div class="aui-list-item-text">' + company_address + '</div>' +
+            '<div class="aui-list-item-text" id="dis_' + company_no + '"></div>' +
             '<div class="aui-list-item-text"><div class="item-evaluation" data-no="'+company_no+'" onclick="openReviewsInformation(this);">查看评价<div></div>' +
             '</div>' +
             '</div>' +
@@ -278,18 +289,18 @@
         }, function(ret, err) {
             var company_no = ret.value.id;
             if (company_no != undefined) {
+                //找到商户列表中对应商户编号的列表对象
                 var $obj = $("li[data-no='" + company_no + "']");
                 if ($obj != undefined) {
                     try {
+                        //改变该对象背景色
                         $obj.addClass('item-active');
                         $obj.siblings('li').removeClass('item-active');
                         var $container=$('.container');
+                        //滚动存放商户列表的容器到该对象位置
                         $('.container-inner').animate({
                             scrollTop:$obj.offset().top
                         }, 300);
-                        // $('.container-inner').animate({
-                        //     scrollTop:$obj.offset().top - $container.offset().top + $container.scrollTop()
-                        // }, 300);
                     } catch (e) {
                     }
                 }
@@ -304,18 +315,16 @@
                 threshold: 0 //设置距离底部多少距离时触发,默认值为0,数字类型
             }
         }, function(ret, err) {
-            // if(g_allow_load){
-            //   loadAccountOrder();
-            // }
-            g_start=g_start+1;
+            //加载附近商户
             loadNearbyCompany();
-
         });
     }
     //查看评价信息
     function openReviewsInformation(obj){
         var company_no=$(obj).attr('data-no');
-        if(company_no!=undefined){
+        //如果商户编号不为空
+        if(!isUndefinedOrEmpty(company_no)){
+          //打开评论内容界面
           api.openWin({
             name: 'company_comment',
             url: '../comment/company_comment.html',
@@ -329,7 +338,6 @@
                company_no:company_no
             }
           });
-
         }else{
           toastFail("系统繁忙,请稍后重试!");
         }

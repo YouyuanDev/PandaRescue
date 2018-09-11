@@ -83,16 +83,18 @@
     apiready = function() {
             fnSettingHeader();
             var data = api.pageParam;
-            //设置聊天界面头部信息
+            //对方id、头像、昵称
             var f_id = data.id;
             var f_zh = data.zh;
             var f_tx = data.tx;
-            //打开聊天Frame
+            //获取导航栏高度
             var header = $api.byId('header');
             var headerH = $api.offset(header).h;
+            //设置导航栏中心位置为对方昵称
             if (f_zh != undefined) {
                 $('.item-title-name').text(f_zh);
             }
+              //打开聊天Frame
             if (f_id != undefined) {
                 api.openFrame({
                     name: 'chat_frame',

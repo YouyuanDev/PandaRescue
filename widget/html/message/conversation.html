@@ -35,8 +35,10 @@
     var language_id = 0;
     apiready = function() {
         fnSettingHeader();
+        //获取导航栏高度
         var header = $api.byId('header');
         var headerH = $api.offset(header).h;
+        //打开对话列表Frame
         api.openFrame({
             name: 'conversation_frame',
             url: './conversation_frame.html',
@@ -56,5 +58,5 @@
             name: 'conversation'
         });
     }
-  
+
 </script>
