@@ -1,6 +1,6 @@
 var header, headerHeight = 0,
     g_loadingID;
-var serverIP = '192.168.0.11:8080';
+var serverIP = 'www.topinspector.cn:9090';
 //设置导航栏兼容ios和Android
 function fnSettingHeader() {
     var sType = api.systemType;
