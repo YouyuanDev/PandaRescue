@@ -110,6 +110,11 @@
     //故障类型集合
     var g_failure_type_dict = {};
     apiready = function() {
+        //判断是否登录
+        var account=getAccount();
+        if(account==undefined){
+          openLogin();
+        }
         fnSettingHeader();
         map = api.require('bMap');
         rong = api.require('rongCloud2');
